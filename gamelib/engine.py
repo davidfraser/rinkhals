@@ -2,7 +2,7 @@
 
 from pgu.engine import Game, State, Quit
 import pygame
-from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE, K_n, K_d
+from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE, K_n, K_d, K_s
 
 from tiles import TILE_MAP
 import gameboard
@@ -26,8 +26,12 @@ class MainMenuState(State):
         if events_equal(e, START_DAY):
             self.game.create_game_board()
             return DayState(self.game)
-        elif e.type is KEYDOWN and e.key == K_ESCAPE:
-            return Quit(self.game)
+        elif e.type is KEYDOWN:
+            if e.key == K_ESCAPE:
+                return Quit(self.game)
+            elif e.key == K_s:
+                self.game.create_game_board()
+                return DayState(self.game)
         elif e.type is not QUIT:
             self.game.main_menu_app.event(e)
 
