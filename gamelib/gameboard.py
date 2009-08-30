@@ -20,6 +20,8 @@ class GameBoard(object):
         self.tools.tga_load_tiles(data.filepath('tiles.tga'), self.TILE_DIMENSIONS)
         self.tools.png_folder_load_tiles(data.filepath('tiles'))
         self.populate_toolbar()
+        self.chickens = []
+        self.foxes = []
 
         self.selected_tool = None
 
@@ -53,11 +55,7 @@ class GameBoard(object):
         return updates
 
     def loop(self):
-        return
-        x = random.randint(0, self.tv.size[0]-1)
-        y = random.randint(0, self.tv.size[1]-1)
-        tile = random.randint(0, 4)
-        self.tv.set((x, y), tile)
+        self.tv.loop()
 
     def select_tool(self, e):
         tool_pos = self.tools.screen_to_tile(e.pos)
@@ -78,3 +76,16 @@ class GameBoard(object):
                 self.select_tool(e)
             else:
                 self.use_tool(e)
+
+    def clear_foxes(self):
+        for fox in self.foxes:
+            self.tv.sprites.remove(fox)
+        self.foxes = [] # Remove all the foxes
+
+    def add_chicken(self, chicken):
+        self.chickens.append(chicken)
+        self.tv.sprites.append(chicken)
+
+    def add_fox(self, fox):
+        self.foxes.append(fox)
+        self.tv.sprites.append(fox)

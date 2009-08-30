@@ -2,9 +2,11 @@
 
 from pgu.engine import Game, State, Quit
 import pygame
-from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE
+from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE, K_n, K_d
 
 import gameboard
+import animal
+import random
 
 class Engine(Game):
     def __init__(self, main_menu_app):
@@ -38,11 +40,54 @@ class MainMenuState(State):
         pygame.display.update(update)
 
 class DayState(State):
+    def init(self):
+        """Add some chickens to the farm"""
+        # Very simple, we walk around the tilemap, and, for each farm tile,
+        # we randomly add a chicken (1 in 10 chance) until we have 5 chickens
+        # or we run out of board
+        self.game.gameboard.clear_foxes()
+        chickens = len(self.game.gameboard.chickens)
+        x, y = 0, 0
+        width, height = self.game.gameboard.tv.size
+        while chickens < 5:
+            if x < width:
+                tile = self.game.gameboard.tv.get((x, y))
+            else:
+                y += 1
+                if y >= height:
+                    break
+                x = 0
+                continue
+            # See if we place a chicken
+            if tile == 1:
+                # Farmland
+                roll = random.randint(1, 10)
+                # We don't place within a tile of the fence, this is to make things
+                # easier
+                for xx in range(x-1, x+2):
+                    if xx >= height or xx < 0:
+                        continue
+                    for yy in range(y-1, y+2):
+                        if yy >= height or yy < 0:
+                            continue
+                        neighbour = self.game.gameboard.tv.get((xx, yy))
+                        if neighbour == 2:
+                            # Fence
+                            roll = 10
+                if roll == 1:
+                    # Create a chicken
+                    chickens += 1
+                    chick = animal.Chicken((x, y))
+                    self.game.gameboard.add_chicken(chick)
+            x += 1
+
     def event(self, e):
         if events_equal(e, START_NIGHT):
             return NightState(self.game)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
             return MainMenuState(self.game)
+        elif e.type is KEYDOWN and e.key == K_n:
+            return pygame.event.post(START_NIGHT)
         elif events_equal(e, GO_MAIN_MENU):
             return MainMenuState(self.game)
         elif e.type is not QUIT:
@@ -60,9 +105,55 @@ class DayState(State):
         self.game.gameboard.loop()
 
 class NightState(State):
+    def init(self):
+        """Add some foxes to the farm"""
+        # Very simple, we walk around the tilemap, and, for each farm tile,
+        # we randomly add a chicken (1 in 10 chance) until we have 5 chickens
+        # or we run out of board
+        foxes = len(self.game.gameboard.foxes)
+        x, y = 0, 0
+        width, height = self.game.gameboard.tv.size
+        while foxes < 5:
+            if x < width:
+                tile = self.game.gameboard.tv.get((x, y))
+            else:
+                y += 1
+                if y >= height:
+                    break
+                x = 0
+                continue
+            # See if we place a fox
+            if tile == 0:
+                # Forest
+                roll = random.randint(1, 10)
+                if roll == 1:
+                    # Create a fox
+                    foxes += 1
+                    fox = animal.Fox((x, y))
+                    self.game.gameboard.add_fox(fox)
+            x += 5
+
     def event(self, e):
         if events_equal(e, START_DAY):
             return DayState(self.game)
+        elif e.type is KEYDOWN and e.key == K_d:
+            return pygame.event.post(START_DAY)
+        elif e.type is KEYDOWN and e.key == K_ESCAPE:
+            return MainMenuState(self.game)
+        elif e.type is not QUIT:
+            self.game.gameboard.event(e)
+
+    def loop(self):
+        self.game.gameboard.loop()
+
+    def paint(self, screen):
+        self.game.gameboard.paint(screen)
+        pygame.display.flip()
+
+    def update(self, screen):
+        update = self.game.gameboard.update(screen)
+        pygame.display.update(update)
+
 
 # pygame events
 
