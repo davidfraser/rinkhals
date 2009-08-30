@@ -41,6 +41,8 @@ class DayState(State):
             return MainMenuState(self.game)
         elif events_equal(e, GO_MAIN_MENU):
             return MainMenuState(self.game)
+        elif e.type is not QUIT:
+            self.game.gameboard.event(e)
 
     def paint(self, screen):
         self.game.gameboard.paint(screen)
