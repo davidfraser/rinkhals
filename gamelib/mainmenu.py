@@ -26,14 +26,22 @@ class MainMenu(gui.Table):
         fullscreen_toggle = gui.Button("Toggle Fullscreen")
         fullscreen_toggle.connect(gui.CLICK, fullscreen_toggled)
 
-        self.tr()
-        self.td(gui.Label(constants.NAME, color=constants.FG_COLOR), colspan=2)
+        style = {
+            "padding_bottom": 15,
+        }
+        td_kwargs = {
+            "align": 0,
+            "style": style,
+        }
 
         self.tr()
-        self.td(start_button, align=0)
+        self.td(gui.Label(constants.NAME, color=constants.FG_COLOR), **td_kwargs)
 
         self.tr()
-        self.td(fullscreen_toggle, align=0)
+        self.td(start_button, **td_kwargs)
 
         self.tr()
-        self.td(quit_button, align=0)
+        self.td(fullscreen_toggle, **td_kwargs)
+
+        self.tr()
+        self.td(quit_button, **td_kwargs)

@@ -44,7 +44,7 @@ def main():
     app = gui.App()
     main_menu = MainMenu()
 
-    c = gui.Container(align=-1, valign=-1)
+    c = gui.Container(align=0, valign=0)
     c.add(main_menu, 0, 0)
 
     app.init(c)
