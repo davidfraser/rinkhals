@@ -8,39 +8,14 @@ package.
 
 import pygame
 from pgu import gui
-from pygame.locals import SWSURFACE, QUIT, KEYDOWN, K_ESCAPE, USEREVENT
+from pygame.locals import SWSURFACE
 
 from mainmenu import MainMenu
+from engine import Engine, MainMenuState
 import constants
 
-def gameloop(screen, app):
-    """Main game loop."""
-    clock = pygame.time.Clock()
-    done = False
-    while not done:
-        for e in pygame.event.get():
-            if e.type is QUIT:
-                done = True
-            elif e.type is KEYDOWN and e.key == K_ESCAPE:
-                done = True
-            elif e.type is USEREVENT:
-                print e.event
-            else:
-                app.event(e)
-
-        # Clear the screen and render the stars
-        dt = clock.tick()/1000.0
-        screen.fill((0,0,0))
-        app.paint(screen)
-        pygame.display.flip()
-        pygame.time.wait(10)
-
-
-def main():
-    """Main script."""
-    screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE)
-
-    form = gui.Form()
+def create_menu_app():
+    """Create the menu app."""
     app = gui.App()
     main_menu = MainMenu()
 
@@ -48,5 +23,11 @@ def main():
     c.add(main_menu, 0, 0)
 
     app.init(c)
+    return app
 
-    gameloop(screen, app)
+def main():
+    """Main script."""
+    screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE)
+    main_menu_app = create_menu_app()
+    engine = Engine(main_menu_app)
+    engine.run(MainMenuState(engine), screen)

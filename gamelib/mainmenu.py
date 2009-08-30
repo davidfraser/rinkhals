@@ -3,6 +3,7 @@
 from pgu import gui
 import pygame
 import constants
+import engine
 
 class MainMenu(gui.Table):
     def __init__(self, **params):
@@ -12,10 +13,10 @@ class MainMenu(gui.Table):
             pygame.display.toggle_fullscreen()
 
         def quit_pressed():
-            pygame.event.post(pygame.event.Event(pygame.QUIT))
+            pygame.event.post(engine.QUIT)
 
         def start_pressed():
-            pygame.event.post(pygame.event.Event(pygame.USEREVENT, event="<Our Start Event Class>"))
+            pygame.event.post(engine.START_DAY)
 
         start_button = gui.Button("Start")
         start_button.connect(gui.CLICK, start_pressed)

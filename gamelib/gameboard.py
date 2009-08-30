@@ -1,9 +1,7 @@
 import random
 
-import pygame
 from pgu import tilevid
 
-import constants
 import data
 
 
