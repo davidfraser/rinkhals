@@ -4,6 +4,8 @@ from pgu.engine import Game, State, Quit
 import pygame
 from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE
 
+import gameboard
+
 class Engine(Game):
     def __init__(self, main_menu_app):
         self.main_menu_app = main_menu_app
@@ -13,9 +15,13 @@ class Engine(Game):
         """Tic toc."""
         pygame.time.wait(10)
 
+    def create_game_board(self):
+        self.gameboard = gameboard.GameBoard()
+
 class MainMenuState(State):
     def event(self, e):
         if events_equal(e, START_DAY):
+            self.game.create_game_board()
             return DayState(self.game)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
             return Quit(self.game)
@@ -35,6 +41,17 @@ class DayState(State):
             return MainMenuState(self.game)
         elif events_equal(e, GO_MAIN_MENU):
             return MainMenuState(self.game)
+
+    def paint(self, screen):
+        self.game.gameboard.paint(screen)
+        pygame.display.flip()
+
+    def update(self, screen):
+        update = self.game.gameboard.update(screen)
+        pygame.display.update(update)
+
+    def loop(self):
+        self.game.gameboard.loop()
 
 class NightState(State):
     def event(self, e):
