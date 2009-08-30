@@ -33,6 +33,10 @@ class MainMenuState(State):
         self.game.main_menu_app.paint(screen)
         pygame.display.flip()
 
+    def update(self, screen):
+        update = self.game.main_menu_app.update(screen)
+        pygame.display.update(update)
+
 class DayState(State):
     def event(self, e):
         if events_equal(e, START_NIGHT):
