@@ -1,9 +1,9 @@
 import random
 
-from pgu import gui, tilevid
 from pygame.locals import MOUSEBUTTONDOWN
 
 import data
+import tiles
 
 
 class GameBoard(object):
@@ -11,12 +11,14 @@ class GameBoard(object):
     TOOLBAR_WIDTH = 22
 
     def __init__(self):
-        self.tv = tilevid.Tilevid()
+        self.tv = tiles.FarmVid()
         self.tv.tga_load_tiles(data.filepath('tiles.tga'), self.TILE_DIMENSIONS)
+        self.tv.png_folder_load_tiles(data.filepath('tiles'))
         self.tv.tga_load_level(data.filepath('level1.tga'))
 
-        self.tools = tilevid.Tilevid()
+        self.tools = tiles.FarmVid()
         self.tools.tga_load_tiles(data.filepath('tiles.tga'), self.TILE_DIMENSIONS)
+        self.tools.png_folder_load_tiles(data.filepath('tiles'))
         self.populate_toolbar()
 
         self.selected_tool = None
