@@ -36,15 +36,15 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.35"
-     inkscape:cx="-97.857143"
-     inkscape:cy="520"
+     inkscape:zoom="1.2541055"
+     inkscape:cx="316.80774"
+     inkscape:cy="211.30599"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="735"
-     inkscape:window-x="0"
+     inkscape:window-width="1278"
+     inkscape:window-height="730"
+     inkscape:window-x="42"
      inkscape:window-y="24" />
   <metadata
      id="metadata8898">
@@ -63,7 +63,7 @@
      id="layer1"
      transform="translate(-41.763672,-314.71075)">
     <rect
-       style="opacity:1;fill:#58ff00;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#a2ff46;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect8908"
        width="633.61548"
        height="421.01721"
@@ -115,12 +115,12 @@
          style="fill:#ff0000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
     <path
-       style="fill:#0e9000;fill-opacity:1;fill-rule:evenodd;stroke:#279500;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#58ff00;fill-opacity:1;fill-rule:evenodd;stroke:#279500;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 54.085711,718.00379 C 47.154741,714.45259 51.035841,651.41789 55.861341,651.41789 C 65.722821,671.54159 72.317261,691.66539 72.729781,711.78919 C 70.124481,671.27479 75.763941,634.88279 82.495721,599.03692 C 94.819621,636.84999 106.30846,674.52399 104.69104,710.01349 C 106.09658,680.34559 111.88603,655.06159 125.11073,637.21289 C 131.83271,660.13539 138.79677,683.00939 133.98886,708.23789 C 136.79327,662.32179 150.58339,630.13789 162.39887,595.48567 C 166.7737,633.64879 173.71367,672.32489 166.83793,708.23789 C 171.41922,682.77579 177.4102,660.13309 189.03325,648.75449 C 196.38276,673.95849 197.06815,697.82979 192.5845,720.66729 L 54.085711,718.00379 z"
        id="path8068"
        sodipodi:nodetypes="cccccccccccc" />
     <path
-       style="fill:#0e9000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#58ff00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 575.37208,715.25161 C 567.55528,701.65888 572.79409,685.89023 578.92333,669.97316 C 592.61732,682.56393 602.76905,695.86315 604.6699,710.81255 C 601.25034,691.03741 607.94465,675.30781 616.21146,660.20722 C 626.37121,676.25387 635.13194,692.76686 631.30428,713.47598 C 634.48677,698.18058 637.53585,682.78512 649.94834,674.41222 C 659.04514,689.2091 657.85097,704.00598 655.27522,718.80286 L 575.37208,715.25161 z"
        id="path8075"
        sodipodi:nodetypes="cccccccc" />
