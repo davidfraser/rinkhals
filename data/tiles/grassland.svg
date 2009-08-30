@@ -8,13 +8,14 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="744.09448819"
-   height="1052.3622047"
+   width="471.42856"
+   height="471.42856"
    id="svg8054"
    sodipodi:version="0.32"
    inkscape:version="0.46"
    sodipodi:docname="grassland.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.0">
   <defs
      id="defs8056">
     <inkscape:perspective
@@ -37,7 +38,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98000003"
      inkscape:cx="499.91704"
-     inkscape:cy="459.53377"
+     inkscape:cy="460.55418"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -59,7 +60,8 @@
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(-264.20276,-357.11414)">
     <rect
        style="opacity:1;fill:#58ff00;fill-opacity:1;stroke:#24ff00;stroke-width:0;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect7475"
