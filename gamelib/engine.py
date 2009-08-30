@@ -43,6 +43,8 @@ class MainMenuState(State):
 class DayState(State):
     def init(self):
         """Add some chickens to the farm"""
+        self.game.gameboard.tv.sun(True)
+
         # disable timer
         pygame.time.set_timer(MOVE_FOX_ID, 0)
         # Very simple, we walk around the tilemap, and, for each farm tile,
@@ -110,6 +112,8 @@ class DayState(State):
 class NightState(State):
     def init(self):
         """Add some foxes to the farm"""
+        self.game.gameboard.tv.sun(False)
+
         # Add a timer to the event queue
         self.cycle_count = 0
         pygame.time.set_timer(MOVE_FOX_ID, 300)
