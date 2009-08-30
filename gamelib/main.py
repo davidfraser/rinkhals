@@ -8,7 +8,7 @@ package.
 
 import pygame
 from pgu import gui
-from pygame.locals import SWSURFACE, QUIT, KEYDOWN, K_ESCAPE
+from pygame.locals import SWSURFACE, QUIT, KEYDOWN, K_ESCAPE, USEREVENT
 
 from mainmenu import MainMenu
 import constants
@@ -23,6 +23,8 @@ def gameloop(screen, app):
                 done = True
             elif e.type is KEYDOWN and e.key == K_ESCAPE:
                 done = True
+            elif e.type is USEREVENT:
+                print e.event
             else:
                 app.event(e)
 

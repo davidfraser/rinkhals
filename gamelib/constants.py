@@ -1,8 +1,8 @@
 """Operation Fox Assault constants."""
 
-NAME = "Operation Fox Assault"
+# Project metadata
 
-SCREEN = (800, 600)
+NAME = "Operation Fox Assault"
 
 AUTHORS = [
     ("Adrianna Pinska", "adrianna.pinska@gmail.com"),
@@ -10,3 +10,8 @@ AUTHORS = [
     ("Neil Muller", ""),
     ("Simon Cross", "hodgestar+rinkhals@gmail.com"),
 ]
+
+# GUI constants
+
+SCREEN = (800, 600)
+FG_COLOR = (255, 255, 255)
