@@ -1,12 +1,14 @@
 import random
 
 from pgu import gui, tilevid
+from pygame.locals import MOUSEBUTTONDOWN
 
 import data
 
 
 class GameBoard(object):
     TILE_DIMENSIONS = (20, 20)
+    TOOLBAR_WIDTH = 22
 
     def __init__(self):
         self.tv = tilevid.Tilevid()
@@ -15,16 +17,18 @@ class GameBoard(object):
 
         self.tools = tilevid.Tilevid()
         self.tools.tga_load_tiles(data.filepath('tiles.tga'), self.TILE_DIMENSIONS)
-        self.tools.resize((1, 2))
         self.populate_toolbar()
 
+        self.selected_tool = None
+
     def populate_toolbar(self):
+        self.tools.resize((1, 2))
         self.tools.set((0,0), 2)
         self.tools.set((0,1), 3)
 
     def split_screen(self, screen):
         leftbar_rect = screen.get_rect()
-        leftbar_rect.width = self.TILE_DIMENSIONS[0] + 2
+        leftbar_rect.width = self.TOOLBAR_WIDTH
         main_rect = screen.get_rect()
         main_rect.width -= leftbar_rect.width
         main_rect.left += leftbar_rect.width
@@ -47,10 +51,28 @@ class GameBoard(object):
         return updates
 
     def loop(self):
+        return
         x = random.randint(0, self.tv.size[0]-1)
         y = random.randint(0, self.tv.size[1]-1)
         tile = random.randint(0, 4)
         self.tv.set((x, y), tile)
 
+    def select_tool(self, e):
+        tool_pos = self.tools.screen_to_tile(e.pos)
+        if tool_pos[1] < 2:
+            self.selected_tool = self.tools.get(tool_pos)
+        else:
+            self.selected_tool = None
+
+    def use_tool(self, e):
+        if self.selected_tool is None:
+            return
+        pos = self.tv.screen_to_tile((e.pos[0] - self.TOOLBAR_WIDTH, e.pos[1]))
+        self.tv.set(pos, self.selected_tool)
+
     def event(self, e):
-        pass
+        if e.type == MOUSEBUTTONDOWN:
+            if e.pos[0] < self.TOOLBAR_WIDTH:
+                self.select_tool(e)
+            else:
+                self.use_tool(e)
