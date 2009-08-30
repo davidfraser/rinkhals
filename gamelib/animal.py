@@ -75,6 +75,15 @@ class Fox(Animal):
         if closest.pos == self.pos:
             gameboard.remove_chicken(closest)
             self.full = True
+        for fox in gameboard.foxes:
+            if fox is not self:
+                if fox.pos[0] == xpos and fox.pos[1] == ypos:
+                    if xpos != self.pos[0]:
+                        xpos = self.pos[0]
+                    elif ypos != self.pos[1]:
+                        ypos = self.pos[1]
+                    else: # We move a step away
+                        xpos += 1
         self.pos = (xpos, ypos)
         
             
