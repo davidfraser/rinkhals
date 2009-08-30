@@ -82,6 +82,10 @@ class GameBoard(object):
             self.tv.sprites.remove(fox)
         self.foxes = [] # Remove all the foxes
 
+    def move_foxes(self):
+        for fox in self.foxes:
+            fox.move(self)
+
     def add_chicken(self, chicken):
         self.chickens.append(chicken)
         self.tv.sprites.append(chicken)
@@ -89,3 +93,13 @@ class GameBoard(object):
     def add_fox(self, fox):
         self.foxes.append(fox)
         self.tv.sprites.append(fox)
+
+    def remove_fox(self, fox):
+        if fox in self.foxes:
+            self.foxes.remove(fox)
+            self.tv.sprites.remove(fox)
+
+    def remove_chicken(self, chick):
+        if chick in self.chickens:
+            self.chickens.remove(chick)
+            self.tv.sprites.remove(chick)

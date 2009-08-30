@@ -1,6 +1,7 @@
 """Class for the various animals in the game"""
 
 import pygame
+import random
 from pgu.vid import Sprite
 
 import data
@@ -43,9 +44,37 @@ class Fox(Animal):
 
     def __init__(self, pos):
         image = pygame.image.load(data.filepath('sprites/fox.png'))
+        self.full = False
         Animal.__init__(self, image, pos)
 
     def move(self, gameboard):
         """Foxes will aim to move towards the closest henhouse or free
           chicken"""
-        return self.pos
+        if self.full:
+            return
+        # Find the closest chicken
+        min_dist = 999
+        min_vec = None
+        closest = None
+        for chicken in gameboard.chickens:
+            vec = (chicken.pos[0] - self.pos[0], chicken.pos[1] - self.pos[1])
+            dist = abs(vec[0]) + abs(vec[1])
+            if dist < min_dist:
+                min_dist = dist
+                min_vec = vec
+                closest = chicken
+        xpos, ypos = self.pos
+        if min_vec[0] < 0:
+            xpos -= 1
+        elif min_vec[0] > 0:
+            xpos += 1
+        if min_vec[1] < 0:
+            ypos -= 1
+        elif min_vec[1] > 0:
+            ypos += 1
+        if closest.pos == self.pos:
+            gameboard.remove_chicken(closest)
+            self.full = True
+        self.pos = (xpos, ypos)
+        
+            

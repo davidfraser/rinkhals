@@ -4,6 +4,7 @@ from pgu.engine import Game, State, Quit
 import pygame
 from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE, K_n, K_d
 
+from tiles import TILE_MAP
 import gameboard
 import animal
 import random
@@ -42,6 +43,8 @@ class MainMenuState(State):
 class DayState(State):
     def init(self):
         """Add some chickens to the farm"""
+        # disable timer
+        pygame.time.set_timer(MOVE_FOX_ID, 0)
         # Very simple, we walk around the tilemap, and, for each farm tile,
         # we randomly add a chicken (1 in 10 chance) until we have 5 chickens
         # or we run out of board
@@ -59,9 +62,9 @@ class DayState(State):
                 x = 0
                 continue
             # See if we place a chicken
-            if tile == 1:
+            if 'grassland' == TILE_MAP[tile]:
                 # Farmland
-                roll = random.randint(1, 10)
+                roll = random.randint(1, 20)
                 # We don't place within a tile of the fence, this is to make things
                 # easier
                 for xx in range(x-1, x+2):
@@ -71,7 +74,7 @@ class DayState(State):
                         if yy >= height or yy < 0:
                             continue
                         neighbour = self.game.gameboard.tv.get((xx, yy))
-                        if neighbour == 2:
+                        if 'fence' == TILE_MAP[neighbour]:
                             # Fence
                             roll = 10
                 if roll == 1:
@@ -107,6 +110,9 @@ class DayState(State):
 class NightState(State):
     def init(self):
         """Add some foxes to the farm"""
+        # Add a timer to the event queue
+        self.cycle_count = 0
+        pygame.time.set_timer(MOVE_FOX_ID, 300)
         # Very simple, we walk around the tilemap, and, for each farm tile,
         # we randomly add a chicken (1 in 10 chance) until we have 5 chickens
         # or we run out of board
@@ -123,9 +129,9 @@ class NightState(State):
                 x = 0
                 continue
             # See if we place a fox
-            if tile == 0:
+            if TILE_MAP[tile] == 'woodland':
                 # Forest
-                roll = random.randint(1, 10)
+                roll = random.randint(1, 20)
                 if roll == 1:
                     # Create a fox
                     foxes += 1
@@ -140,6 +146,11 @@ class NightState(State):
             return pygame.event.post(START_DAY)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
             return MainMenuState(self.game)
+        elif e.type is MOVE_FOX_ID:
+            self.cycle_count += 1
+            if self.cycle_count > 15:
+                return pygame.event.post(START_DAY)
+            return self.game.gameboard.move_foxes()
         elif e.type is not QUIT:
             self.game.gameboard.event(e)
 
@@ -154,7 +165,6 @@ class NightState(State):
         update = self.game.gameboard.update(screen)
         pygame.display.update(update)
 
-
 # pygame events
 
 def events_equal(e1, e2):
@@ -164,4 +174,6 @@ def events_equal(e1, e2):
 START_DAY = pygame.event.Event(USEREVENT, name="START_DAY")
 START_NIGHT = pygame.event.Event(USEREVENT, name="START_NIGHT")
 GO_MAIN_MENU = pygame.event.Event(USEREVENT, name="GO_MAIN_MENU")
+MOVE_FOX_ID = USEREVENT + 1
+MOVE_FOXES = pygame.event.Event(MOVE_FOX_ID, name="MOVE_FOXES")
 QUIT = pygame.event.Event(QUIT)
