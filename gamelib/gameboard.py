@@ -30,6 +30,7 @@ class ToolBar(gui.Table):
         self.add_tool_button("Sell egg", constants.TOOL_SELL_EGG)
         self.add_tool_button("Buy fence", constants.TOOL_BUY_FENCE)
         self.add_tool_button("Buy henhouse", constants.TOOL_BUY_HENHOUSE)
+        self.add_tool_button("Buy guard tower", constants.TOOL_BUY_GUARDTOWER)
 
     def update_cash_counter(self, amount):
         self.cash_counter.update_value("Groats: %s" % amount)
@@ -87,6 +88,7 @@ class GameBoard(object):
         self.chickens = []
         self.foxes = []
         self.henhouses = []
+        self.guardtowers = []
         self.cash = 0
         self.add_cash(constants.STARTING_CASH)
 
@@ -123,6 +125,8 @@ class GameBoard(object):
             self.buy_fence(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_BUY_HENHOUSE:
             self.buy_henhouse(self.tv.screen_to_tile(e.pos))
+        elif self.selected_tool == constants.TOOL_BUY_GUARDTOWER:
+            self.buy_guardtower(self.tv.screen_to_tile(e.pos))
 
     def get_chicken(self, pos):
         for chick in self.chickens:
@@ -157,6 +161,14 @@ class GameBoard(object):
             self.add_cash(-constants.BUY_PRICE_HENHOUSE)
             self.add_henhouse(henhouse)
 
+    def buy_guardtower(self, tile_pos):
+        if self.cash < constants.BUY_PRICE_GUARDTOWER:
+            return
+        guardtower = buildings.GuardTower(tile_pos)
+        if guardtower.place(self.tv):
+            self.add_cash(-constants.BUY_PRICE_GUARDTOWER)
+            self.add_guardtower(guardtower)
+
     def event(self, e):
         if e.type == KEYDOWN:
             if e.key == K_UP:
@@ -190,6 +202,10 @@ class GameBoard(object):
     def add_henhouse(self, henhouse):
         self.henhouses.append(henhouse)
         self.tv.sprites.append(henhouse)
+
+    def add_guardtower(self, guardtower):
+        self.guardtowers.append(guardtower)
+        self.tv.sprites.append(guardtower)
 
     def remove_fox(self, fox):
         if fox in self.foxes:
