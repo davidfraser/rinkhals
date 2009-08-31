@@ -65,8 +65,14 @@ def convert_to_night(image):
     night_image.fill(NIGHT_COLOUR, None, BLEND_RGBA_MULT)
     return night_image
 
+def convert_to_right_facing(image):
+    right_facing_image = image.copy()
+    right_facing_image = pygame.transform.flip(right_facing_image, 1, 0)
+    return right_facing_image
+
 # globals
 
 cache = ImageCache()
 cache.register_modifier("night", convert_to_night)
+cache.register_modifier("right_facing", convert_to_right_facing)
 load_image = cache.load_image

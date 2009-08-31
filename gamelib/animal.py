@@ -7,9 +7,11 @@ import imagecache
 class Animal(Sprite):
     """Base class for animals"""
 
-    def __init__(self, image, pos):
+    def __init__(self, image_left, image_right, pos):
         # Create the animal somewhere far off screen
-        Sprite.__init__(self, image, (-1000, -1000))
+        Sprite.__init__(self, image_left, (-1000, -1000))
+        self.image_left = image_left
+        self.image_right = image_right
         self.pos = pos
 
     def loop(self, tv, _sprite):
@@ -26,8 +28,9 @@ class Chicken(Animal):
     """A chicken"""
 
     def __init__(self, pos):
-        image = imagecache.load_image('sprites/chkn.png')
-        Animal.__init__(self, image, pos)
+        image_left = imagecache.load_image('sprites/chkn.png')
+        image_right = imagecache.load_image('sprites/chkn.png', ("right_facing",))
+        Animal.__init__(self, image_left, image_right, pos)
 
     def move(self, gameboard):
         """A free chicken will move away from other free chickens"""
@@ -38,7 +41,7 @@ class Egg(Animal):
 
     def __init__(self, pos):
         image = imagecache.load_image('sprites/egg.png')
-        Animal.__init__(self, image, pos)
+        Animal.__init__(self, image, image, pos)
 
     # Eggs don't move
 
@@ -46,9 +49,10 @@ class Fox(Animal):
     """A fox"""
 
     def __init__(self, pos):
-        image = imagecache.load_image('sprites/fox.png')
+        image_left = imagecache.load_image('sprites/fox.png')
+        image_right = imagecache.load_image('sprites/fox.png', ("right_facing",))
         self.full = False
-        Animal.__init__(self, image, pos)
+        Animal.__init__(self, image_left, image_right, pos)
 
     def move(self, gameboard):
         """Foxes will aim to move towards the closest henhouse or free
@@ -69,8 +73,10 @@ class Fox(Animal):
         xpos, ypos = self.pos
         if min_vec[0] < 0:
             xpos -= 1
+            self.setimage(self.image_left)
         elif min_vec[0] > 0:
             xpos += 1
+            self.setimage(self.image_right)
         if min_vec[1] < 0:
             ypos -= 1
         elif min_vec[1] > 0:
