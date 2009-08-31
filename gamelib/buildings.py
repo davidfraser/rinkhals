@@ -10,19 +10,22 @@ class Building(Sprite):
 
     GRASSLAND = tiles.REVERSE_TILE_MAP['grassland']
 
-    def __init__(self, day_image, night_image, pos, size, tile_no):
+    def __init__(self, pos):
         """Initial image, tile vid position, size and tile number for building."""
-        # Create the building somewhere far off screen
-        Sprite.__init__(self, day_image, (-1000, -1000))
-        self.day_image = day_image
-        self.night_image = night_image
+        self.day_image = imagecache.load_image(self.IMAGE)
+        self.night_image = imagecache.load_image(self.IMAGE, ('night',))
         self.pos = pos
-        self.size = size
-        self.tile_no = tile_no
+        self.size = self.SIZE
+        self.tile_no = self.TILE_NO
+        self._buy_price = self.BUY_PRICE
+
+        # Create the building somewhere far off screen
+        Sprite.__init__(self, self.day_image, (-1000, -1000))
 
     def tile_positions(self):
         """Return pairs of (x, y) tile positions for each of the tile positions
-           occupied by the building."""
+           occupied by the building.
+           """
         xpos, ypos = self.pos
         xsize, ysize = self.size
 
@@ -58,31 +61,44 @@ class Building(Sprite):
 
         return True
 
+    def buy_price(self):
+        return self._buy_price
+
     def sun(self, sun_on):
         if sun_on:
             self.setimage(self.day_image)
         else:
             self.setimage(self.night_image)
 
+
 class HenHouse(Building):
     """A HenHouse."""
 
-    HENHOUSE = tiles.REVERSE_TILE_MAP['henhouse']
-
-    def __init__(self, pos):
-        day_image = imagecache.load_image('sprites/henhouse.png')
-        night_image = imagecache.load_image('sprites/henhouse.png', ('night',))
-        size = (3, 2)
-        Building.__init__(self, day_image, night_image, pos, size, self.HENHOUSE)
+    TILE_NO = tiles.REVERSE_TILE_MAP['henhouse']
+    BUY_PRICE = 100
+    SIZE = (3, 2)
+    IMAGE = 'sprites/henhouse.png'
+    NAME = 'Hen House'
 
 
 class GuardTower(Building):
     """A GuardTower."""
 
-    GUARDTOWER = tiles.REVERSE_TILE_MAP['guardtower']
+    TILE_NO = tiles.REVERSE_TILE_MAP['guardtower']
+    BUY_PRICE = 200
+    SIZE = (2, 2)
+    IMAGE = 'sprites/watchtower.png'
+    NAME = 'Watch Tower'
 
-    def __init__(self, pos):
-        day_image = imagecache.load_image('sprites/watchtower.png')
-        night_image = imagecache.load_image('sprites/watchtower.png', ('night',))
-        size = (2, 2)
-        Building.__init__(self, day_image, night_image, pos, size, self.GUARDTOWER)
+def is_building(obj):
+    """Return true if obj is a build class."""
+    return hasattr(obj, "NAME")
+
+BUILDINGS = []
+for name in dir():
+    obj = eval(name)
+    try:
+        if is_building(obj):
+            BUILDINGS.append(obj)
+    except TypeError:
+        pass
