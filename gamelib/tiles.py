@@ -1,9 +1,8 @@
 """Extension to pgu's tilevid."""
 
 from pgu import tilevid, vid
-import pygame
-from pygame.locals import BLEND_RGBA_MULT
 import os
+import imagecache
 
 TILE_MAP = {
     0: "woodland",
@@ -25,14 +24,14 @@ class FarmVid(tilevid.Tilevid):
     def png_folder_load_tiles(self, path):
         """Load tiles from a folder of PNG files."""
         for dirpath, dirnames, filenames in os.walk(path):
+            abstract_dirpath = "/".join(dirpath.split(os.path.sep))
             for filename in filenames:
                 basename, ext = os.path.splitext(filename)
                 if ext != ".png":
                     continue
                 if basename in REVERSE_TILE_MAP:
                     n = REVERSE_TILE_MAP[basename]
-                    img = pygame.image.load(os.path.join(dirpath, filename)).convert_alpha()
-                    self.tiles[n] = FarmTile(img)
+                    self.tiles[n] = FarmTile(abstract_dirpath + "/" + filename)
 
     def sun(self, sun_on):
         """Make it night."""
@@ -45,12 +44,9 @@ class FarmVid(tilevid.Tilevid):
 
 class FarmTile(vid.Tile):
 
-    NIGHT_COLOUR = (100.0, 100.0, 200.0, 255.0)
-
-    def __init__(self, image):
-        self.day_image = image
-        self.night_image = image.copy()
-        self.night_image.fill(self.NIGHT_COLOUR, None, BLEND_RGBA_MULT)
+    def __init__(self, image_name):
+        self.day_image = imagecache.load_image(image_name)
+        self.night_image = imagecache.load_image(image_name, ("night",))
         self.image = self.day_image
 
     def sun(self, sun_on):
