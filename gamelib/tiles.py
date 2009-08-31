@@ -47,7 +47,7 @@ class FarmTile(vid.Tile):
     def __init__(self, image_name):
         self.day_image = imagecache.load_image(image_name)
         self.night_image = imagecache.load_image(image_name, ("night",))
-        self.image = self.day_image
+        vid.Tile.__init__(self, self.day_image)
 
     def sun(self, sun_on):
         if sun_on:
