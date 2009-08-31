@@ -95,6 +95,8 @@ class GameBoard(object):
         self.cash = 0
         self.add_cash(constants.STARTING_CASH)
 
+        self.fix_buildings()
+
     def create_disp(self):
         width, height = pygame.display.get_surface().get_size()
         tbl = gui.Table()
@@ -232,3 +234,39 @@ class GameBoard(object):
     def add_cash(self, amount):
         self.cash += amount
         self.toolbar.update_cash_counter(self.cash)
+
+    def fix_buildings(self):
+        """Go through the level map looking for buildings that haven't
+           been added to self.buildings and adding them.
+
+           Where partial buildings exist (i.e. places where the building
+           cannot fit on the available tiles) the building is added anyway
+           to the top left corner.
+
+           Could be a lot faster.
+           """
+        tile_to_building = dict((b.TILE_NO, b) for b in buildings.BUILDINGS)
+        print tile_to_building
+
+        w, h = self.tv.size
+        for x in xrange(w):
+            for y in xrange(h):
+                tile_pos = (x, y)
+                tile_no = self.tv.get(tile_pos)
+                if tile_no not in tile_to_building:
+                    continue
+
+                covered = False
+                for building in self.buildings:
+                    if building.covers(tile_pos):
+                        covered = True
+                        break
+
+                if covered:
+                    continue
+
+                building_cls = tile_to_building[tile_no]
+                building = building_cls(tile_pos)
+                building.remove(self.tv)
+                building.place(self.tv)
+                self.add_building(building)
