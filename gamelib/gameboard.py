@@ -123,11 +123,10 @@ class GameBoard(object):
             pass
         elif self.selected_tool == constants.TOOL_BUY_FENCE:
             self.buy_fence(self.tv.screen_to_tile(e.pos))
+        elif self.selected_tool == constants.TOOL_SELL_BUILDING:
+            self.sell_building(self.tv.screen_to_tile(e.pos))
         elif buildings.is_building(self.selected_tool):
-            building_cls = self.selected_tool
-            tile_pos = self.tv.screen_to_tile(e.pos)
-            building = building_cls(tile_pos)
-            self.buy_building(building)
+            self.buy_building(self.tv.screen_to_tile(e.pos), self.selected_tool)
 
     def get_chicken(self, pos):
         for chick in self.chickens:
@@ -154,12 +153,20 @@ class GameBoard(object):
         self.add_cash(-constants.BUY_PRICE_FENCE)
         self.tv.set(tile_pos, tiles.REVERSE_TILE_MAP['fence'])
 
-    def buy_building(self, building):
+    def buy_building(self, tile_pos, building_cls):
+        building = building_cls(tile_pos)
         if self.cash < building.buy_price():
             return
         if building.place(self.tv):
             self.add_cash(-building.buy_price())
             self.add_building(building)
+
+    def sell_building(self, tile_pos):
+        for building in self.buildings:
+            if building.covers(tile_pos):
+                self.add_cash(building.sell_price())
+                building.remove(self.tv)
+                self.remove_building(building)
 
     def event(self, e):
         if e.type == KEYDOWN:
@@ -204,6 +211,11 @@ class GameBoard(object):
         if chick in self.chickens:
             self.chickens.remove(chick)
             self.tv.sprites.remove(chick)
+
+    def remove_building(self, building):
+        if building in self.buildings:
+            self.buildings.remove(building)
+            self.tv.sprites.remove(building)
 
     def add_cash(self, amount):
         self.cash += amount

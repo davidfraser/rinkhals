@@ -18,6 +18,7 @@ class Building(Sprite):
         self.size = self.SIZE
         self.tile_no = self.TILE_NO
         self._buy_price = self.BUY_PRICE
+        self._sell_price = self.SELL_PRICE
 
         # Create the building somewhere far off screen
         Sprite.__init__(self, self.day_image, (-1000, -1000))
@@ -47,9 +48,6 @@ class Building(Sprite):
         """Check that the building can be placed at its current position
            and place it if possible.
            """
-        xpos, ypos = self.pos
-        xsize, ysize = self.size
-
         # check that all spaces under the structure are grassland
         for tile_pos in self.tile_positions():
             if not tv.get(tile_pos) == self.GRASSLAND:
@@ -61,8 +59,24 @@ class Building(Sprite):
 
         return True
 
+    def covers(self, tile_pos):
+        """Return True if build covers tile_pos, False otherwise."""
+        xpos, ypos = self.pos
+        xsize, ysize = self.size
+        return (xpos <= tile_pos[0] < xpos + xsize) and \
+            (ypos <= tile_pos[1] < ypos + ysize)
+
+    def remove(self, tv):
+        """Remove the building from its current position."""
+        # remove tile
+        for tile_pos in self.tile_positions():
+            tv.set(tile_pos, self.GRASSLAND)
+
     def buy_price(self):
         return self._buy_price
+
+    def sell_price(self):
+        return self._sell_price
 
     def sun(self, sun_on):
         if sun_on:
@@ -76,6 +90,7 @@ class HenHouse(Building):
 
     TILE_NO = tiles.REVERSE_TILE_MAP['henhouse']
     BUY_PRICE = 100
+    SELL_PRICE = 90
     SIZE = (3, 2)
     IMAGE = 'sprites/henhouse.png'
     NAME = 'Hen House'
@@ -86,6 +101,7 @@ class GuardTower(Building):
 
     TILE_NO = tiles.REVERSE_TILE_MAP['guardtower']
     BUY_PRICE = 200
+    SELL_PRICE = 150
     SIZE = (2, 2)
     IMAGE = 'sprites/watchtower.png'
     NAME = 'Watch Tower'
