@@ -115,6 +115,9 @@ class Fox(Animal):
         min_cost = self._cost_path(direct_path, gameboard)
         min_path = direct_path
         # is there a point nearby that gives us a cheaper direct path?
+        # This is delibrately not finding the optimal path, as I don't
+        # want the foxes to be too intelligent, although the implementation
+        # isn't well optimised yet
         poss = [Position(x, y) for x in range(self.pos.x - 2, self.pos.x + 3)
                 for y in range(self.pos.y - 2, self.pos.y + 3)]
         for start in poss:
