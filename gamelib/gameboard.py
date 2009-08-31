@@ -78,6 +78,9 @@ class GameBoard(object):
     TILE_DIMENSIONS = (20, 20)
     TOOLBAR_WIDTH = 140
 
+    GRASSLAND = tiles.REVERSE_TILE_MAP['grassland']
+    FENCE = tiles.REVERSE_TILE_MAP['fence']
+
     def __init__(self):
         self.tv = tiles.FarmVid()
         self.tv.tga_load_tiles(data.filepath('tiles.tga'), self.TILE_DIMENSIONS)
@@ -145,13 +148,19 @@ class GameBoard(object):
         self.remove_chicken(chick)
 
     def buy_fence(self, tile_pos):
-        if self.tv.get(tile_pos) != tiles.REVERSE_TILE_MAP['grassland']:
+        if self.tv.get(tile_pos) != self.GRASSLAND:
             return
         if self.cash < constants.BUY_PRICE_FENCE:
             print "You can't afford a fence."
             return
         self.add_cash(-constants.BUY_PRICE_FENCE)
-        self.tv.set(tile_pos, tiles.REVERSE_TILE_MAP['fence'])
+        self.tv.set(tile_pos, self.FENCE)
+
+    def sell_fence(self, tile_pos):
+        if self.tv.get(tile_pos) != self.FENCE:
+            return
+        self.add_cash(constants.SELL_PRICE_FENCE)
+        self.tv.set(tile_pos, self.GRASSLAND)
 
     def buy_building(self, tile_pos, building_cls):
         building = building_cls(tile_pos)
@@ -162,11 +171,14 @@ class GameBoard(object):
             self.add_building(building)
 
     def sell_building(self, tile_pos):
+        if self.tv.get(tile_pos) == self.FENCE:
+            return self.sell_fence(tile_pos)
         for building in self.buildings:
             if building.covers(tile_pos):
                 self.add_cash(building.sell_price())
                 building.remove(self.tv)
                 self.remove_building(building)
+                break
 
     def event(self, e):
         if e.type == KEYDOWN:
