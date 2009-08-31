@@ -1,10 +1,8 @@
 """Class for the various animals in the game"""
 
-import pygame
-import random
 from pgu.vid import Sprite
 
-import data
+import imagecache
 
 class Animal(Sprite):
     """Base class for animals"""
@@ -28,7 +26,7 @@ class Chicken(Animal):
     """A chicken"""
 
     def __init__(self, pos):
-        image = pygame.image.load(data.filepath('sprites/chkn.png'))
+        image = imagecache.load_image('sprites/chkn.png')
         Animal.__init__(self, image, pos)
 
     def move(self, gameboard):
@@ -44,7 +42,7 @@ class Fox(Animal):
     """A fox"""
 
     def __init__(self, pos):
-        image = pygame.image.load(data.filepath('sprites/fox.png'))
+        image = imagecache.load_image('sprites/fox.png')
         self.full = False
         Animal.__init__(self, image, pos)
 
