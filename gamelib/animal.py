@@ -10,7 +10,8 @@ class Animal(Sprite):
     """Base class for animals"""
 
     def __init__(self, image, pos):
-        Sprite.__init__(self, image, pos)
+        # Create the animal somewhere far off screen
+        Sprite.__init__(self, image, (-1000, -1000))
         self.pos = pos
 
     def loop(self, tv, _sprite):
