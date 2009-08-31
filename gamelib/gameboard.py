@@ -114,24 +114,38 @@ class GameBoard(object):
 
     def use_tool(self, e):
         if self.selected_tool == constants.TOOL_SELL_CHICKEN:
-            for chick in self.chickens:
-                if chick.rect.collidepoint(e.pos):
-                    if len(self.chickens) == 1:
-                        print "Can't sell your last chicken!"
-                    else:
-                        self.add_cash(constants.SELL_PRICE_CHICKEN)
-                        self.remove_chicken(chick)
-                    break
+            self.sell_chicken(e.pos)
         if self.selected_tool == constants.TOOL_SELL_EGG:
             pass
         if self.selected_tool == constants.TOOL_BUY_FENCE:
-            tile_pos = self.tv.screen_to_tile(e.pos)
-            if (self.cash >= constants.BUY_PRICE_FENCE and
-                self.tv.get(tile_pos) == tiles.REVERSE_TILE_MAP['grassland']):
-                self.add_cash(-constants.BUY_PRICE_FENCE)
-                self.tv.set(tile_pos, tiles.REVERSE_TILE_MAP['fence'])
+            self.buy_fence(self.tv.screen_to_tile(e.pos))
         if self.selected_tool == constants.TOOL_BUY_HENHOUSE:
             pass
+
+    def get_chicken(self, pos):
+        for chick in self.chickens:
+            if chick.rect.collidepoint(pos):
+                return chick
+        return None
+        
+    def sell_chicken(self, pos):
+        chick = self.get_chicken(pos)
+        if chick is None:
+            return
+        if len(self.chickens) == 1:
+            print "You can't sell your last chicken!"
+            return
+        self.add_cash(constants.SELL_PRICE_CHICKEN)
+        self.remove_chicken(chick)
+
+    def buy_fence(self, tile_pos):
+        if self.tv.get(tile_pos) != tiles.REVERSE_TILE_MAP['grassland']:
+            return
+        if self.cash < constants.BUY_PRICE_FENCE:
+            print "You can't afford a fence."
+            return
+        self.add_cash(-constants.BUY_PRICE_FENCE)
+        self.tv.set(tile_pos, tiles.REVERSE_TILE_MAP['fence'])
 
     def event(self, e):
         if e.type == KEYDOWN:
