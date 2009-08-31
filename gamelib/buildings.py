@@ -82,7 +82,7 @@ class GuardTower(Building):
     GUARDTOWER = tiles.REVERSE_TILE_MAP['guardtower']
 
     def __init__(self, pos):
-        day_image = imagecache.load_image('sprites/guardtower.png')
-        night_image = imagecache.load_image('sprites/guardtower.png', ('night',))
-        size = (1, 1)
+        day_image = imagecache.load_image('sprites/watchtower.png')
+        night_image = imagecache.load_image('sprites/watchtower.png', ('night',))
+        size = (2, 2)
         Building.__init__(self, day_image, night_image, pos, size, self.GUARDTOWER)
