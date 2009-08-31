@@ -9,7 +9,6 @@ import tiles
 import constants
 import buildings
 import animal
-from misc import Position
 
 class OpaqueLabel(gui.Label):
     def paint(self, s):
@@ -299,30 +298,35 @@ class GameBoard(object):
 
     def spawn_foxes(self):
         """The foxes come at night, and this is where they come from."""
-        # Very simple, we walk around the tilemap, and, for each farm tile,
-        # we randomly add a chicken (1 in 10 chance) until we have 5 chickens
-        # or we run out of board
+        # Foxes spawn just outside the map
         x, y = 0, 0
         width, height = self.tv.size
         new_foxes = random.randint(3, 7)
         while len(self.foxes) < new_foxes:
-            if x < width:
-                tile = self.tv.get((x, y))
+            side = random.randint(0, 3)
+            if side == 0:
+                # top
+                y = -1
+                x = random.randint(-1, width)
+            elif side == 1:
+                # bottom
+                y = height
+                x = random.randint(-1, width)
+            elif side == 2:
+                # left
+                x = -1
+                y = random.randint(-1, height)
             else:
-                y += 1
-                if y >= height:
+                x = width
+                y = random.randint(-1, height)
+            skip = False
+            for other_fox in self.foxes:
+                if other_fox.pos.x == x and other_fox.pos.y == y:
+                    skip = True # Choose a new position
                     break
-                x = 0
-                continue
-            # See if we place a fox
-            if tiles.TILE_MAP[tile] == 'woodland':
-                # Forest
-                roll = random.randint(1, 20)
-                if roll == 1:
-                    # Create a fox
-                    fox = animal.Fox((x, y))
-                    self.add_fox(fox)
-            x += 5
+            if not skip:
+                fox = animal.Fox((x, y))
+                self.add_fox(fox)
 
     def fix_buildings(self):
         """Go through the level map looking for buildings that haven't
