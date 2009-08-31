@@ -5,6 +5,7 @@ from pgu import gui
 import data
 import tiles
 import constants
+import buildings
 
 
 class OpaqueLabel(gui.Label):
@@ -85,6 +86,7 @@ class GameBoard(object):
         self.selected_tool = None
         self.chickens = []
         self.foxes = []
+        self.henhouses = []
         self.cash = 0
         self.add_cash(constants.STARTING_CASH)
 
@@ -115,19 +117,19 @@ class GameBoard(object):
     def use_tool(self, e):
         if self.selected_tool == constants.TOOL_SELL_CHICKEN:
             self.sell_chicken(e.pos)
-        if self.selected_tool == constants.TOOL_SELL_EGG:
+        elif self.selected_tool == constants.TOOL_SELL_EGG:
             pass
-        if self.selected_tool == constants.TOOL_BUY_FENCE:
+        elif self.selected_tool == constants.TOOL_BUY_FENCE:
             self.buy_fence(self.tv.screen_to_tile(e.pos))
-        if self.selected_tool == constants.TOOL_BUY_HENHOUSE:
-            pass
+        elif self.selected_tool == constants.TOOL_BUY_HENHOUSE:
+            self.buy_henhouse(self.tv.screen_to_tile(e.pos))
 
     def get_chicken(self, pos):
         for chick in self.chickens:
             if chick.rect.collidepoint(pos):
                 return chick
         return None
-        
+
     def sell_chicken(self, pos):
         chick = self.get_chicken(pos)
         if chick is None:
@@ -146,6 +148,14 @@ class GameBoard(object):
             return
         self.add_cash(-constants.BUY_PRICE_FENCE)
         self.tv.set(tile_pos, tiles.REVERSE_TILE_MAP['fence'])
+
+    def buy_henhouse(self, tile_pos):
+        if self.cash < constants.BUY_PRICE_HENHOUSE:
+            return
+        henhouse = buildings.HenHouse(tile_pos)
+        if henhouse.place(self.tv):
+            self.add_cash(-constants.BUY_PRICE_HENHOUSE)
+            self.add_henhouse(henhouse)
 
     def event(self, e):
         if e.type == KEYDOWN:
@@ -176,6 +186,10 @@ class GameBoard(object):
     def add_fox(self, fox):
         self.foxes.append(fox)
         self.tv.sprites.append(fox)
+
+    def add_henhouse(self, henhouse):
+        self.henhouses.append(henhouse)
+        self.tv.sprites.append(henhouse)
 
     def remove_fox(self, fox):
         if fox in self.foxes:
