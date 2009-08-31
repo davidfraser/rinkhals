@@ -36,6 +36,10 @@ class Chicken(Animal):
 class Egg(Animal):
     """An egg"""
 
+    def __init__(self, pos):
+        image = imagecache.load_image('sprites/egg.png')
+        Animal.__init__(self, image, pos)
+
     # Eggs don't move
 
 class Fox(Animal):
