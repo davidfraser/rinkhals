@@ -40,6 +40,7 @@ if __name__ == "__main__":
     sprite_path = "data/sprites"
     sprites = [
         ("chkn", 20, 20),
+        ("egg", 20, 20),
         ("fox", 20, 20),
         ("henhouse", 60, 40),
     ]
