@@ -30,4 +30,7 @@ def main():
     screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE)
     main_menu_app = create_menu_app()
     engine = Engine(main_menu_app)
-    engine.run(MainMenuState(engine), screen)
+    try:
+        engine.run(MainMenuState(engine), screen)
+    except KeyboardInterrupt:
+        pass
