@@ -73,7 +73,8 @@ class GameBoard(object):
         tbl = gui.Table()
         tbl.tr()
         tbl.td(ToolBar(self), width=self.TOOLBAR_WIDTH)
-        tbl.td(VidWidget(self, self.tv, width=width-self.TOOLBAR_WIDTH, height=height))
+        self.tvw = VidWidget(self, self.tv, width=width-self.TOOLBAR_WIDTH, height=height)
+        tbl.td(self.tvw)
         self.disp = gui.App()
         self.disp.init(tbl)
 
@@ -81,6 +82,7 @@ class GameBoard(object):
         self.disp.paint(screen)
 
     def update(self, screen):
+        self.tvw.reupdate()
         return self.disp.update(screen)
 
     def loop(self):
