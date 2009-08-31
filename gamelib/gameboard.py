@@ -33,6 +33,15 @@ class ToolBar(gui.Table):
         for building_cls in buildings.BUILDINGS:
             self.add_tool_button("Buy %s" % (building_cls.NAME,), building_cls)
 
+        day_done_button = gui.Button("Finished Day")
+        day_done_button.connect(gui.CLICK, self.day_done)
+        self.tr()
+        self.td(day_done_button, style={"padding_top": 30})
+
+    def day_done(self):
+        import engine
+        pygame.event.post(engine.START_NIGHT)
+
     def update_cash_counter(self, amount):
         self.cash_counter.update_value("Groats: %s" % amount)
         self.repaint()
@@ -246,7 +255,6 @@ class GameBoard(object):
            Could be a lot faster.
            """
         tile_to_building = dict((b.TILE_NO, b) for b in buildings.BUILDINGS)
-        print tile_to_building
 
         w, h = self.tv.size
         for x in xrange(w):
