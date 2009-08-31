@@ -1,34 +1,98 @@
-import random
-
+import pygame
 from pygame.locals import MOUSEBUTTONDOWN
+from pgu import gui
 
 import data
 import tiles
 
+SELL_CHICKEN = None
+SELL_EGG = None
+BUY_FENCE = 2
+BUY_HENHOUSE = 3
+
+
+class ToolBar(gui.Table):
+    def __init__(self, gameboard, **params):
+        gui.Table.__init__(self, **params)
+        self.gameboard = gameboard
+        self.add_tool_button("Sell chicken", SELL_CHICKEN)
+        self.add_tool_button("Sell egg", SELL_EGG)
+        self.add_tool_button("Buy fence", BUY_FENCE)
+        self.add_tool_button("Buy henhouse", BUY_HENHOUSE)
+
+    def add_tool_button(self, text, tool):
+        style = {
+            "padding_bottom": 15,
+        }
+        td_kwargs = {
+            "style": style,
+            "width": self.gameboard.TOOLBAR_WIDTH,
+        }
+        button = gui.Button(text)
+        button.connect(gui.CLICK, lambda: self.gameboard.set_selected_tool(tool))
+        self.tr()
+        self.td(button, **td_kwargs)
+
+
+class VidWidget(gui.Widget):
+    def __init__(self, gameboard, vid, **params):
+        gui.Widget.__init__(self, **params)
+        self.gameboard = gameboard
+        self.vid = vid
+        self.width = params.get('width', 0)
+        self.height = params.get('height', 0)
+
+    def paint(self, surface):
+        self.vid.paint(surface)
+
+    def update(self, surface):
+        offset = surface.get_offset()
+        return [r.move(offset) for r in self.vid.update(surface)]
+
+    def resize(self, width=0, height=0):
+        if width is not None:
+            self.width = width
+        if height is not None:
+            self.height = height
+        return self.width, self.height
+
+    def event(self, e):
+        if e.type == MOUSEBUTTONDOWN:
+            self.gameboard.use_tool(e)
+
+
+class DispTable(gui.Table):
+    def __init__(self, gameboard, **params):
+        gui.Table.__init__(self, **params)
+        self.gameboard = gameboard
+        self.tr()
+        self.td(self.gameboard.tools, width=self.gameboard.TOOLBAR_WIDTH)
+        self.td(self.gameboard.vidwidget)
+
 
 class GameBoard(object):
     TILE_DIMENSIONS = (20, 20)
-    TOOLBAR_WIDTH = 22
+    TOOLBAR_WIDTH = 140
 
     def __init__(self):
         self.tv = tiles.FarmVid()
         self.tv.tga_load_tiles(data.filepath('tiles.tga'), self.TILE_DIMENSIONS)
         self.tv.png_folder_load_tiles(data.filepath('tiles'))
         self.tv.tga_load_level(data.filepath('level1.tga'))
-
-        self.tools = tiles.FarmVid()
-        self.tools.tga_load_tiles(data.filepath('tiles.tga'), self.TILE_DIMENSIONS)
-        self.tools.png_folder_load_tiles(data.filepath('tiles'))
-        self.populate_toolbar()
+        self.selected_tool = None
         self.chickens = []
         self.foxes = []
+        self.create_disp()
 
-        self.selected_tool = None
-
-    def populate_toolbar(self):
-        self.tools.resize((1, 2))
-        self.tools.set((0,0), 2)
-        self.tools.set((0,1), 3)
+    def create_disp(self):
+        width, height = pygame.display.get_surface().get_size()
+        self.tools = ToolBar(self)
+        self.vidwidget = VidWidget(self, self.tv, width=width-self.TOOLBAR_WIDTH, height=height)
+        self.disp = gui.App()
+        c = gui.Container(align=0, valign=0)
+        tbl = DispTable(self)
+        c.add(tbl, 0, 0)
+        self.disp.init(c)
 
     def split_screen(self, screen):
         leftbar_rect = screen.get_rect()
@@ -39,43 +103,30 @@ class GameBoard(object):
         return screen.subsurface(leftbar_rect), screen.subsurface(main_rect)
 
     def paint(self, screen):
-        leftbar, main = self.split_screen(screen)
-        self.tools.paint(leftbar)
-        self.tv.paint(main)
+        self.disp.paint(screen)
 
-    def update_vid(self, vid, subsurface):
+    def update_subscreen(self, vid, subsurface):
         offset = subsurface.get_offset()
         return [r.move(offset) for r in vid.update(subsurface)]
 
     def update(self, screen):
-        leftbar, main = self.split_screen(screen)
-        updates = []
-        updates.extend(self.update_vid(self.tools, leftbar))
-        updates.extend(self.update_vid(self.tv, main))
-        return updates
+        return self.disp.update(screen)
 
     def loop(self):
         self.tv.loop()
 
-    def select_tool(self, e):
-        tool_pos = self.tools.screen_to_tile(e.pos)
-        if tool_pos[1] < 2:
-            self.selected_tool = self.tools.get(tool_pos)
-        else:
-            self.selected_tool = None
+    def set_selected_tool(self, tool):
+        self.selected_tool = tool
 
     def use_tool(self, e):
         if self.selected_tool is None:
             return
-        pos = self.tv.screen_to_tile((e.pos[0] - self.TOOLBAR_WIDTH, e.pos[1]))
+#         pos = self.tv.screen_to_tile((e.pos[0] - self.TOOLBAR_WIDTH, e.pos[1]))
+        pos = self.tv.screen_to_tile(e.pos)
         self.tv.set(pos, self.selected_tool)
 
     def event(self, e):
-        if e.type == MOUSEBUTTONDOWN:
-            if e.pos[0] < self.TOOLBAR_WIDTH:
-                self.select_tool(e)
-            else:
-                self.use_tool(e)
+        self.disp.event(e)
 
     def clear_foxes(self):
         for fox in self.foxes:
