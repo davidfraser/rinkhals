@@ -4,6 +4,7 @@ from pgu import gui
 
 import data
 import tiles
+import constants
 
 # FIXME: These should probably be proper events of some kind.
 SELL_CHICKEN = None
@@ -12,14 +13,32 @@ BUY_FENCE = 2
 BUY_HENHOUSE = 3
 
 
+class OpaqueLabel(gui.Label):
+    def paint(self, s):
+        s.fill(self.style.background)
+        gui.Label.paint(self, s)
+
+    def update_value(self, value):
+        self.value = value
+        self.style.width, self.style.height = self.font.size(self.value)
+        self.repaint()
+
+
 class ToolBar(gui.Table):
     def __init__(self, gameboard, **params):
         gui.Table.__init__(self, **params)
         self.gameboard = gameboard
+        self.cash_counter = OpaqueLabel("Groats:                ", color=constants.FG_COLOR)
+        self.tr()
+        self.add(self.cash_counter)
         self.add_tool_button("Sell chicken", SELL_CHICKEN)
         self.add_tool_button("Sell egg", SELL_EGG)
         self.add_tool_button("Buy fence", BUY_FENCE)
         self.add_tool_button("Buy henhouse", BUY_HENHOUSE)
+
+    def update_cash_counter(self, amount):
+        self.cash_counter.update_value("Groats: %s" % amount)
+        self.repaint()
 
     def add_tool_button(self, text, tool):
         button = gui.Button(text)
@@ -67,16 +86,19 @@ class GameBoard(object):
         self.tv.tga_load_tiles(data.filepath('tiles.tga'), self.TILE_DIMENSIONS)
         self.tv.png_folder_load_tiles(data.filepath('tiles'))
         self.tv.tga_load_level(data.filepath('level1.tga'))
+        self.create_disp()
+
         self.selected_tool = None
         self.chickens = []
         self.foxes = []
-        self.create_disp()
+        self.cash = 0
 
     def create_disp(self):
         width, height = pygame.display.get_surface().get_size()
         tbl = gui.Table()
         tbl.tr()
-        tbl.td(ToolBar(self), width=self.TOOLBAR_WIDTH)
+        self.toolbar = ToolBar(self)
+        tbl.td(self.toolbar, width=self.TOOLBAR_WIDTH)
         self.tvw = VidWidget(self, self.tv, width=width-self.TOOLBAR_WIDTH, height=height)
         tbl.td(self.tvw)
         self.disp = gui.App()
@@ -93,6 +115,8 @@ class GameBoard(object):
         self.tv.loop()
 
     def set_selected_tool(self, tool):
+        if tool is None:
+            self.add_cash(10)
         self.selected_tool = tool
 
     def use_tool(self, e):
@@ -140,3 +164,7 @@ class GameBoard(object):
         if chick in self.chickens:
             self.chickens.remove(chick)
             self.tv.sprites.remove(chick)
+
+    def add_cash(self, amount):
+        self.cash += amount
+        self.toolbar.update_cash_counter(self.cash)
