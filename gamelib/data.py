@@ -20,5 +20,7 @@ def load(filename, mode='rb'):
 
     "mode" is passed as the second arg to open().
     '''
+    # convert unix path separator to platform appropriate one
+    filename = os.path.join(*filename.split("/"))
     return open(os.path.join(data_dir, filename), mode)
 
