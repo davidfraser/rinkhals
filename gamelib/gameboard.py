@@ -1,5 +1,5 @@
 import pygame
-from pygame.locals import MOUSEBUTTONDOWN
+from pygame.locals import MOUSEBUTTONDOWN, KEYDOWN, K_UP, K_DOWN, K_LEFT, K_RIGHT
 from pgu import gui
 
 import data
@@ -32,6 +32,7 @@ class VidWidget(gui.Widget):
     def __init__(self, gameboard, vid, **params):
         gui.Widget.__init__(self, **params)
         self.gameboard = gameboard
+        vid.bounds = pygame.Rect((0, 0), vid.tile_to_view(vid.size))
         self.vid = vid
         self.width = params.get('width', 0)
         self.height = params.get('height', 0)
@@ -48,6 +49,9 @@ class VidWidget(gui.Widget):
         if height is not None:
             self.height = height
         return self.width, self.height
+
+    def move_view(self, x, y):
+        self.vid.view.move_ip((x, y))
 
     def event(self, e):
         if e.type == MOUSEBUTTONDOWN:
@@ -98,7 +102,17 @@ class GameBoard(object):
         self.tv.set(pos, self.selected_tool)
 
     def event(self, e):
-        self.disp.event(e)
+        if e.type == KEYDOWN:
+            if e.key == K_UP:
+                self.tvw.move_view(0, -self.TILE_DIMENSIONS[1])
+            if e.key == K_DOWN:
+                self.tvw.move_view(0, self.TILE_DIMENSIONS[1])
+            if e.key == K_LEFT:
+                self.tvw.move_view(-self.TILE_DIMENSIONS[0], 0)
+            if e.key == K_RIGHT:
+                self.tvw.move_view(self.TILE_DIMENSIONS[0], 0)
+        else:
+            self.disp.event(e)
 
     def clear_foxes(self):
         for fox in self.foxes:
