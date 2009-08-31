@@ -4,10 +4,7 @@ from pgu.engine import Game, State, Quit
 import pygame
 from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE, K_n, K_d, K_s
 
-from tiles import TILE_MAP
 import gameboard
-import animal
-import random
 
 class Engine(Game):
     def __init__(self, main_menu_app):
@@ -51,44 +48,8 @@ class DayState(State):
 
         # disable timer
         pygame.time.set_timer(MOVE_FOX_ID, 0)
-        # Very simple, we walk around the tilemap, and, for each farm tile,
-        # we randomly add a chicken (1 in 10 chance) until we have 5 chickens
-        # or we run out of board
         self.game.gameboard.clear_foxes()
-        chickens = len(self.game.gameboard.chickens)
-        x, y = 0, 0
-        width, height = self.game.gameboard.tv.size
-        while chickens < 5:
-            if x < width:
-                tile = self.game.gameboard.tv.get((x, y))
-            else:
-                y += 1
-                if y >= height:
-                    break
-                x = 0
-                continue
-            # See if we place a chicken
-            if 'grassland' == TILE_MAP[tile]:
-                # Farmland
-                roll = random.randint(1, 20)
-                # We don't place within a tile of the fence, this is to make things
-                # easier
-                for xx in range(x-1, x+2):
-                    if xx >= height or xx < 0:
-                        continue
-                    for yy in range(y-1, y+2):
-                        if yy >= height or yy < 0:
-                            continue
-                        neighbour = self.game.gameboard.tv.get((xx, yy))
-                        if 'fence' == TILE_MAP[neighbour]:
-                            # Fence
-                            roll = 10
-                if roll == 1:
-                    # Create a chicken
-                    chickens += 1
-                    chick = animal.Chicken((x, y))
-                    self.game.gameboard.add_chicken(chick)
-            x += 1
+        self.game.gameboard.update_chickens()
 
     def event(self, e):
         if events_equal(e, START_NIGHT):
@@ -120,32 +81,8 @@ class NightState(State):
 
         # Add a timer to the event queue
         self.cycle_count = 0
-        pygame.time.set_timer(MOVE_FOX_ID, 300)
-        # Very simple, we walk around the tilemap, and, for each farm tile,
-        # we randomly add a chicken (1 in 10 chance) until we have 5 chickens
-        # or we run out of board
-        foxes = len(self.game.gameboard.foxes)
-        x, y = 0, 0
-        width, height = self.game.gameboard.tv.size
-        while foxes < 5:
-            if x < width:
-                tile = self.game.gameboard.tv.get((x, y))
-            else:
-                y += 1
-                if y >= height:
-                    break
-                x = 0
-                continue
-            # See if we place a fox
-            if TILE_MAP[tile] == 'woodland':
-                # Forest
-                roll = random.randint(1, 20)
-                if roll == 1:
-                    # Create a fox
-                    foxes += 1
-                    fox = animal.Fox((x, y))
-                    self.game.gameboard.add_fox(fox)
-            x += 5
+        pygame.time.set_timer(MOVE_FOX_ID, 200)
+        self.game.gameboard.spawn_foxes()
 
     def event(self, e):
         if events_equal(e, START_DAY):
@@ -156,7 +93,7 @@ class NightState(State):
             return MainMenuState(self.game)
         elif e.type is MOVE_FOX_ID:
             self.cycle_count += 1
-            if self.cycle_count > 15:
+            if self.cycle_count > 50:
                 return pygame.event.post(START_DAY)
             return self.game.gameboard.move_foxes()
         elif e.type is not QUIT:

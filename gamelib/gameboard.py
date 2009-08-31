@@ -1,3 +1,5 @@
+import random
+
 import pygame
 from pygame.locals import MOUSEBUTTONDOWN, KEYDOWN, K_UP, K_DOWN, K_LEFT, K_RIGHT
 from pgu import gui
@@ -6,7 +8,8 @@ import data
 import tiles
 import constants
 import buildings
-
+import animal
+from misc import Position
 
 class OpaqueLabel(gui.Label):
     def paint(self, s):
@@ -89,6 +92,7 @@ class GameBoard(object):
 
     GRASSLAND = tiles.REVERSE_TILE_MAP['grassland']
     FENCE = tiles.REVERSE_TILE_MAP['fence']
+    BROKEN_FENCE = tiles.REVERSE_TILE_MAP['broken fence']
 
     def __init__(self):
         self.tv = tiles.FarmVid()
@@ -130,6 +134,15 @@ class GameBoard(object):
     def set_selected_tool(self, tool):
         self.selected_tool = tool
 
+    def in_bounds(self, pos):
+        """Check if a position is within the game boundaries"""
+        if pos.x < 0 or pos.y < 0:
+            return False
+        width, height = self.tv.size
+        if pos.x >= width or pos.y >= height:
+            return False
+        return True
+
     def use_tool(self, e):
         if self.selected_tool == constants.TOOL_SELL_CHICKEN:
             self.sell_chicken(e.pos)
@@ -159,7 +172,8 @@ class GameBoard(object):
         self.remove_chicken(chick)
 
     def buy_fence(self, tile_pos):
-        if self.tv.get(tile_pos) != self.GRASSLAND:
+        this_tile = self.tv.get(tile_pos)
+        if this_tile not in [self.GRASSLAND, self.BROKEN_FENCE]:
             return
         if self.cash < constants.BUY_PRICE_FENCE:
             print "You can't afford a fence."
@@ -243,6 +257,72 @@ class GameBoard(object):
     def add_cash(self, amount):
         self.cash += amount
         self.toolbar.update_cash_counter(self.cash)
+
+    def update_chickens(self):
+        """Update the chickens state at the start of the new day"""
+        # Currently random chickens appear
+        # Very simple, we walk around the tilemap, and, for each farm tile,
+        # we randomly add a chicken (1 in 10 chance) until we have 5 chickens
+        # or we run out of board
+        x, y = 0, 0
+        width, height = self.tv.size
+        while len(self.chickens) < 5:
+            if x < width:
+                tile = self.tv.get((x, y))
+            else:
+                y += 1
+                if y >= height:
+                    break
+                x = 0
+                continue
+            # See if we place a chicken
+            if 'grassland' == tiles.TILE_MAP[tile]:
+                # Farmland
+                roll = random.randint(1, 20)
+                # We don't place within a tile of the fence, this is to make things
+                # easier
+                for xx in range(x-1, x+2):
+                    if xx >= width or xx < 0:
+                        continue
+                    for yy in range(y-1, y+2):
+                        if yy >= height or yy < 0:
+                            continue
+                        neighbour = self.tv.get((xx, yy))
+                        if 'fence' == tiles.TILE_MAP[neighbour]:
+                            # Fence
+                            roll = 10
+                if roll == 1:
+                    # Create a chicken
+                    chick = animal.Chicken((x, y))
+                    self.add_chicken(chick)
+            x += 1
+
+    def spawn_foxes(self):
+        """The foxes come at night, and this is where they come from."""
+        # Very simple, we walk around the tilemap, and, for each farm tile,
+        # we randomly add a chicken (1 in 10 chance) until we have 5 chickens
+        # or we run out of board
+        x, y = 0, 0
+        width, height = self.tv.size
+        new_foxes = random.randint(3, 7)
+        while len(self.foxes) < new_foxes:
+            if x < width:
+                tile = self.tv.get((x, y))
+            else:
+                y += 1
+                if y >= height:
+                    break
+                x = 0
+                continue
+            # See if we place a fox
+            if tiles.TILE_MAP[tile] == 'woodland':
+                # Forest
+                roll = random.randint(1, 20)
+                if roll == 1:
+                    # Create a fox
+                    fox = animal.Fox((x, y))
+                    self.add_fox(fox)
+            x += 5
 
     def fix_buildings(self):
         """Go through the level map looking for buildings that haven't
