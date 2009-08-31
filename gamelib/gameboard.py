@@ -6,12 +6,6 @@ import data
 import tiles
 import constants
 
-# FIXME: These should probably be proper events of some kind.
-SELL_CHICKEN = None
-SELL_EGG = None
-BUY_FENCE = 2
-BUY_HENHOUSE = 3
-
 
 class OpaqueLabel(gui.Label):
     def paint(self, s):
@@ -31,10 +25,10 @@ class ToolBar(gui.Table):
         self.cash_counter = OpaqueLabel("Groats:                ", color=constants.FG_COLOR)
         self.tr()
         self.add(self.cash_counter)
-        self.add_tool_button("Sell chicken", SELL_CHICKEN)
-        self.add_tool_button("Sell egg", SELL_EGG)
-        self.add_tool_button("Buy fence", BUY_FENCE)
-        self.add_tool_button("Buy henhouse", BUY_HENHOUSE)
+        self.add_tool_button("Sell chicken", constants.TOOL_SELL_CHICKEN)
+        self.add_tool_button("Sell egg", constants.TOOL_SELL_EGG)
+        self.add_tool_button("Buy fence", constants.TOOL_BUY_FENCE)
+        self.add_tool_button("Buy henhouse", constants.TOOL_BUY_HENHOUSE)
 
     def update_cash_counter(self, amount):
         self.cash_counter.update_value("Groats: %s" % amount)
@@ -92,6 +86,7 @@ class GameBoard(object):
         self.chickens = []
         self.foxes = []
         self.cash = 0
+        self.add_cash(constants.STARTING_CASH)
 
     def create_disp(self):
         width, height = pygame.display.get_surface().get_size()
@@ -115,15 +110,28 @@ class GameBoard(object):
         self.tv.loop()
 
     def set_selected_tool(self, tool):
-        if tool is None:
-            self.add_cash(10)
         self.selected_tool = tool
 
     def use_tool(self, e):
-        if self.selected_tool is None:
-            return
-        pos = self.tv.screen_to_tile(e.pos)
-        self.tv.set(pos, self.selected_tool)
+        if self.selected_tool == constants.TOOL_SELL_CHICKEN:
+            for chick in self.chickens:
+                if chick.rect.collidepoint(e.pos):
+                    if len(self.chickens) == 1:
+                        print "Can't sell your last chicken!"
+                    else:
+                        self.add_cash(constants.SELL_PRICE_CHICKEN)
+                        self.remove_chicken(chick)
+                    break
+        if self.selected_tool == constants.TOOL_SELL_EGG:
+            pass
+        if self.selected_tool == constants.TOOL_BUY_FENCE:
+            tile_pos = self.tv.screen_to_tile(e.pos)
+            if (self.cash >= constants.BUY_PRICE_FENCE and
+                self.tv.get(tile_pos) == tiles.REVERSE_TILE_MAP['grassland']):
+                self.add_cash(-constants.BUY_PRICE_FENCE)
+                self.tv.set(tile_pos, tiles.REVERSE_TILE_MAP['fence'])
+        if self.selected_tool == constants.TOOL_BUY_HENHOUSE:
+            pass
 
     def event(self, e):
         if e.type == KEYDOWN:
