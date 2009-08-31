@@ -63,10 +63,10 @@ class Fox(Animal):
             # weighting for movement calculation
             'grassland' : 2,
             'woodland' : 1, # Try to keep to the woods if possible
-            'broken fence' : 1,
+            'broken fence' : 2,
             'fence' : 10,
-            'guardtower' : 1, # We can pass under towers
-            'henhouse' : 1,
+            'guardtower' : 2, # We can pass under towers
+            'henhouse' : 2,
             }
 
     def __init__(self, pos):
@@ -181,12 +181,18 @@ class Fox(Animal):
             final_pos = None
             dist = 10
             for poss in moves:
-                this_tile = gameboard.tv.get(poss.to_tuple())
+                if gameboard.in_bounds(poss):
+                    this_tile = gameboard.tv.get(poss.to_tuple())
+                else:
+                    this_tile = tiles.REVERSE_TILE_MAP['woodland']
                 new_dist = poss.dist(new_pos)
                 if new_dist < dist:
                     dist = new_dist
                     final_pos = poss
-        this_tile = gameboard.tv.get(final_pos.to_tuple())
+        if gameboard.in_bounds(final_pos):
+            this_tile = gameboard.tv.get(final_pos.to_tuple())
+        else:
+            this_tile = tiles.REVERSE_TILE_MAP['woodland']
         if tiles.TILE_MAP[this_tile] == 'broken fence' and self.hunting:
             # We'll head back towards the holes we make/find
             self.landmarks.append(final_pos)
