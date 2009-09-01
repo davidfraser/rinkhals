@@ -174,10 +174,14 @@ class GameBoard(object):
         this_tile = self.tv.get(tile_pos)
         if this_tile not in [self.GRASSLAND, self.BROKEN_FENCE]:
             return
-        if self.cash < constants.BUY_PRICE_FENCE:
+        if this_tile == self.GRASSLAND:
+            cost = constants.BUY_PRICE_FENCE
+        else:
+            cost = constants.REPAIR_PRICE_FENCE
+        if self.cash < cost:
             print "You can't afford a fence."
             return
-        self.add_cash(-constants.BUY_PRICE_FENCE)
+        self.add_cash(-cost)
         self.tv.set(tile_pos, self.FENCE)
 
     def sell_fence(self, tile_pos):
