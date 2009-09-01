@@ -47,5 +47,6 @@ if __name__ == "__main__":
     ]
 
     process_svg_folder("data/tiles", 20, 20)
+    process_svg_folder("data/icons", 40, 40)
     for name, width, height in sprites:
         process_sprite(name, width, height, sprite_path)
