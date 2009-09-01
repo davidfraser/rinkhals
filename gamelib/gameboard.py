@@ -243,6 +243,13 @@ class GameBoard(object):
     def clear_foxes(self):
         for fox in self.foxes:
             self.tv.sprites.remove(fox)
+            # Any foxes that didn't make it to the woods are automatically
+            # killed
+            if self.in_bounds(fox.pos) and self.tv.get(fox.pos.to_tuple()) \
+                    != self.WOODLAND:
+                self.killed_foxes += 1
+                self.toolbar.update_fox_counter(self.killed_foxes)
+                self.add_cash(constants.SELL_PRICE_DEAD_FOX)
         self.foxes = [] # Remove all the foxes
 
     def move_foxes(self):
