@@ -6,6 +6,7 @@ from pgu import gui
 
 import data
 import tiles
+import icons
 import constants
 import buildings
 import animal
@@ -26,8 +27,16 @@ class ToolBar(gui.Table):
         gui.Table.__init__(self, **params)
         self.gameboard = gameboard
         self.cash_counter = OpaqueLabel("Groats:                ", color=constants.FG_COLOR)
+        self.chicken_counter = OpaqueLabel("         ", color=constants.FG_COLOR)
+        self.killed_foxes = OpaqueLabel("         ", color=constants.FG_COLOR)
         self.tr()
         self.add(self.cash_counter)
+        self.tr()
+        self.td(icons.CHKN_ICON, align=-1)
+        self.add(self.chicken_counter)
+        self.tr()
+        self.td(icons.KILLED_FOX, align=-1)
+        self.add(self.killed_foxes)
         self.add_tool_button("Sell chicken", constants.TOOL_SELL_CHICKEN)
         self.add_tool_button("Sell egg", constants.TOOL_SELL_EGG)
         self.add_tool_button("Sell building", constants.TOOL_SELL_BUILDING)
@@ -46,6 +55,14 @@ class ToolBar(gui.Table):
 
     def update_cash_counter(self, amount):
         self.cash_counter.update_value("Groats: %s" % amount)
+        self.repaint()
+
+    def update_chicken_counter(self, number):
+        self.chicken_counter.update_value("  %s" % number)
+        self.repaint()
+
+    def update_fox_counter(self, number):
+        self.killed_foxes.update_value("  %s" % number)
         self.repaint()
 
     def add_tool_button(self, text, tool):
@@ -91,6 +108,7 @@ class GameBoard(object):
 
     GRASSLAND = tiles.REVERSE_TILE_MAP['grassland']
     FENCE = tiles.REVERSE_TILE_MAP['fence']
+    WOODLAND = tiles.REVERSE_TILE_MAP['woodland']
     BROKEN_FENCE = tiles.REVERSE_TILE_MAP['broken fence']
 
     def __init__(self):
@@ -105,6 +123,7 @@ class GameBoard(object):
         self.foxes = []
         self.buildings = []
         self.cash = 0
+        self.killed_foxes = 0
         self.add_cash(constants.STARTING_CASH)
 
         self.fix_buildings()
@@ -233,6 +252,7 @@ class GameBoard(object):
     def add_chicken(self, chicken):
         self.chickens.append(chicken)
         self.tv.sprites.append(chicken)
+        self.toolbar.update_chicken_counter(len(self.chickens))
 
     def add_fox(self, fox):
         self.foxes.append(fox)
@@ -251,6 +271,7 @@ class GameBoard(object):
         if chick in self.chickens:
             self.chickens.remove(chick)
             self.tv.sprites.remove(chick)
+            self.toolbar.update_chicken_counter(len(self.chickens))
 
     def remove_building(self, building):
         if building in self.buildings:
