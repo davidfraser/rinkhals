@@ -1,5 +1,7 @@
 """Class for the various animals in the game"""
 
+import random
+
 from pgu.vid import Sprite
 from pgu.algo import getline
 
@@ -16,6 +18,7 @@ class Animal(Sprite):
         self.image_left = image_left
         self.image_right = image_right
         self.pos = Position(tile_pos[0], tile_pos[1])
+        self.equipment = []
 
     def loop(self, tv, _sprite):
         ppos = tv.tile_to_view(self.pos.to_tuple())
@@ -34,6 +37,12 @@ class Animal(Sprite):
         elif final_pos.right_of(self.pos):
             self.setimage(self.image_right)
 
+    def equip(self, item):
+        self.equipment.append(item)
+
+    def weapons(self):
+        return [e for e in self.equipment if e.is_weapon]
+
 class Chicken(Animal):
     """A chicken"""
 
@@ -46,6 +55,29 @@ class Chicken(Animal):
     def move(self, gameboard):
         """A free chicken will move away from other free chickens"""
         pass
+
+    def _find_killable_fox(self, weapon, gameboard):
+        """Choose a random fox within range of this weapon."""
+        killable_foxes = []
+        for fox in gameboard.foxes:
+            if weapon.in_range(gameboard, self, fox):
+                killable_foxes.append(fox)
+        if not killable_foxes:
+            return None
+        return random.choice(killable_foxes)
+
+    def attack(self, gameboard):
+        """An armed chicken will attack a fox within range."""
+        if not self.weapons():
+            # Not going to take on a fox bare-winged.
+            return
+        # Choose the first weapon equipped.
+        weapon = self.weapons()[0]
+        fox = self._find_killable_fox(weapon, gameboard)
+        if not fox:
+            return
+        if weapon.hit(gameboard, self, fox):
+            gameboard.kill_fox(fox)
 
 class Egg(Animal):
     """An egg"""
