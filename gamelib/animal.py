@@ -79,16 +79,19 @@ class Fox(Animal):
         self.dig_pos = None
         self.tick = 0
 
+    def _cost_tile(self, pos, gameboard):
+        if gameboard.in_bounds(pos):
+            this_tile = gameboard.tv.get(pos.to_tuple())
+            cost = self.costs.get(tiles.TILE_MAP[this_tile], 100)
+        else:
+            cost = 100 # Out of bounds is expensive
+        return cost
+
     def _cost_path(self, path, gameboard):
         """Calculate the cost of a path"""
         total = 0
         for pos in path:
-            if gameboard.in_bounds(pos):
-                this_tile = gameboard.tv.get(pos.to_tuple())
-                cost = self.costs.get(tiles.TILE_MAP[this_tile], 100)
-            else:
-                cost = 100 # Out of bounds is expensive
-            total += cost
+            total += self._cost_tile(pos, gameboard)
         return total
 
     def _gen_path(self, start_pos, final_pos):
@@ -118,11 +121,10 @@ class Fox(Animal):
         # This is delibrately not finding the optimal path, as I don't
         # want the foxes to be too intelligent, although the implementation
         # isn't well optimised yet
-        poss = [Position(x, y) for x in range(self.pos.x - 2, self.pos.x + 3)
-                for y in range(self.pos.y - 2, self.pos.y + 3)]
+        poss = [Position(x, y) for x in range(self.pos.x - 3, self.pos.x + 4)
+                for y in range(self.pos.y - 3, self.pos.y + 4)
+                if (x, y) != (0,0)]
         for start in poss:
-            if start == self.pos:
-                continue # don't repeat work we don't need to
             cand_path = self._gen_path(self.pos, start) + \
                     self._gen_path(start, final_pos)
             cost = self._cost_path(cand_path, gameboard)
@@ -169,7 +171,8 @@ class Fox(Animal):
         """Update the position, making sure we don't step on other foxes"""
         final_pos = new_pos
         moves = [Position(x, y) for x in range(self.pos.x-1, self.pos.x + 2)
-                for y in range(self.pos.y-1, self.pos.y + 2)]
+                for y in range(self.pos.y-1, self.pos.y + 2)
+                if (x,y) != (0,0)]
         blocked = False
         for fox in gameboard.foxes:
             if fox is not self and fox.pos == new_pos:
@@ -177,17 +180,13 @@ class Fox(Animal):
             if fox.pos in moves:
                 moves.remove(fox.pos)
         if blocked:
-            # find the closest point in moves to new_pos that's not a fence
+            # find the cheapest point in moves to new_pos that's not blocked
             final_pos = None
-            dist = 10
+            min_cost = 1000
             for poss in moves:
-                if gameboard.in_bounds(poss):
-                    this_tile = gameboard.tv.get(poss.to_tuple())
-                else:
-                    this_tile = tiles.REVERSE_TILE_MAP['woodland']
-                new_dist = poss.dist(new_pos)
-                if new_dist < dist:
-                    dist = new_dist
+                cost = self._cost_tile(poss, gameboard)
+                if cost < min_cost:
+                    min_cost = cost
                     final_pos = poss
         if gameboard.in_bounds(final_pos):
             this_tile = gameboard.tv.get(final_pos.to_tuple())
