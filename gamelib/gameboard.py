@@ -29,25 +29,19 @@ class ToolBar(gui.Table):
         self.cash_counter = OpaqueLabel("Groats:                ", color=constants.FG_COLOR)
         self.chicken_counter = OpaqueLabel("         ", color=constants.FG_COLOR)
         self.killed_foxes = OpaqueLabel("         ", color=constants.FG_COLOR)
-        self.tr()
-        self.add(self.cash_counter)
-        self.tr()
-        self.td(icons.CHKN_ICON, align=-1)
-        self.add(self.chicken_counter)
-        self.tr()
-        self.td(icons.KILLED_FOX, align=-1)
-        self.add(self.killed_foxes)
+
+        self.add_counter(None, self.cash_counter)
+        self.add_counter(icons.CHKN_ICON, self.chicken_counter)
+        self.add_counter(icons.KILLED_FOX, self.killed_foxes)
+
         self.add_tool_button("Sell chicken", constants.TOOL_SELL_CHICKEN)
         self.add_tool_button("Sell egg", constants.TOOL_SELL_EGG)
         self.add_tool_button("Sell building", constants.TOOL_SELL_BUILDING)
         self.add_tool_button("Buy fence", constants.TOOL_BUY_FENCE)
         for building_cls in buildings.BUILDINGS:
             self.add_tool_button("Buy %s" % (building_cls.NAME,), building_cls)
-
-        day_done_button = gui.Button("Finished Day")
-        day_done_button.connect(gui.CLICK, self.day_done)
-        self.tr()
-        self.td(day_done_button, style={"padding_top": 30})
+        self.add_spacer()
+        self.add_button("Finished Day", self.day_done)
 
     def day_done(self):
         import engine
@@ -65,12 +59,24 @@ class ToolBar(gui.Table):
         self.killed_foxes.update_value("  %s" % number)
         self.repaint()
 
+    def add_spacer(self, height=30):
+        self.tr()
+        self.add(gui.Spacer(0, height))
+
     def add_tool_button(self, text, tool):
+        self.add_button(text, lambda: self.gameboard.set_selected_tool(tool))
+
+    def add_button(self, text, func):
         button = gui.Button(text)
-        button.connect(gui.CLICK, lambda: self.gameboard.set_selected_tool(tool))
+        button.connect(gui.CLICK, func)
         self.tr()
         self.add(button)
 
+    def add_counter(self, icon, label):
+        self.tr()
+        if icon:
+            self.td(icon, align=-1)
+        self.add(label)
 
 class VidWidget(gui.Widget):
     def __init__(self, gameboard, vid, **params):
