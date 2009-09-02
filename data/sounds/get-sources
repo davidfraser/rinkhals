@@ -1,0 +1,103 @@
+#!/usr/bin/env python
+
+"""Script to fetch sources defined in sources.txt"""
+
+import ConfigParser
+import logging
+import os
+import subprocess
+import urllib
+import urllib2
+try:
+    import pymedia.audio.acodec as acodec
+    import pymedia.muxer as muxer
+except ImportError, e:
+    logging.warning("pymedia not installed, will use transcode to convert files: %s", e)
+    acodec = None
+    muxer = None
+
+def iter_sources(filename=None):
+    """fetches a bunch of sound sources from the descriptions in the given filename"""
+    if filename is None:
+        filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sources.txt")
+    source_config = ConfigParser.SafeConfigParser()
+    source_config.read(filename)
+    for section in source_config.sections():
+        yield section, dict(source_config.items(section))
+
+def convert_audio(source_filename, target_filename, source_ext, target_ext):
+    """converts audio between files"""
+    if not acodec or not muxer:
+        logging.info("Could not convert audio files: will try use transcode")
+        subprocess.call(["transcode", "-y", "null,%s" % target_ext, "-i", source_filename, "-o", target_filename])
+        return
+    logging.info("Converting %s (format %s) to %s (format %s)", source_filename, source_ext, target_filename, target_ext)
+    source_file = open(source_filename, 'rb')
+    s = source_file.read(8192)
+    dm = muxer.Demuxer(source_ext)
+    frames = dm.parse(s)
+    print dm.hasHeader(), dm.getInfo()
+    dec = acodec.Decoder(dm.streams[0])
+    frame = r[0]
+    r = dec.decode(frame[1])
+    print r.sample_rate, r.channels, r.bitrate, r.sample_length
+    
+    params = {
+    'id': acodec.getCodecId(target_ext),
+    'bitrate': r.bitrate,
+    'sample_rate': r.sample_rate,
+    'ext': target_ext,
+    'channels': r.channels }
+    enc = acodec.Encoder(params)
+    enc.setInfo(dec.getInfo())
+    
+    target_file = open(target_filename, 'wb')
+    while len(s):
+        frames = enc.encode(r.data)
+        target_file.write(enc.mux(frames))
+        s = source_file.read(1024)
+    
+    r = dec.decode(s)
+    target_file.write(enc.flush())
+    target_file.close()
+
+def handle_logins(config):
+    """logs in to necessary sites and returns urllib2 opener with cookies set up"""
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+    urllib2.install_opener(opener)
+    for section in config.sections():
+        options = dict(config.items(section))
+        url = options.pop("url")
+        params = urllib.urlencode(options)
+        f = opener.open(url, params)
+        contents = f.read()
+        f.close()
+    # params = urllib.urlencode({'username': 'davidfraser', 'password': 'QwpCAlZe', 'autologin': 'on', 'login': 'login', 'redirect': '../index.php'})
+    return opener
+
+if __name__ == "__main__":
+    target_dir = os.path.dirname(os.path.abspath(__file__))
+    web_config = ConfigParser.SafeConfigParser()
+    web_config.read(os.path.join(target_dir, "web.ini"))
+    opener = handle_logins(web_config)
+    for filename, source_options in iter_sources(os.path.join(target_dir, "sources.txt")):
+        download_filename = filename
+        orig_ext = source_options.get("originalextension", None)
+        if orig_ext:
+            target_name, target_ext = os.path.splitext(download_filename)
+            download_filename = target_name + "." + orig_ext
+            target_ext = target_ext.lstrip(".").lower()
+        download_filename = os.path.join(target_dir, download_filename)
+        if not os.path.exists(download_filename):
+            url = source_options["url"]
+            contents = opener.open(url).read()
+            if "<html" in contents[:1024].lower():
+                logging.error("%s returned HTML rather than file contents", url)
+                continue
+            f = open(download_filename, "wb")
+            f.write(contents)
+            f.close()
+        filename = os.path.join(target_dir, filename)
+        if not os.path.exists(filename):
+            convert_audio(download_filename, filename, orig_ext, target_ext)
+
