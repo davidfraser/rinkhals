@@ -8,6 +8,7 @@ import os
 import subprocess
 import urllib
 import urllib2
+import zipfile
 try:
     import pymedia.audio.acodec as acodec
     import pymedia.muxer as muxer
@@ -91,6 +92,14 @@ def handle_logins(config):
         opener.weblogin[section]["lazy"] = True
     return opener
 
+def extract_archive(archive_filename, archive_member, target_filename):
+    """extracts file from an archive"""
+    archive = zipfile.ZipFile(archive_filename)
+    contents = archive.read(archive_member, "rb")
+    target_file = open(target_filename, "wb")
+    target_file.write(contents)
+    target_file.close()
+
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
     target_dir = os.path.dirname(os.path.abspath(__file__))
@@ -100,13 +109,21 @@ if __name__ == "__main__":
     for filename, source_options in iter_sources(os.path.join(target_dir, "sources.txt")):
         download_filename = filename
         orig_ext = source_options.get("originalextension", None)
-        if orig_ext:
-            target_name, target_ext = os.path.splitext(download_filename)
-            download_filename = target_name + "." + orig_ext
-            target_ext = target_ext.lstrip(".").lower()
+        archive_ext = source_options.get("archiveextension", None)
+        is_archive = archive_ext
+        if archive_ext:
+            download_ext = archive_ext
+        else:
+            download_ext = orig_ext
+        url = source_options["url"]
+        target_name, target_ext = os.path.splitext(filename)
+        target_ext = target_ext.lstrip(".").lower()
+        if is_archive:
+            download_filename = url[url.rfind("/")+1:]
+        elif download_ext:
+            download_filename = target_name + "." + download_ext
         download_filename = os.path.join(target_dir, download_filename)
         if not os.path.exists(download_filename):
-            url = source_options["url"]
             if "weblogin" in source_options:
                 lazy_login(opener.weblogin[source_options["weblogin"]])
             logging.info("Downloading %s to %s", url, download_filename)
@@ -117,9 +134,19 @@ if __name__ == "__main__":
             f = open(download_filename, "wb")
             f.write(contents)
             f.close()
-        filename = os.path.join(target_dir, filename)
-        if not os.path.exists(filename):
+        target_filename = os.path.join(target_dir, filename)
+        if not os.path.exists(target_filename):
+            if is_archive:
+                if not orig_ext:
+                    archive_filename = source_options.get("archivemember", filename)
+                    orig_ext = os.path.splitext(archive_filename)[1].lstrip(".")
+                archive_filename = target_name + "." + orig_ext
+                source_filename = os.path.join(target_dir, archive_filename)
+                if not os.path.exists(source_filename):
+                    extract_archive(download_filename, source_options.get("archivemember", filename), source_filename)
+            else:
+                source_filename = download_filename
             orig_format = source_options.get("originalformat", orig_ext)
             target_format = source_options.get("targetformat", target_ext)
-            convert_audio(download_filename, filename, orig_format, target_format)
+            convert_audio(source_filename, target_filename, orig_format, target_format)
 
