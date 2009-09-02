@@ -350,6 +350,8 @@ class GameBoard(object):
     def logging_forest(self, tile_pos):
         if self.tv.get(tile_pos) != self.WOODLAND:
             return
+        if self.cash < constants.LOGGING_PRICE:
+            return
         self.add_cash(-constants.LOGGING_PRICE)
         self.tv.set(tile_pos, self.GRASSLAND)
 
