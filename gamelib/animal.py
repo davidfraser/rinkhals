@@ -44,6 +44,9 @@ class Animal(Sprite):
     def weapons(self):
         return [e for e in self.equipment if e.is_weapon]
 
+    def covers(self, tile_pos):
+        return tile_pos[0] == self.pos.x and tile_pos[1] == self.pos.y
+
 class Chicken(Animal):
     """A chicken"""
 
