@@ -15,23 +15,19 @@ from engine import Engine, MainMenuState
 from sound import init_sound
 import constants
 
-def create_menu_app():
-    """Create the menu app."""
+
+
+def create_app():
+    """Create the app."""
     app = gui.App()
-    main_menu = MainMenu()
-
-    c = MenuContainer(align=0, valign=0)
-    c.add(main_menu, 0, 0)
-
-    app.init(c)
     return app
 
 def main():
     """Main script."""
     init_sound()
     screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE)
-    main_menu_app = create_menu_app()
-    engine = Engine(main_menu_app)
+    main_app = create_app()
+    engine = Engine(main_app)
     try:
         engine.run(MainMenuState(engine), screen)
     except KeyboardInterrupt:

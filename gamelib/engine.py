@@ -5,11 +5,14 @@ import pygame
 from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE, K_n, K_d, K_s
 
 import gameboard
+import gameover
 import sound
+import constants
+import mainmenu
 
 class Engine(Game):
-    def __init__(self, main_menu_app):
-        self.main_menu_app = main_menu_app
+    def __init__(self, main_app):
+        self.main_app = main_app
         self.clock = pygame.time.Clock()
 
     def tick(self):
@@ -19,7 +22,18 @@ class Engine(Game):
     def create_game_board(self):
         self.gameboard = gameboard.GameBoard()
 
+    def set_main_menu(self):
+        """Create the main menu"""
+        mainmenu.add_main_menu(self.main_app)
+
+    def generate_score(self):
+        """Create the Game Over state"""
+        gameover.add_game_over(self.main_app, self.gameboard)
+
 class MainMenuState(State):
+    def init(self):
+        self.game.set_main_menu()
+
     def event(self, e):
         if events_equal(e, START_DAY):
             self.game.create_game_board()
@@ -31,15 +45,15 @@ class MainMenuState(State):
                 self.game.create_game_board()
                 return DayState(self.game)
         elif e.type is not QUIT:
-            self.game.main_menu_app.event(e)
+            self.game.main_app.event(e)
 
     def paint(self, screen):
         screen.fill((0,0,0))
-        self.game.main_menu_app.paint(screen)
+        self.game.main_app.paint(screen)
         pygame.display.flip()
 
     def update(self, screen):
-        update = self.game.main_menu_app.update(screen)
+        update = self.game.main_app.update(screen)
         pygame.display.update(update)
 
 class DayState(State):
@@ -51,6 +65,7 @@ class DayState(State):
         sound.play_sound("daybreak.ogg")
         # disable timer
         pygame.time.set_timer(MOVE_FOX_ID, 0)
+        self.game.gameboard.advance_day()
         self.game.gameboard.clear_foxes()
         sound.background_music("daytime.ogg")
         self.game.gameboard.hatch_eggs()
@@ -95,6 +110,8 @@ class NightState(State):
 
     def event(self, e):
         if events_equal(e, START_DAY):
+            if self.game.gameboard.is_game_over():
+                return GameOver(self.game)
             return DayState(self.game)
         elif e.type is KEYDOWN and e.key == K_d:
             return pygame.event.post(START_DAY)
@@ -102,7 +119,7 @@ class NightState(State):
             return MainMenuState(self.game)
         elif e.type is MOVE_FOX_ID:
             self.cycle_count += 1
-            if self.cycle_count > NIGHT_LENGTH:
+            if self.cycle_count > constants.NIGHT_LENGTH:
                 return pygame.event.post(START_DAY)
             if self.game.gameboard.move_foxes():
                 # All foxes are gone/safe, so dawn happens
@@ -121,6 +138,30 @@ class NightState(State):
         update = self.game.gameboard.update(screen)
         pygame.display.update(update)
 
+class GameOver(State):
+    def init(self):
+        """Setup everything"""
+        self.game.gameboard.tv.sun(True)
+        self.game.generate_score()
+
+    def event(self, e):
+        if e.type is KEYDOWN:
+            if e.key == K_ESCAPE:
+                return MainMenuState(self.game)
+        elif events_equal(e, GO_MAIN_MENU):
+            return MainMenuState(self.game)
+        elif e.type is not QUIT:
+            self.game.main_app.event(e)
+
+    def paint(self, screen):
+        screen.fill((0,0,0))
+        self.game.main_app.paint(screen)
+        pygame.display.flip()
+
+    def update(self, screen):
+        update = self.game.main_app.update(screen)
+        pygame.display.update(update)
+
 # pygame events
 
 def events_equal(e1, e2):
@@ -133,4 +174,3 @@ GO_MAIN_MENU = pygame.event.Event(USEREVENT, name="GO_MAIN_MENU")
 MOVE_FOX_ID = USEREVENT + 1
 MOVE_FOXES = pygame.event.Event(MOVE_FOX_ID, name="MOVE_FOXES")
 QUIT = pygame.event.Event(QUIT)
-NIGHT_LENGTH = 150

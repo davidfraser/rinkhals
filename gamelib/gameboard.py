@@ -39,9 +39,11 @@ class ToolBar(gui.Table):
         self.cash_counter = mklabel()
         self.chicken_counter = mklabel()
         self.egg_counter = mklabel()
+        self.day_counter = mklabel()
         self.killed_foxes = mklabel()
         self.rifle_counter = mklabel()
 
+        self.add_counter(mklabel("Day:"), self.day_counter)
         self.add_counter(mklabel("Groats:"), self.cash_counter)
         self.add_counter(mklabel("Eggs:"), self.egg_counter)
         self.add_counter(icons.CHKN_ICON, self.chicken_counter)
@@ -68,6 +70,7 @@ class ToolBar(gui.Table):
     update_fox_counter = mkcountupdate('killed_foxes')
     update_chicken_counter = mkcountupdate('chicken_counter')
     update_egg_counter = mkcountupdate('egg_counter')
+    update_day_counter = mkcountupdate('day_counter')
 
     def add_spacer(self, height=30):
         self.tr()
@@ -141,6 +144,7 @@ class GameBoard(object):
         self.buildings = []
         self.cash = 0
         self.eggs = 0
+        self.days = 0
         self.killed_foxes = 0
         self.add_cash(constants.STARTING_CASH)
 
@@ -395,6 +399,10 @@ class GameBoard(object):
         else:
             self.disp.event(e)
 
+    def advance_day(self):
+        self.days += 1
+        self.toolbar.update_day_counter(self.days)
+
     def clear_foxes(self):
         for fox in self.foxes.copy():
             # Any foxes that didn't make it to the woods are automatically
@@ -600,3 +608,10 @@ class GameBoard(object):
                 building.remove(self.tv)
                 building.place(self.tv)
                 self.add_building(building)
+
+    def is_game_over(self):
+        """Return true if we're complete"""
+        if self.days > constants.TURN_LIMIT:
+            return True
+        if len(self.chickens) == 0:
+            return True

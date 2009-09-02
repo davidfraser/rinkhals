@@ -6,6 +6,18 @@ import constants
 import engine
 import imagecache
 
+def add_main_menu(app):
+    """Add the main menu to the app"""
+    for widget in app._get_widgets(app):
+        app.remove(widget)
+
+    main_menu = MainMenu()
+
+    c = MenuContainer(align=0, valign=0)
+    c.add(main_menu, 0, 0)
+
+    app.init(c)
+
 class MenuContainer(gui.Container):
     def paint(self, s):
         pygame.display.set_caption(constants.NAME)
