@@ -26,9 +26,12 @@ def iter_sources(filename=None):
     for section in source_config.sections():
         yield section, dict(source_config.items(section))
 
-def convert_audio(source_filename, target_filename, source_format, target_format):
+def convert_audio(source_filename, target_filename, source_format, target_format, converter=None):
     """converts audio between files"""
     logging.info("Converting %s (format %s) to %s (format %s)", source_filename, source_format, target_filename, target_format)
+    if converter == "oggenc":
+        subprocess.call(["oggenc", source_filename, "-o", target_filename])
+        return
     if not acodec or not muxer:
         logging.debug("pymedia not present: will try use transcode")
         if source_format == "aiff":
@@ -148,5 +151,6 @@ if __name__ == "__main__":
                 source_filename = download_filename
             orig_format = source_options.get("originalformat", orig_ext)
             target_format = source_options.get("targetformat", target_ext)
-            convert_audio(source_filename, target_filename, orig_format, target_format)
+            converter = source_options.get("converter", None)
+            convert_audio(source_filename, target_filename, orig_format, target_format, converter)
 
