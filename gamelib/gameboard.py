@@ -139,10 +139,13 @@ class GameBoard(object):
         self.foxes = set()
         self.buildings = []
         self.cash = 0
+        self.eggs = 0
         self.killed_foxes = 0
         self.add_cash(constants.STARTING_CASH)
 
         self.fix_buildings()
+
+        self.add_some_chickens()
 
     def create_disp(self):
         width, height = pygame.display.get_surface().get_size()
@@ -234,11 +237,12 @@ class GameBoard(object):
         building = self.get_building(tile_pos)
         if building:
             # XXX: quick hack so egg loop triggers
-            building.add_occupant(self.animal_to_place)
-            if self.animal_to_place in self.tv.sprites:
-                self.tv.sprites.remove(self.animal_to_place)
-            self.animal_to_place = None
-            self.open_building_dialog(building)
+            if self.animal_to_place:
+                building.add_occupant(self.animal_to_place)
+                if self.animal_to_place in self.tv.sprites:
+                    self.tv.sprites.remove(self.animal_to_place)
+                self.animal_to_place = None
+                self.open_building_dialog(building)
             return
         if self.tv.get(tile_pos) == self.GRASSLAND:
             if self.animal_to_place is not None:
@@ -370,30 +374,28 @@ class GameBoard(object):
         self.tv.sprites.append(building)
 
     def lay_eggs(self):
-        eggs = 0
+        self.eggs = 0
         for building in self.buildings:
             if building.NAME in [buildings.HenHouse.NAME]:
                 for chicken in building.occupants():
                     print 'Laying check', chicken, chicken.egg, chicken.egg_counter
                     chicken.lay()
                     if chicken.egg:
-                        eggs += 1
-        self.toolbar.update_egg_counter(eggs)
+                        self.eggs += 1
+        self.toolbar.update_egg_counter(self.eggs)
 
     def hatch_eggs(self):
-        eggs = 0
         for building in self.buildings:
             if building.NAME in [buildings.HenHouse.NAME]:
                 for chicken in building.occupants():
                     print 'Checking', chicken, chicken.egg, chicken.egg_counter
                     new_chick = chicken.hatch()
-                    if chicken.egg:
-                        eggs += 1
                     if new_chick:
+                        self.eggs -= 1
                         print 'hatching chicken %s in %s ' % (chicken, building)
                         building.add_occupant(new_chick)
                         self.add_chicken(new_chick)
-        self.toolbar.update_egg_counter(eggs)
+        self.toolbar.update_egg_counter(self.eggs)
 
     def kill_fox(self, fox):
         if fox in self.foxes:
@@ -409,6 +411,11 @@ class GameBoard(object):
 
     def remove_chicken(self, chick):
         self.chickens.discard(chick)
+        if chick.egg:
+            self.eggs -= 1
+            self.toolbar.update_egg_counter(self.eggs)
+        if chick.abode:
+            chick.abode.remove_occupant(chick)
         self.toolbar.update_chicken_counter(len(self.chickens))
         if chick in self.tv.sprites:
             if chick.outside():
@@ -423,15 +430,11 @@ class GameBoard(object):
         self.cash += amount
         self.toolbar.update_cash_counter(self.cash)
 
-    def update_chickens(self):
-        """Update the chickens state at the start of the new day"""
-        # Currently random chickens appear
-        # Very simple, we walk around the tilemap, and, for each farm tile,
-        # we randomly add a chicken (1 in 10 chance) until we have 5 chickens
-        # or we run out of board
+    def add_some_chickens(self):
+        """Add some random chickens to start the game"""
         x, y = 0, 0
         width, height = self.tv.size
-        while len(self.chickens) < 5:
+        while len(self.chickens) < 10:
             if x < width:
                 tile = self.tv.get((x, y))
             else:

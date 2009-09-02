@@ -52,7 +52,6 @@ class DayState(State):
         # disable timer
         pygame.time.set_timer(MOVE_FOX_ID, 0)
         self.game.gameboard.clear_foxes()
-        self.game.gameboard.update_chickens()
         sound.background_music("daytime.ogg")
         self.game.gameboard.hatch_eggs()
 
