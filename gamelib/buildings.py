@@ -8,6 +8,7 @@ import tiles
 class Building(Sprite):
     """Base class for buildings"""
 
+    IS_BUILDING = True
     GRASSLAND = tiles.REVERSE_TILE_MAP['grassland']
 
     def __init__(self, pos):
@@ -123,7 +124,7 @@ class GuardTower(Building):
 
 def is_building(obj):
     """Return true if obj is a build class."""
-    return hasattr(obj, "NAME")
+    return getattr(obj, "IS_BUILDING", False) and hasattr(obj, "NAME")
 
 BUILDINGS = []
 for name in dir():

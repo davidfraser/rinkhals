@@ -23,16 +23,25 @@ class OpaqueLabel(gui.Label):
         self.style.width, self.style.height = self.font.size(self.value)
         self.repaint()
 
+def mklabel(text="         ", color=constants.FG_COLOR):
+    return OpaqueLabel(text, color=color)
+
+def mkcountupdate(counter):
+    def update_counter(self, value):
+        getattr(self, counter).update_value("%s" % value)
+        self.repaint()
+    return update_counter
 
 class ToolBar(gui.Table):
     def __init__(self, gameboard, **params):
         gui.Table.__init__(self, **params)
         self.gameboard = gameboard
-        self.cash_counter = OpaqueLabel("Groats:                ", color=constants.FG_COLOR)
-        self.chicken_counter = OpaqueLabel("         ", color=constants.FG_COLOR)
-        self.killed_foxes = OpaqueLabel("         ", color=constants.FG_COLOR)
+        self.cash_counter = mklabel()
+        self.chicken_counter = mklabel()
+        self.killed_foxes = mklabel()
+        self.rifle_counter = mklabel()
 
-        self.add_counter(None, self.cash_counter)
+        self.add_counter(mklabel("Groats:"), self.cash_counter)
         self.add_counter(icons.CHKN_ICON, self.chicken_counter)
         self.add_counter(icons.KILLED_FOX, self.killed_foxes)
 
@@ -43,6 +52,8 @@ class ToolBar(gui.Table):
         self.add_tool_button("Buy fence", constants.TOOL_BUY_FENCE)
         for building_cls in buildings.BUILDINGS:
             self.add_tool_button("Buy %s" % (building_cls.NAME,), building_cls)
+        for equipment_cls in equipment.EQUIPMENT:
+            self.add_tool_button("Buy %s" % (equipment_cls.NAME,), equipment_cls)
         self.add_spacer()
         self.add_button("Finished Day", self.day_done)
 
@@ -50,17 +61,9 @@ class ToolBar(gui.Table):
         import engine
         pygame.event.post(engine.START_NIGHT)
 
-    def update_cash_counter(self, amount):
-        self.cash_counter.update_value("Groats: %s" % amount)
-        self.repaint()
-
-    def update_chicken_counter(self, number):
-        self.chicken_counter.update_value("  %s" % number)
-        self.repaint()
-
-    def update_fox_counter(self, number):
-        self.killed_foxes.update_value("  %s" % number)
-        self.repaint()
+    update_cash_counter = mkcountupdate('cash_counter')
+    update_fox_counter = mkcountupdate('killed_foxes')
+    update_chicken_counter = mkcountupdate('chicken_counter')
 
     def add_spacer(self, height=30):
         self.tr()
@@ -185,6 +188,8 @@ class GameBoard(object):
             self.sell_building(self.tv.screen_to_tile(e.pos))
         elif buildings.is_building(self.selected_tool):
             self.buy_building(self.tv.screen_to_tile(e.pos), self.selected_tool)
+        elif equipment.is_equipment(self.selected_tool):
+            self.buy_equipment(self.tv.screen_to_tile(e.pos), self.selected_tool)
 
     def get_chicken(self, tile_pos):
         for chick in self.chickens:
@@ -273,6 +278,15 @@ class GameBoard(object):
         if building.place(self.tv):
             self.add_cash(-building.buy_price())
             self.add_building(building)
+
+    def buy_equipment(self, tile_pos, equipment_cls):
+        chicken = self.get_chicken(tile_pos)
+        equipment = equipment_cls()
+        if chicken is None or self.cash < equipment.buy_price():
+            return
+        if equipment.place(chicken):
+            self.add_cash(-equipment.buy_price())
+            chicken.equip(equipment)
 
     def sell_building(self, tile_pos):
         if self.tv.get(tile_pos) == self.FENCE:
@@ -390,8 +404,6 @@ class GameBoard(object):
                 if roll == 1:
                     # Create a chicken
                     chick = animal.Chicken((x, y))
-                    if random.randint(0, 1) == 0:
-                        chick.equip(equipment.Rifle())
                     self.add_chicken(chick)
             x += 1
 
