@@ -46,6 +46,8 @@ if __name__ == "__main__":
         ("ninja_fox", 20, 20),
         ("equip_rifle", 20, 20),
         ("equip_knife", 20, 20),
+        ("kevlar", 20, 20),
+        ("helmet", 20, 20),
         ("henhouse", 60, 40),
         ("hendominium", 40, 60),
         ("watchtower", 40, 40),
