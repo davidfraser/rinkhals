@@ -96,6 +96,9 @@ class Chicken(Animal):
             sound.play_sound("kill-fox.ogg")
             gameboard.kill_fox(fox)
 
+    def outside(self):
+        return self.abode is None
+
 class Egg(Animal):
     """An egg"""
 

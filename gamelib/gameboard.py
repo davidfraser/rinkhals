@@ -230,14 +230,7 @@ class GameBoard(object):
             return
         building = self.get_building(tile_pos)
         if building:
-            if self.animal_to_place is not None:
-                occupant = self.animal_to_place
-                if occupant in self.tv.sprites:
-                    self.tv.sprites.remove(occupant)
-                building.add_occupant(occupant)
-                print building, building.occupants()
-            else:
-                self.select_animal_from_building(building)
+            self.open_building_dialog(building)
             return
         if self.tv.get(tile_pos) == self.GRASSLAND:
             if self.animal_to_place is not None:
@@ -246,10 +239,36 @@ class GameBoard(object):
                     occupant.abode.remove_occupant(occupant)
                 occupant.set_pos(tile_pos)
 
-    def select_animal_from_building(self, building):
-        """Create dialog for selecting an animal from a building."""
-        # XXX: unimplemented
-        print "Selecting animal from building %r" % (building,)
+    def open_dialog(self, widget):
+        """Open a dialog for the given widget. Add close button."""
+        tbl = gui.Table()
+
+        def close_dialog():
+            self.disp.close(tbl)
+
+        close_button = gui.Button("Close")
+        close_button.connect(gui.CLICK, close_dialog)
+
+        tbl = gui.Table()
+        tbl.tr()
+        tbl.td(widget, colspan=2)
+        tbl.tr()
+        tbl.td(gui.Spacer(100, 0))
+        tbl.td(close_button)
+
+        self.disp.open(tbl)
+
+    def open_building_dialog(self, building):
+        """Create dialog for manipulating the contents of a building."""
+        width, height = pygame.display.get_surface().get_size()
+        tbl = gui.Table()
+        for row in range(building.size[0]):
+            tbl.tr()
+            for col in range(building.size[1]):
+                button = gui.Button("%s, %s" % (row, col))
+                tbl.td(button)
+
+        self.open_dialog(tbl)
 
     def buy_fence(self, tile_pos):
         this_tile = self.tv.get(tile_pos)
@@ -330,7 +349,8 @@ class GameBoard(object):
 
     def add_chicken(self, chicken):
         self.chickens.append(chicken)
-        self.tv.sprites.append(chicken)
+        if chicken.outside():
+            self.tv.sprites.append(chicken)
         self.toolbar.update_chicken_counter(len(self.chickens))
 
     def add_fox(self, fox):
@@ -356,7 +376,8 @@ class GameBoard(object):
     def remove_chicken(self, chick):
         if chick in self.chickens:
             self.chickens.remove(chick)
-            self.tv.sprites.remove(chick)
+            if chick.outside():
+                self.tv.sprites.remove(chick)
             self.toolbar.update_chicken_counter(len(self.chickens))
 
     def remove_building(self, building):
