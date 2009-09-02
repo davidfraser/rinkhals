@@ -17,6 +17,13 @@ SCREEN = (800, 600)
 FG_COLOR = (255, 255, 255)
 BG_COLOR = (0, 0, 0)
 
+# Mixer constants
+FREQ = 44100   # same as audio CD
+BITSIZE = -16  # unsigned 16 bit
+CHANNELS = 2   # 1 == mono, 2 == stereo
+BUFFER = 1024  # audio buffer size in no. of samples
+FRAMERATE = 30 # how often to check if playback has finished
+
 # Game constants
 
 STARTING_CASH = 1000

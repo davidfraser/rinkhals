@@ -12,6 +12,7 @@ from pygame.locals import SWSURFACE
 
 from mainmenu import MainMenu
 from engine import Engine, MainMenuState
+from sound import init_sound
 import constants
 
 def create_menu_app():
@@ -27,6 +28,7 @@ def create_menu_app():
 
 def main():
     """Main script."""
+    init_sound()
     screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE)
     main_menu_app = create_menu_app()
     engine = Engine(main_menu_app)
