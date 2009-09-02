@@ -32,23 +32,32 @@ class Weapon(Equipment):
         if hasattr(self, 'HIT_SOUND'):
             sound.play_sound(self.HIT_SOUND)
         roll = random.randint(1, 100)
-        return roll > self.BASE_HIT + self.RANGE_MODIFIER*wielder.pos.dist(target.pos)
+        return roll > (100-self.BASE_HIT) + self.RANGE_MODIFIER*wielder.pos.dist(target.pos)
 
     def place(self, animal):
         for eq in animal.equipment:
-            if self.NAME == eq.NAME:
+            if is_weapon(eq):
                 return False
         return True
 
 class Rifle(Weapon):
     NAME = "rifle"
+    BUY_PRICE = 100
+    SELL_PRICE = 75
+
+    RANGE = 3
+    BASE_HIT = 55
+    RANGE_MODIFIER = 15
+    HIT_SOUND = "fire-rifle.ogg"
+
+class Knife(Weapon):
+    NAME = "knife"
     BUY_PRICE = 20
     SELL_PRICE = 15
 
-    RANGE = 3
-    BASE_HIT = 50
-    RANGE_MODIFIER = 15
-    HIT_SOUND = "fire-rifle.ogg"
+    RANGE = 1
+    BASE_HIT = 70
+    RANGE_MODIFIER = 0
 
 def is_equipment(obj):
     """Return true if obj is a build class."""
