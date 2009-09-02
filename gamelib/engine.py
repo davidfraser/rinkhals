@@ -93,7 +93,7 @@ class NightState(State):
             return MainMenuState(self.game)
         elif e.type is MOVE_FOX_ID:
             self.cycle_count += 1
-            if self.cycle_count > 50:
+            if self.cycle_count > NIGHT_LENGTH:
                 return pygame.event.post(START_DAY)
             return self.game.gameboard.move_foxes()
         elif e.type is not QUIT:
@@ -122,3 +122,4 @@ GO_MAIN_MENU = pygame.event.Event(USEREVENT, name="GO_MAIN_MENU")
 MOVE_FOX_ID = USEREVENT + 1
 MOVE_FOXES = pygame.event.Event(MOVE_FOX_ID, name="MOVE_FOXES")
 QUIT = pygame.event.Event(QUIT)
+NIGHT_LENGTH = 150
