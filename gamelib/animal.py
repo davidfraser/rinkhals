@@ -20,6 +20,7 @@ class Animal(Sprite):
         self.image_right = image_right
         self.pos = Position(tile_pos[0], tile_pos[1])
         self.equipment = []
+        self.abode = None
 
     def loop(self, tv, _sprite):
         ppos = tv.tile_to_view(self.pos.to_tuple())
@@ -30,6 +31,12 @@ class Animal(Sprite):
         """Given the game state, return a new position for the object"""
         # Default is not to move
         pass
+
+    def set_pos(self, tile_pos):
+        """Move an animal to the given tile_pos."""
+        new_pos = Position(*tile_pos)
+        self._fix_face(new_pos)
+        self.pos = new_pos
 
     def _fix_face(self, final_pos):
         """Set the face correctly"""

@@ -217,20 +217,29 @@ class GameBoard(object):
            """
         chicken = self.get_chicken(tile_pos)
         if chicken:
-            self.animal_to_place = chicken
-            print "Selected animal %r" % (chicken,)
+            if chicken is self.animal_to_place:
+                self.animal_to_place = None
+            else:
+                self.animal_to_place = chicken
+            print "Selected animal %r" % (self.animal_to_place,)
             return
         building = self.get_building(tile_pos)
         if building:
             if self.animal_to_place is not None:
-                self.put_animal_in_building(self.animal_to_place, building)
+                occupant = self.animal_to_place
+                if occupant in self.tv.sprites:
+                    self.tv.sprites.remove(occupant)
+                building.add_occupant(occupant)
+                print building, building.occupants()
             else:
                 self.select_animal_from_building(building)
-
-    def put_animal_in_building(self, animal, building):
-        """Place animal in building."""
-        # XXX: unimplemented
-        print "Placing %r in %r" % (animal, building)
+            return
+        if self.tv.get(tile_pos) == self.GRASSLAND:
+            if self.animal_to_place is not None:
+                occupant = self.animal_to_place
+                if occupant.abode is not None:
+                    occupant.abode.remove_occupant(occupant)
+                occupant.set_pos(tile_pos)
 
     def select_animal_from_building(self, building):
         """Create dialog for selecting an animal from a building."""

@@ -19,6 +19,7 @@ class Building(Sprite):
         self.tile_no = self.TILE_NO
         self._buy_price = self.BUY_PRICE
         self._sell_price = self.SELL_PRICE
+        self._occupants = set()
 
         # Create the building somewhere far off screen
         Sprite.__init__(self, self.day_image, (-1000, -1000))
@@ -84,6 +85,20 @@ class Building(Sprite):
         else:
             self.setimage(self.night_image)
 
+    def occupants(self):
+        """Return list of buildings occupants."""
+        return list(self._occupants)
+
+    def add_occupant(self, occupant):
+        if occupant.abode is not None:
+            occupant.abode.remove_occupant(occupant)
+        occupant.abode = self
+        self._occupants.add(occupant)
+
+    def remove_occupant(self, occupant):
+        if occupant in self._occupants:
+            self._occupants.remove(occupant)
+            occupant.abode = None
 
 class HenHouse(Building):
     """A HenHouse."""
