@@ -65,9 +65,9 @@ class Building(Sprite):
         self._floors = []
         for f in range(self.FLOORS):
             places = []
-            for i in range(self.size[0]):
+            for j in range(self.size[1]):
                 row = []
-                for j in range(self.size[1]):
+                for i in range(self.size[0]):
                     row.append(Place(self, (i, j)))
                 places.append(row)
             floor = Floor("Floor %s" % (f+1,), places)
