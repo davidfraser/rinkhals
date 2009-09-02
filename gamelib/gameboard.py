@@ -36,6 +36,7 @@ class ToolBar(gui.Table):
         self.add_counter(icons.CHKN_ICON, self.chicken_counter)
         self.add_counter(icons.KILLED_FOX, self.killed_foxes)
 
+        self.add_tool_button("Move Animals", constants.TOOL_PLACE_ANIMALS)
         self.add_tool_button("Sell chicken", constants.TOOL_SELL_CHICKEN)
         self.add_tool_button("Sell egg", constants.TOOL_SELL_EGG)
         self.add_tool_button("Sell building", constants.TOOL_SELL_BUILDING)
@@ -127,6 +128,7 @@ class GameBoard(object):
         self.create_disp()
 
         self.selected_tool = None
+        self.animal_to_place = None
         self.chickens = []
         self.foxes = []
         self.buildings = []
@@ -159,6 +161,7 @@ class GameBoard(object):
 
     def set_selected_tool(self, tool):
         self.selected_tool = tool
+        self.animal_to_place = None
 
     def in_bounds(self, pos):
         """Check if a position is within the game boundaries"""
@@ -171,9 +174,11 @@ class GameBoard(object):
 
     def use_tool(self, e):
         if self.selected_tool == constants.TOOL_SELL_CHICKEN:
-            self.sell_chicken(e.pos)
+            self.sell_chicken(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELL_EGG:
             pass
+        elif self.selected_tool == constants.TOOL_PLACE_ANIMALS:
+            self.place_animal(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_BUY_FENCE:
             self.buy_fence(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELL_BUILDING:
@@ -181,14 +186,20 @@ class GameBoard(object):
         elif buildings.is_building(self.selected_tool):
             self.buy_building(self.tv.screen_to_tile(e.pos), self.selected_tool)
 
-    def get_chicken(self, pos):
+    def get_chicken(self, tile_pos):
         for chick in self.chickens:
-            if chick.rect.collidepoint(pos):
+            if chick.covers(tile_pos):
                 return chick
         return None
 
-    def sell_chicken(self, pos):
-        chick = self.get_chicken(pos)
+    def get_building(self, tile_pos):
+        for building in self.buildings:
+            if building.covers(tile_pos):
+                return building
+        return None
+
+    def sell_chicken(self, tile_pos):
+        chick = self.get_chicken(tile_pos)
         if chick is None:
             return
         if len(self.chickens) == 1:
@@ -197,6 +208,34 @@ class GameBoard(object):
         self.add_cash(constants.SELL_PRICE_CHICKEN)
         sound.play_sound("sell-chicken.ogg")
         self.remove_chicken(chick)
+
+    def place_animal(self, tile_pos):
+        """Handle an TOOL_PLACE_ANIMALS click.
+
+           This will either select an animal or
+           place a selected animal in a building.
+           """
+        chicken = self.get_chicken(tile_pos)
+        if chicken:
+            self.animal_to_place = chicken
+            print "Selected animal %r" % (chicken,)
+            return
+        building = self.get_building(tile_pos)
+        if building:
+            if self.animal_to_place is not None:
+                self.put_animal_in_building(self.animal_to_place, building)
+            else:
+                self.select_animal_from_building(building)
+
+    def put_animal_in_building(self, animal, building):
+        """Place animal in building."""
+        # XXX: unimplemented
+        print "Placing %r in %r" % (animal, building)
+
+    def select_animal_from_building(self, building):
+        """Create dialog for selecting an animal from a building."""
+        # XXX: unimplemented
+        print "Selecting animal from building %r" % (building,)
 
     def buy_fence(self, tile_pos):
         this_tile = self.tv.get(tile_pos)
@@ -229,12 +268,12 @@ class GameBoard(object):
     def sell_building(self, tile_pos):
         if self.tv.get(tile_pos) == self.FENCE:
             return self.sell_fence(tile_pos)
-        for building in self.buildings:
-            if building.covers(tile_pos):
-                self.add_cash(building.sell_price())
-                building.remove(self.tv)
-                self.remove_building(building)
-                break
+        building = self.get_building(tile_pos)
+        if building is None:
+            return
+        self.add_cash(building.sell_price())
+        building.remove(self.tv)
+        self.remove_building(building)
 
     def event(self, e):
         if e.type == KEYDOWN:
