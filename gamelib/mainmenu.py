@@ -8,7 +8,7 @@ import imagecache
 
 def add_main_menu(app):
     """Add the main menu to the app"""
-    for widget in app._get_widgets(app):
+    for widget in app.widgets[:]:
         app.remove(widget)
 
     main_menu = MainMenu()

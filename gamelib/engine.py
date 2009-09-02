@@ -141,7 +141,6 @@ class NightState(State):
 class GameOver(State):
     def init(self):
         """Setup everything"""
-        self.game.gameboard.tv.sun(True)
         self.game.generate_score()
 
     def event(self, e):
