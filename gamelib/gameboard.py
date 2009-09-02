@@ -159,6 +159,7 @@ class GameBoard(object):
         self.disp.init(tbl)
 
     def paint(self, screen):
+        screen.fill(constants.BG_COLOR)
         self.disp.paint(screen)
 
     def update(self, screen):

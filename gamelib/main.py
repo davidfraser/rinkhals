@@ -10,7 +10,7 @@ import pygame
 from pgu import gui
 from pygame.locals import SWSURFACE
 
-from mainmenu import MainMenu
+from mainmenu import MenuContainer, MainMenu
 from engine import Engine, MainMenuState
 from sound import init_sound
 import constants
@@ -20,7 +20,7 @@ def create_menu_app():
     app = gui.App()
     main_menu = MainMenu()
 
-    c = gui.Container(align=0, valign=0)
+    c = MenuContainer(align=0, valign=0)
     c.add(main_menu, 0, 0)
 
     app.init(c)

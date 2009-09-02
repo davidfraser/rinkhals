@@ -4,6 +4,14 @@ from pgu import gui
 import pygame
 import constants
 import engine
+import imagecache
+
+class MenuContainer(gui.Container):
+    def paint(self, s):
+        pygame.display.set_caption(constants.NAME)
+        splash = imagecache.load_image("images/splash.png")
+        pygame.display.get_surface().blit(splash, (0, 0))
+        gui.Container.paint(self, s)
 
 class MainMenu(gui.Table):
     def __init__(self, **params):
@@ -34,9 +42,6 @@ class MainMenu(gui.Table):
             "align": 0,
             "style": style,
         }
-
-        self.tr()
-        self.td(gui.Label(constants.NAME, color=constants.FG_COLOR), **td_kwargs)
 
         self.tr()
         self.td(start_button, **td_kwargs)
