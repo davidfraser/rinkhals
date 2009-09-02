@@ -1,0 +1,8 @@
+[freesound]
+url: http://www.freesound.org/forum/login.php
+username: username
+password: password
+autologin: on
+login: login
+
+
