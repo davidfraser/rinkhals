@@ -1,0 +1,39 @@
+== TODO ==
+
+* <confluence> There are sprites for equipped weapons; they just need to be strapped onto the chickens.
+  * <jerith> I'll do equipped chickens tomorrow.
+
+* <Hodgestar> A BuildingFullError can be raised when attempting to hatch eggs in buildings.
+
+* <confluence> Muzzle flashes!
+
+* <jerith> Our menu isn't friendly and buildings don't show their contents.
+  * <Hodgestar> And we need to add a numerical overlay to show how many chickens are in a building.
+
+* <confluence> We should have text images instead of buttons (in the various menus and toolbars).
+
+* <confluence> Those cursor changes would also be good.
+  * <jerith> Oh, the building placement stuff.
+  * <Hodgestar> Yes, the cursor changes will help a lot with the animal movement tool.
+  * <Hodgestar> And with building placement.
+
+* <Nitwit> And we need to start testing for lose conditions, and set an upper time limit
+  * <Nitwit> 30 days good as a starting limit?
+  * <Hodgestar> Sounds good. What happens when the 30 days are up?
+  * <Hodgestar> Some kind of high-score table?
+  * <jerith> I'm thinking win conditions should be a number of chickens and a cash balance at the end of the level.
+  * <Nitwit> I'm adding a game over state - I was thinking of only a "You lost" or "Score : x" message for tonight
+  * <Nitwit> where score = cash + WEIGHT*chickens, for some value of WEIGHT
+  * <jerith> Maybe make level a fixed number of days -- a fortnight seems a good balance.
+  * <Nitwit> given the current time to hatch chickens, I worry that a fornight is too short
+  * <jerith> How long does it take to hatch chickens?
+  * <jerith> Actually, I'm probably overestimating the amount of  work that will go into a day.
+  * <Nitwit> jerith: 2 nights, so a fornight gives at most 7 cycles
+  * <Nitwit> but we can fiddle with values for game balance tomorrow and Friday
+  * <Hodgestar> Maybe score = cash + (chicken sell price)*chickens.
+  * <Hodgestar> I.e. what you would get if you converted all your chickens to cash at the end.
+  * <Hodgestar> jerith says to add (egg sell price)*eggs too.
+
+* <jerith> Oh, defensive equipment.
+
+* <Hodgestar> There is also an odd bug where buildings fail to open when they're full or close to full.
