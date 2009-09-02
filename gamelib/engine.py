@@ -142,6 +142,7 @@ class GameOver(State):
     def init(self):
         """Setup everything"""
         self.game.generate_score()
+        pygame.time.set_timer(MOVE_FOX_ID, 0)
 
     def event(self, e):
         if e.type is KEYDOWN:
