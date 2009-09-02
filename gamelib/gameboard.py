@@ -547,8 +547,10 @@ class GameBoard(object):
                     break
             if not skip:
                 roll = random.randint(0, 10)
-                if roll < 9:
+                if roll < 8:
                     fox = animal.Fox((x, y))
+                elif roll < 9:
+                    fox = animal.NinjaFox((x, y))
                 else:
                     fox = animal.GreedyFox((x, y))
                 self.add_fox(fox)
