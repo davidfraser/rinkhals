@@ -130,6 +130,7 @@ class Fox(Animal):
     """A fox"""
 
     STEALTH = 20
+    IMAGE_FILE = 'sprites/fox.png'
 
     costs = {
             # weighting for movement calculation
@@ -142,9 +143,8 @@ class Fox(Animal):
             }
 
     def __init__(self, pos):
-        image_left = imagecache.load_image('sprites/fox.png')
-        image_right = imagecache.load_image('sprites/fox.png',
-                ("right_facing",))
+        image_left = imagecache.load_image(self.IMAGE_FILE)
+        image_right = imagecache.load_image(self.IMAGE_FILE, ("right_facing",))
         Animal.__init__(self, image_left, image_right, pos)
         self.landmarks = [self.pos]
         self.hunting = True
@@ -320,6 +320,7 @@ class NinjaFox(Fox):
     """Ninja foxes are hard to see"""
 
     STEALTH = 60
+    IMAGE_FILE = 'sprites/ninja_fox.png'
 
 class DemoFox(Fox):
     """Demolition Foxes destroy fences easily"""
