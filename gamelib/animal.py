@@ -194,10 +194,14 @@ class Fox(Animal):
             return self.pos
         if closest.pos == self.pos:
             # Caught a chicken
-            gameboard.remove_chicken(closest)
-            self.hunting = False
+            self._catch_chicken(closest, gameboard)
             return self.pos
         return self._find_best_path_step(closest.pos, gameboard)
+
+    def _catch_chicken(self, chicken, gameboard):
+        """Catch a chicken"""
+        gameboard.remove_chicken(chicken)
+        self.hunting = False
 
     def _update_pos(self, gameboard, new_pos):
         """Update the position, making sure we don't step on other foxes"""
@@ -228,29 +232,38 @@ class Fox(Animal):
             # We'll head back towards the holes we make/find
             self.landmarks.append(final_pos)
         elif tiles.TILE_MAP[this_tile] == 'fence' and not self.dig_pos:
-            self.tick = 5
-            self.dig_pos = final_pos
+            self._dig(final_pos)
             return self.pos
         return final_pos
+
+    def _dig(self, dig_pos):
+        """Setup dig parameters, to be overridden if needed"""
+        self.tick = 5
+        self.dig_pos = dig_pos
+
+    def _make_hole(self, gameboard):
+        """Make a hole in the fence"""
+        gameboard.tv.set(self.dig_pos.to_tuple(),
+                tiles.REVERSE_TILE_MAP['broken fence'])
+        self.dig_pos = None
 
     def move(self, gameboard):
         """Foxes will aim to move towards the closest henhouse or free
            chicken"""
         if self.dig_pos:
             if self.tick:
-                # We're digging through the fence
                 self.tick -= 1
+                # We're still digging through the fence
                 # Check the another fox hasn't dug a hole for us
-                # We're top busy digging to notice if a hole appears nearby,
+                # We're too busy digging to notice if a hole appears nearby,
                 # but we'll notice if the fence we're digging vanishes
                 this_tile = gameboard.tv.get(self.dig_pos.to_tuple())
                 if tiles.TILE_MAP[this_tile] == 'broken fence':
                     self.tick = 0 
+                return
             else:
                 # We've dug through the fence, so make a hole
-                gameboard.tv.set(self.dig_pos.to_tuple(),
-                        tiles.REVERSE_TILE_MAP['broken fence'])
-                self.dig_pos = None
+                self._make_hole(gameboard)
             return 
         if self.hunting:
             desired_pos = self._find_path_to_chicken(gameboard)
@@ -259,5 +272,22 @@ class Fox(Animal):
         final_pos = self._update_pos(gameboard, desired_pos)
         self._fix_face(final_pos)
         self.pos = final_pos
-        
-            
+
+class NinjaFox(Fox):
+    """Ninja foxes are hard to see"""
+
+class DemoFox(Fox):
+    """Demolition Foxes destroy fences easily"""
+
+class GreedyFox(Fox):
+    """Greedy foxes eat more chickens"""
+
+    def __init__(self, pos):
+        Fox.__init__(self, pos)
+        self.chickens_eaten = 0
+
+    def _catch_chicken(self, chicken, gameboard):
+        gameboard.remove_chicken(chicken)
+        self.chickens_eaten += 1
+        if self.chickens_eaten > 2:
+            self.hunting = False

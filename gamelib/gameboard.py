@@ -374,7 +374,11 @@ class GameBoard(object):
                     skip = True # Choose a new position
                     break
             if not skip:
-                fox = animal.Fox((x, y))
+                roll = random.randint(0, 10)
+                if roll < 9:
+                    fox = animal.Fox((x, y))
+                else:
+                    fox = animal.GreedyFox((x, y))
                 self.add_fox(fox)
 
     def fix_buildings(self):
