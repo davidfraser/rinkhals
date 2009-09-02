@@ -287,6 +287,8 @@ class GameBoard(object):
                 button.connect(gui.CLICK, select_occupant, place, button)
 
                 old_abode = self.animal_to_place.abode
+                if old_abode is not None:
+                    old_abode.clear_occupant()
                 if id(old_abode) in place_button_map:
                     old_button = place_button_map[id(old_abode)]
                     old_button.value = icons.EMPTY_NEST_ICON
