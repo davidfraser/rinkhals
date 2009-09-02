@@ -12,7 +12,7 @@ try:
     import pymedia.audio.acodec as acodec
     import pymedia.muxer as muxer
 except ImportError, e:
-    logging.warning("pymedia not installed, will use transcode to convert files: %s", e)
+    logging.info("pymedia not installed, will use transcode to convert files: %s", e)
     acodec = None
     muxer = None
 
@@ -20,21 +20,26 @@ def iter_sources(filename=None):
     """fetches a bunch of sound sources from the descriptions in the given filename"""
     if filename is None:
         filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sources.txt")
-    source_config = ConfigParser.SafeConfigParser()
+    source_config = ConfigParser.RawConfigParser()
     source_config.read(filename)
     for section in source_config.sections():
         yield section, dict(source_config.items(section))
 
-def convert_audio(source_filename, target_filename, source_ext, target_ext):
+def convert_audio(source_filename, target_filename, source_format, target_format):
     """converts audio between files"""
+    logging.info("Converting %s (format %s) to %s (format %s)", source_filename, source_format, target_filename, target_format)
     if not acodec or not muxer:
-        logging.info("Could not convert audio files: will try use transcode")
-        subprocess.call(["transcode", "-y", "null,%s" % target_ext, "-i", source_filename, "-o", target_filename])
+        logging.debug("pymedia not present: will try use transcode")
+        if source_format == "aiff":
+            source_format = "mplayer"
+        options = ["-y", "null,%s" % target_format, "-i", source_filename, "-o", target_filename]
+        if source_format not in ["wav", "mp3", "ogg"]:
+            options += ["-x", "null,%s" % source_format]
+        subprocess.call(["transcode"] + options)
         return
-    logging.info("Converting %s (format %s) to %s (format %s)", source_filename, source_ext, target_filename, target_ext)
     source_file = open(source_filename, 'rb')
     s = source_file.read(8192)
-    dm = muxer.Demuxer(source_ext)
+    dm = muxer.Demuxer(source_format)
     frames = dm.parse(s)
     print dm.hasHeader(), dm.getInfo()
     dec = acodec.Decoder(dm.streams[0])
@@ -43,10 +48,10 @@ def convert_audio(source_filename, target_filename, source_ext, target_ext):
     print r.sample_rate, r.channels, r.bitrate, r.sample_length
     
     params = {
-    'id': acodec.getCodecId(target_ext),
+    'id': acodec.getCodecId(target_format),
     'bitrate': r.bitrate,
     'sample_rate': r.sample_rate,
-    'ext': target_ext,
+    'ext': target_format,
     'channels': r.channels }
     enc = acodec.Encoder(params)
     enc.setInfo(dec.getInfo())
@@ -69,6 +74,7 @@ def handle_logins(config):
         options = dict(config.items(section))
         url = options.pop("url")
         params = urllib.urlencode(options)
+        logging.info("Logging in to %s", url)
         f = opener.open(url, params)
         contents = f.read()
         f.close()
@@ -76,8 +82,9 @@ def handle_logins(config):
     return opener
 
 if __name__ == "__main__":
+    logging.getLogger().setLevel(logging.INFO)
     target_dir = os.path.dirname(os.path.abspath(__file__))
-    web_config = ConfigParser.SafeConfigParser()
+    web_config = ConfigParser.RawConfigParser()
     web_config.read(os.path.join(target_dir, "web.ini"))
     opener = handle_logins(web_config)
     for filename, source_options in iter_sources(os.path.join(target_dir, "sources.txt")):
@@ -90,6 +97,7 @@ if __name__ == "__main__":
         download_filename = os.path.join(target_dir, download_filename)
         if not os.path.exists(download_filename):
             url = source_options["url"]
+            logging.info("Downloading %s to %s", url, download_filename)
             contents = opener.open(url).read()
             if "<html" in contents[:1024].lower():
                 logging.error("%s returned HTML rather than file contents", url)
@@ -99,5 +107,7 @@ if __name__ == "__main__":
             f.close()
         filename = os.path.join(target_dir, filename)
         if not os.path.exists(filename):
-            convert_audio(download_filename, filename, orig_ext, target_ext)
+            orig_format = source_options.get("originalformat", orig_ext)
+            target_format = source_options.get("targetformat", target_ext)
+            convert_audio(download_filename, filename, orig_format, target_format)
 

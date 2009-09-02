@@ -5,4 +5,11 @@ password: password
 autologin: on
 login: login
 
+[sampleswap]
+url: http://www.sampleswap.org/login.php
+username: username
+password: password
+autologin: on
+login: Log In
+
 
