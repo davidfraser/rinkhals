@@ -47,7 +47,7 @@ class DayState(State):
         """Add some chickens to the farm"""
         self.game.gameboard.tv.sun(True)
 
-        sound.play_sound("chicken5.ogg")
+        sound.play_sound("daybreak.ogg")
         # disable timer
         pygame.time.set_timer(MOVE_FOX_ID, 0)
         self.game.gameboard.clear_foxes()
@@ -81,6 +81,7 @@ class NightState(State):
         """Add some foxes to the farm"""
         self.game.gameboard.tv.sun(False)
 
+        sound.play_sound("nightfall.ogg")
         # Add a timer to the event queue
         self.cycle_count = 0
         pygame.time.set_timer(MOVE_FOX_ID, 200)

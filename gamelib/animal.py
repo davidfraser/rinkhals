@@ -8,6 +8,7 @@ from pgu.algo import getline
 import imagecache
 import tiles
 from misc import Position
+import sound
 
 class Animal(Sprite):
     """Base class for animals"""
@@ -77,6 +78,7 @@ class Chicken(Animal):
         if not fox:
             return
         if weapon.hit(gameboard, self, fox):
+            sound.play_sound("kill-fox.ogg")
             gameboard.kill_fox(fox)
 
 class Egg(Animal):
@@ -200,6 +202,7 @@ class Fox(Animal):
 
     def _catch_chicken(self, chicken, gameboard):
         """Catch a chicken"""
+        sound.play_sound("kill-chicken.ogg")
         gameboard.remove_chicken(chicken)
         self.hunting = False
 

@@ -23,7 +23,7 @@ License: Public Domain
 OriginalExtension: aiff
 WebLogin: sampleswap
 
-[chicken4.ogg]
+[sell-chicken.ogg]
 URL: http://www.archive.org/download/BoulangerColette/BoulangerColette44.zip
 Source: http://www.archive.org/details/BoulangerColette
 License: http://creativecommons.org/licenses/by/3.0/
@@ -31,11 +31,36 @@ Credit: Sound samples by Boulanger Colette recorded for Richard Boulanger for us
 ArchiveExtension: zip
 ArchiveMember: ColetteBoulanger44/chicken.wav
 
-[chicken5.ogg]
+[daybreak.ogg]
 URL: http://www.archive.org/download/BoulangerColette/BoulangerColette44.zip
 Source: http://www.archive.org/details/BoulangerColette
 License: http://creativecommons.org/licenses/by/3.0/
 Credit: Sound samples by Boulanger Colette recorded for Richard Boulanger for use in the One Laptop per Child music library. See http://wiki.laptop.org/go/Sound_samples for details.
 ArchiveExtension: zip
 ArchiveMember: ColetteBoulanger44/rooster.wav
+
+[nightfall.ogg]
+URL: http://www.archive.org/download/Berklee44v6/Berklee44v6.zip
+Source: http://www.archive.org/details/Berklee44v6
+License: http://creativecommons.org/licenses/by/3.0/
+Credit: Sound samples by Berklee recorded for Richard Boulanger for use in the One Laptop per Child music library. See http://wiki.laptop.org/go/Sound_samples for details.
+ArchiveExtension: zip
+ArchiveMember: Berklee44v6/dog1.wav
+OriginalFormat: mplayer
+
+[kill-chicken.ogg]
+URL: http://www.archive.org/download/Berklee44v6/Berklee44v6.zip
+Source: http://www.archive.org/details/Berklee44v6
+License: http://creativecommons.org/licenses/by/3.0/
+Credit: Sound samples by Berklee recorded for Richard Boulanger for use in the One Laptop per Child music library. See http://wiki.laptop.org/go/Sound_samples for details.
+ArchiveExtension: zip
+ArchiveMember: Berklee44v6/animal_vocal_1.wav
+
+[kill-fox.ogg]
+URL: http://www.archive.org/download/Berklee44v6/Berklee44v6.zip
+Source: http://www.archive.org/details/Berklee44v6
+License: http://creativecommons.org/licenses/by/3.0/
+Credit: Sound samples by Berklee recorded for Richard Boulanger for use in the One Laptop per Child music library. See http://wiki.laptop.org/go/Sound_samples for details.
+ArchiveExtension: zip
+ArchiveMember: Berklee44v6/dog_bark_1.wav
 

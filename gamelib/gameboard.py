@@ -195,7 +195,7 @@ class GameBoard(object):
             print "You can't sell your last chicken!"
             return
         self.add_cash(constants.SELL_PRICE_CHICKEN)
-        sound.play_sound("chicken4.ogg")
+        sound.play_sound("sell-chicken.ogg")
         self.remove_chicken(chick)
 
     def buy_fence(self, tile_pos):
