@@ -42,6 +42,7 @@ if __name__ == "__main__":
         ("chkn", 20, 20),
         ("egg", 20, 20),
         ("fox", 20, 20),
+        ("rifle", 20, 20),
         ("henhouse", 60, 40),
         ("watchtower", 40, 40),
     ]
