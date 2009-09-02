@@ -1,5 +1,6 @@
 import os
 import pygame
+import sys
 
 import data
 import constants
