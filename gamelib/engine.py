@@ -5,6 +5,7 @@ import pygame
 from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE, K_n, K_d, K_s
 
 import gameboard
+import sound
 
 class Engine(Game):
     def __init__(self, main_menu_app):
@@ -46,6 +47,7 @@ class DayState(State):
         """Add some chickens to the farm"""
         self.game.gameboard.tv.sun(True)
 
+        sound.play_sound("chicken5.ogg")
         # disable timer
         pygame.time.set_timer(MOVE_FOX_ID, 0)
         self.game.gameboard.clear_foxes()

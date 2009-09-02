@@ -11,6 +11,7 @@ import constants
 import buildings
 import animal
 import equipment
+import sound
 
 class OpaqueLabel(gui.Label):
     def paint(self, s):
@@ -194,6 +195,7 @@ class GameBoard(object):
             print "You can't sell your last chicken!"
             return
         self.add_cash(constants.SELL_PRICE_CHICKEN)
+        sound.play_sound("chicken4.ogg")
         self.remove_chicken(chick)
 
     def buy_fence(self, tile_pos):
