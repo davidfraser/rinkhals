@@ -29,4 +29,28 @@ def play_sound(filename):
         SOUND_CACHE[file_path] = sound = pygame.mixer.Sound(file_path)
     sound.play()
 
+CURRENT_MUSIC_FILE = None
+
+def stop_background_music():
+    """stops any playing background music"""
+    global CURRENT_MUSIC_FILE
+    CURRENT_MUSIC_FILE = None
+    # TODO: fadeout in a background thread
+    pygame.mixer.music.stop()
+
+def background_music(filename):
+    """plays the background music with the given filename from the data sounds directory"""
+    global CURRENT_MUSIC_FILE
+    if not SOUND_INITIALIZED:
+        return
+    file_path = data.filepath("sounds", filename)
+    if CURRENT_MUSIC_FILE == file_path:
+        return
+    stop_background_music()
+    if not os.path.exists(file_path):
+        return
+    CURRENT_MUSIC_FILE = file_path
+    pygame.mixer.music.load(file_path)
+    pygame.mixer.music.set_volume(0.3)
+    pygame.mixer.music.play(-1)
 

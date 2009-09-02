@@ -45,6 +45,7 @@ class MainMenuState(State):
 class DayState(State):
     def init(self):
         """Add some chickens to the farm"""
+        sound.stop_background_music()
         self.game.gameboard.tv.sun(True)
 
         sound.play_sound("daybreak.ogg")
@@ -52,6 +53,7 @@ class DayState(State):
         pygame.time.set_timer(MOVE_FOX_ID, 0)
         self.game.gameboard.clear_foxes()
         self.game.gameboard.update_chickens()
+        sound.background_music("daytime.ogg")
 
     def event(self, e):
         if events_equal(e, START_NIGHT):
@@ -79,6 +81,7 @@ class DayState(State):
 class NightState(State):
     def init(self):
         """Add some foxes to the farm"""
+        sound.stop_background_music()
         self.game.gameboard.tv.sun(False)
 
         sound.play_sound("nightfall.ogg")
@@ -86,6 +89,7 @@ class NightState(State):
         self.cycle_count = 0
         pygame.time.set_timer(MOVE_FOX_ID, 200)
         self.game.gameboard.spawn_foxes()
+        sound.background_music("nighttime.ogg")
 
     def event(self, e):
         if events_equal(e, START_DAY):

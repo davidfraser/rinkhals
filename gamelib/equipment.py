@@ -1,6 +1,7 @@
 """Stuff for animals to use."""
 
 import random
+import sound
 
 class Equipment(object):
     is_weapon = False
@@ -24,5 +25,6 @@ class Rifle(Weapon):
 
     def hit(self, gameboard, wielder, target):
         """Closer is more accurate."""
+        sound.play_sound("fire-rifle.ogg")
         return random.randint(1, 100) > 60 + 10*wielder.pos.dist(target.pos)
 
