@@ -54,6 +54,7 @@ class DayState(State):
         self.game.gameboard.clear_foxes()
         self.game.gameboard.update_chickens()
         sound.background_music("daytime.ogg")
+        self.game.gameboard.hatch_eggs()
 
     def event(self, e):
         if events_equal(e, START_NIGHT):
@@ -90,6 +91,8 @@ class NightState(State):
         pygame.time.set_timer(MOVE_FOX_ID, 200)
         self.game.gameboard.spawn_foxes()
         sound.background_music("nighttime.ogg")
+
+        self.game.gameboard.lay_eggs()
 
     def event(self, e):
         if events_equal(e, START_DAY):

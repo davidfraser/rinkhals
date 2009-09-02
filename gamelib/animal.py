@@ -65,10 +65,28 @@ class Chicken(Animal):
         image_right = imagecache.load_image('sprites/chkn.png',
                 ("right_facing",))
         Animal.__init__(self, image_left, image_right, pos)
+        self.egg = False
+        self.egg_counter = 0
 
     def move(self, gameboard):
         """A free chicken will move away from other free chickens"""
         pass
+
+    def lay(self):
+        """See if the chicken lays an egg"""
+        if not self.egg:
+            self.egg = True
+            self.egg_counter = 2
+
+    def hatch(self):
+        """See if we have an egg to hatch"""
+        if self.egg:
+            self.egg_counter -= 1
+            if self.egg_counter == 0:
+                # Egg hatches
+                self.egg = False
+                return Chicken(self.pos.to_tuple())
+        return None
 
     def _find_killable_fox(self, weapon, gameboard):
         """Choose a random fox within range of this weapon."""

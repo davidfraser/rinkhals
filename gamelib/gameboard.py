@@ -38,10 +38,12 @@ class ToolBar(gui.Table):
         self.gameboard = gameboard
         self.cash_counter = mklabel()
         self.chicken_counter = mklabel()
+        self.egg_counter = mklabel()
         self.killed_foxes = mklabel()
         self.rifle_counter = mklabel()
 
         self.add_counter(mklabel("Groats:"), self.cash_counter)
+        self.add_counter(mklabel("Eggs:"), self.egg_counter)
         self.add_counter(icons.CHKN_ICON, self.chicken_counter)
         self.add_counter(icons.KILLED_FOX, self.killed_foxes)
 
@@ -64,6 +66,7 @@ class ToolBar(gui.Table):
     update_cash_counter = mkcountupdate('cash_counter')
     update_fox_counter = mkcountupdate('killed_foxes')
     update_chicken_counter = mkcountupdate('chicken_counter')
+    update_egg_counter = mkcountupdate('egg_counter')
 
     def add_spacer(self, height=30):
         self.tr()
@@ -132,8 +135,8 @@ class GameBoard(object):
 
         self.selected_tool = None
         self.animal_to_place = None
-        self.chickens = []
-        self.foxes = []
+        self.chickens = set()
+        self.foxes = set()
         self.buildings = []
         self.cash = 0
         self.killed_foxes = 0
@@ -230,6 +233,11 @@ class GameBoard(object):
             return
         building = self.get_building(tile_pos)
         if building:
+            # XXX: quick hack so egg loop triggers
+            building.add_occupant(self.animal_to_place)
+            if self.animal_to_place in self.tv.sprites:
+                self.tv.sprites.remove(self.animal_to_place)
+            self.animal_to_place = None
             self.open_building_dialog(building)
             return
         if self.tv.get(tile_pos) == self.GRASSLAND:
@@ -331,7 +339,7 @@ class GameBoard(object):
             self.disp.event(e)
 
     def clear_foxes(self):
-        for fox in self.foxes[:]:
+        for fox in self.foxes.copy():
             # Any foxes that didn't make it to the woods are automatically
             # killed
             if self.in_bounds(fox.pos) and self.tv.get(fox.pos.to_tuple()) \
@@ -339,7 +347,7 @@ class GameBoard(object):
                 self.kill_fox(fox)
             else:
                 self.tv.sprites.remove(fox)
-        self.foxes = [] # Remove all the foxes
+        self.foxes = set() # Remove all the foxes
 
     def move_foxes(self):
         for fox in self.foxes:
@@ -348,18 +356,44 @@ class GameBoard(object):
             chicken.attack(self)
 
     def add_chicken(self, chicken):
-        self.chickens.append(chicken)
+        self.chickens.add(chicken)
         if chicken.outside():
             self.tv.sprites.append(chicken)
         self.toolbar.update_chicken_counter(len(self.chickens))
 
     def add_fox(self, fox):
-        self.foxes.append(fox)
+        self.foxes.add(fox)
         self.tv.sprites.append(fox)
 
     def add_building(self, building):
         self.buildings.append(building)
         self.tv.sprites.append(building)
+
+    def lay_eggs(self):
+        eggs = 0
+        for building in self.buildings:
+            if building.NAME in [buildings.HenHouse.NAME]:
+                for chicken in building.occupants():
+                    print 'Laying check', chicken, chicken.egg, chicken.egg_counter
+                    chicken.lay()
+                    if chicken.egg:
+                        eggs += 1
+        self.toolbar.update_egg_counter(eggs)
+
+    def hatch_eggs(self):
+        eggs = 0
+        for building in self.buildings:
+            if building.NAME in [buildings.HenHouse.NAME]:
+                for chicken in building.occupants():
+                    print 'Checking', chicken, chicken.egg, chicken.egg_counter
+                    new_chick = chicken.hatch()
+                    if chicken.egg:
+                        eggs += 1
+                    if new_chick:
+                        print 'hatching chicken %s in %s ' % (chicken, building)
+                        building.add_occupant(new_chick)
+                        self.add_chicken(new_chick)
+        self.toolbar.update_egg_counter(eggs)
 
     def kill_fox(self, fox):
         if fox in self.foxes:
@@ -369,16 +403,16 @@ class GameBoard(object):
             self.remove_fox(fox)
 
     def remove_fox(self, fox):
-        if fox in self.foxes:
-            self.foxes.remove(fox)
+        self.foxes.discard(fox)
+        if fox in self.tv.sprites:
             self.tv.sprites.remove(fox)
 
     def remove_chicken(self, chick):
-        if chick in self.chickens:
-            self.chickens.remove(chick)
+        self.chickens.discard(chick)
+        self.toolbar.update_chicken_counter(len(self.chickens))
+        if chick in self.tv.sprites:
             if chick.outside():
                 self.tv.sprites.remove(chick)
-            self.toolbar.update_chicken_counter(len(self.chickens))
 
     def remove_building(self, building):
         if building in self.buildings:
