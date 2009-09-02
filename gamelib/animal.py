@@ -57,6 +57,9 @@ class Animal(Sprite):
     def covers(self, tile_pos):
         return tile_pos[0] == self.pos.x and tile_pos[1] == self.pos.y
 
+    def outside(self):
+        return self.abode is None
+
 class Chicken(Animal):
     """A chicken"""
 
@@ -113,9 +116,6 @@ class Chicken(Animal):
         if weapon.hit(gameboard, self, fox):
             sound.play_sound("kill-fox.ogg")
             gameboard.kill_fox(fox)
-
-    def outside(self):
-        return self.abode is None
 
 class Egg(Animal):
     """An egg"""

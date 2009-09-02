@@ -5,6 +5,47 @@ from pgu.vid import Sprite
 import imagecache
 import tiles
 
+class Place(object):
+    """Space within a building that can be occupied."""
+
+    def __init__(self, building, offset):
+        self.occupant = None
+        self.building = building
+        self.offset = offset
+
+    def set_occupant(self, occupant):
+        self.clear_occupant()
+        self.occupant = occupant
+        self.occupant.abode = self
+
+    def clear_occupant(self):
+        if self.occupant is not None:
+            self.occupant.abode = None
+            self.occupant = None
+
+    def get_pos(self):
+        bpos = self.building.pos
+        return (bpos[0] + self.offset[0], bpos[1] + self.offset[1])
+
+class Floor(object):
+    """A set of places within a building. Places on a
+       floor are organised into rows and columns.
+       """
+
+    def __init__(self, title, places):
+        self.title = title # str
+        self.places = places # list of lists of places
+
+    def rows(self):
+        for row in self.places:
+            yield row
+
+    def width(self):
+        return max(len(row) for row in self.places)
+
+class BuildingFullError(Exception):
+    pass
+
 class Building(Sprite):
     """Base class for buildings"""
 
@@ -20,7 +61,17 @@ class Building(Sprite):
         self.tile_no = self.TILE_NO
         self._buy_price = self.BUY_PRICE
         self._sell_price = self.SELL_PRICE
-        self._occupants = set()
+
+        self._floors = []
+        for f in range(self.FLOORS):
+            places = []
+            for i in range(self.size[0]):
+                row = []
+                for j in range(self.size[1]):
+                    row.append(Place(self, (i, j)))
+                places.append(row)
+            floor = Floor("Floor %s" % (f+1,), places)
+            self._floors.append(floor)
 
         # Create the building somewhere far off screen
         Sprite.__init__(self, self.day_image, (-1000, -1000))
@@ -86,20 +137,32 @@ class Building(Sprite):
         else:
             self.setimage(self.night_image)
 
-    def occupants(self):
-        """Return list of buildings occupants."""
-        return list(self._occupants)
+    def floors(self):
+        return self._floors
+
+    def places(self):
+        for floor in self._floors:
+            for row in floor.rows():
+                for place in row:
+                    yield place
+
+    def max_floor_width(self):
+        return max(floor.width() for floor in self._floors)
+
+    def first_empty_place(self):
+        for place in self.places():
+            if place.occupant is None:
+                return place
+        raise BuildingFullError()
 
     def add_occupant(self, occupant):
-        if occupant.abode is not None:
-            occupant.abode.remove_occupant(occupant)
-        occupant.abode = self
-        self._occupants.add(occupant)
+        place = self.first_empty_place()
+        place.set_occupant(occupant)
 
-    def remove_occupant(self, occupant):
-        if occupant in self._occupants:
-            self._occupants.remove(occupant)
-            occupant.abode = None
+    def occupants(self):
+        for place in self.places():
+            if place.occupant is not None:
+                yield place.occupant
 
 class HenHouse(Building):
     """A HenHouse."""
@@ -110,7 +173,14 @@ class HenHouse(Building):
     SIZE = (3, 2)
     IMAGE = 'sprites/henhouse.png'
     NAME = 'Hen House'
+    FLOORS = 1
 
+class DoubleStoryHenHouse(HenHouse):
+    """A double story hen house."""
+    BUY_PRICE = 300
+    SELL_PRICE = 150
+    NAME = 'Hendominium'
+    FLOORS = 2
 
 class GuardTower(Building):
     """A GuardTower."""
@@ -121,6 +191,7 @@ class GuardTower(Building):
     SIZE = (2, 2)
     IMAGE = 'sprites/watchtower.png'
     NAME = 'Watch Tower'
+    FLOORS = 1
 
 def is_building(obj):
     """Return true if obj is a build class."""

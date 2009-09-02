@@ -233,24 +233,26 @@ class GameBoard(object):
                 self.animal_to_place = None
             else:
                 self.animal_to_place = chicken
-            print "Selected animal %r" % (self.animal_to_place,)
             return
         building = self.get_building(tile_pos)
         if building:
-            # XXX: quick hack so egg loop triggers
-            if self.animal_to_place:
-                building.add_occupant(self.animal_to_place)
-                if self.animal_to_place in self.tv.sprites:
-                    self.tv.sprites.remove(self.animal_to_place)
-                self.animal_to_place = None
-                self.open_building_dialog(building)
+            self.open_building_dialog(building)
             return
         if self.tv.get(tile_pos) == self.GRASSLAND:
             if self.animal_to_place is not None:
                 occupant = self.animal_to_place
                 if occupant.abode is not None:
-                    occupant.abode.remove_occupant(occupant)
+                    occupant.abode.clear_occupant()
                 occupant.set_pos(tile_pos)
+                self.set_visibility(occupant)
+
+    def set_visibility(self, chicken):
+        if chicken.outside():
+            if chicken not in self.tv.sprites:
+                self.tv.sprites.append(chicken)
+        else:
+            if chicken in self.tv.sprites:
+                self.tv.sprites.remove(chicken)
 
     def open_dialog(self, widget):
         """Open a dialog for the given widget. Add close button."""
@@ -273,13 +275,50 @@ class GameBoard(object):
 
     def open_building_dialog(self, building):
         """Create dialog for manipulating the contents of a building."""
+        def select_occupant(place, button):
+            """Select occupant in place."""
+            self.animal_to_place = place.occupant
+
+        def set_occupant(place, button):
+            """Set occupant of a given place."""
+            if self.animal_to_place is not None:
+                button.value = icons.CHKN_NEST_ICON
+                button.disconnect(gui.CLICK, set_occupant)
+                button.connect(gui.CLICK, select_occupant, place, button)
+
+                old_abode = self.animal_to_place.abode
+                if id(old_abode) in place_button_map:
+                    old_button = place_button_map[id(old_abode)]
+                    old_button.value = icons.EMPTY_NEST_ICON
+                    old_button.disconnect(gui.CLICK, select_occupant)
+                    old_button.connect(gui.CLICK, set_occupant, place, button)
+
+                chicken = self.animal_to_place
+                place.set_occupant(chicken)
+                chicken.set_pos(place.get_pos())
+                self.set_visibility(self.animal_to_place)
+
+        place_button_map = {}
+
         width, height = pygame.display.get_surface().get_size()
         tbl = gui.Table()
-        for row in range(building.size[0]):
+        columns = building.max_floor_width()
+        kwargs = { 'style': { 'padding_left': 10, 'padding_bottom': 10 }}
+        for floor in building.floors():
             tbl.tr()
-            for col in range(building.size[1]):
-                button = gui.Button("%s, %s" % (row, col))
-                tbl.td(button)
+            tbl.td(gui.Button(floor.title), colspan=columns, align=-1, **kwargs)
+            tbl.tr()
+            for row in floor.rows():
+                tbl.tr()
+                for place in row:
+                    if place.occupant is None:
+                        button = gui.Button(icons.EMPTY_NEST_ICON)
+                        button.connect(gui.CLICK, set_occupant, place, button)
+                    else:
+                        button = gui.Button(icons.CHKN_NEST_ICON)
+                        button.connect(gui.CLICK, select_occupant, place, button)
+                    place_button_map[id(place)] = button
+                    tbl.td(button, **kwargs)
 
         self.open_dialog(tbl)
 
@@ -401,8 +440,11 @@ class GameBoard(object):
                     new_chick = chicken.hatch()
                     if new_chick:
                         self.eggs -= 1
-                        building.add_occupant(new_chick)
-                        self.add_chicken(new_chick)
+                        try:
+                            building.add_occupant(new_chick)
+                            self.add_chicken(new_chick)
+                        except buildings.BuildingFullError:
+                            print "Building full."
         self.toolbar.update_egg_counter(self.eggs)
 
     def kill_fox(self, fox):
@@ -423,7 +465,7 @@ class GameBoard(object):
             self.eggs -= 1
             self.toolbar.update_egg_counter(self.eggs)
         if chick.abode:
-            chick.abode.remove_occupant(chick)
+            chick.abode.clear_occupant()
         self.toolbar.update_chicken_counter(len(self.chickens))
         if chick in self.tv.sprites:
             if chick.outside():
