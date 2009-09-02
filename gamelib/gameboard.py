@@ -354,10 +354,20 @@ class GameBoard(object):
         self.foxes = set() # Remove all the foxes
 
     def move_foxes(self):
+        """Move the foxes.
+        
+           We return True if there are no more foxes to move or all the
+           foxes are safely back. This end's the night"""
+        if not self.foxes:
+            return True
+        over = True
         for fox in self.foxes:
             fox.move(self)
+            if not fox.safe:
+                over = False
         for chicken in self.chickens:
             chicken.attack(self)
+        return over
 
     def add_chicken(self, chicken):
         self.chickens.add(chicken)

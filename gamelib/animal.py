@@ -150,6 +150,7 @@ class Fox(Animal):
         self.hunting = True
         self.dig_pos = None
         self.tick = 0
+        self.safe = False
 
     def _cost_tile(self, pos, gameboard):
         if gameboard.in_bounds(pos):
@@ -215,6 +216,7 @@ class Fox(Animal):
                 self.landmarks.pop() # Moving to the next landmark
             else:
                 # Safely back at the start
+                self.safe = True
                 return self.pos
         return self._find_best_path_step(self.landmarks[-1], gameboard)
 
