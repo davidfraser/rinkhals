@@ -1,28 +1,3 @@
-[chicken1.ogg]
-URL: http://www.freesound.org/download/76868/76868_Robinhood76_01170_village_hen_4.wav
-Source: http://www.freesound.org/samplesViewSingle.php?id=76868
-License: http://creativecommons.org/licenses/sampling+/1.0/
-Credit: Robinhood76 (http://www.freesound.org/usersViewSingle.php?id=321967)
-Date: 2009-08-02
-OriginalExtension: wav
-WebLogin: freesound
-
-[chicken2.ogg]
-URL: http://www.freesound.org/download/75726/75726_Robinhood76_01130_chicken_hen_2.wav
-Source: http://www.freesound.org/samplesViewSingle.php?id=75726
-License: http://creativecommons.org/licenses/sampling+/1.0/
-Credit: Robinhood76 (http://www.freesound.org/usersViewSingle.php?id=321967)
-Date: 2009-07-17
-OriginalExtension: wav
-WebLogin: freesound
-
-[chicken3.ogg]
-URL: http://www.sampleswap.org/SAMPLESWAP/SFX%20AND%20UNUSUAL%20SOUNDS/sfx%20cheesy%20lo-fi/Chicken.aif
-Source: http://www.sampleswap.org/filebrowser-new.php?d=SFX+AND+UNUSUAL+SOUNDS%2Fsfx+cheesy+lo-fi%2F
-License: Public Domain
-OriginalExtension: aiff
-WebLogin: sampleswap
-
 [sell-chicken.ogg]
 URL: http://www.archive.org/download/BoulangerColette/BoulangerColette44.zip
 Source: http://www.archive.org/details/BoulangerColette
