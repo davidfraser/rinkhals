@@ -177,8 +177,11 @@ class HenHouse(Building):
 
 class DoubleStoryHenHouse(HenHouse):
     """A double story hen house."""
+    TILE_NO = tiles.REVERSE_TILE_MAP['hendominium']
     BUY_PRICE = 300
     SELL_PRICE = 150
+    SIZE = (2, 3)
+    IMAGE = 'sprites/hendominium.png'
     NAME = 'Hendominium'
     FLOORS = 2
 

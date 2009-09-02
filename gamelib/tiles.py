@@ -15,6 +15,7 @@ class TileMap(object):
         3: ("henhouse", "grassland.png"),
         4: ("guardtower", "guardtower.png"),
         5: ("broken fence", "broken_fence.png"),
+        6: ("hendominium", "grassland.png"),
     }
 
     def __init__(self, tiles=None):
