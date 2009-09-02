@@ -46,6 +46,8 @@ if __name__ == "__main__":
         ("knife", 20, 20),
         ("henhouse", 60, 40),
         ("watchtower", 40, 40),
+        ("chknnest", 20, 20),
+        ("emptynest", 20, 20),
     ]
 
     process_svg_folder("data/tiles", 20, 20)
