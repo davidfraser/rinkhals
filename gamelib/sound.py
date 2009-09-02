@@ -15,14 +15,18 @@ def init_sound():
     except pygame.error, exc:
         print >>sys.stderr, "Could not initialize sound system: %s" % exc
 
+SOUND_CACHE = {}
+
 def play_sound(filename):
     """plays the sound with the given filename from the data sounds directory"""
     if not SOUND_INITIALIZED:
         return
     file_path = data.filepath("sounds", filename)
-    if not os.path.exists(file_path):
-        return
-    pygame.mixer.music.load(file_path)
-    pygame.mixer.music.play()
+    sound = SOUND_CACHE.get(file_path, None)
+    if not sound:
+        if not os.path.exists(file_path):
+            return
+        SOUND_CACHE[file_path] = sound = pygame.mixer.Sound(file_path)
+    sound.play()
 
 
