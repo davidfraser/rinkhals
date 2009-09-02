@@ -47,7 +47,7 @@ class Rifle(Weapon):
 
     RANGE = 3
     BASE_HIT = 50
-    RANGE_MODIFIER = 10
+    RANGE_MODIFIER = 15
     HIT_SOUND = "fire-rifle.ogg"
 
 def is_equipment(obj):

@@ -14,6 +14,8 @@ import equipment
 class Animal(Sprite):
     """Base class for animals"""
 
+    STEALTH = 0
+
     def __init__(self, image_left, image_right, tile_pos):
         # Create the animal somewhere far off screen
         Sprite.__init__(self, image_left, (-1000, -1000))
@@ -72,6 +74,8 @@ class Chicken(Animal):
         """Choose a random fox within range of this weapon."""
         killable_foxes = []
         for fox in gameboard.foxes:
+            if not visible(self, fox):
+                continue
             if weapon.in_range(gameboard, self, fox):
                 killable_foxes.append(fox)
         if not killable_foxes:
@@ -103,6 +107,8 @@ class Egg(Animal):
 
 class Fox(Animal):
     """A fox"""
+
+    STEALTH = 20
 
     costs = {
             # weighting for movement calculation
@@ -290,6 +296,8 @@ class Fox(Animal):
 class NinjaFox(Fox):
     """Ninja foxes are hard to see"""
 
+    STEALTH = 60
+
 class DemoFox(Fox):
     """Demolition Foxes destroy fences easily"""
 
@@ -305,3 +313,8 @@ class GreedyFox(Fox):
         self.chickens_eaten += 1
         if self.chickens_eaten > 2:
             self.hunting = False
+
+def visible(watcher, watchee):
+    roll = random.randint(1, 100)
+    distance = watcher.pos.dist(watchee.pos) - 1
+    return roll > watchee.STEALTH + 10*distance
