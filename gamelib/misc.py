@@ -13,7 +13,7 @@ class Position(object):
     def dist(self, b):
         """Gives the distance to another position"""
 
-        return abs(self.x - b.x) + abs(self.y - b.y)
+        return max(abs(self.x - b.x), abs(self.y - b.y))
 
     def __sub__(self, b):
         return Position(self.x - b.x, self.y - b.y)
