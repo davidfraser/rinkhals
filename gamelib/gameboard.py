@@ -250,7 +250,7 @@ class GameBoard(object):
             self.disp.event(e)
 
     def clear_foxes(self):
-        for fox in self.foxes:
+        for fox in self.foxes[:]:
             # Any foxes that didn't make it to the woods are automatically
             # killed
             if self.in_bounds(fox.pos) and self.tv.get(fox.pos.to_tuple()) \
