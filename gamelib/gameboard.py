@@ -378,7 +378,6 @@ class GameBoard(object):
         for building in self.buildings:
             if building.NAME in [buildings.HenHouse.NAME]:
                 for chicken in building.occupants():
-                    print 'Laying check', chicken, chicken.egg, chicken.egg_counter
                     chicken.lay()
                     if chicken.egg:
                         self.eggs += 1
@@ -388,11 +387,9 @@ class GameBoard(object):
         for building in self.buildings:
             if building.NAME in [buildings.HenHouse.NAME]:
                 for chicken in building.occupants():
-                    print 'Checking', chicken, chicken.egg, chicken.egg_counter
                     new_chick = chicken.hatch()
                     if new_chick:
                         self.eggs -= 1
-                        print 'hatching chicken %s in %s ' % (chicken, building)
                         building.add_occupant(new_chick)
                         self.add_chicken(new_chick)
         self.toolbar.update_egg_counter(self.eggs)
