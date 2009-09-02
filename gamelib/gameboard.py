@@ -51,6 +51,7 @@ class ToolBar(gui.Table):
         self.add_tool_button("Sell chicken", constants.TOOL_SELL_CHICKEN)
         self.add_tool_button("Sell egg", constants.TOOL_SELL_EGG)
         self.add_tool_button("Sell building", constants.TOOL_SELL_BUILDING)
+        self.add_tool_button("Lumberjack", constants.TOOL_LOGGING)
         self.add_tool_button("Buy fence", constants.TOOL_BUY_FENCE)
         for building_cls in buildings.BUILDINGS:
             self.add_tool_button("Buy %s" % (building_cls.NAME,), building_cls)
@@ -193,6 +194,8 @@ class GameBoard(object):
             self.buy_fence(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELL_BUILDING:
             self.sell_building(self.tv.screen_to_tile(e.pos))
+        elif self.selected_tool == constants.TOOL_LOGGING:
+            self.logging_forest(self.tv.screen_to_tile(e.pos))
         elif buildings.is_building(self.selected_tool):
             self.buy_building(self.tv.screen_to_tile(e.pos), self.selected_tool)
         elif equipment.is_equipment(self.selected_tool):
@@ -342,6 +345,12 @@ class GameBoard(object):
         if self.tv.get(tile_pos) != self.FENCE:
             return
         self.add_cash(constants.SELL_PRICE_FENCE)
+        self.tv.set(tile_pos, self.GRASSLAND)
+
+    def logging_forest(self, tile_pos):
+        if self.tv.get(tile_pos) != self.WOODLAND:
+            return
+        self.add_cash(-constants.LOGGING_PRICE)
         self.tv.set(tile_pos, self.GRASSLAND)
 
     def buy_building(self, tile_pos, building_cls):
