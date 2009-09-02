@@ -38,6 +38,7 @@ def process_sprite(name, width, height, sprite_path):
 if __name__ == "__main__":
     tile_path = "data/tiles"
     sprite_path = "data/sprites"
+    image_path = "data/images"
     sprites = [
         ("chkn", 20, 20),
         ("egg", 20, 20),
@@ -54,3 +55,4 @@ if __name__ == "__main__":
     process_svg_folder("data/icons", 40, 40)
     for name, width, height in sprites:
         process_sprite(name, width, height, sprite_path)
+    process_sprite("splash", 800, 600, image_path)
