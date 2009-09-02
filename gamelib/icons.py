@@ -2,7 +2,9 @@
 
 from pgu.gui import Image
 
-import data
+import imagecache
 
-KILLED_FOX = Image(data.filepath('icons/killed_fox.png'))
-CHKN_ICON = Image(data.filepath('icons/chkn.png'))
+KILLED_FOX = Image(imagecache.load_image('icons/killed_fox.png'))
+CHKN_ICON = Image(imagecache.load_image('icons/chkn.png'))
+EMPTY_NEST_ICON = Image(imagecache.load_image('sprites/emptynest.png'))
+CHKN_NEST_ICON = Image(imagecache.load_image('sprites/chknnest.png'))
