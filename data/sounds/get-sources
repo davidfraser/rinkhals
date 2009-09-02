@@ -66,19 +66,29 @@ def convert_audio(source_filename, target_filename, source_format, target_format
     target_file.write(enc.flush())
     target_file.close()
 
+def lazy_login(options):
+    """performs a lazy login for the given options"""
+    if not options.get("lazy", False):
+        # this login has already happened
+        return
+    options["lazy"] = False
+    options = options.copy()
+    url = options.pop("url")
+    params = urllib.urlencode(options)
+    logging.info("Logging in to %s", url)
+    f = opener.open(url, params)
+    contents = f.read()
+    f.close()
+
 def handle_logins(config):
     """logs in to necessary sites and returns urllib2 opener with cookies set up"""
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+    opener.weblogin = {}
     urllib2.install_opener(opener)
     for section in config.sections():
         options = dict(config.items(section))
-        url = options.pop("url")
-        params = urllib.urlencode(options)
-        logging.info("Logging in to %s", url)
-        f = opener.open(url, params)
-        contents = f.read()
-        f.close()
-    # params = urllib.urlencode({'username': 'davidfraser', 'password': 'QwpCAlZe', 'autologin': 'on', 'login': 'login', 'redirect': '../index.php'})
+        opener.weblogin[section] = options
+        opener.weblogin[section]["lazy"] = True
     return opener
 
 if __name__ == "__main__":
@@ -97,6 +107,8 @@ if __name__ == "__main__":
         download_filename = os.path.join(target_dir, download_filename)
         if not os.path.exists(download_filename):
             url = source_options["url"]
+            if "weblogin" in source_options:
+                lazy_login(opener.weblogin[source_options["weblogin"]])
             logging.info("Downloading %s to %s", url, download_filename)
             contents = opener.open(url).read()
             if "<html" in contents[:1024].lower():
