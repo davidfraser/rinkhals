@@ -447,7 +447,7 @@ class GameBoard(object):
     def lay_eggs(self):
         self.eggs = 0
         for building in self.buildings:
-            if building.NAME in [buildings.HenHouse.NAME]:
+            if building.NAME in buildings.HENHOUSES:
                 for chicken in building.occupants():
                     chicken.lay()
                     if chicken.egg:
@@ -456,7 +456,7 @@ class GameBoard(object):
 
     def hatch_eggs(self):
         for building in self.buildings:
-            if building.NAME in [buildings.HenHouse.NAME]:
+            if building.NAME in buildings.HENHOUSES:
                 for chicken in building.occupants():
                     new_chick = chicken.hatch()
                     if new_chick:
@@ -488,9 +488,8 @@ class GameBoard(object):
         if chick.abode:
             chick.abode.clear_occupant()
         self.toolbar.update_chicken_counter(len(self.chickens))
-        if chick in self.tv.sprites:
-            if chick.outside():
-                self.tv.sprites.remove(chick)
+        if chick in self.tv.sprites and chick.outside():
+            self.tv.sprites.remove(chick)
 
     def remove_building(self, building):
         if building in self.buildings:

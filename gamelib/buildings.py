@@ -200,6 +200,9 @@ def is_building(obj):
     """Return true if obj is a build class."""
     return getattr(obj, "IS_BUILDING", False) and hasattr(obj, "NAME")
 
+# Building hens can lay eggs in
+HENHOUSES = [HenHouse.NAME, DoubleStoryHenHouse.NAME]
+
 BUILDINGS = []
 for name in dir():
     obj = eval(name)
