@@ -230,7 +230,7 @@ class GameBoard(object):
         elif equipment.is_equipment(self.selected_tool):
             self.buy_equipment(self.tv.screen_to_tile(e.pos), self.selected_tool)
 
-    def get_chicken(self, tile_pos):
+    def get_outside_chicken(self, tile_pos):
         for chick in self.chickens:
             if chick.covers(tile_pos) and chick.outside():
                 return chick
@@ -243,7 +243,7 @@ class GameBoard(object):
         return None
 
     def sell_chicken(self, tile_pos):
-        chick = self.get_chicken(tile_pos)
+        chick = self.get_outside_chicken(tile_pos)
         if chick is None:
             return
         if len(self.chickens) == 1:
@@ -259,7 +259,7 @@ class GameBoard(object):
            This will either select an animal or
            place a selected animal in a building.
            """
-        chicken = self.get_chicken(tile_pos)
+        chicken = self.get_outside_chicken(tile_pos)
         if chicken:
             if chicken is self.animal_to_place:
                 self.animal_to_place = None
@@ -395,7 +395,7 @@ class GameBoard(object):
             self.add_building(building)
 
     def buy_equipment(self, tile_pos, equipment_cls):
-        chicken = self.get_chicken(tile_pos)
+        chicken = self.get_outside_chicken(tile_pos)
         equipment = equipment_cls()
         if chicken is None or self.cash < equipment.buy_price():
             return
@@ -414,7 +414,7 @@ class GameBoard(object):
         self.remove_building(building)
 
     def sell_equipment(self, tile_pos):
-        chicken = self.get_chicken(tile_pos)
+        chicken = self.get_outside_chicken(tile_pos)
         if chicken is None or not chicken.equipment:
             return
         if len(chicken.equipment) == 1:
