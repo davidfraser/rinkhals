@@ -12,6 +12,7 @@ import buildings
 import animal
 import equipment
 import sound
+import cursors
 
 class OpaqueLabel(gui.Label):
     def paint(self, s):
@@ -50,28 +51,35 @@ class ToolBar(gui.Table):
         self.add_counter(icons.KILLED_FOX, self.killed_foxes)
         self.add_spacer(20)
 
-        self.add_tool_button("Move Hen", constants.TOOL_PLACE_ANIMALS)
+        self.add_tool_button("Move Hen", constants.TOOL_PLACE_ANIMALS,
+                cursors.cursors['select'])
         self.add_tool_button("Cut Trees", constants.TOOL_LOGGING)
         self.add_spacer(20)
 
         self.add_heading("Sell ...")
-        self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN)
-        self.add_tool_button("Egg", constants.TOOL_SELL_EGG)
-        self.add_tool_button("Building", constants.TOOL_SELL_BUILDING)
+        self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
+                cursors.cursors['select'])
+        self.add_tool_button("Egg", constants.TOOL_SELL_EGG,
+                cursors.cursors['select'])
+        self.add_tool_button("Building", constants.TOOL_SELL_BUILDING,
+                cursors.cursors['select'])
         self.add_spacer(20)
 
         self.add_heading("Buy ...")
         self.add_tool_button("Fence", constants.TOOL_BUY_FENCE)
         for building_cls in buildings.BUILDINGS:
-            self.add_tool_button(building_cls.NAME.title(), building_cls)
+            self.add_tool_button(building_cls.NAME.title(), building_cls,
+                    cursors.cursors.get('build', None))
         for equipment_cls in equipment.EQUIPMENT:
-            self.add_tool_button(equipment_cls.NAME.title(), equipment_cls)
+            self.add_tool_button(equipment_cls.NAME.title(), equipment_cls,
+                    cursors.cursors.get(equipment_cls.NAME, None))
         self.add_spacer()
 
         self.add_button("Finished Day", self.day_done)
 
     def day_done(self):
         import engine
+        self.gameboard.reset_cursor()
         pygame.event.post(engine.START_NIGHT)
 
     update_cash_counter = mkcountupdate('cash_counter')
@@ -88,8 +96,9 @@ class ToolBar(gui.Table):
         self.tr()
         self.td(mklabel(text), colspan=2)
 
-    def add_tool_button(self, text, tool):
-        self.add_button(text, lambda: self.gameboard.set_selected_tool(tool))
+    def add_tool_button(self, text, tool, cursor=None):
+        self.add_button(text, lambda: self.gameboard.set_selected_tool(tool,
+            cursor))
 
     def add_button(self, text, func):
         button = gui.Button(text, width=self.rect.w, style={"padding_left": 0})
@@ -180,9 +189,16 @@ class GameBoard(object):
     def loop(self):
         self.tv.loop()
 
-    def set_selected_tool(self, tool):
+    def set_selected_tool(self, tool, cursor):
         self.selected_tool = tool
         self.animal_to_place = None
+        if cursor:
+            pygame.mouse.set_cursor(*cursor)
+        else:
+            pygame.mouse.set_cursor(*cursors.cursors['arrow'])
+
+    def reset_cursor(self):
+        pygame.mouse.set_cursor(*cursors.cursors['arrow'])
 
     def in_bounds(self, pos):
         """Check if a position is within the game boundaries"""
@@ -244,8 +260,10 @@ class GameBoard(object):
         if chicken and chicken.abode is None:
             if chicken is self.animal_to_place:
                 self.animal_to_place = None
+                pygame.mouse.set_cursor(*cursors.cursors['arrow'])
             else:
                 self.animal_to_place = chicken
+                pygame.mouse.set_cursor(*cursors.cursors['chicken'])
             return
         building = self.get_building(tile_pos)
         if building:
@@ -291,6 +309,7 @@ class GameBoard(object):
         def select_occupant(place, button):
             """Select occupant in place."""
             self.animal_to_place = place.occupant
+            pygame.mouse.set_cursor(*cursors.cursor['chicken'])
 
         def set_occupant(place, button):
             """Set occupant of a given place."""

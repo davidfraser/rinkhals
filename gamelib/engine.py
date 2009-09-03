@@ -87,6 +87,7 @@ class DayState(State):
         if events_equal(e, START_NIGHT):
             return NightState(self.game)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
+            self.game.gameboard.reset_cursor()
             return GameOver(self.game)
         elif e.type is KEYDOWN and e.key == K_n:
             return pygame.event.post(START_NIGHT)
@@ -130,6 +131,7 @@ class NightState(State):
         elif e.type is KEYDOWN and e.key == K_d:
             return pygame.event.post(START_DAY)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
+            self.game.gameboard.reset_cursor()
             return GameOver(self.game)
         elif e.type is MOVE_FOX_ID:
             self.cycle_count += 1
