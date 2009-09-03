@@ -56,8 +56,9 @@ class ImageCache(object):
 
 # modifiers
 
-from pygame.locals import BLEND_RGBA_MULT
+from pygame.locals import BLEND_RGBA_MULT, BLEND_MULT
 NIGHT_COLOUR = (100.0, 100.0, 200.0, 255.0)
+DARKEN_COLOUR = (100.0, 100.0, 100.0, 255.0)
 
 def convert_to_night(image):
     """Convert a day tile to a night tile."""
@@ -70,9 +71,20 @@ def convert_to_right_facing(image):
     right_facing_image = pygame.transform.flip(right_facing_image, 1, 0)
     return right_facing_image
 
+def darken_center(image):
+    darkened = image.copy()
+    w, h = darkened.get_size()
+    w, h = int(w*0.5), int(h*0.5)
+    x, y = int(w*0.5), int(h*0.5)
+    overlay = pygame.Surface((w, h))
+    overlay.fill(DARKEN_COLOUR)
+    darkened.blit(overlay, (x,y), None, BLEND_MULT)
+    return darkened
+
 # globals
 
 cache = ImageCache()
 cache.register_modifier("night", convert_to_night)
 cache.register_modifier("right_facing", convert_to_right_facing)
+cache.register_modifier("darken_center", darken_center)
 load_image = cache.load_image

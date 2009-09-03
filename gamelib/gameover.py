@@ -17,9 +17,9 @@ class GameOverContainer(gui.Container):
         gui.Container.__init__(self, *args, **kwargs)
         self.add(game_over, 0, 0)
         if game_over.survived:
-            self.splash = imagecache.load_image("images/gameover_win.png")
+            self.splash = imagecache.load_image("images/gameover_win.png", ["darken_center"])
         else:
-            self.splash = imagecache.load_image("images/gameover_lose.png")
+            self.splash = imagecache.load_image("images/gameover_lose.png", ["darken_center"])
 
     def paint(self, s):
         pygame.display.set_caption('Game Over')
