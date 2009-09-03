@@ -92,6 +92,12 @@ class ToolBar(gui.Table):
         self.td(icon, align=-1, width=self.rect.w/2)
         self.td(label, align=-1, width=self.rect.w/2)
 
+    def resize(self, width=None, height=None):
+        width, height = gui.Table.resize(self, width, height)
+        width = GameBoard.TOOLBAR_WIDTH
+        return width, height
+
+
 class VidWidget(gui.Widget):
     def __init__(self, gameboard, vid, **params):
         gui.Widget.__init__(self, **params)
@@ -154,7 +160,7 @@ class GameBoard(object):
         tbl.tr()
         self.toolbar = ToolBar(self, width=self.TOOLBAR_WIDTH)
         tbl.td(self.toolbar, valign=-1)
-        self.tvw = VidWidget(self, self.tv, width=width-self.TOOLBAR_WIDTH-19, height=height)
+        self.tvw = VidWidget(self, self.tv, width=width-self.TOOLBAR_WIDTH, height=height)
         tbl.td(self.tvw)
         self.top_widget = tbl
 
