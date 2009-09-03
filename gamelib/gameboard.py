@@ -231,7 +231,7 @@ class GameBoard(object):
            place a selected animal in a building.
            """
         chicken = self.get_chicken(tile_pos)
-        if chicken:
+        if chicken and chicken.abode is None:
             if chicken is self.animal_to_place:
                 self.animal_to_place = None
             else:
