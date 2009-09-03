@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="525"
+   height="525"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   version="1.0"
+   sodipodi:docname="muzzle_flash.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+    <inkscape:perspective
+       id="perspective2447"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.88833333"
+     inkscape:cx="141.19606"
+     inkscape:cy="155.41034"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="735"
+     inkscape:window-x="1280"
+     inkscape:window-y="24" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-169.70945,-261.08105)">
+    <path
+       style="opacity:1;fill:#ffdf31;fill-opacity:1;stroke:#ffba00;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 110.96875 204.625 L 91.53125 253.90625 L 56.5625 214.125 L 73.34375 264.34375 L 21 256.375 L 56.75 278.34375 C 64.018293 278.21834 70.365937 278.07633 71.125 277.90625 C 72.11351 277.68476 73.351242 277.11611 73.875 276.65625 C 74.65684 275.9698 76.239627 275.80605 82.625 275.75 C 86.679776 275.71441 112.71285 275.66504 135.1875 275.625 L 125.625 273.65625 L 158.71875 232.3125 L 112.1875 257.5625 L 110.96875 204.625 z M 51.6875 294.0625 L 51 295.46875 C 50.745858 296.0009 50.517301 296.30929 50.15625 296.53125 L 50.125 296.65625 L 50 296.65625 C 49.489673 296.89362 48.71834 296.9573 47.28125 297.03125 C 46.30975 297.08124 45.498408 297.08282 44.8125 297.0625 L 20.90625 311.59375 L 70.875 304.125 C 69.703191 303.17752 68.564528 301.07681 68.5625 299.5625 C 68.56073 298.24541 66.975521 295.33789 65.75 294.4375 C 65.46757 294.23 62.195552 294.06683 58.46875 294.0625 L 51.6875 294.0625 z M 84.4375 295.625 C 77.394412 295.63162 73.718748 295.7887 73.71875 296.125 C 73.71875 296.41924 74.183111 297.17277 74.75 297.78125 C 75.91282 299.0294 76.878622 301.99438 76.46875 303.0625 C 76.199808 303.76335 74.412223 304.46034 72.96875 304.625 L 56.34375 353.9375 L 91.4375 314.28125 L 110.6875 363.625 L 112.09375 310.6875 L 158.5625 336.09375 L 126.90625 296.34375 C 122.92033 296.26548 118.82658 296.1785 115.3125 296.09375 C 101.89041 295.77006 91.480588 295.61838 84.4375 295.625 z M 72.125 299.6875 C 71.87278 299.6875 71.656251 300.0451 71.65625 300.46875 C 71.65625 300.8924 71.991463 301.25001 72.40625 301.25 C 72.86563 301.25 73.055051 300.93795 72.875 300.46875 C 72.71243 300.0451 72.377211 299.68749 72.125 299.6875 z "
+       transform="translate(169.70945,261.08105)"
+       id="path5713" />
+  </g>
+</svg>

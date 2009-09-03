@@ -41,16 +41,23 @@ if __name__ == "__main__":
     image_path = "data/images"
     sprites = [
         ("chkn", 20, 20),
+        ("select_chkn", 20, 20),
+        ("chkn_death", 20, 20),
         ("egg", 20, 20),
         ("fox", 20, 20),
+        ("fox_death", 20, 20),
         ("ninja_fox", 20, 20),
         ("equip_rifle", 20, 20),
         ("equip_knife", 20, 20),
+        ("muzzle_flash", 20, 20),
         ("kevlar", 20, 20),
         ("helmet", 20, 20),
         ("henhouse", 60, 40),
+        ("select_henhouse", 60, 40),
         ("hendominium", 40, 60),
+        ("select_hendominium", 40, 60),
         ("watchtower", 40, 40),
+        ("select_watchtower", 40, 40),
         ("chknnest", 20, 20),
         ("emptynest", 20, 20),
     ]
