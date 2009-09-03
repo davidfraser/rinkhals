@@ -37,3 +37,10 @@
 * <jerith> Oh, defensive equipment.
 
 * <Hodgestar> There is also an odd bug where buildings fail to open when they're full or close to full.
+
+* <tzhau> simchicken! so are there gonna to be chicken processing plants? escaping chickens?
+  * <Hodgestar> tzhau: We could add some sort of self-managing henhouse that sells chickens automatically to make space for hatching eggs.
+
+* <Nitwit> Hodgestar: I see the ninja fox screenshot shows we have a chicken counting bug somewhere
+  * <Hodgestar> Nitwit: Is the chicken perhaps inside? Or is the number too low?
+  * <Nitwit> Hodgestar: the number's too low - there are 5 chickens visible, but a count of only tically to make space for hatching eggs.
