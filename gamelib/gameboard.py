@@ -63,6 +63,7 @@ class ToolBar(gui.Table):
                 cursors.cursors['select'])
         self.add_tool_button("Building", constants.TOOL_SELL_BUILDING,
                 cursors.cursors['select'])
+        self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT)
         self.add_spacer(20)
 
         self.add_heading("Buy ...")
@@ -220,6 +221,8 @@ class GameBoard(object):
             self.buy_fence(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELL_BUILDING:
             self.sell_building(self.tv.screen_to_tile(e.pos))
+        elif self.selected_tool == constants.TOOL_SELL_EQUIPMENT:
+            self.sell_equipment(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_LOGGING:
             self.logging_forest(self.tv.screen_to_tile(e.pos))
         elif buildings.is_building(self.selected_tool):
@@ -229,7 +232,7 @@ class GameBoard(object):
 
     def get_chicken(self, tile_pos):
         for chick in self.chickens:
-            if chick.covers(tile_pos):
+            if chick.covers(tile_pos) and chick.outside():
                 return chick
         return None
 
@@ -257,7 +260,7 @@ class GameBoard(object):
            place a selected animal in a building.
            """
         chicken = self.get_chicken(tile_pos)
-        if chicken and chicken.abode is None:
+        if chicken:
             if chicken is self.animal_to_place:
                 self.animal_to_place = None
                 pygame.mouse.set_cursor(*cursors.cursors['arrow'])
@@ -334,7 +337,6 @@ class GameBoard(object):
 
         place_button_map = {}
 
-        width, height = pygame.display.get_surface().get_size()
         tbl = gui.Table()
         columns = building.max_floor_width()
         kwargs = { 'style': { 'padding_left': 10, 'padding_bottom': 10 }}
@@ -410,6 +412,39 @@ class GameBoard(object):
         self.add_cash(building.sell_price())
         building.remove(self.tv)
         self.remove_building(building)
+
+    def sell_equipment(self, tile_pos):
+        chicken = self.get_chicken(tile_pos)
+        if chicken is None or not chicken.equipment:
+            return
+        if len(chicken.equipment) == 1:
+            item = chicken.equipment[0]
+            self.add_cash(item.sell_price())
+            chicken.unequip(item)
+        else:
+            self.open_equipment_dialog(chicken)
+
+    def open_equipment_dialog(self, chicken):
+        tbl = gui.Table()
+
+        def sell_item(item, button):
+            """Select item of equipment."""
+            self.add_cash(item.sell_price())
+            chicken.unequip(item)
+            self.disp.close(tbl)
+
+        kwargs = { 'style': { 'padding_left': 10, 'padding_bottom': 10 }}
+
+        tbl.tr()
+        tbl.td(gui.Button("Sell ...     "), align=-1, **kwargs)
+
+        for item in chicken.equipment:
+            tbl.tr()
+            button = gui.Button(item.name().title())
+            button.connect(gui.CLICK, sell_item, item, button)
+            tbl.td(button, align=1, **kwargs)
+
+        self.open_dialog(tbl)
 
     def event(self, e):
         if e.type == KEYDOWN:
