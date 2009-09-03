@@ -139,7 +139,9 @@ class Fox(Animal):
             'broken fence' : 2,
             'fence' : 10,
             'guardtower' : 2, # We can pass under towers
-            'henhouse' : 2,
+            'henhouse' : 30, # Don't go into a henhouse unless we're going to
+                             # catch a chicken there
+            'hendominium' : 30,
             }
 
     def __init__(self, pos):
@@ -151,6 +153,7 @@ class Fox(Animal):
         self.dig_pos = None
         self.tick = 0
         self.safe = False
+        self.closest = None
 
     def _cost_tile(self, pos, gameboard):
         if gameboard.in_bounds(pos):
@@ -224,35 +227,42 @@ class Fox(Animal):
         """Find the path to the closest chicken"""
         # Find the closest chicken
         min_dist = 999
-        closest = None
-        for chicken in gameboard.chickens:
-            dist = chicken.pos.dist(self.pos)
-            if dist < min_dist:
-                min_dist = dist
-                closest = chicken
-        if not closest:
+        if self.closest not in gameboard.chickens:
+            # Either no target, or someone ate it
+            for chicken in gameboard.chickens:
+                dist = chicken.pos.dist(self.pos)
+                if chicken.abode:
+                    dist += 10 # Prefer free-ranging chickens
+                if dist < min_dist:
+                    min_dist = dist
+                    self.closest = chicken
+        if not self.closest:
             # No more chickens, so leave
             self.hunting = False
             return self.pos
-        if closest.pos == self.pos:
+        if self.closest.pos == self.pos:
             # Caught a chicken
-            self._catch_chicken(closest, gameboard)
+            self._catch_chicken(self.closest, gameboard)
             return self.pos
-        return self._find_best_path_step(closest.pos, gameboard)
+        return self._find_best_path_step(self.closest.pos, gameboard)
 
     def _catch_chicken(self, chicken, gameboard):
         """Catch a chicken"""
         sound.play_sound("kill-chicken.ogg")
+        self.closest = None
         gameboard.remove_chicken(chicken)
         self.hunting = False
 
     def _update_pos(self, gameboard, new_pos):
         """Update the position, making sure we don't step on other foxes"""
         final_pos = new_pos
+        if new_pos == self.pos:
+            # We're not moving, so we can skip all the checks
+            return final_pos
+        blocked = False
         moves = [Position(x, y) for x in range(self.pos.x-1, self.pos.x + 2)
                 for y in range(self.pos.y-1, self.pos.y + 2)
                 if (x,y) != (0,0)]
-        blocked = False
         for fox in gameboard.foxes:
             if fox is not self and fox.pos == new_pos:
                 blocked = True
@@ -334,6 +344,7 @@ class GreedyFox(Fox):
 
     def _catch_chicken(self, chicken, gameboard):
         gameboard.remove_chicken(chicken)
+        self.closest = None
         self.chickens_eaten += 1
         if self.chickens_eaten > 2:
             self.hunting = False
