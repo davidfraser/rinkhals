@@ -19,11 +19,14 @@ class Animal(Sprite):
     def __init__(self, image_left, image_right, tile_pos):
         # Create the animal somewhere far off screen
         Sprite.__init__(self, image_left, (-1000, -1000))
-        self.image_left = image_left
-        self.image_right = image_right
+        self._image_left = image_left
+        self.image_left = image_left.copy()
+        self._image_right = image_right
+        self.image_right = image_right.copy()
         self.pos = Position(tile_pos[0], tile_pos[1])
         self.equipment = []
         self.abode = None
+        self.facing = 'left'
 
     def loop(self, tv, _sprite):
         ppos = tv.tile_to_view(self.pos.to_tuple())
@@ -44,12 +47,29 @@ class Animal(Sprite):
     def _fix_face(self, final_pos):
         """Set the face correctly"""
         if final_pos.left_of(self.pos):
-            self.setimage(self.image_left)
+            self._set_image_facing('left')
         elif final_pos.right_of(self.pos):
+            self._set_image_facing('right')
+
+    def _set_image_facing(self, facing):
+        self.facing = facing
+        if self.facing == 'left':
+            self.setimage(self.image_left)
+        elif self.facing == 'right':
             self.setimage(self.image_right)
 
     def equip(self, item):
         self.equipment.append(item)
+        if not hasattr(self, 'EQUIPMENT_IMAGE_ATTRIBUTE'):
+            return
+        eq_image_attr = getattr(item, self.EQUIPMENT_IMAGE_ATTRIBUTE, 'None')
+        if not eq_image_attr:
+            return
+        eq_image_left = imagecache.load_image(eq_image_attr)
+        eq_image_right = imagecache.load_image(eq_image_attr, ("right_facing",))
+        self.image_left.blit(eq_image_left, (0, 0))
+        self.image_right.blit(eq_image_right, (0, 0))
+        self._set_image_facing(self.facing)
 
     def weapons(self):
         return [e for e in self.equipment if equipment.is_weapon(e)]
@@ -62,6 +82,8 @@ class Animal(Sprite):
 
 class Chicken(Animal):
     """A chicken"""
+
+    EQUIPMENT_IMAGE_ATTRIBUTE = 'CHICKEN_IMAGE_FILE'
 
     def __init__(self, pos):
         image_left = imagecache.load_image('sprites/chkn.png')

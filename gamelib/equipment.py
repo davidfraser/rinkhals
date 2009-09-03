@@ -50,6 +50,8 @@ class Rifle(Weapon):
     RANGE_MODIFIER = 15
     HIT_SOUND = "fire-rifle.ogg"
 
+    CHICKEN_IMAGE_FILE = 'sprites/equip_rifle.png'
+
 class Knife(Weapon):
     NAME = "knife"
     BUY_PRICE = 20
@@ -58,6 +60,8 @@ class Knife(Weapon):
     RANGE = 1
     BASE_HIT = 70
     RANGE_MODIFIER = 0
+
+    CHICKEN_IMAGE_FILE = 'sprites/equip_knife.png'
 
 def is_equipment(obj):
     """Return true if obj is a build class."""
