@@ -182,7 +182,7 @@ class HenHouse(Building):
     SIZE = (3, 2)
     IMAGE = 'sprites/henhouse.png'
     SELECTED_IMAGE = 'sprites/select_henhouse.png'
-    NAME = 'Hen House'
+    NAME = 'Henhouse'
     FLOORS = 1
 
 class DoubleStoryHenHouse(HenHouse):
@@ -205,7 +205,7 @@ class GuardTower(Building):
     SIZE = (2, 2)
     IMAGE = 'sprites/watchtower.png'
     SELECTED_IMAGE = 'sprites/select_watchtower.png'
-    NAME = 'Watch Tower'
+    NAME = 'Watchtower'
     FLOORS = 1
 
 def is_building(obj):
