@@ -1,8 +1,5 @@
 == TODO ==
 
-* <confluence> There are sprites for equipped weapons; they just need to be strapped onto the chickens.
-  * <jerith> I'll do equipped chickens tomorrow.
-
 * <Hodgestar> A BuildingFullError can be raised when attempting to hatch eggs in buildings.
 
 * <confluence> Muzzle flashes!
