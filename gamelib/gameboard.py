@@ -328,6 +328,7 @@ class GameBoard(object):
         tbl.td(close_button)
 
         self.disp.open(tbl)
+        return tbl
 
     def open_building_dialog(self, building):
         """Create dialog for manipulating the contents of a building."""
@@ -453,7 +454,7 @@ class GameBoard(object):
             """Select item of equipment."""
             self.add_cash(item.sell_price())
             chicken.unequip(item)
-            self.disp.close(tbl)
+            self.disp.close(dialog)
 
         kwargs = { 'style': { 'padding_left': 10, 'padding_bottom': 10 }}
 
@@ -466,7 +467,7 @@ class GameBoard(object):
             button.connect(gui.CLICK, sell_item, item, button)
             tbl.td(button, align=1, **kwargs)
 
-        self.open_dialog(tbl)
+        dialog = self.open_dialog(tbl)
 
     def event(self, e):
         if e.type == KEYDOWN:
