@@ -15,21 +15,41 @@ import sound
 import cursors
 
 class OpaqueLabel(gui.Label):
+    def __init__(self, value, **params):
+        gui.Label.__init__(self, value, **params)
+        if 'width' in params:
+            self._width = params['width']
+        if 'height' in params:
+            self._height = params['height']
+        self._set_size()
+
+    def _set_size(self):
+        width, height = self.font.size(self.value)
+        width = getattr(self, '_width', width)
+        height = getattr(self, '_height', height)
+        self.style.width, self.style.height = width, height
+
     def paint(self, s):
         s.fill(self.style.background)
+        if self.style.align > 0:
+            r = s.get_rect()
+            w, _ = self.font.size(self.value)
+            s = s.subsurface(r.move((r.w-w, 0)).clip(r))
         gui.Label.paint(self, s)
 
     def update_value(self, value):
         self.value = value
-        self.style.width, self.style.height = self.font.size(self.value)
+        self._set_size()
         self.repaint()
 
-def mklabel(text="         ", color=constants.FG_COLOR):
-    return OpaqueLabel(text, color=color)
+def mklabel(text="", **params):
+    params.setdefault('color', constants.FG_COLOR)
+    params.setdefault('width', GameBoard.TOOLBAR_WIDTH/2)
+    return OpaqueLabel(text, **params)
 
 def mkcountupdate(counter):
     def update_counter(self, value):
-        getattr(self, counter).update_value("%5s" % value)
+        getattr(self, counter).update_value("%s  " % value)
         self.repaint()
     return update_counter
 
@@ -37,13 +57,15 @@ class ToolBar(gui.Table):
     def __init__(self, gameboard, **params):
         gui.Table.__init__(self, **params)
         self.gameboard = gameboard
-        self.cash_counter = mklabel()
-        self.chicken_counter = mklabel()
-        self.egg_counter = mklabel()
-        self.day_counter = mklabel()
-        self.killed_foxes = mklabel()
-        self.rifle_counter = mklabel()
+        self.cash_counter = mklabel(align=1)
+        self.chicken_counter = mklabel(align=1)
+        self.egg_counter = mklabel(align=1)
+        self.day_counter = mklabel(align=1)
+        self.killed_foxes = mklabel(align=1)
 
+        self.tr()
+        self.td(gui.Spacer(self.rect.w/2, 0))
+        self.td(gui.Spacer(self.rect.w/2, 0))
         self.add_counter(mklabel("Day:"), self.day_counter)
         self.add_counter(mklabel("Groats:"), self.cash_counter)
         self.add_counter(mklabel("Eggs:"), self.egg_counter)
@@ -74,7 +96,7 @@ class ToolBar(gui.Table):
         for equipment_cls in equipment.EQUIPMENT:
             self.add_tool_button(equipment_cls.NAME.title(), equipment_cls,
                     cursors.cursors.get(equipment_cls.NAME, None))
-        self.add_spacer()
+        self.add_spacer(30)
 
         self.add_button("Finished Day", self.day_done)
 
@@ -89,7 +111,7 @@ class ToolBar(gui.Table):
     update_egg_counter = mkcountupdate('egg_counter')
     update_day_counter = mkcountupdate('day_counter')
 
-    def add_spacer(self, height=30):
+    def add_spacer(self, height):
         self.tr()
         self.td(gui.Spacer(0, height), colspan=2)
 
@@ -109,8 +131,8 @@ class ToolBar(gui.Table):
 
     def add_counter(self, icon, label):
         self.tr()
-        self.td(icon, align=-1, width=self.rect.w/2)
-        self.td(label, align=-1, width=self.rect.w/2)
+        self.td(icon, width=self.rect.w/2)
+        self.td(label, width=self.rect.w/2)
 
     def resize(self, width=None, height=None):
         width, height = gui.Table.resize(self, width, height)
