@@ -3,6 +3,7 @@
 import cairo
 import rsvg
 import os
+from Image import open
 
 def svg_to_png(svg_name, png_name, w, h):
     """Convert an SVG file to a PNG file."""
@@ -35,10 +36,24 @@ def process_sprite(name, width, height, sprite_path):
     png_name = os.path.join(sprite_path, name) + ".png"
     svg_to_png(svg_name, png_name, width, height)
 
+def process_cursor(name, width, height, sprite_path, cursor_path):
+    # We bounce through png to get something PIL understands
+    svg_name = os.path.join(sprite_path, name) + '.svg'
+    png_name = os.path.join(cursor_path, name) + '.png'
+    xbm_name = os.path.join(cursor_path, name) + '.xbm'
+    svg_to_png(svg_name, png_name, width, height)
+    # We need to bounce through 'L' first to handle transparency OK
+    pixeldata = open(png_name).convert('L')
+    # Everything > 0 goes to white
+    lut = [0] + [1]*255
+    pixeldata.point(lut, mode='1').save(xbm_name)
+    os.remove(png_name)
+
 if __name__ == "__main__":
     tile_path = "data/tiles"
     sprite_path = "data/sprites"
     image_path = "data/images"
+    cursor_path = "data/cursors"
     sprites = [
         ("chkn", 20, 20),
         ("select_chkn", 20, 20),
@@ -62,6 +77,13 @@ if __name__ == "__main__":
         ("emptynest", 20, 20),
     ]
 
+    cursors = [
+        ("chkn", 16, 16),
+        ("equip_knife", 16, 16),
+        ("equip_rifle", 16, 16),
+        ("egg", 16, 16),
+        ]
+
     process_svg_folder("data/tiles", 20, 20)
     process_svg_folder("data/icons", 40, 40)
     for name, width, height in sprites:
@@ -69,3 +91,5 @@ if __name__ == "__main__":
     process_sprite("splash", 800, 600, image_path)
     process_sprite("gameover_win", 800, 600, image_path)
     process_sprite("gameover_lose", 800, 600, image_path)
+    for name, width, height in cursors:
+        process_cursor(name, width, height, sprite_path, cursor_path)
