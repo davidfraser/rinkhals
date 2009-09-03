@@ -70,6 +70,9 @@ class Armour(Equipment):
 
     def place(self, animal):
         """Give additional lives"""
+        for eq in animal.equipment:
+            if eq.NAME == self.NAME:
+                return False
         animal.lives += self.PROTECTION
         return True
 
