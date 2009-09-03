@@ -28,7 +28,7 @@ def mklabel(text="         ", color=constants.FG_COLOR):
 
 def mkcountupdate(counter):
     def update_counter(self, value):
-        getattr(self, counter).update_value("%s" % value)
+        getattr(self, counter).update_value("%5s" % value)
         self.repaint()
     return update_counter
 
@@ -83,12 +83,12 @@ class ToolBar(gui.Table):
         button = gui.Button(text)
         button.connect(gui.CLICK, func)
         self.tr()
-        self.add(button)
+        self.add(button, colspan=2)
 
     def add_counter(self, icon, label):
         self.tr()
         if icon:
-            self.td(icon, align=-1)
+            self.td(icon, align=-1, width=self.rect.w/2)
         self.add(label)
 
 class VidWidget(gui.Widget):
