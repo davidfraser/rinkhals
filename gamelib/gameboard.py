@@ -310,12 +310,14 @@ class GameBoard(object):
             if chicken in self.tv.sprites:
                 self.tv.sprites.remove(chicken)
 
-    def open_dialog(self, widget):
+    def open_dialog(self, widget, close_callback=None):
         """Open a dialog for the given widget. Add close button."""
         tbl = gui.Table()
 
         def close_dialog():
             self.disp.close(tbl)
+            if close_callback is not None:
+                close_callback()
 
         close_button = gui.Button("Close")
         close_button.connect(gui.CLICK, close_dialog)
@@ -379,7 +381,11 @@ class GameBoard(object):
                     place_button_map[id(place)] = button
                     tbl.td(button, **kwargs)
 
-        self.open_dialog(tbl)
+        building.selected(True)
+        def close_callback():
+            building.selected(False)
+
+        self.open_dialog(tbl, close_callback=close_callback)
 
     def buy_fence(self, tile_pos):
         this_tile = self.tv.get(tile_pos)

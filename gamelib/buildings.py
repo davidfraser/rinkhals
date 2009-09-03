@@ -56,11 +56,13 @@ class Building(Sprite):
         """Initial image, tile vid position, size and tile number for building."""
         self.day_image = imagecache.load_image(self.IMAGE)
         self.night_image = imagecache.load_image(self.IMAGE, ('night',))
+        self.selected_image = imagecache.load_image(self.SELECTED_IMAGE)
         self.pos = pos
         self.size = self.SIZE
         self.tile_no = self.TILE_NO
         self._buy_price = self.BUY_PRICE
         self._sell_price = self.SELL_PRICE
+        self._sun_on = True
 
         self._floors = []
         for f in range(self.FLOORS):
@@ -131,7 +133,14 @@ class Building(Sprite):
     def sell_price(self):
         return self._sell_price
 
+    def selected(self, selected):
+        if selected:
+            self.setimage(self.selected_image)
+        else:
+            self.sun(self._sun_on)
+
     def sun(self, sun_on):
+        self._sun_on = sun_on
         if sun_on:
             self.setimage(self.day_image)
         else:
@@ -172,6 +181,7 @@ class HenHouse(Building):
     SELL_PRICE = 90
     SIZE = (3, 2)
     IMAGE = 'sprites/henhouse.png'
+    SELECTED_IMAGE = 'sprites/select_henhouse.png'
     NAME = 'Hen House'
     FLOORS = 1
 
@@ -182,6 +192,7 @@ class DoubleStoryHenHouse(HenHouse):
     SELL_PRICE = 150
     SIZE = (2, 3)
     IMAGE = 'sprites/hendominium.png'
+    SELECTED_IMAGE = 'sprites/select_hendominium.png'
     NAME = 'Hendominium'
     FLOORS = 2
 
@@ -193,6 +204,7 @@ class GuardTower(Building):
     SELL_PRICE = 150
     SIZE = (2, 2)
     IMAGE = 'sprites/watchtower.png'
+    SELECTED_IMAGE = 'sprites/select_watchtower.png'
     NAME = 'Watch Tower'
     FLOORS = 1
 
