@@ -30,7 +30,6 @@ class Animal(Sprite):
         self.equipment = []
         self.abode = None
         self.facing = 'left'
-        self.lives = 1
 
     def loop(self, tv, _sprite):
         ppos = tv.tile_to_view(self.pos.to_tuple())
@@ -92,11 +91,21 @@ class Animal(Sprite):
     def weapons(self):
         return [e for e in self.equipment if equipment.is_weapon(e)]
 
+    def armour(self):
+        return [e for e in self.equipment if equipment.is_armour(e)]
+
     def covers(self, tile_pos):
         return tile_pos[0] == self.pos.x and tile_pos[1] == self.pos.y
 
     def outside(self):
         return self.abode is None
+
+    def survive_damage(self):
+        for a in self.armour():
+            if not a.survive_damage():
+                self.unequip(a)
+            return True
+        return False
 
 class Chicken(Animal):
     """A chicken"""
@@ -291,8 +300,7 @@ class Fox(Animal):
 
     def _catch_chicken(self, chicken, gameboard):
         """Catch a chicken"""
-        chicken.lives -= 1
-        if not chicken.lives > 0:
+        if not chicken.survive_damage():
             sound.play_sound("kill-chicken.ogg")
             gameboard.remove_chicken(chicken)
         self.closest = None

@@ -563,8 +563,7 @@ class GameBoard(object):
 
     def kill_fox(self, fox):
         if fox in self.foxes:
-            fox.lives -= 1
-            if not fox.lives > 0:
+            if not fox.survive_damage():
                 self.killed_foxes += 1
                 self.toolbar.update_fox_counter(self.killed_foxes)
                 self.add_cash(constants.SELL_PRICE_DEAD_FOX)

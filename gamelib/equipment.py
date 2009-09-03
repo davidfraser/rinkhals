@@ -66,22 +66,33 @@ class Knife(Weapon):
     CHICKEN_IMAGE_FILE = 'sprites/equip_knife.png'
 
 class Armour(Equipment):
+    IS_ARMOUR = True
     DRAW_LAYER = 5
+
+    def __init__(self):
+        super(Armour, self).__init__()
+        self.hitpoints = self.STARTING_HITPOINTS
 
     def place(self, animal):
         """Give additional lives"""
         for eq in animal.equipment:
             if eq.NAME == self.NAME:
                 return False
-        animal.lives += self.PROTECTION
         return True
+
+    def survive_damage(self):
+        self.hitpoints -= 1
+        if self.hitpoints > 0:
+            self._sell_price = int(self._sell_price*self.hitpoints/float(self.hitpoints+1))
+            return True
+        return False
 
 class Helmet(Armour):
     NAME = "helmet"
     BUY_PRICE = 25
     SELL_PRICE = 15
 
-    PROTECTION = 1
+    STARTING_HITPOINTS = 1
 
     CHICKEN_IMAGE_FILE = 'sprites/helmet.png'
 
@@ -90,7 +101,7 @@ class Kevlar(Armour):
     BUY_PRICE = 100
     SELL_PRICE = 75
 
-    PROTECTION = 2
+    STARTING_HITPOINTS = 2
 
     CHICKEN_IMAGE_FILE = 'sprites/kevlar.png'
 
@@ -100,6 +111,9 @@ def is_equipment(obj):
 
 def is_weapon(obj):
     return is_equipment(obj) and getattr(obj, 'IS_WEAPON', False)
+
+def is_armour(obj):
+    return is_equipment(obj) and getattr(obj, 'IS_ARMOUR', False)
 
 EQUIPMENT = []
 for name in dir():
