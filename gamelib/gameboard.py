@@ -327,7 +327,7 @@ class GameBoard(object):
         tbl.td(widget, colspan=2)
         tbl.tr()
         tbl.td(gui.Spacer(100, 0))
-        tbl.td(close_button)
+        tbl.td(close_button, align=1)
 
         self.disp.open(tbl)
         return tbl
@@ -437,6 +437,10 @@ class GameBoard(object):
             return self.sell_fence(tile_pos)
         building = self.get_building(tile_pos)
         if building is None:
+            return
+        if list(building.occupants()):
+            warning = gui.Button("Occupied buildings may not be sold.")
+            self.open_dialog(warning)
             return
         self.add_cash(building.sell_price())
         building.remove(self.tv)
