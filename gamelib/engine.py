@@ -44,6 +44,7 @@ class Engine(Game):
 
 class MainMenuState(State):
     def init(self):
+        sound.stop_background_music()
         self.game.set_main_menu()
 
     def event(self, e):
@@ -155,6 +156,7 @@ class NightState(State):
 class GameOver(State):
     def init(self):
         """Setup everything"""
+        sound.stop_background_music()
         self.game.create_game_over()
         pygame.time.set_timer(MOVE_FOX_ID, 0)
 
