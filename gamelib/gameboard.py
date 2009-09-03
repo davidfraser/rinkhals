@@ -48,18 +48,24 @@ class ToolBar(gui.Table):
         self.add_counter(mklabel("Eggs:"), self.egg_counter)
         self.add_counter(icons.CHKN_ICON, self.chicken_counter)
         self.add_counter(icons.KILLED_FOX, self.killed_foxes)
-        self.add_spacer()
+        self.add_spacer(20)
 
-        self.add_tool_button("Move Animals", constants.TOOL_PLACE_ANIMALS)
-        self.add_tool_button("Sell chicken", constants.TOOL_SELL_CHICKEN)
-        self.add_tool_button("Sell egg", constants.TOOL_SELL_EGG)
-        self.add_tool_button("Sell building", constants.TOOL_SELL_BUILDING)
-        self.add_tool_button("Lumberjack", constants.TOOL_LOGGING)
-        self.add_tool_button("Buy fence", constants.TOOL_BUY_FENCE)
+        self.add_tool_button("Move Hen", constants.TOOL_PLACE_ANIMALS)
+        self.add_tool_button("Cut Trees", constants.TOOL_LOGGING)
+        self.add_spacer(20)
+
+        self.add_heading("Sell ...")
+        self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN)
+        self.add_tool_button("Egg", constants.TOOL_SELL_EGG)
+        self.add_tool_button("Building", constants.TOOL_SELL_BUILDING)
+        self.add_spacer(20)
+
+        self.add_heading("Buy ...")
+        self.add_tool_button("Fence", constants.TOOL_BUY_FENCE)
         for building_cls in buildings.BUILDINGS:
-            self.add_tool_button("Buy %s" % (building_cls.NAME,), building_cls)
+            self.add_tool_button(building_cls.NAME.title(), building_cls)
         for equipment_cls in equipment.EQUIPMENT:
-            self.add_tool_button("Buy %s" % (equipment_cls.NAME,), equipment_cls)
+            self.add_tool_button(equipment_cls.NAME.title(), equipment_cls)
         self.add_spacer()
 
         self.add_button("Finished Day", self.day_done)
@@ -78,11 +84,15 @@ class ToolBar(gui.Table):
         self.tr()
         self.td(gui.Spacer(0, height), colspan=2)
 
+    def add_heading(self, text):
+        self.tr()
+        self.td(mklabel(text), colspan=2)
+
     def add_tool_button(self, text, tool):
         self.add_button(text, lambda: self.gameboard.set_selected_tool(tool))
 
     def add_button(self, text, func):
-        button = gui.Button(text, width=self.rect.w)
+        button = gui.Button(text, width=self.rect.w, style={"padding_left": 0})
         button.connect(gui.CLICK, func)
         self.tr()
         self.td(button, align=-1, colspan=2)
