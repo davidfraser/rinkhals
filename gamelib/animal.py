@@ -61,11 +61,16 @@ class Animal(Sprite):
 
     def equip(self, item):
         self.equipment.append(item)
-        self.draw_equipment(item)
-        if not equipment.is_weapon(item):
-            # redraw weapons on top
-            for weapon in self.weapons():
-                self.draw_equipment(weapon)
+        self.redraw_equipment()
+
+    def unequip(self, item):
+        self.equipment = [e for e in self.equipment if e != item]
+        self.redraw_equipment()
+
+    def redraw_equipment(self):
+        self.equipment.sort(key=lambda x: x.DRAW_LAYER)
+        for item in self.equipment:
+            self.draw_equipment(item)
 
     def draw_equipment(self, item):
         if not hasattr(self, 'EQUIPMENT_IMAGE_ATTRIBUTE'):

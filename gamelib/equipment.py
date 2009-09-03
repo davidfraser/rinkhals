@@ -5,6 +5,7 @@ import sound
 
 class Equipment(object):
     IS_EQUIPMENT = True
+    DRAW_LAYER = 0
 
     def __init__(self):
         self._buy_price = self.BUY_PRICE
@@ -22,6 +23,7 @@ class Equipment(object):
 
 class Weapon(Equipment):
     IS_WEAPON = True
+    DRAW_LAYER = 10
 
     def in_range(self, gameboard, wielder, target):
         """Can the lucky wielder hit the potentially unlucky target with this?"""
@@ -64,6 +66,7 @@ class Knife(Weapon):
     CHICKEN_IMAGE_FILE = 'sprites/equip_knife.png'
 
 class Armour(Equipment):
+    DRAW_LAYER = 5
 
     def place(self, animal):
         """Give additional lives"""
