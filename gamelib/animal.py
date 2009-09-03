@@ -176,6 +176,7 @@ class Fox(Animal):
         self.tick = 0
         self.safe = False
         self.closest = None
+        self.last_steps = []
 
     def _cost_tile(self, pos, gameboard):
         if gameboard.in_bounds(pos):
@@ -274,19 +275,21 @@ class Fox(Animal):
         self.closest = None
         gameboard.remove_chicken(chicken)
         self.hunting = False
+        self.last_steps = [] # Forget history here
 
     def _update_pos(self, gameboard, new_pos):
         """Update the position, making sure we don't step on other foxes"""
-        final_pos = new_pos
         if new_pos == self.pos:
             # We're not moving, so we can skip all the checks
-            return final_pos
-        blocked = False
+            return new_pos
+        final_pos = new_pos
+        blocked = final_pos in self.last_steps
         moves = [Position(x, y) for x in range(self.pos.x-1, self.pos.x + 2)
                 for y in range(self.pos.y-1, self.pos.y + 2)
-                if (x,y) != (0,0)]
+                if Position(x,y) != self.pos and \
+                        Position(x, y) not in self.last_steps]
         for fox in gameboard.foxes:
-            if fox is not self and fox.pos == new_pos:
+            if fox is not self and fox.pos == final_pos:
                 blocked = True
             if fox.pos in moves:
                 moves.remove(fox.pos)
@@ -299,6 +302,9 @@ class Fox(Animal):
                 if cost < min_cost:
                     min_cost = cost
                     final_pos = poss
+        if not final_pos:
+            # No good choice, so stay put
+            return self.pos
         if gameboard.in_bounds(final_pos):
             this_tile = gameboard.tv.get(final_pos.to_tuple())
         else:
@@ -309,6 +315,9 @@ class Fox(Animal):
         elif tiles.TILE_MAP[this_tile] == 'fence' and not self.dig_pos:
             self._dig(final_pos)
             return self.pos
+        self.last_steps.append(final_pos)
+        if len(self.last_steps) > 3:
+            self.last_steps.pop(0)
         return final_pos
 
     def _dig(self, dig_pos):
@@ -370,6 +379,7 @@ class GreedyFox(Fox):
         self.chickens_eaten += 1
         if self.chickens_eaten > 2:
             self.hunting = False
+        self.last_steps = []
 
 def visible(watcher, watchee):
     roll = random.randint(1, 100)
