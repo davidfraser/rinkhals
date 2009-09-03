@@ -67,3 +67,5 @@ if __name__ == "__main__":
     for name, width, height in sprites:
         process_sprite(name, width, height, sprite_path)
     process_sprite("splash", 800, 600, image_path)
+    process_sprite("gameover_win", 800, 600, image_path)
+    process_sprite("gameover_lose", 800, 600, image_path)
