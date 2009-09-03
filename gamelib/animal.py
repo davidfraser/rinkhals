@@ -61,16 +61,19 @@ class Animal(Sprite):
 
     def equip(self, item):
         self.equipment.append(item)
-        self.redraw_equipment()
+        self.redraw()
 
     def unequip(self, item):
         self.equipment = [e for e in self.equipment if e != item]
-        self.redraw_equipment()
+        self.redraw()
 
-    def redraw_equipment(self):
+    def redraw(self):
+        self.image_left = self._image_left.copy()
+        self.image_right = self._image_right.copy()
         self.equipment.sort(key=lambda x: x.DRAW_LAYER)
         for item in self.equipment:
             self.draw_equipment(item)
+        self._set_image_facing(self.facing)
 
     def draw_equipment(self, item):
         if not hasattr(self, 'EQUIPMENT_IMAGE_ATTRIBUTE'):
@@ -82,7 +85,6 @@ class Animal(Sprite):
         eq_image_right = imagecache.load_image(eq_image_attr, ("right_facing",))
         self.image_left.blit(eq_image_left, (0, 0))
         self.image_right.blit(eq_image_right, (0, 0))
-        self._set_image_facing(self.facing)
 
     def weapons(self):
         return [e for e in self.equipment if equipment.is_weapon(e)]
