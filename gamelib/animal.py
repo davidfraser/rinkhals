@@ -23,7 +23,10 @@ class Animal(Sprite):
         self.image_left = image_left.copy()
         self._image_right = image_right
         self.image_right = image_right.copy()
-        self.pos = Position(tile_pos[0], tile_pos[1])
+        if hasattr(tile_pos, 'to_tuple'):
+            self.pos = tile_pos
+        else:
+            self.pos = Position(tile_pos[0], tile_pos[1])
         self.equipment = []
         self.abode = None
         self.facing = 'left'
@@ -105,7 +108,7 @@ class Chicken(Animal):
         image_right = imagecache.load_image('sprites/chkn.png',
                 ("right_facing",))
         Animal.__init__(self, image_left, image_right, pos)
-        self.egg = False
+        self.egg = None
         self.egg_counter = 0
 
     def move(self, gameboard):
@@ -115,17 +118,12 @@ class Chicken(Animal):
     def lay(self):
         """See if the chicken lays an egg"""
         if not self.egg:
-            self.egg = True
-            self.egg_counter = 2
+            self.egg = Egg(self.pos)
 
     def hatch(self):
         """See if we have an egg to hatch"""
         if self.egg:
-            self.egg_counter -= 1
-            if self.egg_counter == 0:
-                # Egg hatches
-                self.egg = False
-                return Chicken(self.pos.to_tuple())
+            return self.egg.hatch()
         return None
 
     def _find_killable_fox(self, weapon, gameboard):
@@ -160,8 +158,15 @@ class Egg(Animal):
     def __init__(self, pos):
         image = imagecache.load_image('sprites/egg.png')
         Animal.__init__(self, image, image, pos)
+        self.counter = 2
 
     # Eggs don't move
+
+    def hatch(self):
+        self.counter -= 1
+        if self.counter == 0:
+            return Chicken(self.pos)
+        return None
 
 class Fox(Animal):
     """A fox"""
