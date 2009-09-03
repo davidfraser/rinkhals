@@ -476,10 +476,12 @@ class GameBoard(object):
 
     def kill_fox(self, fox):
         if fox in self.foxes:
-            self.killed_foxes += 1
-            self.toolbar.update_fox_counter(self.killed_foxes)
-            self.add_cash(constants.SELL_PRICE_DEAD_FOX)
-            self.remove_fox(fox)
+            fox.lives -= 1
+            if not fox.lives > 0:
+                self.killed_foxes += 1
+                self.toolbar.update_fox_counter(self.killed_foxes)
+                self.add_cash(constants.SELL_PRICE_DEAD_FOX)
+                self.remove_fox(fox)
 
     def remove_fox(self, fox):
         self.foxes.discard(fox)

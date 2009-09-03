@@ -27,6 +27,7 @@ class Animal(Sprite):
         self.equipment = []
         self.abode = None
         self.facing = 'left'
+        self.lives = 1
 
     def loop(self, tv, _sprite):
         ppos = tv.tile_to_view(self.pos.to_tuple())
@@ -60,6 +61,13 @@ class Animal(Sprite):
 
     def equip(self, item):
         self.equipment.append(item)
+        self.draw_equipment(item)
+        if not equipment.is_weapon(item):
+            # redraw weapons on top
+            for weapon in self.weapons():
+                self.draw_equipment(weapon)
+
+    def draw_equipment(self, item):
         if not hasattr(self, 'EQUIPMENT_IMAGE_ATTRIBUTE'):
             return
         eq_image_attr = getattr(item, self.EQUIPMENT_IMAGE_ATTRIBUTE, 'None')
@@ -271,9 +279,11 @@ class Fox(Animal):
 
     def _catch_chicken(self, chicken, gameboard):
         """Catch a chicken"""
-        sound.play_sound("kill-chicken.ogg")
+        chicken.lives -= 1
+        if not chicken.lives > 0:
+            sound.play_sound("kill-chicken.ogg")
+            gameboard.remove_chicken(chicken)
         self.closest = None
-        gameboard.remove_chicken(chicken)
         self.hunting = False
         self.last_steps = [] # Forget history here
 

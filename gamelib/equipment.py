@@ -54,7 +54,7 @@ class Rifle(Weapon):
 
 class Knife(Weapon):
     NAME = "knife"
-    BUY_PRICE = 20
+    BUY_PRICE = 25
     SELL_PRICE = 15
 
     RANGE = 1
@@ -62,6 +62,31 @@ class Knife(Weapon):
     RANGE_MODIFIER = 0
 
     CHICKEN_IMAGE_FILE = 'sprites/equip_knife.png'
+
+class Armour(Equipment):
+
+    def place(self, animal):
+        """Give additional lives"""
+        animal.lives += self.PROTECTION
+        return True
+
+class Helmet(Armour):
+    NAME = "helmet"
+    BUY_PRICE = 25
+    SELL_PRICE = 15
+
+    PROTECTION = 1
+
+    CHICKEN_IMAGE_FILE = 'sprites/helmet.png'
+
+class Kevlar(Armour):
+    NAME = "kevlar"
+    BUY_PRICE = 100
+    SELL_PRICE = 75
+
+    PROTECTION = 2
+
+    CHICKEN_IMAGE_FILE = 'sprites/kevlar.png'
 
 def is_equipment(obj):
     """Return true if obj is a build class."""
