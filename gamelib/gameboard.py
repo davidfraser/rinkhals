@@ -263,7 +263,7 @@ class GameBoard(object):
         if chicken:
             if chicken is self.animal_to_place:
                 self.animal_to_place = None
-                pygame.mouse.set_cursor(*cursors.cursors['arrow'])
+                pygame.mouse.set_cursor(*cursors.cursors['select'])
             else:
                 self.animal_to_place = chicken
                 pygame.mouse.set_cursor(*cursors.cursors['chicken'])
@@ -312,7 +312,7 @@ class GameBoard(object):
         def select_occupant(place, button):
             """Select occupant in place."""
             self.animal_to_place = place.occupant
-            pygame.mouse.set_cursor(*cursors.cursor['chicken'])
+            pygame.mouse.set_cursor(*cursors.cursors['chicken'])
 
         def set_occupant(place, button):
             """Set occupant of a given place."""
