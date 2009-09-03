@@ -10,23 +10,26 @@ import pygame
 from pgu import gui
 from pygame.locals import SWSURFACE
 
-from mainmenu import MenuContainer, MainMenu
-from engine import Engine, MainMenuState
+#from engine import Engine, MainMenuState
 from sound import init_sound
 import constants
 
-
-
-def create_app():
-    """Create the app."""
+def create_main_app(screen):
+    """Create an app with a background widget."""
     app = gui.App()
+    background = pygame.Surface(screen.get_size())
+    widget = gui.Image(background)
+    app.init(widget, screen)
     return app
 
 def main():
     """Main script."""
     init_sound()
     screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE)
-    main_app = create_app()
+    main_app = create_main_app(screen)
+
+    from engine import Engine, MainMenuState
+
     engine = Engine(main_app)
     try:
         engine.run(MainMenuState(engine), screen)

@@ -48,6 +48,7 @@ class ToolBar(gui.Table):
         self.add_counter(mklabel("Eggs:"), self.egg_counter)
         self.add_counter(icons.CHKN_ICON, self.chicken_counter)
         self.add_counter(icons.KILLED_FOX, self.killed_foxes)
+        self.add_spacer()
 
         self.add_tool_button("Move Animals", constants.TOOL_PLACE_ANIMALS)
         self.add_tool_button("Sell chicken", constants.TOOL_SELL_CHICKEN)
@@ -60,6 +61,7 @@ class ToolBar(gui.Table):
         for equipment_cls in equipment.EQUIPMENT:
             self.add_tool_button("Buy %s" % (equipment_cls.NAME,), equipment_cls)
         self.add_spacer()
+
         self.add_button("Finished Day", self.day_done)
 
     def day_done(self):
@@ -74,44 +76,34 @@ class ToolBar(gui.Table):
 
     def add_spacer(self, height=30):
         self.tr()
-        self.add(gui.Spacer(0, height))
+        self.td(gui.Spacer(0, height), colspan=2)
 
     def add_tool_button(self, text, tool):
         self.add_button(text, lambda: self.gameboard.set_selected_tool(tool))
 
     def add_button(self, text, func):
-        button = gui.Button(text)
+        button = gui.Button(text, width=self.rect.w)
         button.connect(gui.CLICK, func)
         self.tr()
-        self.add(button, colspan=2)
+        self.td(button, align=-1, colspan=2)
 
     def add_counter(self, icon, label):
         self.tr()
-        if icon:
-            self.td(icon, align=-1, width=self.rect.w/2)
-        self.add(label)
+        self.td(icon, align=-1, width=self.rect.w/2)
+        self.td(label, align=-1, width=self.rect.w/2)
 
 class VidWidget(gui.Widget):
     def __init__(self, gameboard, vid, **params):
         gui.Widget.__init__(self, **params)
         self.gameboard = gameboard
-        vid.bounds = pygame.Rect((0, 0), vid.tile_to_view(vid.size))
         self.vid = vid
-        self.width = params.get('width', 0)
-        self.height = params.get('height', 0)
+        self.vid.bounds = pygame.Rect((0, 0), vid.tile_to_view(vid.size))
 
     def paint(self, surface):
         self.vid.paint(surface)
 
     def update(self, surface):
         return self.vid.update(surface)
-
-    def resize(self, width=0, height=0):
-        if width is not None:
-            self.width = width
-        if height is not None:
-            self.height = height
-        return self.width, self.height
 
     def move_view(self, x, y):
         self.vid.view.move_ip((x, y))
@@ -130,12 +122,13 @@ class GameBoard(object):
     WOODLAND = tiles.REVERSE_TILE_MAP['woodland']
     BROKEN_FENCE = tiles.REVERSE_TILE_MAP['broken fence']
 
-    def __init__(self):
+    def __init__(self, main_app):
+        self.disp = main_app
         self.tv = tiles.FarmVid()
         self.tv.tga_load_tiles(data.filepath('tiles.tga'), self.TILE_DIMENSIONS)
         self.tv.png_folder_load_tiles(data.filepath('tiles'))
         self.tv.tga_load_level(data.filepath('level1.tga'))
-        self.create_disp()
+        self.create_display()
 
         self.selected_tool = None
         self.animal_to_place = None
@@ -152,24 +145,21 @@ class GameBoard(object):
 
         self.add_some_chickens()
 
-    def create_disp(self):
-        width, height = pygame.display.get_surface().get_size()
+    def get_top_widget(self):
+        return self.top_widget
+
+    def create_display(self):
+        width, height = self.disp.rect.w, self.disp.rect.h
         tbl = gui.Table()
         tbl.tr()
-        self.toolbar = ToolBar(self)
-        tbl.td(self.toolbar, width=self.TOOLBAR_WIDTH)
-        self.tvw = VidWidget(self, self.tv, width=width-self.TOOLBAR_WIDTH, height=height)
+        self.toolbar = ToolBar(self, width=self.TOOLBAR_WIDTH)
+        tbl.td(self.toolbar, valign=-1)
+        self.tvw = VidWidget(self, self.tv, width=width-self.TOOLBAR_WIDTH-19, height=height)
         tbl.td(self.tvw)
-        self.disp = gui.App()
-        self.disp.init(tbl)
+        self.top_widget = tbl
 
-    def paint(self, screen):
-        screen.fill(constants.BG_COLOR)
-        self.disp.paint(screen)
-
-    def update(self, screen):
+    def update(self):
         self.tvw.reupdate()
-        return self.disp.update(screen)
 
     def loop(self):
         self.tv.loop()

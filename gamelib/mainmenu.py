@@ -6,17 +6,14 @@ import constants
 import engine
 import imagecache
 
-def add_main_menu(app):
-    """Add the main menu to the app"""
-    for widget in app.widgets[:]:
-        app.remove(widget)
-
+def make_main_menu():
+    """Create a main menu"""
     main_menu = MainMenu()
 
     c = MenuContainer(align=0, valign=0)
     c.add(main_menu, 0, 0)
 
-    app.init(c)
+    return c
 
 class MenuContainer(gui.Container):
     def paint(self, s):

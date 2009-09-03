@@ -7,16 +7,14 @@ import engine
 import constants
 import imagecache
 
-def add_game_over(app, gameboard):
-    """Add the game over menu to the app"""
-    for widget in app.widgets[:]:
-        app.remove(widget)
+def create_game_over(gameboard):
+    """Create a game over screen"""
     game_over = GameOver(gameboard)
 
     c = GameOverContainer(align=0, valign=0)
     c.add(game_over, 0, 0)
 
-    app.init(c)
+    return c
 
 class GameOverContainer(gui.Container):
     def paint(self, s):
