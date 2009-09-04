@@ -4,6 +4,12 @@
 
 * <confluence> Muzzle flashes!
 
+* Animations? (Fox catching chicken (with feathers), demolition foxes blowing things up?)
+
+* Add the demolition fox
+
+* Finish egg selling 
+
 * <jerith> Our menu isn't friendly and buildings don't show their contents.
   * <Hodgestar> And we need to add a numerical overlay to show how many chickens are in a building.
 
@@ -13,6 +19,8 @@
   * <jerith> Oh, the building placement stuff.
   * <Hodgestar> Yes, the cursor changes will help a lot with the animal movement tool.
   * <Hodgestar> And with building placement.
+  -- cursors can change, although we need more cursors for the different tools
+  -- Overlay code for buildings still need
 
 * <Nitwit> And we need to start testing for lose conditions, and set an upper time limit
   * <Nitwit> 30 days good as a starting limit?
@@ -31,9 +39,14 @@
   * <Hodgestar> I.e. what you would get if you converted all your chickens to cash at the end.
   * <Hodgestar> jerith says to add (egg sell price)*eggs too.
 
+  -- Game over & time limit implemented with final score.
+  -- High score support still needed (pgu.high ?)
+  -- Need to remove current 'd' shortcut
+  -- Should esc take us to a different state than won / lost?
+
 * <tzhau> simchicken! so are there gonna to be chicken processing plants? escaping chickens?
   * <Hodgestar> tzhau: We could add some sort of self-managing henhouse that sells chickens automatically to make space for hatching eggs.
 
 * <Nitwit> Hodgestar: I see the ninja fox screenshot shows we have a chicken counting bug somewhere
   * <Hodgestar> Nitwit: Is the chicken perhaps inside? Or is the number too low?
-  * <Nitwit> Hodgestar: the number's too low - there are 5 chickens visible, but a count of only tically to make space for hatching eggs.
+  * <Nitwit> Hodgestar: the number's too low - there are 5 chickens visible, but a count of only 4
