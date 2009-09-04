@@ -2,7 +2,7 @@
 
 from pgu.engine import Game, State, Quit
 import pygame
-from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE, K_n, K_d, K_s
+from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE, K_n, K_d, K_s, K_i
 
 import gameboard
 import gameover
@@ -65,6 +65,8 @@ class MainMenuState(State):
             elif e.key == K_s:
                 self.game.create_game_board()
                 return DayState(self.game)
+            elif e.key == K_i:
+                return HelpScreenState(self.game)
         elif e.type is not QUIT:
             self.game.main_app.event(e)
 
