@@ -110,6 +110,7 @@ class DayState(State):
         sound.play_sound("daybreak.ogg")
         # disable timer
         pygame.time.set_timer(MOVE_FOX_ID, 0)
+        pygame.time.set_timer(ANIM_ID, 50)
         self.game.gameboard.advance_day()
         self.game.gameboard.clear_foxes()
         sound.background_music("daytime.ogg")
@@ -121,6 +122,8 @@ class DayState(State):
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
             self.game.gameboard.reset_cursor()
             return GameOver(self.game)
+        elif e.type is ANIM_ID:
+            self.game.gameboard.run_animations()
         elif e.type is KEYDOWN and e.key == K_n:
             return pygame.event.post(START_NIGHT)
         elif events_equal(e, GO_MAIN_MENU):
@@ -151,6 +154,7 @@ class NightState(State):
         # Add a timer to the event queue
         self.cycle_count = 0
         pygame.time.set_timer(MOVE_FOX_ID, 200)
+        pygame.time.set_timer(ANIM_ID, 50)
         self.game.gameboard.spawn_foxes()
         sound.background_music("nighttime.ogg")
 
@@ -166,6 +170,8 @@ class NightState(State):
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
             self.game.gameboard.reset_cursor()
             return GameOver(self.game)
+        elif e.type is ANIM_ID:
+            self.game.gameboard.run_animations()
         elif e.type is MOVE_FOX_ID:
             self.cycle_count += 1
             if self.cycle_count > constants.NIGHT_LENGTH:
@@ -194,6 +200,7 @@ class GameOver(State):
         sound.stop_background_music()
         self.game.create_game_over()
         pygame.time.set_timer(MOVE_FOX_ID, 0)
+        pygame.time.set_timer(ANIM_ID, 0)
 
     def event(self, e):
         if e.type is KEYDOWN:
@@ -224,5 +231,6 @@ START_NIGHT = pygame.event.Event(USEREVENT, name="START_NIGHT")
 GO_MAIN_MENU = pygame.event.Event(USEREVENT, name="GO_MAIN_MENU")
 GO_HELP_SCREEN = pygame.event.Event(USEREVENT, name="GO_HELP_SCREEN")
 MOVE_FOX_ID = USEREVENT + 1
+ANIM_ID = USEREVENT + 6
 MOVE_FOXES = pygame.event.Event(MOVE_FOX_ID, name="MOVE_FOXES")
 QUIT = pygame.event.Event(QUIT)

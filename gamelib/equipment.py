@@ -3,6 +3,7 @@
 import random
 import sound
 import imagecache
+import animations
 
 class Equipment(object):
     IS_EQUIPMENT = True
@@ -50,6 +51,8 @@ class Weapon(Equipment):
         """Is the potentially unlucky target actually unlucky?"""
         if hasattr(self, 'HIT_SOUND'):
             sound.play_sound(self.HIT_SOUND)
+        if hasattr(self, 'ANIMATION'):
+            gameboard.animations.append(self.ANIMATION(wielder))
         roll = random.randint(1, 100)
         base_hit = self._get_parameter('BASE_HIT', wielder)
         range_penalty = self._get_parameter('RANGE_PENALTY', wielder)
@@ -73,6 +76,8 @@ class Rifle(Weapon):
     HIT_SOUND = "fire-rifle.ogg"
 
     CHICKEN_IMAGE_FILE = 'sprites/equip_rifle.png'
+
+    ANIMATION = animations.MuzzleFlash
 
 class Knife(Weapon):
     TYPE = "KNIFE"

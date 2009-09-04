@@ -149,9 +149,39 @@ class VidWidget(gui.Widget):
 
     def paint(self, surface):
         self.vid.paint(surface)
+        # Blit animation frames on top of the drawing
+        x, y = self.vid.view.x, self.vid.view.y
+        for anim in self.gameboard.animations:
+            anim.fix_pos(self.vid)
+            anim.irect.x = anim.rect.x - anim.shape.x
+            anim.irect.y = anim.rect.y - anim.shape.y
+            surface.blit(anim.image, (anim.irect.x - x, anim.irect.y - y))
+            # We don't store anim._irect, since we only update anims if the
+            # image changes, which kills irect
 
     def update(self, surface):
-        return self.vid.update(surface)
+        us = []
+        x, y = self.vid.view.x, self.vid.view.y
+        for anim in self.gameboard.animations[:]:
+            """Handle completed animations"""
+            if anim.removed:
+                us.append(pygame.Rect(anim.irect.x - x, anim.irect.y - y,
+                    anim.irect.width, anim.irect.height))
+                self.gameboard.animations.remove(anim)
+                # Flag the underlying tiles/sprites to be redrawn
+                self.vid.alayer[anim.pos.y][anim.pos.x]=1
+        us.extend(self.vid.update(surface))
+        for anim in self.gameboard.animations:
+            if anim.updated: 
+                anim.fix_pos(self.vid)
+                # setimage has happened
+                anim.irect.x = anim.rect.x - anim.shape.x
+                anim.irect.y = anim.rect.y - anim.shape.y
+                surface.blit(anim.image, (anim.irect.x - x, anim.irect.y - y))
+                anim.updated = 0
+                us.append(pygame.Rect(anim.irect.x - x, anim.irect.y - y,
+                    anim.irect.width, anim.irect.height))
+        return us
 
     def move_view(self, x, y):
         self.vid.view.move_ip((x, y))
@@ -186,6 +216,7 @@ class GameBoard(object):
         self.chickens = set()
         self.foxes = set()
         self.buildings = []
+        self.animations = []
         self.cash = 0
         self.eggs = 0
         self.days = 0
@@ -592,6 +623,10 @@ class GameBoard(object):
             else:
                 self.tv.sprites.remove(fox)
         self.foxes = set() # Remove all the foxes
+
+    def run_animations(self):
+        for anim in self.animations:
+            anim.animate()
 
     def move_foxes(self):
         """Move the foxes.
