@@ -163,13 +163,14 @@ class VidWidget(gui.Widget):
         us = []
         x, y = self.vid.view.x, self.vid.view.y
         for anim in self.gameboard.animations[:]:
-            """Handle completed animations"""
+            # We process removed animations 1st, so we redraw things correctly
             if anim.removed:
                 us.append(pygame.Rect(anim.irect.x - x, anim.irect.y - y,
                     anim.irect.width, anim.irect.height))
                 self.gameboard.animations.remove(anim)
                 # Flag the underlying tiles/sprites to be redrawn
                 self.vid.alayer[anim.pos.y][anim.pos.x]=1
+                self.vid.updates.append(anim.pos.to_tuple())
         us.extend(self.vid.update(surface))
         for anim in self.gameboard.animations:
             if anim.updated: 
