@@ -9,6 +9,7 @@ import gameover
 import sound
 import constants
 import mainmenu
+import helpscreen
 
 class Engine(Game):
     def __init__(self, main_app):
@@ -37,6 +38,11 @@ class Engine(Game):
         """Open the main menu"""
         self.open_window(self.main_menu)
 
+    def set_help_screen(self):
+        """Open the main menu"""
+        help_screen = helpscreen.make_help_screen()
+        self.open_window(help_screen)
+
     def create_game_over(self):
         """Create and open the Game Over window"""
         game_over = gameover.create_game_over(self.gameboard)
@@ -51,12 +57,36 @@ class MainMenuState(State):
         if events_equal(e, START_DAY):
             self.game.create_game_board()
             return DayState(self.game)
+        elif events_equal(e, GO_HELP_SCREEN):
+            return HelpScreenState(self.game)
         elif e.type is KEYDOWN:
             if e.key == K_ESCAPE:
                 return Quit(self.game)
             elif e.key == K_s:
                 self.game.create_game_board()
                 return DayState(self.game)
+        elif e.type is not QUIT:
+            self.game.main_app.event(e)
+
+    def paint(self, screen):
+        screen.fill((0,0,0))
+        self.game.main_app.paint(screen)
+        pygame.display.flip()
+
+    def update(self, screen):
+        update = self.game.main_app.update(screen)
+        pygame.display.update(update)
+
+class HelpScreenState(State):
+    def init(self):
+        sound.stop_background_music()
+        self.game.set_help_screen()
+
+    def event(self, e):
+        if e.type is KEYDOWN and e.key == K_ESCAPE:
+                return MainMenu(self.game)
+        elif events_equal(e, GO_MAIN_MENU):
+            return MainMenuState(self.game)
         elif e.type is not QUIT:
             self.game.main_app.event(e)
 
@@ -189,6 +219,7 @@ def events_equal(e1, e2):
 START_DAY = pygame.event.Event(USEREVENT, name="START_DAY")
 START_NIGHT = pygame.event.Event(USEREVENT, name="START_NIGHT")
 GO_MAIN_MENU = pygame.event.Event(USEREVENT, name="GO_MAIN_MENU")
+GO_HELP_SCREEN = pygame.event.Event(USEREVENT, name="GO_HELP_SCREEN")
 MOVE_FOX_ID = USEREVENT + 1
 MOVE_FOXES = pygame.event.Event(MOVE_FOX_ID, name="MOVE_FOXES")
 QUIT = pygame.event.Event(QUIT)

@@ -35,11 +35,17 @@ class MainMenu(gui.Table):
         def start_pressed():
             pygame.event.post(engine.START_DAY)
 
+        def help_pressed():
+            pygame.event.post(engine.GO_HELP_SCREEN)
+
         start_button = gui.Button("Start")
         start_button.connect(gui.CLICK, start_pressed)
 
         quit_button = gui.Button("Quit")
         quit_button.connect(gui.CLICK, quit_pressed)
+
+        help_button = gui.Button("Instructions")
+        help_button.connect(gui.CLICK, help_pressed)
 
         fullscreen_toggle = gui.Button("Toggle Fullscreen")
         fullscreen_toggle.connect(gui.CLICK, fullscreen_toggled)
@@ -54,6 +60,9 @@ class MainMenu(gui.Table):
 
         self.tr()
         self.td(start_button, **td_kwargs)
+
+        self.tr()
+        self.td(help_button, **td_kwargs)
 
         self.tr()
         self.td(fullscreen_toggle, **td_kwargs)
