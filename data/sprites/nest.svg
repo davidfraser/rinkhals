@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="525"
+   height="525"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   version="1.0"
+   sodipodi:docname="nest.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+    <inkscape:perspective
+       id="perspective2447"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.0152381"
+     inkscape:cx="262.5"
+     inkscape:cy="258.59605"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="735"
+     inkscape:window-x="1280"
+     inkscape:window-y="24" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-169.70945,-261.08105)">
+    <path
+       style="fill:#d59c00;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 19.699812,421.57599 C 64.414091,413.23551 76.763522,401.68524 88.649159,434.38086 C 46.344027,421.5139 52.688079,450.55505 35.459663,472.79549 C 77.716392,452.9915 86.092567,444.58529 123.12383,471.8105 C 88.18586,464.83499 99.938588,492.65826 92.589119,508.25516 C 150.68992,462.17704 136.47879,531.63527 258.06754,524.01501 C 320.19535,529.53274 374.99657,490.05853 405.81613,513.18011 C 410.67337,501.01938 395.52847,494.85929 374.29644,490.52533 C 423.51729,481.30127 448.19612,480.38066 465.90056,497.42027 C 460.39149,481.15723 469.0173,452.4733 425.51595,459.00563 C 451.8429,435.98403 472.74703,437.7931 504.3152,454.08068 C 486.96506,431.3694 485.5605,419.68271 442.26079,425.51595 C 452.97019,398.78466 466.71387,398.42333 514.16511,397.93621 C 487.17367,389.92244 471.17277,361.82272 421.57599,393.99625 C 435.62785,346.64925 444.34247,353.03395 473.78049,346.71669 C 416.84752,323.07564 398.31462,358.49763 361.49156,385.13134 C 321.74687,361.5858 358.8146,347.44425 397.93622,328.98687 C 355.69193,339.60599 318.54937,313.98963 293.5272,386.11632 C 260.16061,339.74713 296.39795,339.28372 316.18199,312.24203 C 288.37798,329.63446 269.61922,315.5347 244.27768,387.10131 C 249.90841,349.20179 213.908,340.5807 178.28331,318.15197 C 191.96444,346.91262 233.08012,361.19417 200.93809,385.13133 C 178.374,329.19693 135.82129,331.21099 100.46904,328.98687 C 126.98441,344.7794 161.76098,355.7797 145.77861,389.0713 C 111.93139,342.61653 75.839941,355.98365 39.399625,353.61164 C 68.006231,372.52508 99.843555,350.95827 94.559096,398.9212 C 65.337709,375.60152 48.9212,400.26014 19.699812,421.57599 z"
+       id="path2402"
+       transform="translate(169.70945,261.08105)"
+       sodipodi:nodetypes="ccccccccccccccccccccccccccc" />
+  </g>
+</svg>
