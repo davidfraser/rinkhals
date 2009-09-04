@@ -332,7 +332,6 @@ class GameBoard(object):
                 return False
             self.add_cash(constants.SELL_PRICE_CHICKEN)
             sound.play_sound("sell-chicken.ogg")
-            self.remove_chicken(chicken)
             return True
 
         chick = self.get_outside_chicken(tile_pos)
@@ -401,6 +400,10 @@ class GameBoard(object):
             if self.animal_to_place is not None:
                 self.animal_to_place.unequip_by_name("nest")
                 self.relocate_animal(self.animal_to_place, tile_pos=tile_pos)
+                if self.animal_to_place.egg:
+                    self.animal_to_place.remove_egg()
+                    self.eggs -= 1
+                    self.toolbar.update_egg_counter(self.eggs)
 
     def relocate_animal(self, chicken, tile_pos=None, place=None):
         assert((tile_pos, place) != (None, None))
@@ -476,6 +479,7 @@ class GameBoard(object):
                     if sell_callback(place.occupant):
                         # empty the nest (on button)
                         update_button(place.occupant, empty=True)
+                        self.remove_chicken(place.occupant)
                     else:
                         # Update for equipment changes, etc.
                         update_button(place.occupant)
@@ -691,6 +695,7 @@ class GameBoard(object):
                         try:
                             building.add_occupant(new_chick)
                             self.add_chicken(new_chick)
+                            new_chick.equip(equipment.Nest())
                         except buildings.BuildingFullError:
                             print "Building full."
         self.toolbar.update_egg_counter(self.eggs)
