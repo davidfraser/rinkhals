@@ -1,5 +1,17 @@
 == TODO ==
 
+* Still need cursors/sprites for:
+  -- Cut Trees
+  -- Sell ...
+    -- Chicken (too similar to move)
+    -- Egg (too similar to move)
+    -- Building (too similar to move)
+    -- Equipment
+  -- Buy ...
+    -- Fence
+    -- Helmet
+    -- Kevlar
+
 * Fix cursor sprite layering
 
 * Add invalid cursor sprite
