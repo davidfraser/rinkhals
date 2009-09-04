@@ -62,6 +62,7 @@ if __name__ == "__main__":
         ("fox", 20, 20),
         ("fox_death", 20, 20),
         ("ninja_fox", 20, 20),
+        ("sapper_fox", 20, 20),
         ("equip_rifle", 20, 20),
         ("equip_knife", 20, 20),
         ("muzzle_flash", 20, 20),
