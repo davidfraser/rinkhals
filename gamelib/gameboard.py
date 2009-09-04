@@ -259,6 +259,8 @@ class GameBoard(object):
         sprite_curs = None
         if buildings.is_building(tool):
             sprite_curs = sprite_cursor.SpriteCursor(tool.IMAGE, self.tv)
+        if tool == constants.TOOL_BUY_FENCE:
+            sprite_curs = sprite_cursor.SpriteCursor("tiles/fence.png", self.tv)
         self.set_cursor(cursor, sprite_curs)
 
     def set_cursor(self, cursor=None, sprite_curs=None):
