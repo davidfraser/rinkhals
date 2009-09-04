@@ -308,7 +308,7 @@ class GameBoard(object):
         def do_sell(chicken):
             if chicken.egg:
                 # We sell the egg
-                self.add_cash(constants.SELL_PRICE_CHICKEN)
+                self.add_cash(constants.SELL_PRICE_EGG)
                 sound.play_sound("sell-chicken.ogg")
                 chicken.egg = None
                 self.eggs -= 1
