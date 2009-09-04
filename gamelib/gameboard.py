@@ -710,6 +710,8 @@ class GameBoard(object):
             self.tv.sprites.remove(fox)
 
     def remove_chicken(self, chick):
+        if chick is self.animal_to_place:
+            self.select_animal_to_place(None)
         self.chickens.discard(chick)
         if chick.egg:
             self.eggs -= 1
