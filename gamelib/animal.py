@@ -15,6 +15,8 @@ class Animal(Sprite):
     """Base class for animals"""
 
     STEALTH = 0
+    VISION_BONUS = 0
+    VISION_RANGE_PENALTY = 10
 
     def __init__(self, image_left, image_right, tile_pos):
         # Create the animal somewhere far off screen
@@ -415,7 +417,16 @@ class GreedyFox(Fox):
             self.hunting = False
         self.last_steps = []
 
+def _get_vision_param(parameter, watcher):
+    param = getattr(watcher, parameter)
+    if watcher.abode:
+        modifier = getattr(watcher.abode.building, 'MODIFY_'+parameter, lambda r: r)
+        param = modifier(param)
+    return param
+
 def visible(watcher, watchee):
-    roll = random.randint(1, 100)
+    vision_bonus = _get_vision_param('VISION_BONUS', watcher)
+    range_penalty = _get_vision_param('VISION_RANGE_PENALTY', watcher)
     distance = watcher.pos.dist(watchee.pos) - 1
-    return roll > watchee.STEALTH + 10*distance
+    roll = random.randint(1, 100)
+    return roll > watchee.STEALTH - vision_bonus + range_penalty*distance
