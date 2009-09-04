@@ -338,15 +338,31 @@ class GameBoard(object):
             return
         building = self.get_building(tile_pos)
         if building:
-            self.open_building_dialog(building)
+            if self.animal_to_place:
+                try:
+                    place = building.first_empty_place()
+                    self.relocate_animal(self.animal_to_place, place=place)
+                    self.animal_to_place = None
+                    pygame.mouse.set_cursor(*cursors.cursors['select'])
+                except buildings.BuildingFullError:
+                    pass
+            else:
+                self.open_building_dialog(building)
             return
         if self.tv.get(tile_pos) == self.GRASSLAND:
             if self.animal_to_place is not None:
-                occupant = self.animal_to_place
-                if occupant.abode is not None:
-                    occupant.abode.clear_occupant()
-                occupant.set_pos(tile_pos)
-                self.set_visibility(occupant)
+                self.relocate_animal(self.animal_to_place, tile_pos=tile_pos)
+
+    def relocate_animal(self, chicken, tile_pos=None, place=None):
+        assert((tile_pos, place) != (None, None))
+        if chicken.abode is not None:
+            chicken.abode.clear_occupant()
+        if tile_pos:
+            chicken.set_pos(tile_pos)
+        else:
+            place.set_occupant(chicken)
+            chicken.set_pos(place.get_pos())
+        self.set_visibility(chicken)
 
     def set_visibility(self, chicken):
         if chicken.outside():
@@ -405,8 +421,6 @@ class GameBoard(object):
                         sell_callback)
 
                 old_abode = self.animal_to_place.abode
-                if old_abode is not None:
-                    old_abode.clear_occupant()
                 if id(old_abode) in place_button_map:
                     old_button = place_button_map[id(old_abode)]
                     old_button.value = icons.EMPTY_NEST_ICON
@@ -414,10 +428,7 @@ class GameBoard(object):
                     old_button.connect(gui.CLICK, set_occupant, place, button,
                             sell_callback)
 
-                chicken = self.animal_to_place
-                place.set_occupant(chicken)
-                chicken.set_pos(place.get_pos())
-                self.set_visibility(self.animal_to_place)
+                self.relocate_animal(self.animal_to_place, place=place)
 
         place_button_map = {}
 
