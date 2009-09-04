@@ -132,7 +132,10 @@ class Chicken(Animal):
     def hatch(self):
         """See if we have an egg to hatch"""
         if self.egg:
-            return self.egg.hatch()
+            chick = self.egg.hatch()
+            if chick:
+                self.egg = None
+            return chick
         return None
 
     def _find_killable_fox(self, weapon, gameboard):
