@@ -273,7 +273,7 @@ class GameBoard(object):
     def reset_states(self):
         """Clear current states (highlights, etc.)"""
         if self.animal_to_place:
-            self.animal_to_place.unequip_by_name("spotlight")
+            self.select_animal_to_place(None)
         self.set_cursor()
 
     def update_sprite_cursor(self, e):
