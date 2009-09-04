@@ -347,6 +347,9 @@ class GameBoard(object):
             if len(self.chickens) == 1:
                 print "You can't sell your last chicken!"
                 return False
+            for item in list(chicken.equipment):
+                self.add_cash(item.sell_price())
+                chicken.unequip(item)
             self.add_cash(constants.SELL_PRICE_CHICKEN)
             sound.play_sound("sell-chicken.ogg")
             return True
