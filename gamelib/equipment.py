@@ -128,6 +128,7 @@ class Kevlar(Armour):
 class Accoutrement(Equipment):
     """Things which are not equipment, but are displayed in the same way"""
     IS_EQUIPMENT = False
+    IS_ACCOUTREMENT = True
     BUY_PRICE = 0
     SELL_PRICE = 0
 
@@ -156,6 +157,9 @@ def is_weapon(obj):
 
 def is_armour(obj):
     return is_equipment(obj) and getattr(obj, 'IS_ARMOUR', False)
+
+def is_accoutrement(obj):
+    return not getattr(obj, "IS_EQUIPMENT", False) and hasattr(obj, "NAME") and getattr(obj, 'IS_ACCOUTREMENT', False)
 
 EQUIPMENT = []
 for name in dir():

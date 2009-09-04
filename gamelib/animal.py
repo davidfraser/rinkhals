@@ -65,12 +65,24 @@ class Animal(Sprite):
             self.setimage(self.image_right)
 
     def equip(self, item):
-        self.equipment.append(item)
+        if equipment.is_equipment(item):
+            self.equipment.append(item)
+        elif equipment.is_accoutrement(item):
+            self.accoutrements.append(item)
         self.redraw()
 
     def unequip(self, item):
-        self.equipment = [e for e in self.equipment if e != item]
+        if equipment.is_equipment(item):
+            self.equipment = [e for e in self.equipment if e != item]
+        elif equipment.is_accoutrement(item):
+            self.accoutrements = [e for e in self.accoutrements if e != item]
         self.redraw()
+
+    def unequip_by_name(self, item_name):
+        # only remove first match
+        matches = [item for item in self.equipment + self.accoutrements if item.NAME == item_name]
+        if matches:
+            self.unequip(matches[0])
 
     def redraw(self):
         layers = [(self._image_left.copy(), self._image_right.copy(), 0)]

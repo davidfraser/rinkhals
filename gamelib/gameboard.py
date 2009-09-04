@@ -217,7 +217,7 @@ class GameBoard(object):
 
     def set_selected_tool(self, tool, cursor):
         self.selected_tool = tool
-        self.animal_to_place = None
+        self.select_animal_to_place(None)
         if cursor:
             pygame.mouse.set_cursor(*cursor)
         else:
@@ -321,6 +321,13 @@ class GameBoard(object):
         if building and building.NAME in buildings.HENHOUSES:
             self.open_building_dialog(building, do_sell)
 
+    def select_animal_to_place(self, animal):
+        if self.animal_to_place:
+            self.animal_to_place.unequip_by_name("spotlight")
+        self.animal_to_place = animal
+        if self.animal_to_place:
+            self.animal_to_place.equip(equipment.Spotlight())
+
     def place_animal(self, tile_pos):
         """Handle an TOOL_PLACE_ANIMALS click.
 
@@ -330,10 +337,10 @@ class GameBoard(object):
         chicken = self.get_outside_chicken(tile_pos)
         if chicken:
             if chicken is self.animal_to_place:
-                self.animal_to_place = None
+                self.select_animal_to_place(None)
                 pygame.mouse.set_cursor(*cursors.cursors['select'])
             else:
-                self.animal_to_place = chicken
+                self.select_animal_to_place(chicken)
                 pygame.mouse.set_cursor(*cursors.cursors['chicken'])
             return
         building = self.get_building(tile_pos)
@@ -342,7 +349,7 @@ class GameBoard(object):
                 try:
                     place = building.first_empty_place()
                     self.relocate_animal(self.animal_to_place, place=place)
-                    self.animal_to_place = None
+                    self.select_animal_to_place(None)
                     pygame.mouse.set_cursor(*cursors.cursors['select'])
                 except buildings.BuildingFullError:
                     pass
@@ -400,12 +407,12 @@ class GameBoard(object):
             """Select occupant in place."""
             # sell_callback should return true if we need to remove the
             # occupant
-            self.animal_to_place = place.occupant
+            self.select_animal_to_place(place.occupant)
             if not sell_callback:
                 pygame.mouse.set_cursor(*cursors.cursors['chicken'])
             else:
                 # Attempt to sell the occupant
-                self.animal_to_place = None
+                self.select_animal_to_place(None)
                 if sell_callback(place.occupant):
                     button.value = icons.EMPTY_NEST_ICON
                     button.disconnect(gui.CLICK, select_occupant)
