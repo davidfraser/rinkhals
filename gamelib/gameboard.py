@@ -249,6 +249,12 @@ class GameBoard(object):
     def set_selected_tool(self, tool, cursor):
         self.selected_tool = tool
         self.select_animal_to_place(None)
+        sprite_curs = None
+        if buildings.is_building(tool):
+            sprite_curs = sprite_cursor.SpriteCursor(tool.IMAGE, self.tv)
+        self.set_cursor(cursor, sprite_curs)
+
+    def set_cursor(self, cursor=None, sprite_curs=None):
         if cursor:
             pygame.mouse.set_cursor(*cursor)
         else:
@@ -256,12 +262,10 @@ class GameBoard(object):
         if self.sprite_cursor:
             self.tv.sprites.remove(self.sprite_cursor)
             self.sprite_cursor = None
-        if buildings.is_building(tool):
-            self.sprite_cursor = sprite_cursor.SpriteCursor(tool.IMAGE, self.tv)
+        if sprite_curs:
+            self.sprite_cursor = sprite_curs
             self.tv.sprites.append(self.sprite_cursor)
-
-    def reset_cursor(self):
-        pygame.mouse.set_cursor(*cursors.cursors['arrow'])
+            
 
     def update_sprite_cursor(self, e):
         tile_pos = self.tv.screen_to_tile(e.pos)
@@ -279,7 +283,7 @@ class GameBoard(object):
     def use_tool(self, e):
         if e.button == 3: # Right button
             self.selected_tool = None
-            self.reset_cursor()
+            self.set_cursor()
         elif e.button != 1: # Left button
             return
         if self.selected_tool == constants.TOOL_SELL_CHICKEN:
