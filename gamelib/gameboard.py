@@ -440,41 +440,45 @@ class GameBoard(object):
 
     def open_building_dialog(self, building, sell_callback=None):
         """Create dialog for manipulating the contents of a building."""
-        def select_occupant(place, button, sell_callback):
-            """Select occupant in place."""
-            # sell_callback should return true if we need to remove the
-            # occupant
-            self.select_animal_to_place(place.occupant)
-            if not sell_callback:
-                pygame.mouse.set_cursor(*cursors.cursors['chicken'])
-            else:
-                # Attempt to sell the occupant
-                self.select_animal_to_place(None)
-                if sell_callback(place.occupant):
-                    button.value = icons.EMPTY_NEST_ICON
-                    button.disconnect(gui.CLICK, select_occupant)
-                    button.connect(gui.CLICK, set_occupant, place, button,
-                            sell_callback)
-
-        def set_occupant(place, button, sell_callback):
-            """Set occupant of a given place."""
-            if self.animal_to_place is not None:
-                button.value = icons.animal_icon(self.animal_to_place)
-                button.disconnect(gui.CLICK, set_occupant)
-                button.connect(gui.CLICK, select_occupant, place, button,
-                        sell_callback)
-
-                old_abode = self.animal_to_place.abode
-                if id(old_abode) in place_button_map:
-                    old_button = place_button_map[id(old_abode)]
-                    old_button.value = icons.EMPTY_NEST_ICON
-                    old_button.disconnect(gui.CLICK, select_occupant)
-                    old_button.connect(gui.CLICK, set_occupant, place, button,
-                            sell_callback)
-
-                self.relocate_animal(self.animal_to_place, place=place)
 
         place_button_map = {}
+
+        def update_button(animal, empty=False):
+            """Update a button image (either to the animal, or to empty)."""
+            if animal:
+                button = place_button_map.get(id(animal.abode))
+                if button:
+                    if empty:
+                        button.value = icons.EMPTY_NEST_ICON
+                    else:
+                        button.value = icons.animal_icon(animal)
+
+        def nest_clicked(place, button):
+            """Handle a nest being clicked."""
+            # sell_callback should return true if we need to remove the
+            # occupant
+            if place.occupant:
+                # there is an occupant, select or sell it
+                if not sell_callback:
+                    old_animal = self.animal_to_place
+                    self.select_animal_to_place(place.occupant)
+                    # deselect old animal (on button)
+                    update_button(old_animal)
+                    # select new animal (on button)
+                    update_button(self.animal_to_place)
+                else:
+                    # Attempt to sell the occupant
+                    if sell_callback(place.occupant):
+                        # empty the nest (on button)
+                        update_button(place.occupant, empty=True)
+            else:
+                # there is no occupant, attempt to fill the space
+                if self.animal_to_place is not None:
+                    # empty old nest (on button)
+                    update_button(self.animal_to_place, empty=True)
+                    self.relocate_animal(self.animal_to_place, place=place)
+                    # populate the new nest (on button)
+                    update_button(self.animal_to_place)
 
         tbl = gui.Table()
         columns = building.max_floor_width()
@@ -488,13 +492,10 @@ class GameBoard(object):
                 for place in row:
                     if place.occupant is None:
                         button = gui.Button(icons.EMPTY_NEST_ICON)
-                        button.connect(gui.CLICK, set_occupant, place, button,
-                                sell_callback)
                     else:
                         button = gui.Button(icons.animal_icon(place.occupant))
-                        button.connect(gui.CLICK, select_occupant, place, button,
-                                sell_callback)
                     place_button_map[id(place)] = button
+                    button.connect(gui.CLICK, nest_clicked, place, button)
                     tbl.td(button, **kwargs)
 
         building.selected(True)
