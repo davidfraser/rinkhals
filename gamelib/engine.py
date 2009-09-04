@@ -1,5 +1,4 @@
 """Game engine and states."""
-
 from pgu.engine import Game, State, Quit
 import pygame
 from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE, K_n, K_d, K_s, K_i
@@ -17,6 +16,7 @@ class Engine(Game):
         self.clock = pygame.time.Clock()
         self.main_menu = mainmenu.make_main_menu()
         self._open_window = None
+        self.scoreboard = gameover.ScoreTable()
 
     def tick(self):
         """Tic toc."""
@@ -45,7 +45,7 @@ class Engine(Game):
 
     def create_game_over(self):
         """Create and open the Game Over window"""
-        game_over = gameover.create_game_over(self.gameboard)
+        game_over = gameover.create_game_over(self.gameboard, self.scoreboard)
         self.open_window(game_over)
 
 class MainMenuState(State):
