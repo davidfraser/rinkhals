@@ -349,6 +349,7 @@ class GameBoard(object):
                 try:
                     place = building.first_empty_place()
                     self.relocate_animal(self.animal_to_place, place=place)
+                    self.animal_to_place.equip(equipment.Nest())
                     self.select_animal_to_place(None)
                     pygame.mouse.set_cursor(*cursors.cursors['select'])
                 except buildings.BuildingFullError:
@@ -358,6 +359,7 @@ class GameBoard(object):
             return
         if self.tv.get(tile_pos) == self.GRASSLAND:
             if self.animal_to_place is not None:
+                self.animal_to_place.unequip_by_name("nest")
                 self.relocate_animal(self.animal_to_place, tile_pos=tile_pos)
 
     def relocate_animal(self, chicken, tile_pos=None, place=None):
@@ -422,7 +424,7 @@ class GameBoard(object):
         def set_occupant(place, button, sell_callback):
             """Set occupant of a given place."""
             if self.animal_to_place is not None:
-                button.value = icons.CHKN_NEST_ICON
+                button.value = icons.animal_icon(self.animal_to_place)
                 button.disconnect(gui.CLICK, set_occupant)
                 button.connect(gui.CLICK, select_occupant, place, button,
                         sell_callback)
@@ -454,7 +456,7 @@ class GameBoard(object):
                         button.connect(gui.CLICK, set_occupant, place, button,
                                 sell_callback)
                     else:
-                        button = gui.Button(icons.CHKN_NEST_ICON)
+                        button = gui.Button(icons.animal_icon(place.occupant))
                         button.connect(gui.CLICK, select_occupant, place, button,
                                 sell_callback)
                     place_button_map[id(place)] = button

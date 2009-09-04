@@ -94,9 +94,10 @@ class Animal(Sprite):
 
         layers.sort(key=lambda l: l[2])
 
-        self.image_left = layers[0][0]
-        self.image_right = layers[0][1]
-        for l in layers[1:]:
+        # these always go on the bottom so that other layers don't get overwritten
+        self.image_left = self._image_left.copy()
+        self.image_right = self._image_right.copy()
+        for l in layers:
             self.image_left.blit(l[0], (0,0))
             self.image_right.blit(l[1], (0,0))
 
