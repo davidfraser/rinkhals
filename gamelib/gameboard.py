@@ -552,9 +552,13 @@ class GameBoard(object):
         self.tv.set(tile_pos, self.FENCE)
 
     def sell_fence(self, tile_pos):
-        if self.tv.get(tile_pos) != self.FENCE:
+        this_tile = self.tv.get(tile_pos)
+        if this_tile not in [self.FENCE, self.BROKEN_FENCE]:
             return
-        self.add_cash(constants.SELL_PRICE_FENCE)
+        if this_tile == self.FENCE:
+            self.add_cash(constants.SELL_PRICE_FENCE)
+        elif this_tile == self.BROKEN_FENCE:
+            self.add_cash(constants.SELL_PRICE_BROKEN_FENCE)
         self.tv.set(tile_pos, self.GRASSLAND)
 
     def logging_forest(self, tile_pos):
@@ -585,7 +589,7 @@ class GameBoard(object):
             chicken.equip(equipment)
 
     def sell_building(self, tile_pos):
-        if self.tv.get(tile_pos) == self.FENCE:
+        if self.tv.get(tile_pos) in [self.FENCE, self.BROKEN_FENCE]:
             return self.sell_fence(tile_pos)
         building = self.get_building(tile_pos)
         if building is None:
