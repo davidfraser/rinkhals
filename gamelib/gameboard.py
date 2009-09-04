@@ -249,6 +249,9 @@ class GameBoard(object):
 
     def set_selected_tool(self, tool, cursor):
         self.selected_tool = tool
+        if self.animal_to_place:
+            # Clear any highlights
+            self.animal_to_place.unequip_by_name("spotlight")
         self.select_animal_to_place(None)
         sprite_curs = None
         if buildings.is_building(tool):
@@ -266,7 +269,12 @@ class GameBoard(object):
         if sprite_curs:
             self.sprite_cursor = sprite_curs
             self.tv.sprites.append(self.sprite_cursor)
-            
+
+    def reset_states(self):
+        """Clear current states (highlights, etc.)"""
+        if self.animal_to_place:
+            self.animal_to_place.unequip_by_name("spotlight")
+        self.set_cursor()
 
     def update_sprite_cursor(self, e):
         tile_pos = self.tv.screen_to_tile(e.pos)

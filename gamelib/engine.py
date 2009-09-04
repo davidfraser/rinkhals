@@ -120,7 +120,7 @@ class DayState(State):
         if events_equal(e, START_NIGHT):
             return NightState(self.game)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
-            self.game.gameboard.set_cursor()
+            self.game.gameboard.reset_states()
             return GameOver(self.game)
         elif e.type is ANIM_ID:
             self.game.gameboard.run_animations()
@@ -148,7 +148,7 @@ class NightState(State):
         """Add some foxes to the farm"""
         sound.stop_background_music()
         self.game.gameboard.tv.sun(False)
-        self.game.gameboard.set_cursor()
+        self.game.gameboard.reset_states()
 
         sound.play_sound("nightfall.ogg")
         # Add a timer to the event queue
