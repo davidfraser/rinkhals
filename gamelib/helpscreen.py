@@ -22,8 +22,9 @@ You lose if you end a night with no chickens left.
 You win if you survive 14 nights.
 
 Chickens only lay eggs in henhouses, and must stay on the egg for 2 days to
-hatch a new chicken. Chickens that hatch in already full henhouses die
-immediately from overcrowding.
+hatch a new chicken. Chickens that hatch in already full henhouses are
+moved to just outside. If there is no space outside, they die immediately
+from overcrowding.
 """ % constants.NAME
 
 def make_help_screen():
