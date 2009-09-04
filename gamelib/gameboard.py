@@ -254,7 +254,7 @@ class GameBoard(object):
         if self.selected_tool == constants.TOOL_SELL_CHICKEN:
             self.sell_chicken(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELL_EGG:
-            pass
+            self.sell_egg(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_PLACE_ANIMALS:
             self.place_animal(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_BUY_FENCE:
@@ -283,15 +283,34 @@ class GameBoard(object):
         return None
 
     def sell_chicken(self, tile_pos):
+
+        def do_sell(chicken):
+            if not chicken:
+                return False # sanity check
+            if len(self.chickens) == 1:
+                print "You can't sell your last chicken!"
+                return False
+            self.add_cash(constants.SELL_PRICE_CHICKEN)
+            sound.play_sound("sell-chicken.ogg")
+            self.remove_chicken(chicken)
+            return True
+
         chick = self.get_outside_chicken(tile_pos)
         if chick is None:
+            building = self.get_building(tile_pos)
+            if building and building.NAME in buildings.HENHOUSES:
+                self.open_building_dialog(building, do_sell)
             return
-        if len(self.chickens) == 1:
-            print "You can't sell your last chicken!"
-            return
-        self.add_cash(constants.SELL_PRICE_CHICKEN)
-        sound.play_sound("sell-chicken.ogg")
-        self.remove_chicken(chick)
+        do_sell(chick)
+
+
+    def sell_egg(self, tile_pos):
+        def do_sell(chicken):
+            # Placeholde
+            return False
+        building = self.get_building(tile_pos)
+        if building and building.NAME in buildings.HENHOUSES:
+            self.open_building_dialog(building)
 
     def place_animal(self, tile_pos):
         """Handle an TOOL_PLACE_ANIMALS click.
@@ -350,19 +369,31 @@ class GameBoard(object):
         self.disp.open(tbl)
         return tbl
 
-    def open_building_dialog(self, building):
+    def open_building_dialog(self, building, sell_callback=None):
         """Create dialog for manipulating the contents of a building."""
-        def select_occupant(place, button):
+        def select_occupant(place, button, sell_callback):
             """Select occupant in place."""
+            # sell_callback should return true if we need to remove the
+            # occupant
             self.animal_to_place = place.occupant
-            pygame.mouse.set_cursor(*cursors.cursors['chicken'])
+            if not sell_callback:
+                pygame.mouse.set_cursor(*cursors.cursors['chicken'])
+            else:
+                # Attempt to sell the occupant
+                self.animal_to_place = None
+                if sell_callback(place.occupant):
+                    button.value = icons.EMPTY_NEST_ICON
+                    button.disconnect(gui.CLICK, select_occupant)
+                    button.connect(gui.CLICK, set_occupant, place, button,
+                            sell_callback)
 
-        def set_occupant(place, button):
+        def set_occupant(place, button, sell_callback):
             """Set occupant of a given place."""
             if self.animal_to_place is not None:
                 button.value = icons.CHKN_NEST_ICON
                 button.disconnect(gui.CLICK, set_occupant)
-                button.connect(gui.CLICK, select_occupant, place, button)
+                button.connect(gui.CLICK, select_occupant, place, button,
+                        sell_callback)
 
                 old_abode = self.animal_to_place.abode
                 if old_abode is not None:
@@ -371,7 +402,8 @@ class GameBoard(object):
                     old_button = place_button_map[id(old_abode)]
                     old_button.value = icons.EMPTY_NEST_ICON
                     old_button.disconnect(gui.CLICK, select_occupant)
-                    old_button.connect(gui.CLICK, set_occupant, place, button)
+                    old_button.connect(gui.CLICK, set_occupant, place, button,
+                            sell_callback)
 
                 chicken = self.animal_to_place
                 place.set_occupant(chicken)
@@ -392,10 +424,12 @@ class GameBoard(object):
                 for place in row:
                     if place.occupant is None:
                         button = gui.Button(icons.EMPTY_NEST_ICON)
-                        button.connect(gui.CLICK, set_occupant, place, button)
+                        button.connect(gui.CLICK, set_occupant, place, button,
+                                sell_callback)
                     else:
                         button = gui.Button(icons.CHKN_NEST_ICON)
-                        button.connect(gui.CLICK, select_occupant, place, button)
+                        button.connect(gui.CLICK, select_occupant, place, button,
+                                sell_callback)
                     place_button_map[id(place)] = button
                     tbl.td(button, **kwargs)
 
