@@ -413,6 +413,9 @@ class GameBoard(object):
             cost = constants.BUY_PRICE_FENCE
         else:
             cost = constants.REPAIR_PRICE_FENCE
+        if any((chicken.pos.x, chicken.pos.y) == tile_pos for chicken in self.chickens):
+            return
+
         if self.cash < cost:
             print "You can't afford a fence."
             return
@@ -436,6 +439,8 @@ class GameBoard(object):
     def buy_building(self, tile_pos, building_cls):
         building = building_cls(tile_pos)
         if self.cash < building.buy_price():
+            return
+        if any(building.covers((chicken.pos.x, chicken.pos.y)) for chicken in self.chickens):
             return
         if building.place(self.tv):
             self.add_cash(-building.buy_price())
