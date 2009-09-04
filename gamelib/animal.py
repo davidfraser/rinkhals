@@ -143,13 +143,19 @@ class Chicken(Animal):
         """See if the chicken lays an egg"""
         if not self.egg:
             self.egg = Egg(self.pos)
+            self.equip(equipment.NestEgg())
+
+    def remove_egg(self):
+        """Clean up the egg state"""
+        self.egg = None
+        self.unequip_by_name("nestegg")
 
     def hatch(self):
         """See if we have an egg to hatch"""
         if self.egg:
             chick = self.egg.hatch()
             if chick:
-                self.egg = None
+                self.remove_egg()
             return chick
         return None
 

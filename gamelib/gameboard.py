@@ -354,7 +354,7 @@ class GameBoard(object):
                 # We sell the egg
                 self.add_cash(constants.SELL_PRICE_EGG)
                 sound.play_sound("sell-chicken.ogg")
-                chicken.egg = None
+                chicken.remove_egg()
                 self.eggs -= 1
                 self.toolbar.update_egg_counter(self.eggs)
                 # Force update
@@ -480,6 +480,9 @@ class GameBoard(object):
                     if sell_callback(place.occupant):
                         # empty the nest (on button)
                         update_button(place.occupant, empty=True)
+                    else:
+                        # Update for equipment changes, etc.
+                        update_button(place.occupant)
             else:
                 # there is no occupant, attempt to fill the space
                 if self.animal_to_place is not None:
