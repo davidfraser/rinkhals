@@ -153,7 +153,8 @@ class NightState(State):
         sound.play_sound("nightfall.ogg")
         # Add a timer to the event queue
         self.cycle_count = 0
-        pygame.time.set_timer(MOVE_FOX_ID, 200)
+        self.cycle_time = 200
+        pygame.time.set_timer(MOVE_FOX_ID, self.cycle_time)
         pygame.time.set_timer(ANIM_ID, 50)
         self.game.gameboard.spawn_foxes()
         sound.background_music("nighttime.ogg")
@@ -166,7 +167,13 @@ class NightState(State):
                 return GameOver(self.game)
             return DayState(self.game)
         elif e.type is KEYDOWN and e.key == K_d:
-            return pygame.event.post(START_DAY)
+            if self.cycle_time > 100:
+                self.cycle_time = 50  
+                pygame.time.set_timer(ANIM_ID, 25)
+            else:
+                self.cycle_time = 200
+                pygame.time.set_timer(ANIM_ID, 50)
+            pygame.time.set_timer(MOVE_FOX_ID, self.cycle_time)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
             self.game.gameboard.set_cursor()
             return GameOver(self.game)

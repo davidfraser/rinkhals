@@ -39,7 +39,6 @@
 
   -- Game over & time limit implemented with final score.
   -- High score support still needed (pgu.high ?)
-  -- Need to remove current 'd' shortcut
   -- Should esc take us to a different state than won / lost?
 
 * <tzhau> simchicken! so are there gonna to be chicken processing plants? escaping chickens?
