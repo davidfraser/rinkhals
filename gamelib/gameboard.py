@@ -357,8 +357,9 @@ class GameBoard(object):
             if building and building.NAME in buildings.HENHOUSES:
                 self.open_building_dialog(building, do_sell)
             return
-        do_sell(chick)
 
+        if do_sell(chick):
+            self.remove_chicken(chick)
 
     def sell_egg(self, tile_pos):
         def do_sell(chicken):
