@@ -56,7 +56,7 @@ class ImageCache(object):
 
 # modifiers
 
-from pygame.locals import BLEND_MULT, BLEND_ADD
+from pygame.locals import BLEND_MULT, BLEND_ADD, BLEND_RGBA_MULT
 NIGHT_COLOUR = (100.0, 100.0, 200.0, 255.0)
 DARKEN_COLOUR = (100.0, 100.0, 100.0, 255.0)
 LIGHTEN_COLOUR = (200.0, 200.0, 200.0, 225.0)
@@ -92,6 +92,11 @@ def lighten_most(image):
     lighten.blit(overlay, (over_x, over_y), None, BLEND_ADD)
     return lighten
 
+def sprite_cursor(image):
+    cursor = image.copy()
+    cursor.fill((255, 255, 255, 100), None, BLEND_RGBA_MULT)
+    return cursor
+
 # globals
 
 cache = ImageCache()
@@ -99,4 +104,5 @@ cache.register_modifier("night", convert_to_night)
 cache.register_modifier("right_facing", convert_to_right_facing)
 cache.register_modifier("darken_center", darken_center)
 cache.register_modifier("lighten_most", lighten_most)
+cache.register_modifier("sprite_cursor", sprite_cursor)
 load_image = cache.load_image

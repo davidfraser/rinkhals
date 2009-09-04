@@ -1,7 +1,7 @@
 import random
 
 import pygame
-from pygame.locals import MOUSEBUTTONDOWN, KEYDOWN, K_UP, K_DOWN, K_LEFT, K_RIGHT
+from pygame.locals import MOUSEBUTTONDOWN, MOUSEMOTION, KEYDOWN, K_UP, K_DOWN, K_LEFT, K_RIGHT
 from pgu import gui
 
 import data
@@ -13,6 +13,7 @@ import animal
 import equipment
 import sound
 import cursors
+import sprite_cursor
 
 class OpaqueLabel(gui.Label):
     def __init__(self, value, **params):
@@ -158,6 +159,8 @@ class VidWidget(gui.Widget):
     def event(self, e):
         if e.type == MOUSEBUTTONDOWN:
             self.gameboard.use_tool(e)
+        elif e.type == MOUSEMOTION and self.gameboard.sprite_cursor:
+            self.gameboard.update_sprite_cursor(e)
 
 
 class GameBoard(object):
@@ -179,6 +182,7 @@ class GameBoard(object):
 
         self.selected_tool = None
         self.animal_to_place = None
+        self.sprite_cursor = None
         self.chickens = set()
         self.foxes = set()
         self.buildings = []
@@ -218,9 +222,19 @@ class GameBoard(object):
             pygame.mouse.set_cursor(*cursor)
         else:
             pygame.mouse.set_cursor(*cursors.cursors['arrow'])
+        if self.sprite_cursor:
+            self.tv.sprites.remove(self.sprite_cursor)
+            self.sprite_cursor = None
+        if buildings.is_building(tool):
+            self.sprite_cursor = sprite_cursor.SpriteCursor(tool.IMAGE, self.tv)
+            self.tv.sprites.append(self.sprite_cursor)
 
     def reset_cursor(self):
         pygame.mouse.set_cursor(*cursors.cursors['arrow'])
+
+    def update_sprite_cursor(self, e):
+        tile_pos = self.tv.screen_to_tile(e.pos)
+        self.sprite_cursor.set_pos(tile_pos)
 
     def in_bounds(self, pos):
         """Check if a position is within the game boundaries"""
