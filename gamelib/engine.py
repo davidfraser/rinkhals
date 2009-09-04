@@ -84,7 +84,7 @@ class HelpScreenState(State):
 
     def event(self, e):
         if e.type is KEYDOWN and e.key == K_ESCAPE:
-                return MainMenu(self.game)
+            return MainMenuState(self.game)
         elif events_equal(e, GO_MAIN_MENU):
             return MainMenuState(self.game)
         elif e.type is not QUIT:
