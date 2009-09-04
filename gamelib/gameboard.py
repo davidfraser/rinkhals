@@ -223,6 +223,7 @@ class GameBoard(object):
         self.days = 0
         self.killed_foxes = 0
         self.add_cash(constants.STARTING_CASH)
+        self.day, self.night = True, False
 
         self.fix_buildings()
 
@@ -248,6 +249,8 @@ class GameBoard(object):
         self.tv.loop()
 
     def set_selected_tool(self, tool, cursor):
+        if not self.day:
+            return
         self.selected_tool = tool
         if self.animal_to_place:
             # Clear any highlights
@@ -276,6 +279,16 @@ class GameBoard(object):
         tile_pos = self.tv.screen_to_tile(e.pos)
         self.sprite_cursor.set_pos(tile_pos)
 
+    def start_night(self):
+        self.day, self.night = False, True
+        self.tv.sun(False)
+        self.reset_states()
+
+    def start_day(self):
+        self.day, self.night = True, False
+        self.tv.sun(True)
+        self.reset_states()
+
     def in_bounds(self, pos):
         """Check if a position is within the game boundaries"""
         if pos.x < 0 or pos.y < 0:
@@ -286,6 +299,8 @@ class GameBoard(object):
         return True
 
     def use_tool(self, e):
+        if not self.day:
+            return
         if e.button == 3: # Right button
             self.selected_tool = None
             self.set_cursor()
