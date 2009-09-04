@@ -38,7 +38,7 @@ def make_help_screen():
 class HelpContainer(gui.Container):
     def paint(self, s):
         pygame.display.set_caption('Instructions')
-        splash = imagecache.load_image("images/splash.png")
+        splash = imagecache.load_image("images/splash.png", ["lighten_most"])
         pygame.display.get_surface().blit(splash, (0, 0))
         gui.Container.paint(self, s)
 
