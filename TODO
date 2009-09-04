@@ -12,17 +12,7 @@
 
 * Add the demolition fox
 
-* <jerith> Our menu isn't friendly and buildings don't show their contents.
-  * <Hodgestar> And we need to add a numerical overlay to show how many chickens are in a building.
-
 * <confluence> We should have text images instead of buttons (in the various menus and toolbars).
-
-* <confluence> Those cursor changes would also be good.
-  * <jerith> Oh, the building placement stuff.
-  * <Hodgestar> Yes, the cursor changes will help a lot with the animal movement tool.
-  * <Hodgestar> And with building placement.
-  -- cursors can change, although we need more cursors for the different tools
-  -- Overlay code for buildings still need
 
 * <Nitwit> And we need to start testing for lose conditions, and set an upper time limit
   * <Nitwit> 30 days good as a starting limit?
