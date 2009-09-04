@@ -41,6 +41,34 @@ class TileMap(object):
 TILE_MAP = TileMap()
 REVERSE_TILE_MAP = TILE_MAP._reverse_map
 
+class FarmSprites(list):
+    def __init__(self):
+        list.__init__(self)
+        self.removed = []
+        self._cursor = None
+
+    def append(self, sprite):
+        if self._cursor is not None:
+            # pop cursor
+            assert(self._cursor is self.pop())
+            list.append(self, sprite)
+            list.append(self, self._cursor)
+        else:
+            list.append(self, sprite)
+        sprite.updated = 1
+
+    def remove(self, sprite):
+        list.remove(self, sprite)
+        sprite.updated = 1
+        self.removed.append(sprite)
+
+    def set_cursor(self, cursor):
+        if self._cursor is not None:
+            self.remove(self._cursor)
+        self._cursor = cursor
+        if cursor is not None:
+            list.append(self, cursor)
+
 
 class FarmVid(tilevid.Tilevid):
     """Extension of pgu's TileVid class to handle the complications
@@ -48,6 +76,7 @@ class FarmVid(tilevid.Tilevid):
        """
     def __init__(self):
         tilevid.Tilevid.__init__(self)
+        self.sprites = FarmSprites()
 
     def png_folder_load_tiles(self, path):
         """Load tiles from a folder of PNG files."""
