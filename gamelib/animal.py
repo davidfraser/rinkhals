@@ -28,6 +28,7 @@ class Animal(Sprite):
         else:
             self.pos = Position(tile_pos[0], tile_pos[1])
         self.equipment = []
+        self.accoutrements = []
         self.abode = None
         self.facing = 'left'
 
@@ -70,23 +71,22 @@ class Animal(Sprite):
         self.redraw()
 
     def redraw(self):
-        self.image_left = self._image_left.copy()
-        self.image_right = self._image_right.copy()
-        self.equipment.sort(key=lambda x: x.DRAW_LAYER)
-        for item in self.equipment:
-            self.draw_equipment(item)
-        self._set_image_facing(self.facing)
+        layers = [(self._image_left.copy(), self._image_right.copy(), 0)]
+        if hasattr(self, 'EQUIPMENT_IMAGE_ATTRIBUTE'):
+            for item in self.accoutrements + self.equipment:
+                images = item.images(self.EQUIPMENT_IMAGE_ATTRIBUTE)
+                if images:
+                    layers.append(images)
 
-    def draw_equipment(self, item):
-        if not hasattr(self, 'EQUIPMENT_IMAGE_ATTRIBUTE'):
-            return
-        eq_image_attr = getattr(item, self.EQUIPMENT_IMAGE_ATTRIBUTE, 'None')
-        if not eq_image_attr:
-            return
-        eq_image_left = imagecache.load_image(eq_image_attr)
-        eq_image_right = imagecache.load_image(eq_image_attr, ("right_facing",))
-        self.image_left.blit(eq_image_left, (0, 0))
-        self.image_right.blit(eq_image_right, (0, 0))
+        layers.sort(key=lambda l: l[2])
+
+        self.image_left = layers[0][0]
+        self.image_right = layers[0][1]
+        for l in layers[1:]:
+            self.image_left.blit(l[0], (0,0))
+            self.image_right.blit(l[1], (0,0))
+
+        self._set_image_facing(self.facing)
 
     def weapons(self):
         return [e for e in self.equipment if equipment.is_weapon(e)]

@@ -2,6 +2,7 @@
 
 import random
 import sound
+import imagecache
 
 class Equipment(object):
     IS_EQUIPMENT = True
@@ -20,6 +21,14 @@ class Equipment(object):
 
     def name(self):
         return self._name
+
+    def images(self, eq_image_attr):
+        eq_image_file = getattr(self, eq_image_attr, None)
+        if not eq_image_file:
+            return None
+        eq_image_left = imagecache.load_image(eq_image_file)
+        eq_image_right = imagecache.load_image(eq_image_file, ("right_facing",))
+        return eq_image_left, eq_image_right, self.DRAW_LAYER
 
 class Weapon(Equipment):
     IS_WEAPON = True
@@ -83,7 +92,6 @@ class Armour(Equipment):
         self.hitpoints = self.STARTING_HITPOINTS
 
     def place(self, animal):
-        """Give additional lives"""
         for eq in animal.equipment:
             if eq.NAME == self.NAME:
                 return False
@@ -113,6 +121,28 @@ class Kevlar(Armour):
     STARTING_HITPOINTS = 2
 
     CHICKEN_IMAGE_FILE = 'sprites/kevlar.png'
+
+class Accoutrement(Equipment):
+    """Things which are not equipment, but are displayed in the same way"""
+    IS_EQUIPMENT = False
+    BUY_PRICE = 0
+    SELL_PRICE = 0
+
+    def place(self, animal):
+        for eq in animal.accoutrements:
+            if eq.NAME == self.NAME:
+                return False
+        return True
+
+class Spotlight(Accoutrement):
+    NAME = "spotlight"
+    CHICKEN_IMAGE_FILE = 'sprites/select_chkn.png'
+    DRAW_LAYER = -5
+
+class Nest(Accoutrement):
+    NAME = "nest"
+    CHICKEN_IMAGE_FILE = 'sprites/nest.png'
+    DRAW_LAYER = 15
 
 def is_equipment(obj):
     """Return true if obj is a build class."""
