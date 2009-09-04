@@ -25,16 +25,23 @@ class Weapon(Equipment):
     IS_WEAPON = True
     DRAW_LAYER = 10
 
+    def _get_parameter(self, parameter, wielder):
+        mod_attr = 'MODIFY_%s_%s' % (self.TYPE, parameter)
+        param = getattr(self, parameter)
+        return getattr(wielder.abode, mod_attr, lambda r: r)(param)
+
     def in_range(self, gameboard, wielder, target):
         """Can the lucky wielder hit the potentially unlucky target with this?"""
-        return wielder.pos.dist(target.pos) <= self.RANGE
+        return wielder.pos.dist(target.pos) <= self._get_parameter('RANGE', wielder)
 
     def hit(self, gameboard, wielder, target):
         """Is the potentially unlucky target actually unlucky?"""
         if hasattr(self, 'HIT_SOUND'):
             sound.play_sound(self.HIT_SOUND)
         roll = random.randint(1, 100)
-        return roll > (100-self.BASE_HIT) + self.RANGE_MODIFIER*wielder.pos.dist(target.pos)
+        base_hit = self._get_parameter('BASE_HIT', wielder)
+        range_penalty = self._get_parameter('RANGE_PENALTY', wielder)
+        return roll > (100-base_hit) + range_penalty*wielder.pos.dist(target.pos)
 
     def place(self, animal):
         for eq in animal.equipment:
@@ -43,25 +50,27 @@ class Weapon(Equipment):
         return True
 
 class Rifle(Weapon):
+    TYPE = "GUN"
     NAME = "rifle"
     BUY_PRICE = 100
     SELL_PRICE = 75
 
     RANGE = 3
     BASE_HIT = 55
-    RANGE_MODIFIER = 15
+    RANGE_PENALTY = 15
     HIT_SOUND = "fire-rifle.ogg"
 
     CHICKEN_IMAGE_FILE = 'sprites/equip_rifle.png'
 
 class Knife(Weapon):
+    TYPE = "KNIFE"
     NAME = "knife"
     BUY_PRICE = 25
     SELL_PRICE = 15
 
     RANGE = 1
     BASE_HIT = 70
-    RANGE_MODIFIER = 0
+    RANGE_PENALTY = 0
 
     CHICKEN_IMAGE_FILE = 'sprites/equip_knife.png'
 

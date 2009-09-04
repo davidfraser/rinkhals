@@ -246,6 +246,11 @@ class GameBoard(object):
         return True
 
     def use_tool(self, e):
+        if e.button == 3: # Right button
+            self.selected_tool = None
+            self.reset_cursor()
+        elif e.button != 1: # Left button
+            return
         if self.selected_tool == constants.TOOL_SELL_CHICKEN:
             self.sell_chicken(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELL_EGG:
