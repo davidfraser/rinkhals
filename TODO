@@ -14,8 +14,6 @@
 
 * Add invalid cursor sprite
 
-* <Hodgestar> A BuildingFullError can be raised when attempting to hatch eggs in buildings.
-
 * Animations? (Fox catching chicken (with feathers), demolition foxes blowing things up?)
 
 * Add the demolition fox
