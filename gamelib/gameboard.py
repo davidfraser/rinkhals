@@ -306,11 +306,20 @@ class GameBoard(object):
 
     def sell_egg(self, tile_pos):
         def do_sell(chicken):
-            # Placeholde
+            if chicken.egg:
+                # We sell the egg
+                self.add_cash(constants.SELL_PRICE_CHICKEN)
+                sound.play_sound("sell-chicken.ogg")
+                chicken.egg = None
+                self.eggs -= 1
+                self.toolbar.update_egg_counter(self.eggs)
+                # Force update
+                self.toolbar.chsize()
             return False
+
         building = self.get_building(tile_pos)
         if building and building.NAME in buildings.HENHOUSES:
-            self.open_building_dialog(building)
+            self.open_building_dialog(building, do_sell)
 
     def place_animal(self, tile_pos):
         """Handle an TOOL_PLACE_ANIMALS click.
