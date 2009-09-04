@@ -121,6 +121,21 @@ class Building(Sprite):
             for dy in xrange(ysize):
                 yield (xpos + dx, ypos + dy)
 
+    def adjacent_tiles(self):
+        """Return pairs of (x, y) tile positions for each of the tiles
+           adjacent to the building.
+           """
+        xpos, ypos = self.pos
+        xsize, ysize = self.size
+
+        for dx in xrange(xsize): # top and bottom
+            yield (xpos + dx, ypos - 1)
+            yield (xpos + dx, ypos + ysize)
+
+        for dy in xrange(ysize): # left and right
+            yield (xpos - 1, ypos + dy)
+            yield (xpos + xsize, ypos + dy)
+
     def loop(self, tv, _sprite):
         ppos = tv.tile_to_view(self.pos)
         self.rect.x = ppos[0]

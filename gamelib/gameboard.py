@@ -712,10 +712,17 @@ class GameBoard(object):
                             self.add_chicken(new_chick)
                             new_chick.equip(equipment.Nest())
                         except buildings.BuildingFullError:
+                            # No space in the hen house, look nearby
+                            for tile_pos in building.adjacent_tiles():
+                                if self.tv.get(tile_pos) != self.GRASSLAND:
+                                    continue
+                                if self.get_outside_chicken(tile_pos) is None:
+                                    self.add_chicken(new_chick)
+                                    self.relocate_animal(new_chick, tile_pos=tile_pos)
+                                    break
                             # if there isn't a space for the
                             # new chick it dies. :/ Farm life
                             # is cruel.
-                            pass
         self.toolbar.update_egg_counter(self.eggs)
 
     def kill_fox(self, fox):
