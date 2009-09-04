@@ -51,6 +51,8 @@ class Building(Sprite):
 
     IS_BUILDING = True
     GRASSLAND = tiles.REVERSE_TILE_MAP['grassland']
+    MODIFY_KNIFE_RANGE = lambda s, x: 0
+    MODIFY_GUN_RANGE = lambda s, x: -1
 
     def __init__(self, pos):
         """Initial image, tile vid position, size and tile number for building."""
@@ -187,6 +189,7 @@ class HenHouse(Building):
 
 class DoubleStoryHenHouse(HenHouse):
     """A double story hen house."""
+
     TILE_NO = tiles.REVERSE_TILE_MAP['hendominium']
     BUY_PRICE = 300
     SELL_PRICE = 150
@@ -207,6 +210,10 @@ class GuardTower(Building):
     SELECTED_IMAGE = 'sprites/select_watchtower.png'
     NAME = 'Watchtower'
     FLOORS = 1
+
+    MODIFY_GUN_RANGE = lambda s, x: (3*x)/2
+    MODIFY_GUN_BASE_HIT = lambda s, x: x-5
+    MODIFY_GUN_RANGE_PENALTY = lambda s, x: x-1
 
 def is_building(obj):
     """Return true if obj is a build class."""

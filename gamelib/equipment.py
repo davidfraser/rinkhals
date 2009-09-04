@@ -35,9 +35,12 @@ class Weapon(Equipment):
     DRAW_LAYER = 10
 
     def _get_parameter(self, parameter, wielder):
-        mod_attr = 'MODIFY_%s_%s' % (self.TYPE, parameter)
         param = getattr(self, parameter)
-        return getattr(wielder.abode, mod_attr, lambda r: r)(param)
+        if wielder.abode:
+            mod_attr = 'MODIFY_%s_%s' % (self.TYPE, parameter)
+            modifier = getattr(wielder.abode.building, mod_attr, lambda r: r)
+            param = modifier(param)
+        return param
 
     def in_range(self, gameboard, wielder, target):
         """Can the lucky wielder hit the potentially unlucky target with this?"""
