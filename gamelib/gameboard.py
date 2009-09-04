@@ -102,7 +102,6 @@ class ToolBar(gui.Table):
 
     def day_done(self):
         import engine
-        self.gameboard.reset_cursor()
         pygame.event.post(engine.START_NIGHT)
 
     update_cash_counter = mkcountupdate('cash_counter')
