@@ -284,6 +284,7 @@ class Fox(Animal):
         min_dist = 999
         if self.closest not in gameboard.chickens:
             # Either no target, or someone ate it
+            self.closest = None
             for chicken in gameboard.chickens:
                 dist = chicken.pos.dist(self.pos)
                 if chicken.abode:
