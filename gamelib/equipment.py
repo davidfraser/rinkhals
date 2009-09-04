@@ -153,6 +153,11 @@ class Nest(Accoutrement):
     CHICKEN_IMAGE_FILE = 'sprites/nest.png'
     DRAW_LAYER = 15
 
+class NestEgg(Accoutrement):
+    NAME = "nestegg"
+    CHICKEN_IMAGE_FILE = 'sprites/equip_egg.png'
+    DRAW_LAYER = 14
+
 def is_equipment(obj):
     """Return true if obj is a build class."""
     return getattr(obj, "IS_EQUIPMENT", False) and hasattr(obj, "NAME")

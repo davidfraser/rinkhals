@@ -74,6 +74,7 @@ if __name__ == "__main__":
         ("watchtower", 40, 40),
         ("select_watchtower", 40, 40),
         ("nest", 20, 20),
+        ("equip_egg", 20, 20),
     ]
 
     cursors = [
