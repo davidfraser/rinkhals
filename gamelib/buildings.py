@@ -1,9 +1,16 @@
 """Classes for various buildings in the game."""
 
 from pgu.vid import Sprite
+from pygame.locals import SRCALPHA
+import pygame
+import pygame.font
 
 import imagecache
 import tiles
+import constants
+
+import warnings
+warnings.filterwarnings("ignore", "os.popen3 is deprecated.")
 
 class Place(object):
     """Space within a building that can be occupied."""
@@ -13,15 +20,19 @@ class Place(object):
         self.building = building
         self.offset = offset
 
-    def set_occupant(self, occupant):
-        self.clear_occupant()
+    def set_occupant(self, occupant, _update=True):
+        self.clear_occupant(_update=False)
         self.occupant = occupant
         self.occupant.abode = self
+        if _update:
+            self.building.update_occupant_count()
 
-    def clear_occupant(self):
+    def clear_occupant(self, _update=True):
         if self.occupant is not None:
             self.occupant.abode = None
             self.occupant = None
+        if _update:
+            self.building.update_occupant_count()
 
     def get_pos(self):
         bpos = self.building.pos
@@ -65,6 +76,9 @@ class Building(Sprite):
         self._buy_price = self.BUY_PRICE
         self._sell_price = self.SELL_PRICE
         self._sun_on = True
+        self._font = pygame.font.SysFont('Vera', 30, bold=True)
+        self._font_image = pygame.Surface(self.day_image.get_size(), flags=SRCALPHA)
+        self._font_image.fill((0, 0, 0, 0))
 
         self._floors = []
         for f in range(self.FLOORS):
@@ -77,8 +91,24 @@ class Building(Sprite):
             floor = Floor("Floor %s" % (f+1,), places)
             self._floors.append(floor)
 
+        # 0: the main iamge
+        # 1: above, -1: below
+        self.draw_stack = {"main": (0, self.day_image)}
+
         # Create the building somewhere far off screen
         Sprite.__init__(self, self.day_image, (-1000, -1000))
+
+    def _redraw(self):
+        items = self.draw_stack.values()
+        items.sort(key=lambda x: x[0])
+        image = items.pop(0)[1].copy()
+        for _lvl, overlay in items:
+            image.blit(overlay, (0, 0))
+        self.setimage(image)
+
+    def _replace_main(self, new_main):
+        self.draw_stack["main"] = (0, new_main)
+        self._redraw()
 
     def tile_positions(self):
         """Return pairs of (x, y) tile positions for each of the tile positions
@@ -137,16 +167,30 @@ class Building(Sprite):
 
     def selected(self, selected):
         if selected:
-            self.setimage(self.selected_image)
+            self._replace_main(self.selected_image)
         else:
             self.sun(self._sun_on)
 
     def sun(self, sun_on):
         self._sun_on = sun_on
         if sun_on:
-            self.setimage(self.day_image)
+            self._replace_main(self.day_image)
         else:
-            self.setimage(self.night_image)
+            self._replace_main(self.night_image)
+
+    def update_occupant_count(self):
+        count = len(list(self.occupants()))
+        if count == 0:
+            if "count" in self.draw_stack:
+                del self.draw_stack["count"]
+        else:
+            image = self._font_image.copy()
+            text = self._font.render(str(count), True, constants.FG_COLOR)
+            w, h = image.get_size()
+            x, y = text.get_size()
+            image.blit(text, (w - x, h - y))
+            self.draw_stack["count"] = (1, image)
+        self._redraw()
 
     def floors(self):
         return self._floors
