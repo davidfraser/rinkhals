@@ -12,8 +12,6 @@ cursors = {
 
 for tag, filename in [
         ('chicken', 'cursors/chkn.xbm'),
-        ('rifle', 'cursors/equip_rifle.xbm'),
-        ('knife', 'cursors/equip_knife.xbm'),
         ]:
     path = data.filepath(filename)
     # pygame 1.8 needs the file twice to do the right thing
