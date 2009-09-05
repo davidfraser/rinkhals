@@ -2,6 +2,7 @@
 
 from pgu import tilevid, vid
 import os
+import data
 import imagecache
 
 class TileMap(object):
@@ -78,10 +79,12 @@ class FarmVid(tilevid.Tilevid):
 
     def png_folder_load_tiles(self, path):
         """Load tiles from a folder of PNG files."""
-        for dirpath, dirnames, filenames in os.walk(path):
-            abstract_dirpath = "/".join(dirpath.split(os.path.sep))
+        full_path = data.filepath(path)
+        for dirpath, dirnames, filenames in os.walk(full_path):
+            relative_path = dirpath[len(full_path):]
+            relative_path = "/".join(relative_path.split(os.path.sep))
             for filename in filenames:
-                image_name = abstract_dirpath + "/" + filename
+                image_name = "/".join([path, relative_path, filename])
                 for tile_no in TILE_MAP.tiles_for_image(filename):
                     tile_name = TILE_MAP[tile_no]
                     self.tiles[tile_no] = FarmTile(tile_no, tile_name, image_name)
