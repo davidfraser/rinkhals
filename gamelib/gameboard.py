@@ -322,6 +322,9 @@ class GameBoard(object):
         self.tv = tiles.FarmVid()
         self.tv.png_folder_load_tiles('tiles')
         self.tv.tga_load_level(data.filepath('levels/farm.tga'))
+        height, width = self.tv.size
+        # Ensure we don't every try to create more foxes then is sane
+        self.max_foxes = min(height+width-15, constants.ABS_MAX_NUM_FOXES)
         self.create_display()
 
         self.selected_tool = None
@@ -985,7 +988,7 @@ class GameBoard(object):
         x, y = 0, 0
         width, height = self.tv.size
         min_foxes = (self.days+3)/2 # always more than one fox
-        new_foxes = random.randint(min_foxes, min_foxes*2)
+        new_foxes = min(random.randint(min_foxes, min_foxes*2), self.max_foxes)
         while len(self.foxes) < new_foxes:
             side = random.randint(0, 3)
             if side == 0:
