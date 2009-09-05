@@ -1,0 +1,56 @@
+#!/bin/sh
+# Copyright 2009 Jeremy Thurgood <firxen+rinkhals@gmail.com>
+# GPL - see COPYING for details
+#
+# Usage: darwin-py2app
+
+OFA_VERSION=`PYTHONPATH=. python -c "from gamelib import version; print version.VERSION_STR"`
+BUILD_FOLDER="foxassault-${OFA_VERSION}"
+DMG_NAME="${BUILD_FOLDER}.dmg"
+PY2APP_LOG="py2app.log"
+
+rm -rf "dist/tmp"
+rm -rf "dist/${BUILD_FOLDER}"
+rm -rf "dist/${ZIP_NAME}"
+
+echo ""
+echo "=== Copying dependencies that might not be installed ==="
+echo ""
+
+PGU_PATH=`find lib/pgu* -maxdepth 0 -type d`
+
+mkdir -p "dist/tmp/share/pgu/themes"
+echo "'${PGU_PATH}/pgu' -> 'dist/tmp/'"
+cp -R "${PGU_PATH}/pgu" "dist/tmp/"
+echo "'${PGU_PATH}/data/themes/default' -> 'dist/tmp/share/pgu/themes/'"
+cp -R "${PGU_PATH}/data/themes/default" "dist/tmp/share/pgu/themes/"
+
+echo ""
+echo "=== Running python setup.py ==="
+echo "  Fox Assault version: ${OFA_VERSION}"
+echo "  Writing log to ${PY2APP_LOG}"
+
+python setup.py py2app >${PY2APP_LOG} 2>&1
+
+rm -rf "dist/tmp"
+
+echo ""
+echo "=== Removing useless cruft that just takes up space ==="
+echo ""
+
+find "dist/${BUILD_FOLDER}" -path '*/Resources/lib/*/data/*' -name '*.svg' -delete
+for dir in docs examples tests; do
+    find "dist/${BUILD_FOLDER}" -path "*/Resources/lib/*/pygame/${dir}/*" -delete
+done
+
+echo "=== Building DMG ==="
+echo ""
+
+hdiutil create -srcfolder dist/${BUILD_FOLDER}/*.app/ dist/${DMG_NAME}
+
+echo ""
+echo "=== Done ==="
+echo ""
+du -sh dist/* | sed 's/^/   /'
+echo ""
+

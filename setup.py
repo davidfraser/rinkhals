@@ -85,6 +85,7 @@ setup   (   # Metadata
                 'script': 'scripts/foxassault.py',
                 # 'icon_resources': [(0, "artwork/sutekh-icon-inkscape.ico")],
             }],
+            app = ['scripts/foxassault.py'],
             cmdclass = {
                 'py2exe': PkgResourceBuilder,
             },
@@ -114,6 +115,15 @@ setup   (   # Metadata
                     # email modules
                     'email.Generator', 'email.Iterators', 'email.Utils',
                 ],
+            },
+            'py2app': {
+                'argv_emulation': 1,
+                'dist_dir': 'dist/foxassault-%s' % version.VERSION_STR,
+                'packages': [
+                    'logging', 'encodings', 'pygame', 'gamelib', 'data', 'dist/tmp/pgu',
+                ],
+                'resources': ['dist/tmp/share'],
+                'excludes': ['numpy', 'pgu'],
             }},
             data_files = [
                 'COPYRIGHT',
