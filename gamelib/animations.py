@@ -59,10 +59,11 @@ class MuzzleFlash(Animation):
             Animation.__init__(self, chicken.pos, self.SEQUENCE_LEFT)
 
 class FenceExplosion(Animation):
-    FLASH_LEFT = imagecache.load_image('sprites/muzzle_flash.png')
-    FLASH_RIGHT = imagecache.load_image('sprites/muzzle_flash.png',
-            ("right_facing",))
-    SEQUENCE = [FLASH_LEFT, FLASH_RIGHT, FLASH_LEFT, FLASH_RIGHT]
+    FLASH_1 = imagecache.load_image('sprites/boom1.png')
+    FLASH_2 = imagecache.load_image('sprites/boom2.png')
+    FLASH_3 = imagecache.load_image('sprites/boom3.png')
+    FLASH_4 = imagecache.load_image('sprites/boom4.png')
+    SEQUENCE = [FLASH_1, FLASH_2, FLASH_3, FLASH_4]
 
 class FoxDeath(Animation):
     BLOOD_SPLAT = imagecache.load_image('sprites/fox_death.png')
