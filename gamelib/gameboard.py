@@ -163,7 +163,7 @@ class ToolBar(gui.Table):
 
         tbl = gui.Table()
         tbl.tr()
-        doc = gui.Document(width=400)
+        doc = gui.Document(width=380)
         space = doc.style.font.size(" ")
         for header in ['Item', 'Buy Price', 'Sell Price']:
             doc.add(make_box(header))
@@ -178,17 +178,24 @@ class ToolBar(gui.Table):
             doc.add(make_box('%d' % equip.BUY_PRICE))
             doc.add(make_box('%d' % equip.SELL_PRICE))
             doc.br(space[1])
+
+        doc.add(make_box("Fence"))
+        doc.add(make_box('%d' % constants.BUY_PRICE_FENCE))
+        doc.add(make_box('%d' % constants.SELL_PRICE_FENCE))
+
+        doc.add(make_box("Repair Fence"))
+        doc.add(make_box('%d' % constants.REPAIR_PRICE_FENCE))
+        doc.add(make_box(''))
+
         fix_widths(doc)
-        for word in "Damaged equipment will be sold for less than" \
-                " the sell price.".split():
+        for word in "Damaged equipment or broken fences will be sold for" \
+                " less than the sell price.".split():
             doc.add(gui.Label(word))
             doc.space(space)
         close_button = gui.Button("Close")
-        tbl.td(doc, colspan=3)
+        tbl.td(doc)
         tbl.tr()
-        tbl.td(gui.Label(''))
-        tbl.td(gui.Label(''))
-        tbl.td(close_button)
+        tbl.td(close_button, align=1)
         dialog = gui.Dialog(gui.Label('Price Reference'), tbl)
         close_button.connect(gui.CLICK, dialog.close)
         dialog.open()
