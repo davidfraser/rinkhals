@@ -143,6 +143,8 @@ class ToolBar(gui.Table):
                 if hasattr(thing, 'style'):
                     thing.style.width = max_width + 10
 
+        tbl = gui.Table()
+        tbl.tr()
         doc = gui.Document(width=400)
         space = doc.style.font.size(" ")
         for header in ['Item', 'Buy Price', 'Sell Price']:
@@ -163,7 +165,14 @@ class ToolBar(gui.Table):
                 " the sell price.".split():
             doc.add(gui.Label(word))
             doc.space(space)
-        dialog = gui.Dialog(gui.Label('Price Reference'), doc)
+        close_button = gui.Button("Close")
+        tbl.td(doc, colspan=3)
+        tbl.tr()
+        tbl.td(gui.Label(''))
+        tbl.td(gui.Label(''))
+        tbl.td(close_button)
+        dialog = gui.Dialog(gui.Label('Price Reference'), tbl)
+        close_button.connect(gui.CLICK, dialog.close)
         dialog.open()
 
     update_cash_counter = mkcountupdate('cash_counter')
@@ -265,7 +274,6 @@ class VidWidget(gui.Widget):
             self.gameboard.use_tool(e)
         elif e.type == MOUSEMOTION and self.gameboard.sprite_cursor:
             self.gameboard.update_sprite_cursor(e)
-
 
 class GameBoard(object):
     TILE_DIMENSIONS = (20, 20)
