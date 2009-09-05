@@ -15,3 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program (see COPYING); if not, write to the
 Free Software Foundation, 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
+
+This work relies heavily on Phil's pyGame Utilities (pgu), copyright Phil
+Hassey and others (see the pgu sources), and several bits of the code are
+derived from pgu. pgu is licensed under the LGPL (v2.1 or later).
