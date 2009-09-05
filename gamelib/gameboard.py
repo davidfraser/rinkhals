@@ -550,7 +550,7 @@ class GameBoard(object):
             if chicken in self.tv.sprites:
                 self.tv.sprites.remove(chicken)
 
-    def open_dialog(self, widget, close_callback=None):
+    def open_dialog(self, widget, x=None, y=None, close_callback=None):
         """Open a dialog for the given widget. Add close button."""
         tbl = gui.Table()
 
@@ -569,7 +569,12 @@ class GameBoard(object):
         tbl.td(gui.Spacer(100, 0))
         tbl.td(close_button, align=1)
 
-        self.disp.open(tbl)
+        if x:
+            offset = (self.disp.rect.center[0] +  x,
+                    self.disp.rect.center[1] + y)
+        else:
+            offset = None
+        self.disp.open(tbl, pos=offset)
         return tbl
 
     def open_building_dialog(self, building, sell_callback=None):
@@ -742,17 +747,29 @@ class GameBoard(object):
         self.remove_building(building)
 
     def sell_equipment(self, tile_pos):
-        chicken = self.get_outside_chicken(tile_pos)
-        if chicken is None or not chicken.equipment:
-            return
-        if len(chicken.equipment) == 1:
-            item = chicken.equipment[0]
-            self.add_cash(item.sell_price())
-            chicken.unequip(item)
-        else:
-            self.open_equipment_dialog(chicken)
+        x, y = 0, 0
+        def do_sell(chicken):
+            if not chicken.equipment:
+                return
+            elif len(chicken.equipment) == 1:
+                item = chicken.equipment[0]
+                self.add_cash(item.sell_price())
+                chicken.unequip(item)
+            else:
+                self.open_equipment_dialog(chicken, x, y)
+            return False
 
-    def open_equipment_dialog(self, chicken):
+        chicken = self.get_outside_chicken(tile_pos)
+        if chicken is not None:
+            do_sell(chicken)
+        else:
+            building = self.get_building(tile_pos)
+            if building is None:
+                return
+            x, y = 50, 0
+            self.open_building_dialog(building, do_sell)
+
+    def open_equipment_dialog(self, chicken, x, y):
         tbl = gui.Table()
 
         def sell_item(item, button):
@@ -772,7 +789,7 @@ class GameBoard(object):
             button.connect(gui.CLICK, sell_item, item, button)
             tbl.td(button, align=1, **kwargs)
 
-        dialog = self.open_dialog(tbl)
+        dialog = self.open_dialog(tbl, x=x, y=y)
 
     def event(self, e):
         if e.type == KEYDOWN and e.key in [K_UP, K_DOWN, K_LEFT, K_RIGHT]:
