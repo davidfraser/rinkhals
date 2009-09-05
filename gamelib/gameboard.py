@@ -79,29 +79,39 @@ class ToolBar(gui.Table):
         self.add_spacer(20)
 
         self.add_tool_button("Move Hen", constants.TOOL_PLACE_ANIMALS,
-                cursors.cursors['select'])
-        self.add_tool_button("Cut Trees", constants.TOOL_LOGGING)
+                None, cursors.cursors['select'])
+        self.add_tool_button("Cut Trees", constants.TOOL_LOGGING,
+                constants.LOGGING_PRICE)
         self.add_spacer(20)
 
         self.add_heading("Sell ...")
         self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
-                cursors.cursors['sell'])
+                constants.SELL_PRICE_CHICKEN, cursors.cursors['sell'])
         self.add_tool_button("Egg", constants.TOOL_SELL_EGG,
-                cursors.cursors['sell'])
+                constants.SELL_PRICE_EGG, cursors.cursors['sell'])
         self.add_tool_button("Building", constants.TOOL_SELL_BUILDING,
-                cursors.cursors['sell'])
+                None, cursors.cursors['sell'])
         self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
-                cursors.cursors['sell'])
+                None, cursors.cursors['sell'])
         self.add_spacer(20)
 
+
         self.add_heading("Buy ...")
-        self.add_tool_button("Fence", constants.TOOL_BUY_FENCE)
+
+        self.add_tool_button("Fence", constants.TOOL_BUY_FENCE,
+                "%s/%s" % (constants.BUY_PRICE_FENCE,
+                           constants.REPAIR_PRICE_FENCE))
+
         for building_cls in buildings.BUILDINGS:
             self.add_tool_button(building_cls.NAME.title(), building_cls,
-                    cursors.cursors.get('build', None))
+                    None, cursors.cursors.get('build', None))
+
         for equipment_cls in equipment.EQUIPMENT:
-            self.add_tool_button(equipment_cls.NAME.title(), equipment_cls,
+            self.add_tool_button(equipment_cls.NAME.title(),
+                    equipment_cls,
+                    equipment_cls.BUY_PRICE,
                     cursors.cursors.get('buy', None))
+
         self.add_spacer(30)
 
         self.add_tool("Finished Day", self.day_done)
@@ -124,7 +134,9 @@ class ToolBar(gui.Table):
         self.tr()
         self.td(mklabel(text), colspan=2)
 
-    def add_tool_button(self, text, tool, cursor=None):
+    def add_tool_button(self, text, tool, price=None, cursor=None):
+        if price is not None:
+            text = "%s  (%s)" % (text, price)
         self.add_tool(text, lambda: self.gameboard.set_selected_tool(tool,
             cursor))
 
