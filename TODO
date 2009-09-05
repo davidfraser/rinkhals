@@ -18,12 +18,12 @@
      -- Sapper foxes blowing things up?
 
 * <Nitwit> And we need to start testing for lose conditions, and set an upper time limit
-  -- High score needs finishing
   -- Think about length of game (i.e. number of days)
-
 
 == POST PYWEEK ==
 
 * Add invalid cursor sprite
 
 * <confluence> We should have text images instead of buttons (in the various menus and toolbars).
+
+* Persistent high scores 
