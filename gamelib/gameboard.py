@@ -95,7 +95,6 @@ class ToolBar(gui.Table):
                 None, cursors.cursors['sell'])
         self.add_spacer(20)
 
-
         self.add_heading("Buy ...")
 
         self.add_tool_button("Fence", constants.TOOL_BUY_FENCE,
@@ -112,6 +111,7 @@ class ToolBar(gui.Table):
                     equipment_cls.BUY_PRICE,
                     cursors.cursors.get('buy', None))
 
+        self.add_tool("Price Reference", self.show_prices)
         self.add_spacer(30)
 
         self.add_tool("Finished Day", self.day_done)
@@ -119,6 +119,52 @@ class ToolBar(gui.Table):
     def day_done(self):
         import engine
         pygame.event.post(engine.START_NIGHT)
+
+    def show_prices(self):
+        """Popup dialog of prices"""
+        def make_box(text):
+            style = {
+                    'border' : 1
+                    }
+            word = gui.Label(text, style=style)
+            return word
+
+        def fix_widths(doc):
+            """Loop through all the widgets in the doc, and set the
+               width of the labels to max + 10"""
+            # We need to do this because of possible font issues
+            max_width = 0
+            for thing in doc.widgets:
+                if hasattr(thing, 'style'):
+                    # A label
+                    if thing.style.width > max_width:
+                        max_width = thing.style.width
+            for thing in doc.widgets:
+                if hasattr(thing, 'style'):
+                    thing.style.width = max_width + 10
+
+        doc = gui.Document(width=400)
+        space = doc.style.font.size(" ")
+        for header in ['Item', 'Buy Price', 'Sell Price']:
+            doc.add(make_box(header))
+        doc.br(space[1])
+        for building in buildings.BUILDINGS:
+            doc.add(make_box(building.NAME))
+            doc.add(make_box('%d' % building.BUY_PRICE))
+            doc.add(make_box('%d' % building.SELL_PRICE))
+            doc.br(space[1])
+        for equip in equipment.EQUIPMENT:
+            doc.add(make_box(equip.NAME))
+            doc.add(make_box('%d' % equip.BUY_PRICE))
+            doc.add(make_box('%d' % equip.SELL_PRICE))
+            doc.br(space[1])
+        fix_widths(doc)
+        for word in "Damaged equipment will be sold for less than" \
+                " the sell price.".split():
+            doc.add(gui.Label(word))
+            doc.space(space)
+        dialog = gui.Dialog(gui.Label('Price Reference'), doc)
+        dialog.open()
 
     update_cash_counter = mkcountupdate('cash_counter')
     update_fox_counter = mkcountupdate('killed_foxes')
