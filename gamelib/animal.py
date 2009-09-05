@@ -40,6 +40,18 @@ class Animal(Sprite):
         self.rect.x = ppos[0]
         self.rect.y = ppos[1]
 
+    def die(self, gameboard):
+        """Play death animation, noises, whatever."""
+        if hasattr(self, 'DEATH_SOUND'):
+            sound.play_sound(self.DEATH_SOUND)
+        if hasattr(self, 'DEATH_ANIMATION'):
+            gameboard.animations.append(self.DEATH_ANIMATION(self.pos))
+        self._game_death(gameboard)
+
+    def _game_death(self, gameboard):
+        # Call appropriate gameboard cleanup here.
+        pass
+
     def move(self, state):
         """Given the game state, return a new position for the object"""
         # Default is not to move
@@ -116,17 +128,20 @@ class Animal(Sprite):
     def outside(self):
         return self.abode is None
 
-    def survive_damage(self):
+    def damage(self, gameboard):
         for a in self.armour():
             if not a.survive_damage():
                 self.unequip(a)
             return True
+        self.die(gameboard)
         return False
 
 class Chicken(Animal):
     """A chicken"""
 
     EQUIPMENT_IMAGE_ATTRIBUTE = 'CHICKEN_IMAGE_FILE'
+    DEATH_ANIMATION = animations.ChickenDeath
+    DEATH_SOUND = 'kill-chicken.ogg'
 
     def __init__(self, pos):
         image_left = imagecache.load_image('sprites/chkn.png')
@@ -134,6 +149,9 @@ class Chicken(Animal):
                 ("right_facing",))
         Animal.__init__(self, image_left, image_right, pos)
         self.eggs = []
+
+    def _game_death(self, gameboard):
+        gameboard.remove_chicken(self)
 
     def move(self, gameboard):
         """A free chicken will move away from other free chickens"""
@@ -200,8 +218,7 @@ class Chicken(Animal):
             return
         self._fix_face(fox.pos)
         if weapon.hit(gameboard, self, fox):
-            sound.play_sound("kill-fox.ogg")
-            gameboard.kill_fox(fox)
+            fox.damage(gameboard)
 
 class Egg(Animal):
     """An egg"""
@@ -224,6 +241,8 @@ class Fox(Animal):
 
     STEALTH = 20
     IMAGE_FILE = 'sprites/fox.png'
+    DEATH_ANIMATION = animations.FoxDeath
+    DEATH_SOUND = 'kill-fox.ogg'
 
     costs = {
             # weighting for movement calculation
@@ -248,6 +267,9 @@ class Fox(Animal):
         self.safe = False
         self.closest = None
         self.last_steps = []
+
+    def _game_death(self, gameboard):
+        gameboard.kill_fox(self)
 
     def _cost_tile(self, pos, gameboard):
         if gameboard.in_bounds(pos):
@@ -343,9 +365,7 @@ class Fox(Animal):
 
     def _catch_chicken(self, chicken, gameboard):
         """Catch a chicken"""
-        if not chicken.survive_damage():
-            sound.play_sound("kill-chicken.ogg")
-            gameboard.remove_chicken(chicken)
+        chicken.damage(gameboard)
         self.closest = None
         self.hunting = False
         self.last_steps = [] # Forget history here
@@ -457,7 +477,7 @@ class GreedyFox(Fox):
         self.chickens_eaten = 0
 
     def _catch_chicken(self, chicken, gameboard):
-        gameboard.remove_chicken(chicken)
+        chicken.damage(gameboard)
         self.closest = None
         self.chickens_eaten += 1
         if self.chickens_eaten > 2:

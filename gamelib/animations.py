@@ -17,8 +17,10 @@ class Animation(Sprite):
        # will cause issues as this will overrun the next move loop.
        # (assuming all animations are triggered by the move loop, of course)
 
-    def __init__(self, sequence, tile_pos):
+    def __init__(self, tile_pos, sequence=None):
         # Create the first frame
+        if sequence is None:
+            sequence = self.SEQUENCE
         self.iter = iter(sequence)
         Sprite.__init__(self, self.iter.next(), (-1000, -1000))
         if hasattr(tile_pos, 'to_tuple'):
@@ -52,18 +54,21 @@ class MuzzleFlash(Animation):
 
     def __init__(self, chicken):
         if chicken.facing == 'right':
-            Animation.__init__(self, self.SEQUENCE_RIGHT, chicken.pos)
+            Animation.__init__(self, chicken.pos, self.SEQUENCE_RIGHT)
         else:
-            Animation.__init__(self, self.SEQUENCE_LEFT, chicken.pos)
+            Animation.__init__(self, chicken.pos, self.SEQUENCE_LEFT)
 
 class FenceExplosion(Animation):
-
     FLASH_LEFT = imagecache.load_image('sprites/muzzle_flash.png')
     FLASH_RIGHT = imagecache.load_image('sprites/muzzle_flash.png',
             ("right_facing",))
-
     SEQUENCE = [FLASH_LEFT, FLASH_RIGHT, FLASH_LEFT, FLASH_RIGHT]
 
-    def __init__(self, fencetile):
-        Animation.__init__(self, self.SEQUENCE, fencetile)
-
+class FoxDeath(Animation):
+    BLOOD_SPLAT = imagecache.load_image('sprites/fox_death.png')
+    SEQUENCE = [BLOOD_SPLAT, BLOOD_SPLAT]
+    
+class ChickenDeath(Animation):
+    BLOOD_SPLAT = imagecache.load_image('sprites/fox_death.png')
+    FEATHER_SPLAT = imagecache.load_image('sprites/chkn_death.png')
+    SEQUENCE = [BLOOD_SPLAT, FEATHER_SPLAT, FEATHER_SPLAT]
