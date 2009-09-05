@@ -8,36 +8,23 @@
     -- Building (too similar to move)
     -- Equipment
   -- Buy ...
-    -- Fence
     -- Helmet
     -- Kevlar
 
-* Add invalid cursor sprite
-
-* Animations? (Fox catching chicken (with feathers), demolition foxes blowing things up?)
-
-* <confluence> We should have text images instead of buttons (in the various menus and toolbars).
+* Animations?
+  -- Muzzle flashes done.
+  -- Still need:
+     -- Fox gibbing chicken (with feathers)
+     -- Sapper foxes blowing things up?
 
 * <Nitwit> And we need to start testing for lose conditions, and set an upper time limit
-  * <Nitwit> 30 days good as a starting limit?
-  * <Hodgestar> Sounds good. What happens when the 30 days are up?
-  * <Hodgestar> Some kind of high-score table?
-  * <jerith> I'm thinking win conditions should be a number of chickens and a cash balance at the end of the level.
-  * <Nitwit> I'm adding a game over state - I was thinking of only a "You lost" or "Score : x" message for tonight
-  * <Nitwit> where score = cash + WEIGHT*chickens, for some value of WEIGHT
-  * <jerith> Maybe make level a fixed number of days -- a fortnight seems a good balance.
-  * <Nitwit> given the current time to hatch chickens, I worry that a fornight is too short
-  * <jerith> How long does it take to hatch chickens?
-  * <jerith> Actually, I'm probably overestimating the amount of  work that will go into a day.
-  * <Nitwit> jerith: 2 nights, so a fornight gives at most 7 cycles
-  * <Nitwit> but we can fiddle with values for game balance tomorrow and Friday
-  * <Hodgestar> Maybe score = cash + (chicken sell price)*chickens.
-  * <Hodgestar> I.e. what you would get if you converted all your chickens to cash at the end.
-  * <Hodgestar> jerith says to add (egg sell price)*eggs too.
-
-  -- Game over & time limit implemented with final score.
-  -- High score support still needed (pgu.high ?)
+  -- High score needs finishing
   -- Should esc take us to a different state than won / lost?
+  -- Think about length of game (i.e. number of days)
 
-* <tzhau> simchicken! so are there gonna to be chicken processing plants? escaping chickens?
-  * <Hodgestar> tzhau: We could add some sort of self-managing henhouse that sells chickens automatically to make space for hatching eggs.
+
+== POST PYWEEK ==
+
+* Add invalid cursor sprite
+
+* <confluence> We should have text images instead of buttons (in the various menus and toolbars).
