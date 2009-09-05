@@ -99,12 +99,13 @@ setup   (   # Metadata
                     'pygame', 'pgu',
                 ],
                 'excludes': [
+                    'numpy',
                 ],
                 'ignores': [
-                    # all database modules except sqlite3
+                    # all database modules
                     'pgdb', 'Sybase', 'adodbapi',
                     'kinterbasdb', 'psycopg', 'psycopg2', 'pymssql',
-                    'sapdb', 'pysqlite2', 'sqlite',
+                    'sapdb', 'pysqlite2', 'sqlite', 'sqlite3',
                     'MySQLdb', 'MySQLdb.connections',
                     'MySQLdb.constants.CR', 'MySQLdb.constants.ER',
                     # old datetime equivalents
@@ -112,10 +113,6 @@ setup   (   # Metadata
                     'mx', 'mx.DateTime', 'mx.DateTime.ISO',
                     # email modules
                     'email.Generator', 'email.Iterators', 'email.Utils',
-                    # GDK related imports we can ignore
-                    'gdk', 'ltihooks',
-                    # ignore things include in Python >= 2.5
-                    'elementtree.ElementTree',
                 ],
             }},
             data_files = [
