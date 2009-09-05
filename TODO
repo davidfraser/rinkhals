@@ -11,9 +11,6 @@
 
 * Level layout refactoring and autogeneration of tiles (Jerith).
 
-* Animations?
-  -- Graphics for sapper foxes blowing things up (Confluence).
-
 * Balance game (game length, profits & costs, etc.) (All).
 
 * Py2exe packaging (Hodgestar).
