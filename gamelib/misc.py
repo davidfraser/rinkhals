@@ -53,7 +53,7 @@ class WeightedSelection(object):
 
 class CheckDialog(gui.Dialog):
     def __init__(self, **params):
-        title = gui.Label('Are You sure')
+        title = gui.Label('Are You Sure?')
         self.do_quit = False
         self.running = True
         tbl = gui.Table()
@@ -77,7 +77,7 @@ class CheckDialog(gui.Dialog):
 
     def event(self, e):
         if e.type == KEYDOWN and e.key == K_ESCAPE:
-            self.clicked(True)
+            self.clicked(False)
             return True
         return gui.Dialog.event(self, e)
 
