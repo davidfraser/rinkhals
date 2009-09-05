@@ -89,6 +89,7 @@ if __name__ == "__main__":
     cursors = [
         ("chkn", 16, 16),
         ("egg", 16, 16),
+        ("sell_cursor", 24, 24),
         ]
 
     process_svg_folder("data/tiles", 20, 20)

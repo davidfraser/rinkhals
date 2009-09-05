@@ -84,13 +84,13 @@ class ToolBar(gui.Table):
 
         self.add_heading("Sell ...")
         self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
-                cursors.cursors['select'])
+                cursors.cursors['sell'])
         self.add_tool_button("Egg", constants.TOOL_SELL_EGG,
-                cursors.cursors['select'])
+                cursors.cursors['sell'])
         self.add_tool_button("Building", constants.TOOL_SELL_BUILDING,
-                cursors.cursors['select'])
+                cursors.cursors['sell'])
         self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
-                cursors.cursors['select'])
+                cursors.cursors['sell'])
         self.add_spacer(20)
 
         self.add_heading("Buy ...")
