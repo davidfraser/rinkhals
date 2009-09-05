@@ -3,7 +3,6 @@
 from pgu.vid import Sprite
 from pygame.locals import SRCALPHA
 import pygame
-import pygame.font
 
 import imagecache
 import tiles
