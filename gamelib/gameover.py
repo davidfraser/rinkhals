@@ -82,6 +82,7 @@ class GameOver(gui.Table):
                 constants.SELL_PRICE_EGG * gameboard.eggs
 
         self.tr()
+        made_list = scoreboard.check(score) is not None
         if gameboard.is_game_over():
             if len(gameboard.chickens) > 0:
                 self.survived = WON
@@ -122,7 +123,7 @@ class GameOver(gui.Table):
         self.tr()
         self.td(gui.Label("Final score : %d" % score,
             color=constants.FG_COLOR), colspan=3)
-        if scoreboard.check(score) is not None:
+        if made_list:
             self.tr()
             if self.survived == WON:
                 self.td(gui.Label("You made the high scores",
