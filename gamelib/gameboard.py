@@ -1,7 +1,8 @@
 import random
 
 import pygame
-from pygame.locals import MOUSEBUTTONDOWN, MOUSEMOTION, KEYDOWN, K_UP, K_DOWN, K_LEFT, K_RIGHT
+from pygame.locals import MOUSEBUTTONDOWN, MOUSEMOTION, KEYDOWN, K_UP, K_DOWN, \
+        K_LEFT, K_RIGHT
 from pgu import gui
 
 import data
@@ -560,6 +561,15 @@ class GameBoard(object):
         def close_callback():
             building.selected(False)
 
+        def evict_callback():
+            print 'evict called', self.animal_to_place
+
+        if not sell_callback:
+            tbl.tr()
+            button = gui.Button('Evict')
+            button.connect(gui.CLICK, evict_callback)
+            tbl.td(button, colspan=2, **kwargs)
+
         self.open_dialog(tbl, close_callback=close_callback)
 
     def buy_fence(self, tile_pos):
@@ -664,7 +674,7 @@ class GameBoard(object):
         dialog = self.open_dialog(tbl)
 
     def event(self, e):
-        if e.type == KEYDOWN:
+        if e.type == KEYDOWN and e.key in [K_UP, K_DOWN, K_LEFT, K_RIGHT]:
             if e.key == K_UP:
                 self.tvw.move_view(0, -self.TILE_DIMENSIONS[1])
             if e.key == K_DOWN:
@@ -673,8 +683,8 @@ class GameBoard(object):
                 self.tvw.move_view(-self.TILE_DIMENSIONS[0], 0)
             if e.key == K_RIGHT:
                 self.tvw.move_view(self.TILE_DIMENSIONS[0], 0)
-        else:
-            self.disp.event(e)
+            return True
+        return False
 
     def advance_day(self):
         self.days += 1
