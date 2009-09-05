@@ -19,3 +19,8 @@ Boston, MA 02111-1307, USA.
 This work relies heavily on Phil's pyGame Utilities (pgu), copyright Phil
 Hassey and others (see the pgu sources), and several bits of the code are
 derived from pgu. pgu is licensed under the LGPL (v2.1 or later).
+
+The sounds are under various copyrights, listed in sources.txt. All sound
+licenses are GPL compatible.
+
+The artwork authors are listed in gamelib/version.py.
