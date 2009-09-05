@@ -1,0 +1,71 @@
+#!/bin/sh
+# Copyright 2009 Simon Cross <hodgestar@gmail.com>
+# GPL - see COPYING for details
+#
+# Usage: unix-tarball
+
+OFA_VERSION=`PYTHONPATH=. python -c "from gamelib import version; print version.VERSION_STR"`
+BUILD_FOLDER="build/foxassault-${OFA_VERSION}"
+DIST_FILE="dist/foxassault-${OFA_VERSION}.tgz"
+TAR_NAME="${BUILD_FOLDER}.tar"
+
+echo "=== Creating UNIX tar ball ==="
+echo ""
+echo "  Fox Assault version: ${OFA_VERSION}"
+echo "  ---"
+echo ""
+
+rm -rf "${BUILD_FOLDER}"
+mkdir -p "${BUILD_FOLDER}"
+
+#
+# Export source and then copy pgu to build folder
+#
+
+echo "=== Exporting source ==="
+echo ""
+
+svn export -q gamelib "${BUILD_FOLDER}/gamelib"
+svn export -q data "${BUILD_FOLDER}/data"
+cp COPYING COPYRIGHT README.txt run_game.py "${BUILD_FOLDER}"
+find "${BUILD_FOLDER}/data" -name '*.svg' -delete
+
+#
+# Copy across pgu
+#
+
+echo "=== Copying in pgu ==="
+echo ""
+
+mkdir -p "${BUILD_FOLDER}/data/themes"
+PGU_ZIP=`find lib -name 'pgu*.zip'`
+PGU_LIB=`basename ${PGU_ZIP} .zip`
+unzip "${PGU_ZIP}" -d ${BUILD_FOLDER}
+cp -R "${BUILD_FOLDER}/${PGU_LIB}/pgu" "${BUILD_FOLDER}"
+cp -R "${BUILD_FOLDER}/${PGU_LIB}/data/themes/default" "${BUILD_FOLDER}/data/themes"
+rm -rf "${BUILD_FOLDER}/${PGU_LIB}"
+
+echo ""
+
+#
+# Create tar ball
+#
+
+echo "=== Creating tar ball ==="
+echo ""
+
+cd build
+tar czf "foxassault-${OFA_VERSION}.tgz" "foxassault-${OFA_VERSION}"
+cd ..
+cp "build/foxassault-${OFA_VERSION}.tgz" "${DIST_FILE}"
+rm "build/foxassault-${OFA_VERSION}.tgz"
+
+echo "  Tar file: ${DIST_FILE}"
+echo "  Build folder: ${BUILD_FOLDER}"
+echo ""
+
+echo "=== Done ==="
+echo ""
+echo -n "  "; du -sh ${DIST_FILE}
+echo -n "  "; du -sh ${BUILD_FOLDER}
+echo ""
