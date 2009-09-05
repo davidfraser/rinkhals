@@ -133,8 +133,7 @@ class Chicken(Animal):
         image_right = imagecache.load_image('sprites/chkn.png',
                 ("right_facing",))
         Animal.__init__(self, image_left, image_right, pos)
-        self.egg = None
-        self.egg_counter = 0
+        self.eggs = []
 
     def move(self, gameboard):
         """A free chicken will move away from other free chickens"""
@@ -142,21 +141,38 @@ class Chicken(Animal):
 
     def lay(self):
         """See if the chicken lays an egg"""
-        if not self.egg:
-            self.egg = Egg(self.pos)
+        if not self.eggs:
+            for x in range(random.randint(1, 4)):
+                self.eggs.append(Egg(self.pos))
             self.equip(equipment.NestEgg())
 
-    def remove_egg(self):
+    def remove_eggs(self):
         """Clean up the egg state"""
-        self.egg = None
+        self.eggs = []
         self.unequip_by_name("nestegg")
 
-    def hatch(self):
+    def remove_one_egg(self):
+        """Clean up the egg state"""
+        self.eggs.pop()
+        if not self.eggs:
+            self.unequip_by_name("nestegg")
+
+    def get_num_eggs(self):
+        return len(self.eggs)
+
+    def hatch(self, gameboard):
         """See if we have an egg to hatch"""
-        if self.egg:
-            chick = self.egg.hatch()
+        if self.eggs:
+            chick = self.eggs[0].hatch()
             if chick:
-                self.remove_egg()
+                # sell the remaining eggs
+                # Remove hatched egg
+                self.eggs.pop() 
+                gameboard.eggs -= 1
+                # Sell other eggs
+                for egg in self.eggs[:]:
+                    gameboard.sell_one_egg(self)
+                self.remove_eggs() # clean up stale images, etc.
             return chick
         return None
 
@@ -193,13 +209,13 @@ class Egg(Animal):
     def __init__(self, pos):
         image = imagecache.load_image('sprites/egg.png')
         Animal.__init__(self, image, image, pos)
-        self.counter = 2
+        self.timer = 2
 
     # Eggs don't move
 
     def hatch(self):
-        self.counter -= 1
-        if self.counter == 0:
+        self.timer -= 1
+        if self.timer == 0:
             return Chicken(self.pos)
         return None
 

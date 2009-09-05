@@ -376,16 +376,21 @@ class GameBoard(object):
         if do_sell(chick):
             self.remove_chicken(chick)
 
+    def sell_one_egg(self, chicken):
+        if chicken.eggs:
+            self.add_cash(constants.SELL_PRICE_EGG)
+            chicken.remove_one_egg()
+            self.eggs -= 1
+            self.toolbar.update_egg_counter(self.eggs)
+            return True
+        return False
+
     def sell_egg(self, tile_pos):
         def do_sell(chicken):
-            if chicken.egg:
-                # We sell the egg
-                self.add_cash(constants.SELL_PRICE_EGG)
+            # We try sell and egg
+            if self.sell_one_egg(chicken):
                 sound.play_sound("sell-chicken.ogg")
-                chicken.remove_egg()
-                self.eggs -= 1
-                self.toolbar.update_egg_counter(self.eggs)
-                # Force update
+                # Force toolbar update
                 self.toolbar.chsize()
             return False
 
@@ -433,10 +438,9 @@ class GameBoard(object):
             if self.animal_to_place is not None:
                 self.animal_to_place.unequip_by_name("nest")
                 self.relocate_animal(self.animal_to_place, tile_pos=tile_pos)
-                if self.animal_to_place.egg:
-                    self.animal_to_place.remove_egg()
-                    self.eggs -= 1
-                    self.toolbar.update_egg_counter(self.eggs)
+                self.eggs -= self.animal_to_place.get_num_eggs()
+                self.animal_to_place.remove_eggs()
+                self.toolbar.update_egg_counter(self.eggs)
 
     def relocate_animal(self, chicken, tile_pos=None, place=None):
         assert((tile_pos, place) != (None, None))
@@ -718,17 +722,15 @@ class GameBoard(object):
             if building.NAME in buildings.HENHOUSES:
                 for chicken in building.occupants():
                     chicken.lay()
-                    if chicken.egg:
-                        self.eggs += 1
+                    self.eggs += chicken.get_num_eggs()
         self.toolbar.update_egg_counter(self.eggs)
 
     def hatch_eggs(self):
         for building in self.buildings:
             if building.NAME in buildings.HENHOUSES:
                 for chicken in building.occupants():
-                    new_chick = chicken.hatch()
+                    new_chick = chicken.hatch(self)
                     if new_chick:
-                        self.eggs -= 1
                         try:
                             building.add_occupant(new_chick)
                             self.add_chicken(new_chick)
@@ -764,9 +766,8 @@ class GameBoard(object):
         if chick is self.animal_to_place:
             self.select_animal_to_place(None)
         self.chickens.discard(chick)
-        if chick.egg:
-            self.eggs -= 1
-            self.toolbar.update_egg_counter(self.eggs)
+        self.eggs -= chick.get_num_eggs()
+        self.toolbar.update_egg_counter(self.eggs)
         if chick.abode:
             chick.abode.clear_occupant()
         self.toolbar.update_chicken_counter(len(self.chickens))
