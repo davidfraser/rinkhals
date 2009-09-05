@@ -317,7 +317,7 @@ class GameBoard(object):
         (animal.Rinkhals, 1),
         )
 
-    def __init__(self, main_app):
+    def __init__(self, main_app, max_turns):
         self.disp = main_app
         self.tv = tiles.FarmVid()
         self.tv.png_folder_load_tiles('tiles')
@@ -325,6 +325,7 @@ class GameBoard(object):
         height, width = self.tv.size
         # Ensure we don't every try to create more foxes then is sane
         self.max_foxes = min(height+width-15, constants.ABS_MAX_NUM_FOXES)
+        self.max_turns = max_turns
         self.create_display()
 
         self.selected_tool = None
@@ -826,9 +827,10 @@ class GameBoard(object):
 
     def advance_day(self):
         self.days += 1
-        if self.days == constants.TURN_LIMIT:
+        if self.days == self.max_turns:
             self.toolbar.day_counter.style.color = (255, 0, 0)
-        self.toolbar.update_day_counter("%s/%s" % (self.days, constants.TURN_LIMIT if constants.TURN_LIMIT > 0 else "-"))
+        self.toolbar.update_day_counter("%s/%s" % (self.days,
+            self.max_turns if self.max_turns > 0 else "-"))
 
     def clear_foxes(self):
         for fox in self.foxes.copy():
@@ -1060,7 +1062,7 @@ class GameBoard(object):
         """Return true if we're complete"""
         if self.trees_left() == 0:
             return True
-        if constants.TURN_LIMIT > 0 and self.days >= constants.TURN_LIMIT:
+        if self.max_turns > 0 and self.days >= self.max_turns:
             return True
         if len(self.chickens) == 0:
             return True

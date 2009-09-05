@@ -33,7 +33,11 @@ class Engine(Game):
 
     def create_game_board(self):
         """Create and open a gameboard window."""
-        self.gameboard = gameboard.GameBoard(self.main_app)
+        self.mode = self.main_menu.get_mode()
+        if not self.mode:
+            self.mode = constants.DEFAULT_MODE
+        self.gameboard = gameboard.GameBoard(self.main_app,
+                constants.TURN_LIMITS[self.mode])
         self.open_window(self.gameboard.get_top_widget())
 
     def set_main_menu(self):
@@ -47,10 +51,8 @@ class Engine(Game):
 
     def create_game_over(self):
         """Create and open the Game Over window"""
-        for mode, days in constants.TURN_LIMITS.iteritems():
-            if days == constants.TURN_LIMIT:
-                game_over = gameover.create_game_over(self.gameboard,
-                        self.scoreboard[mode], mode)
+        game_over = gameover.create_game_over(self.gameboard,
+                self.scoreboard[self.mode], self.mode)
         self.gameboard = None
         self.open_window(game_over)
 

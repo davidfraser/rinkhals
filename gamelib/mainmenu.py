@@ -22,9 +22,13 @@ class MenuContainer(gui.Container):
         pygame.display.get_surface().blit(splash, (0, 0))
         gui.Container.paint(self, s)
 
+    def get_mode(self):
+        return self.widgets[0].mode
+
 class MainMenu(gui.Table):
     def __init__(self, **params):
         gui.Table.__init__(self, **params)
+        self.mode = None
 
         def fullscreen_toggled():
             pygame.display.toggle_fullscreen()
@@ -33,7 +37,7 @@ class MainMenu(gui.Table):
             pygame.event.post(engine.QUIT)
 
         def start_game(mode):
-            constants.TURN_LIMIT = constants.TURN_LIMITS[mode]
+            self.mode = mode
             pygame.event.post(engine.START_DAY)
 
         def help_pressed():
