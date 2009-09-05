@@ -93,7 +93,6 @@ SPRITES = [
 CURSORS = [
     ("chkn", 16, 16),
     ("egg", 16, 16),
-    ("sell_cursor", 24, 24),
     ]
 
 if __name__ == "__main__":
