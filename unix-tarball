@@ -17,6 +17,7 @@ echo ""
 
 rm -rf "${BUILD_FOLDER}"
 mkdir -p "${BUILD_FOLDER}"
+mkdir -p dist
 
 #
 # Export source and then copy pgu to build folder
@@ -57,8 +58,7 @@ echo ""
 cd build
 tar czf "foxassault-${OFA_VERSION}.tgz" "foxassault-${OFA_VERSION}"
 cd ..
-cp "build/foxassault-${OFA_VERSION}.tgz" "${DIST_FILE}"
-rm "build/foxassault-${OFA_VERSION}.tgz"
+mv "build/foxassault-${OFA_VERSION}.tgz" "${DIST_FILE}"
 
 echo "  Tar file: ${DIST_FILE}"
 echo "  Build folder: ${BUILD_FOLDER}"
