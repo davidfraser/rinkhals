@@ -9,39 +9,8 @@ from gamelib import version
 
 try:
     import py2exe
-    from py2exe.build_exe import py2exe as builder
-    import os
-    import glob
-
-    class PkgResourceBuilder(builder):
-        def copy_extensions(self, extensions):
-            """Hack the py2exe C extension copier
-               to put pkg_resources into the
-               library.zip file.
-               """
-            builder.copy_extensions(self, extensions)
-            package_data = self.distribution.package_data.copy()
-
-            for package, patterns in self.distribution.package_data.items():
-                package_dir = os.path.join(*package.split('.'))
-                collect_dir = os.path.join(self.collect_dir, package_dir)
-
-                # create sub-dirs in py2exe collection area
-                # Copy the media files to the collection dir.
-                # Also add the copied file to the list of compiled
-                # files so it will be included in zipfile.
-                for pattern in patterns:
-                    pattern = os.path.join(*pattern.split('/'))
-                    for f in glob.glob(os.path.join(package_dir, pattern)):
-                        name = os.path.basename(f)
-                        folder = os.path.join(collect_dir, os.path.dirname(f))
-                        if not os.path.exists(folder):
-                            self.mkpath(folder)
-                        self.copy_file(f, os.path.join(collect_dir, name))
-                        self.compiled_files.append(os.path.join(package_dir, name))
-
 except ImportError:
-    PkgResourceBuilder = None
+    pass
 
 setup   (   # Metadata
             name = version.NAME,
@@ -68,27 +37,15 @@ setup   (   # Metadata
 
             # Files
             packages = find_packages(),
-            package_data = {
-                # NOTE: PkgResourceBuilder cannot handle the
-                #   catch-all empty package ''.
-                # Include SVG files from sutekh.gui package
-                #'sutekh.gui': ['*.svg'],
-                # Include LICENSE information for sutekh package
-                # Include everything under the docs directory
-                #'sutekh': ['COPYING', 'docs/html/*'],
-            },
-            scripts = ['scripts/foxassault.py','scripts/testconsole.py'],
+            scripts = ['scripts/foxassault.py', 'scripts/testconsole.py'],
 
             # py2exe
             console = ['scripts/testconsole.py'],
             windows = [{
                 'script': 'scripts/foxassault.py',
-                # 'icon_resources': [(0, "artwork/sutekh-icon-inkscape.ico")],
+                'icon_resources': [(0, "data/icons/foxassault.ico")],
             }],
             app = ['scripts/foxassault.py'],
-            cmdclass = {
-                'py2exe': PkgResourceBuilder,
-            },
             options = { 'py2exe': {
                 'skip_archive': 1,
                 'dist_dir': 'dist/foxassault-%s' % version.VERSION_STR,
@@ -128,5 +85,6 @@ setup   (   # Metadata
             data_files = [
                 'COPYRIGHT',
                 'COPYING',
+                'README.txt',
             ],
         )
