@@ -36,23 +36,9 @@ def process_sprite(name, width, height, sprite_path):
     png_name = os.path.join(sprite_path, name) + ".png"
     svg_to_png(svg_name, png_name, width, height)
 
-def process_cursor(name, width, height, sprite_path, cursor_path):
-    # We bounce through png to get something PIL understands
-    svg_name = os.path.join(sprite_path, name) + '.svg'
-    png_name = os.path.join(cursor_path, name) + '.png'
-    xbm_name = os.path.join(cursor_path, name) + '.xbm'
-    svg_to_png(svg_name, png_name, width, height)
-    # We need to bounce through 'L' first to handle transparency OK
-    pixeldata = open(png_name).convert('L')
-    # Everything > 0 goes to white
-    lut = [0] + [1]*255
-    pixeldata.point(lut, mode='1').save(xbm_name)
-    os.remove(png_name)
-
 TILE_PATH = "data/tiles"
 SPRITE_PATH = "data/sprites"
 IMAGE_PATH = "data/images"
-CURSOR_PATH = "data/cursors"
 
 SPRITES = [
     # chicken bits
@@ -86,14 +72,7 @@ SPRITES = [
     ("boom2", 20, 20),
     ("boom3", 20, 20),
     ("boom4", 20, 20),
-    # other
-    ("egg", 20, 20),
 ]
-
-CURSORS = [
-    ("chkn", 16, 16),
-    ("egg", 16, 16),
-    ]
 
 if __name__ == "__main__":
     process_svg_folder("data/tiles", 20, 20)
@@ -103,5 +82,3 @@ if __name__ == "__main__":
     process_sprite("splash", 800, 600, IMAGE_PATH)
     process_sprite("gameover_win", 800, 600, IMAGE_PATH)
     process_sprite("gameover_lose", 800, 600, IMAGE_PATH)
-    for name, width, height in CURSORS:
-        process_cursor(name, width, height, SPRITE_PATH, CURSOR_PATH)
