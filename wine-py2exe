@@ -12,8 +12,7 @@ PY2EXE_LOG="py2exe.log"
 WINE_PYTHON=`winepath "C:/Python25"`
 
 if [ "x$TEMPLATE_FOLDER" = "x" ] ; then
-    echo "Please specify a template folder!"
-    exit 1
+    TEMPLATE_FOLDER="py2exe-template"
 fi
 
 #
@@ -51,11 +50,16 @@ DEST="dist/${BUILD_FOLDER}"
 
 cp -v "${WINE_PYTHON}/Lib/site-packages/pygame"/*.dll "${DEST}"
 cp -v "${TEMPLATE_FOLDER}/python25.dll" "${DEST}"
+cp -v "${TEMPLATE_FOLDER}/msvcr71.dll" "${DEST}"
 mkdir -p "${DEST}/share/pgu/themes"
 echo "'${WINE_PYTHON}/share/pgu/themes/default' -> '${DEST}/share/pgu/themes/'"
 cp -R "${WINE_PYTHON}/share/pgu/themes/default" "${DEST}/share/pgu/themes/"
 echo "'data' -> '${DEST}/data'"
 svn export -q "data" "${DEST}/data"
+
+echo "'${WINE_PYTHON}/Lib/site-packages/pygame' -> '${DEST}'"
+rm -rf "${DEST}/pygame"
+cp -R "${WINE_PYTHON}/Lib/site-packages/pygame" "${DEST}"
 
 echo ""
 
