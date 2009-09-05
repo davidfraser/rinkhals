@@ -224,7 +224,7 @@ class Egg(Animal):
     """An egg"""
 
     def __init__(self, pos):
-        image = imagecache.load_image('sprites/egg.png')
+        image = imagecache.load_image('sprites/equip_egg.png')
         Animal.__init__(self, image, image, pos)
         self.timer = 2
 
