@@ -56,3 +56,14 @@ class MuzzleFlash(Animation):
         else:
             Animation.__init__(self, self.SEQUENCE_LEFT, chicken.pos)
 
+class FenceExplosion(Animation):
+
+    FLASH_LEFT = imagecache.load_image('sprites/muzzle_flash.png')
+    FLASH_RIGHT = imagecache.load_image('sprites/muzzle_flash.png',
+            ("right_facing",))
+
+    SEQUENCE = [FLASH_LEFT, FLASH_RIGHT, FLASH_LEFT, FLASH_RIGHT]
+
+    def __init__(self, fencetile):
+        Animation.__init__(self, self.SEQUENCE, fencetile)
+

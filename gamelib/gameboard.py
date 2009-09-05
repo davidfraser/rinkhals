@@ -14,6 +14,7 @@ import equipment
 import sound
 import cursors
 import sprite_cursor
+import misc
 
 class OpaqueLabel(gui.Label):
     def __init__(self, value, **params):
@@ -206,6 +207,13 @@ class GameBoard(object):
     FENCE = tiles.REVERSE_TILE_MAP['fence']
     WOODLAND = tiles.REVERSE_TILE_MAP['woodland']
     BROKEN_FENCE = tiles.REVERSE_TILE_MAP['broken fence']
+
+    FOX_WEIGHTINGS = (
+        (animal.Fox, 60),
+        (animal.GreedyFox, 30),
+        (animal.NinjaFox, 5),
+        (animal.DemoFox, 5),
+        )
 
     def __init__(self, main_app):
         self.disp = main_app
@@ -813,6 +821,10 @@ class GameBoard(object):
                     self.add_chicken(chick)
             x += 1
 
+    def _choose_fox(self, (x, y)):
+        fox_cls = misc.WeightedSelection(self.FOX_WEIGHTINGS).choose()
+        return fox_cls((x, y))
+
     def spawn_foxes(self):
         """The foxes come at night, and this is where they come from."""
         # Foxes spawn just outside the map
@@ -843,14 +855,7 @@ class GameBoard(object):
                     skip = True # Choose a new position
                     break
             if not skip:
-                roll = random.randint(0, 10)
-                if roll < 8:
-                    fox = animal.Fox((x, y))
-                elif roll < 9:
-                    fox = animal.NinjaFox((x, y))
-                else:
-                    fox = animal.GreedyFox((x, y))
-                self.add_fox(fox)
+                self.add_fox(self._choose_fox((x, y)))
 
     def fix_buildings(self):
         """Go through the level map looking for buildings that haven't

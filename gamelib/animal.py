@@ -10,6 +10,7 @@ import tiles
 from misc import Position
 import sound
 import equipment
+import animations
 
 class Animal(Sprite):
     """Base class for animals"""
@@ -369,14 +370,14 @@ class Fox(Animal):
             # We'll head back towards the holes we make/find
             self.landmarks.append(final_pos)
         elif tiles.TILE_MAP[this_tile] == 'fence' and not self.dig_pos:
-            self._dig(final_pos)
+            self._dig(gameboard, final_pos)
             return self.pos
         self.last_steps.append(final_pos)
         if len(self.last_steps) > 3:
             self.last_steps.pop(0)
         return final_pos
 
-    def _dig(self, dig_pos):
+    def _dig(self, gameboard, dig_pos):
         """Setup dig parameters, to be overridden if needed"""
         self.tick = 5
         self.dig_pos = dig_pos
@@ -421,6 +422,16 @@ class NinjaFox(Fox):
 
 class DemoFox(Fox):
     """Demolition Foxes destroy fences easily"""
+
+    DIG_ANIMATION = animations.FenceExplosion
+    IMAGE_FILE = 'sprites/sapper_fox.png'
+
+    def _dig(self, gameboard, dig_pos):
+        """Setup dig parameters, to be overridden if needed"""
+        self.tick = 0 # Costs us nothing to go through a fence.
+        self.dig_pos = dig_pos
+        gameboard.animations.append(self.DIG_ANIMATION(dig_pos))
+        self._make_hole(gameboard)
 
 class GreedyFox(Fox):
     """Greedy foxes eat more chickens"""

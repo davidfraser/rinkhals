@@ -1,5 +1,7 @@
 # Holder for misc useful classes
 
+import random
+
 class Position(object):
     """2D position / vector"""
 
@@ -29,3 +31,19 @@ class Position(object):
 
     def __eq__(self, b):
         return self.x == b.x and self.y == b.y
+
+class WeightedSelection(object):
+    def __init__(self, weightings=None):
+        self.weightings = []
+        self.total = 0
+        if weightings:
+            for item, weight in weightings:
+                self.weightings.append((item, weight))
+                self.total += weight
+        
+    def choose(self):
+        roll = random.uniform(0, self.total)
+        for item, weight in self.weightings:
+            if roll < weight:
+                return item
+            roll -= weight
