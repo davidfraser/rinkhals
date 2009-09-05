@@ -6,11 +6,6 @@
 
 * Py2app packaging (jerith)
 
-* Show game mode in gameboard
-  - Warn at days - 1?
-  - by tweaking label days XX/YY
-  - Maybe make label red on last day?
-
 * Dialog for do you really want to give up.
 
 == POST PYWEEK ==
