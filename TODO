@@ -1,19 +1,25 @@
 == TODO ==
 
-* Still need cursors/sprites for:
+* Still need cursors/sprites for (Confluence):
   -- Cut Trees
   -- Improve sell cursor
 
-* Still price text for:
+* Still price text for (Hodgestar):
   -- Cut Trees
   -- All Sell tools
   -- Buy Fence
   -- Buy Equipment
 
-* Animations?
-  -- Graphics for sapper foxes blowing things up.
+* Evict button (Nitwit).
 
-* Balance game (game length, profits & costs, etc.) 
+* Level layout refactoring and autogeneration of tiles (Jerith).
+
+* Animations?
+  -- Graphics for sapper foxes blowing things up (Confluence).
+
+* Balance game (game length, profits & costs, etc.) (All).
+
+* Py2exe packaging (Hodgestar).
 
 == POST PYWEEK ==
 
