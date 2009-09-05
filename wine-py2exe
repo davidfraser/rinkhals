@@ -1,8 +1,8 @@
 #!/bin/sh
-# Copyright 2008 Simon Cross <hodgestar@gmail.com>
+# Copyright 2009 Simon Cross <hodgestar@gmail.com>
 # GPL - see COPYING for details
 #
-# Usage: wine-py2exe <dependencies folder>
+# Usage: wine-py2exe
 
 OFA_VERSION=`PYTHONPATH=. python -c "from gamelib import version; print version.VERSION_STR"`
 BUILD_FOLDER="foxassault-${OFA_VERSION}"
