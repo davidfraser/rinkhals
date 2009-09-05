@@ -89,7 +89,8 @@ class ToolBar(gui.Table):
                 cursors.cursors['select'])
         self.add_tool_button("Building", constants.TOOL_SELL_BUILDING,
                 cursors.cursors['select'])
-        self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT)
+        self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
+                cursors.cursors['select'])
         self.add_spacer(20)
 
         self.add_heading("Buy ...")
