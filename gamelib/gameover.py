@@ -12,10 +12,25 @@ import imagecache
 
 WON, LOST, LEFT = range(3)
 
-LOST_MESSAGES = ["You lost", 'You failed to protect yur chickens']
-WON_MESSAGES = ["You survived"]
-LEFT_MESSAGES = ["You sold your farm", "You gave up",
-        "Real life got in the way"]
+WON_MESSAGES = [
+    "You won.",
+    "You survived!",
+    "Your chickens will one day rule the world.",
+    ]
+
+LOST_MESSAGES = [
+    "You lost.",
+    "You failed to protect your chickens.",
+    "Unopposed, the foxes overrun the farm.",
+    ]
+
+LEFT_MESSAGES = [
+    "You gave up.",
+    "You sold your farm.",
+    "Real life got in the way.",
+    "Are you siding with the foxes?",
+    "What will your chickens do now?",
+    ]
 
 def ScoreTable():
     """Create and initialise a score table"""
