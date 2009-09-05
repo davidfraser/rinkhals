@@ -52,6 +52,7 @@ TURN_LIMITS = {
         'Unlimited' : 0,
         }
 
+# This is a "constant".
 TURN_LIMIT = TURN_LIMITS['Two weeks']
 
 ABS_MAX_NUM_FOXES = 50 # Limit possible uppoer number of foxes, due to concerns
