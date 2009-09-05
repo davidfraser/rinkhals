@@ -16,3 +16,7 @@
 * More game levels / progression of difficulty
 
 * Improve performance when many foxes or chickens
+
+* Improve Fullscreen mode (on the fly scaling)
+
+* Investigate using infinity symbol instead of dash for unlimited mode
