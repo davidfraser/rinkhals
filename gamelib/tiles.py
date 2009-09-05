@@ -49,10 +49,8 @@ class FarmSprites(list):
 
     def append(self, sprite):
         if self._cursor is not None:
-            # pop cursor
-            assert(self._cursor is self.pop())
-            list.append(self, sprite)
-            list.append(self, self._cursor)
+            assert(self._cursor is self[-1])
+            list.insert(self, -1, sprite)
         else:
             list.append(self, sprite)
         sprite.updated = 1
