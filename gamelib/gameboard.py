@@ -58,6 +58,8 @@ def mkcountupdate(counter):
 class ToolBar(gui.Table):
     def __init__(self, gameboard, **params):
         gui.Table.__init__(self, **params)
+        self.group = gui.Group(name='toolbar', value=None)
+        self._next_tool_value = 0
         self.gameboard = gameboard
         self.cash_counter = mklabel(align=1)
         self.chicken_counter = mklabel(align=1)
@@ -100,7 +102,7 @@ class ToolBar(gui.Table):
                     cursors.cursors.get(equipment_cls.NAME, None))
         self.add_spacer(30)
 
-        self.add_button("Finished Day", self.day_done)
+        self.add_tool("Finished Day", self.day_done)
 
     def day_done(self):
         import engine
@@ -121,14 +123,20 @@ class ToolBar(gui.Table):
         self.td(mklabel(text), colspan=2)
 
     def add_tool_button(self, text, tool, cursor=None):
-        self.add_button(text, lambda: self.gameboard.set_selected_tool(tool,
+        self.add_tool(text, lambda: self.gameboard.set_selected_tool(tool,
             cursor))
 
-    def add_button(self, text, func):
-        button = gui.Button(text, width=self.rect.w, style={"padding_left": 0})
-        button.connect(gui.CLICK, func)
+    def add_tool(self, text, func):
+        label = gui.basic.Label(text)
+        value = self._next_tool_value
+        self._next_tool_value += 1
+        tool = gui.Tool(self.group, label, value, width=self.rect.w, style={"padding_left": 0})
+        tool.connect(gui.CLICK, func)
         self.tr()
-        self.td(button, align=-1, colspan=2)
+        self.td(tool, align=-1, colspan=2)
+
+    def clear_tool(self):
+        self.group.value = None
 
     def add_counter(self, icon, label):
         self.tr()
@@ -285,9 +293,8 @@ class GameBoard(object):
 
     def reset_states(self):
         """Clear current states (highlights, etc.)"""
-        if self.animal_to_place:
-            self.select_animal_to_place(None)
-        self.set_cursor()
+        self.set_selected_tool(None, None)
+        self.toolbar.clear_tool()
 
     def update_sprite_cursor(self, e):
         tile_pos = self.tv.screen_to_tile(e.pos)

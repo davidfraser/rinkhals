@@ -118,6 +118,7 @@ class DayState(State):
 
     def event(self, e):
         if events_equal(e, START_NIGHT):
+            self.game.gameboard.reset_states()
             return NightState(self.game)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
             self.game.gameboard.reset_states()
