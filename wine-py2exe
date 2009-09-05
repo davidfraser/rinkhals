@@ -1,0 +1,76 @@
+#!/bin/sh
+# Copyright 2008 Simon Cross <hodgestar@gmail.com>
+# GPL - see COPYING for details
+#
+# Usage: wine-py2exe <dependencies folder>
+
+OFA_VERSION=`PYTHONPATH=. python -c "from gamelib import version; print version.VERSION_STR"`
+BUILD_FOLDER="foxassault-${OFA_VERSION}"
+ZIP_NAME="${BUILD_FOLDER}.zip"
+TEMPLATE_FOLDER="$1"
+PY2EXE_LOG="py2exe.log"
+WINE_PYTHON=`winepath "C:/Python25"`
+
+if [ "x$TEMPLATE_FOLDER" = "x" ] ; then
+    echo "Please specify a template folder!"
+    exit 1
+fi
+
+#
+# Run py2exe build under wine
+#
+
+echo "=== Running wine python setup.py ==="
+echo "  Fox Assault version: ${OFA_VERSION}"
+echo "  Writing log to ${PY2EXE_LOG}."
+echo "  ---"
+echo "  Please make sure you have patched your py2exe run.exe"
+echo "  and run_w.exe with PETools (they need to have their"
+echo "  executable size correctly set)."
+echo ""
+
+rm -rf "dist/${BUILD_FOLDER}"
+rm -rf "dist/${ZIP_NAME}"
+wine python setup.py py2exe >${PY2EXE_LOG} 2>&1
+
+#
+# Copy in GTK dependencies py2exe missed
+#   One should be able to obtain /etc, /lib
+#   and /share by installing GTK in a Windows machine
+#   and copying them into the template folder.
+# Copy python dll that py2exe misses   
+# Copy sqlite dll that py2exe misses
+#   One should be able to obtain python25.dll and
+#   sqlite3.dll from a Windows Python 2.5 installation.
+
+echo "=== Copying dependencies that py2exe missed ==="
+echo "  Using template folder ${TEMPLATE_FOLDER}."
+echo ""
+
+DEST="dist/${BUILD_FOLDER}"
+
+cp -v "${WINE_PYTHON}/Lib/site-packages/pygame"/*.dll "${DEST}"
+cp -v "${TEMPLATE_FOLDER}/python25.dll" "${DEST}"
+mkdir -p "${DEST}/share/pgu/themes"
+echo "'${WINE_PYTHON}/share/pgu/themes/default' -> '${DEST}/share/pgu/themes/'"
+cp -R "${WINE_PYTHON}/share/pgu/themes/default" "${DEST}/share/pgu/themes/"
+echo "'data' -> '${DEST}/data'"
+svn export -q "data" "${DEST}/data"
+
+echo ""
+
+#
+# create zip file
+#
+
+echo "=== Creating zip of patched py2exe dist folder ==="
+echo "  Zip file: dist/${ZIP_NAME}"
+echo "  Build folder: dist/${BUILD_FOLDER}"
+echo ""
+
+cd dist
+rm -f "$ZIP_NAME"
+zip -r -q "$ZIP_NAME" "$BUILD_FOLDER"
+rm -rf "~/.VirtualBox/shared/$BUILD_FOLDER"
+cp -R "$BUILD_FOLDER" ~/.VirtualBox/shared/
+cd ..
