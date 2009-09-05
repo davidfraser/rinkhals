@@ -944,7 +944,7 @@ class GameBoard(object):
         x, y = 0, 0
         width, height = self.tv.size
         tries = 0
-        while len(self.chickens) < 10:
+        while len(self.chickens) < constants.START_CHICKENS:
             if x < width:
                 tile = self.tv.get((x, y))
             else:

@@ -56,3 +56,5 @@ TURN_LIMIT = TURN_LIMITS['Two weeks']
 
 ABS_MAX_NUM_FOXES = 50 # Limit possible uppoer number of foxes, due to concerns
                         # about performance, etc.
+
+START_CHICKENS = 10
