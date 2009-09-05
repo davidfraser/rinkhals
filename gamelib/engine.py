@@ -110,7 +110,7 @@ class DayState(State):
         sound.play_sound("daybreak.ogg")
         # disable timer
         pygame.time.set_timer(MOVE_FOX_ID, 0)
-        pygame.time.set_timer(ANIM_ID, 50)
+        pygame.time.set_timer(ANIM_ID, SLOW_ANIM_SPEED)
         self.game.gameboard.advance_day()
         self.game.gameboard.clear_foxes()
         sound.background_music("daytime.ogg")
@@ -181,6 +181,8 @@ class NightState(State):
             # Timer aren't nessecairly ordered, so we make sure
             # we don't get a ANIM event until at least cycle after this
             pygame.time.set_timer(ANIM_ID, self.cycle_time)
+            # Ensure any outstanding animitions get cleaned up
+            self.game.gameboard.run_animations()
             self.cycle_count += 1
             if self.cycle_count > constants.NIGHT_LENGTH:
                 return pygame.event.post(START_DAY)
