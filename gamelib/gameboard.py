@@ -827,7 +827,7 @@ class GameBoard(object):
     def advance_day(self):
         self.days += 1
         self.toolbar.day_counter.style.color = (255, 0, 0)
-        self.toolbar.update_day_counter("%s/%s" % (self.days, constants.TURN_LIMIT))
+        self.toolbar.update_day_counter("%s/%s" % (self.days, constants.TURN_LIMIT if constants.TURN_LIMIT > 0 else "-"))
 
     def clear_foxes(self):
         for fox in self.foxes.copy():
