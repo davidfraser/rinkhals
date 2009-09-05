@@ -76,3 +76,4 @@ echo "=== Done ==="
 echo ""
 echo "  " `ls -sh dist/${ZIP_NAME}`
 echo "  " `du -sh dist/${BUILD_FOLDER}`
+echo ""
