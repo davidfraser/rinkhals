@@ -118,6 +118,9 @@ class ToolBar(gui.Table):
         self.add_tool("Finished Day", self.day_done)
 
         self.anim_clear_tool = False # Flag to clear the tool on an anim loop
+        # pgu's tool widget fiddling happens after the tool action, so calling
+        # clear_tool in the tool's action doesn't work, so we punt it to
+        # the anim loop
 
     def day_done(self):
         import engine
