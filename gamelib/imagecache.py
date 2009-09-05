@@ -75,8 +75,10 @@ def convert_to_right_facing(image):
 def darken_center(image):
     darkened = image.copy()
     w, h = darkened.get_size()
-    over_w, over_h = int(w*0.5), int(h*0.5)
-    over_x, over_y = int(w*0.25), int(h*0.25)
+    fraction = 0.65
+    offset = (1.0 - fraction) / 2.0
+    over_w, over_h = int(w*fraction), int(h*fraction)
+    over_x, over_y = int(w*offset), int(h*offset)
     overlay = pygame.Surface((over_w, over_h))
     overlay.fill(DARKEN_COLOUR)
     darkened.blit(overlay, (over_x, over_y), None, BLEND_MULT)
