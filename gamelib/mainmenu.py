@@ -32,29 +32,26 @@ class MainMenu(gui.Table):
         def quit_pressed():
             pygame.event.post(engine.QUIT)
 
-        def fortnight_pressed():
-            constants.TURN_LIMIT = 14
-            pygame.event.post(engine.START_DAY)
-
-        def quarter_pressed():
-            constants.TURN_LIMIT = 90
-            pygame.event.post(engine.START_DAY)
-
-        def unlimited_pressed():
-            constants.TURN_LIMIT = 0
+        def start_game(mode):
+            constants.TURN_LIMIT = constants.TURN_LIMITS[mode]
             pygame.event.post(engine.START_DAY)
 
         def help_pressed():
             pygame.event.post(engine.GO_HELP_SCREEN)
 
-        fortnight_button = gui.Button("Two weeks")
-        fortnight_button.connect(gui.CLICK, fortnight_pressed)
-
-        quarter_button = gui.Button("Three months")
-        quarter_button.connect(gui.CLICK, quarter_pressed)
-
-        unlim_button = gui.Button("Unlimited")
-        unlim_button.connect(gui.CLICK, unlimited_pressed)
+        style = {
+            "padding_bottom": 15,
+        }
+        td_kwargs = {
+            "align": 0,
+            "style": style,
+        }
+ 
+        for mode in constants.TURN_LIMITS:
+            button = gui.Button(mode)
+            button.connect(gui.CLICK, start_game, mode)
+            self.tr()
+            self.td(button, **td_kwargs)
 
         quit_button = gui.Button("Quit")
         quit_button.connect(gui.CLICK, quit_pressed)
@@ -64,23 +61,6 @@ class MainMenu(gui.Table):
 
         fullscreen_toggle = gui.Button("Toggle Fullscreen")
         fullscreen_toggle.connect(gui.CLICK, fullscreen_toggled)
-
-        style = {
-            "padding_bottom": 15,
-        }
-        td_kwargs = {
-            "align": 0,
-            "style": style,
-        }
-
-        self.tr()
-        self.td(fortnight_button, **td_kwargs)
-
-        self.tr()
-        self.td(quarter_button, **td_kwargs)
-
-        self.tr()
-        self.td(unlim_button, **td_kwargs)
 
         self.tr()
         self.td(help_button, **td_kwargs)

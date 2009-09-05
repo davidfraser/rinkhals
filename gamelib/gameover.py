@@ -3,7 +3,7 @@ import tempfile
 import random
 
 from pgu import gui
-from pgu.high import High
+from pgu.high import Highs
 import pygame
 
 import engine
@@ -36,14 +36,15 @@ def ScoreTable():
     """Create and initialise a score table"""
     # We need a true file, so load will work, but, as we never save,
     # the deletion doesn't bother us.
-    our_scores = High(tempfile.NamedTemporaryFile(), 4)
-    for score in range(700,1000,100):
-        our_scores.submit(score, 'No-one', None)
+    our_scores = Highs(tempfile.NamedTemporaryFile(), 4)
+    for mode in constants.TURN_LIMITS:
+        for score in range(700,1000,100):
+            our_scores[mode].submit(score, 'No-one', None)
     return our_scores
 
-def create_game_over(gameboard, scores):
+def create_game_over(gameboard, scores, mode):
     """Create a game over screen"""
-    game_over = GameOver(gameboard, scores)
+    game_over = GameOver(gameboard, scores, mode)
     return GameOverContainer(game_over, align=0, valign=0)
 
 class GameOverContainer(gui.Container):
@@ -67,7 +68,7 @@ class GameOverContainer(gui.Container):
 
 class GameOver(gui.Table):
 
-    def __init__(self, gameboard, scoreboard, **params):
+    def __init__(self, gameboard, scoreboard, mode, **params):
         gui.Table.__init__(self, **params)
 
         def return_pressed():
@@ -96,6 +97,10 @@ class GameOver(gui.Table):
                 colspan=3)
         self.add_spacer()
         # show the scoreboard
+
+        self.tr()
+        self.td(gui.Label('Game Mode: %s' % mode, color=constants.FG_COLOR),
+                colspan=3)
 
         for highscore in scoreboard:
             self.tr()

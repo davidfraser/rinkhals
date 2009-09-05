@@ -45,4 +45,11 @@ TOOL_LOGGING = 6
 TOOL_SELL_EQUIPMENT = 7
 
 NIGHT_LENGTH = 150
-TURN_LIMIT = 14
+
+TURN_LIMITS = {
+        'Two weeks' : 14,
+        'Three months' : 90,
+        'Unlimited' : 0,
+        }
+
+TURN_LIMIT = TURN_LIMITS['Two weeks']

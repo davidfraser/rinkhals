@@ -6,8 +6,8 @@
 
 * Py2app packaging (jerith)
 
-* Sell equipment from chickens in buildings (Neil)
-  - Display bug with multiple equipment to be resolved
+* Show game mode in gameboard
+  - Warn at days - 1?
 
 == POST PYWEEK ==
 

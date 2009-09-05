@@ -46,7 +46,10 @@ class Engine(Game):
 
     def create_game_over(self):
         """Create and open the Game Over window"""
-        game_over = gameover.create_game_over(self.gameboard, self.scoreboard)
+        for mode, days in constants.TURN_LIMITS.iteritems():
+            if days == constants.TURN_LIMIT:
+                game_over = gameover.create_game_over(self.gameboard,
+                        self.scoreboard[mode], mode)
         self.gameboard = None
         self.open_window(game_over)
 
