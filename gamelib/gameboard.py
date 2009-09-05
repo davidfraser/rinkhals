@@ -287,11 +287,14 @@ class GameBoard(object):
     WOODLAND = tiles.REVERSE_TILE_MAP['woodland']
     BROKEN_FENCE = tiles.REVERSE_TILE_MAP['broken fence']
 
+    # These don't have to add up to 100, but it's easier to think
+    # about them if they do.
     FOX_WEIGHTINGS = (
-        (animal.Fox, 60),
+        (animal.Fox, 59),
         (animal.GreedyFox, 30),
         (animal.NinjaFox, 5),
         (animal.DemoFox, 5),
+        (animal.Rinkhals, 1),
         )
 
     def __init__(self, main_app):

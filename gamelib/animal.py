@@ -423,8 +423,7 @@ class Fox(Animal):
 
     def _make_hole(self, gameboard):
         """Make a hole in the fence"""
-        gameboard.tv.set(self.dig_pos.to_tuple(),
-                tiles.REVERSE_TILE_MAP['broken fence'])
+        gameboard.tv.set(self.dig_pos.to_tuple(), gameboard.BROKEN_FENCE)
         self.dig_pos = None
 
     def move(self, gameboard):
@@ -490,6 +489,26 @@ class GreedyFox(Fox):
         if self.chickens_eaten > 2:
             self.hunting = False
         self.last_steps = []
+
+class Rinkhals(Fox):
+    """The Rinkhals has eclectic tastes"""
+    STEALTH = 80
+    IMAGE_FILE = 'sprites/rinkhals.png'
+
+    def _catch_chicken(self, chicken, gameboard):
+        """The Rinkhals hunts for sport, catch and release style"""
+        self.closest = None
+        self.hunting = False
+        self.last_steps = []
+
+    def _make_hole(self, gameboard):
+        """The Rinkhals eats fences"""
+        gameboard.tv.set(self.dig_pos.to_tuple(), gameboard.GRASSLAND)
+        self.dig_pos = None
+
+    def damage(self, gameboard):
+        """The Rinkhals is invincible!"""
+        return True
 
 def _get_vision_param(parameter, watcher):
     param = getattr(watcher, parameter)
