@@ -49,55 +49,56 @@ def process_cursor(name, width, height, sprite_path, cursor_path):
     pixeldata.point(lut, mode='1').save(xbm_name)
     os.remove(png_name)
 
-if __name__ == "__main__":
-    tile_path = "data/tiles"
-    sprite_path = "data/sprites"
-    image_path = "data/images"
-    cursor_path = "data/cursors"
-    sprites = [
-        # chicken bits
-        ("chkn", 20, 20),
-        ("wing", 20, 20),
-        ("eye", 20, 20),
-        ("equip_rifle", 20, 20),
-        ("equip_knife", 20, 20),
-        ("equip_kevlar", 20, 20),
-        ("equip_helmet", 20, 20),
-        ("select_chkn", 20, 20),
-        ("nest", 20, 20),
-        ("equip_egg", 20, 20),
-        # fox bits
-        ("fox", 20, 20),
-        ("ninja_fox", 20, 20),
-        ("sapper_fox", 20, 20),
-        ("rinkhals", 20, 20),
-        # buildings
-        ("henhouse", 60, 40),
-        ("select_henhouse", 60, 40),
-        ("hendominium", 40, 60),
-        ("select_hendominium", 40, 60),
-        ("watchtower", 40, 40),
-        ("select_watchtower", 40, 40),
-        # special effects
-        ("muzzle_flash", 20, 20),
-        ("chkn_death", 20, 20),
-        ("fox_death", 20, 20),
-        # other
-        ("egg", 20, 20),
+TILE_PATH = "data/tiles"
+SPRITE_PATH = "data/sprites"
+IMAGE_PATH = "data/images"
+CURSOR_PATH = "data/cursors"
+
+SPRITES = [
+    # chicken bits
+    ("chkn", 20, 20),
+    ("wing", 20, 20),
+    ("eye", 20, 20),
+    ("equip_rifle", 20, 20),
+    ("equip_knife", 20, 20),
+    ("equip_kevlar", 20, 20),
+    ("equip_helmet", 20, 20),
+    ("select_chkn", 20, 20),
+    ("nest", 20, 20),
+    ("equip_egg", 20, 20),
+    # fox bits
+    ("fox", 20, 20),
+    ("ninja_fox", 20, 20),
+    ("sapper_fox", 20, 20),
+    ("rinkhals", 20, 20),
+    # buildings
+    ("henhouse", 60, 40),
+    ("select_henhouse", 60, 40),
+    ("hendominium", 40, 60),
+    ("select_hendominium", 40, 60),
+    ("watchtower", 40, 40),
+    ("select_watchtower", 40, 40),
+    # special effects
+    ("muzzle_flash", 20, 20),
+    ("chkn_death", 20, 20),
+    ("fox_death", 20, 20),
+    # other
+    ("egg", 20, 20),
+]
+
+CURSORS = [
+    ("chkn", 16, 16),
+    ("egg", 16, 16),
+    ("sell_cursor", 24, 24),
     ]
 
-    cursors = [
-        ("chkn", 16, 16),
-        ("egg", 16, 16),
-        ("sell_cursor", 24, 24),
-        ]
-
+if __name__ == "__main__":
     process_svg_folder("data/tiles", 20, 20)
     process_svg_folder("data/icons", 40, 40)
-    for name, width, height in sprites:
-        process_sprite(name, width, height, sprite_path)
-    process_sprite("splash", 800, 600, image_path)
-    process_sprite("gameover_win", 800, 600, image_path)
-    process_sprite("gameover_lose", 800, 600, image_path)
-    for name, width, height in cursors:
-        process_cursor(name, width, height, sprite_path, cursor_path)
+    for name, width, height in SPRITES:
+        process_sprite(name, width, height, SPRITE_PATH)
+    process_sprite("splash", 800, 600, IMAGE_PATH)
+    process_sprite("gameover_win", 800, 600, IMAGE_PATH)
+    process_sprite("gameover_lose", 800, 600, IMAGE_PATH)
+    for name, width, height in CURSORS:
+        process_cursor(name, width, height, SPRITE_PATH, CURSOR_PATH)
