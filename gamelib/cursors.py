@@ -8,6 +8,7 @@ import data
 cursors = {
         'arrow' : pygame.cursors.arrow,
         'select' : pygame.cursors.broken_x,
+        'ball': pygame.cursors.ball,
         }
 
 for tag, filename in [

@@ -81,7 +81,7 @@ class ToolBar(gui.Table):
         self.add_tool_button("Move Hen", constants.TOOL_PLACE_ANIMALS,
                 None, cursors.cursors['select'])
         self.add_tool_button("Cut Trees", constants.TOOL_LOGGING,
-                constants.LOGGING_PRICE)
+                constants.LOGGING_PRICE, cursors.cursors['ball'])
         self.add_spacer(20)
 
         self.add_heading("Sell ...")
