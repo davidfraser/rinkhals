@@ -206,6 +206,8 @@ class ToolBar(gui.Table):
 
     def clear_tool(self):
         self.group.value = None
+        for item in self.group.widgets:
+            item.pcls = ""
 
     def add_counter(self, icon, label):
         self.tr()
