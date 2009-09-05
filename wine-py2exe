@@ -74,6 +74,6 @@ cd ..
 
 echo "=== Done ==="
 echo ""
-echo "  " `ls -sh dist/${ZIP_NAME}`
-echo "  " `du -sh dist/${BUILD_FOLDER}`
+echo -n "  "; du -sh dist/${ZIP_NAME}
+echo -n "  "; du -sh dist/${BUILD_FOLDER}
 echo ""
