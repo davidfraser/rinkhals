@@ -48,6 +48,7 @@ cp -R "${WINE_PYTHON}/share/pgu/themes/default" "${DEST}/share/pgu/themes/"
 
 echo "'data' -> '${DEST}/data'"
 svn export -q "data" "${DEST}/data"
+find "${DEST}/data" -name '*.svg' -delete
 
 echo "'${WINE_PYTHON}/Lib/site-packages/pygame' -> '${DEST}'"
 rm -rf "${DEST}/pygame"
@@ -73,4 +74,5 @@ cd ..
 
 echo "=== Done ==="
 echo ""
-echo "  " `ls -sh dist/*.zip`
+echo "  " `ls -sh dist/${ZIP_NAME}`
+echo "  " `du -sh dist/${BUILD_FOLDER}`
