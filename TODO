@@ -1,12 +1,8 @@
 == TODO ==
 
-* Balance game (game length, profits & costs, etc.) (All)
-
-* Py2exe packaging (Hodgestar)
-
 * Py2app packaging (jerith)
-
-* Unix packaging (Hodgestar)
+* Add icons to py2exe build.
+* Add icons to py2app build.
 
 == POST PYWEEK ==
 
