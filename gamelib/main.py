@@ -13,6 +13,7 @@ from pygame.locals import SWSURFACE
 #from engine import Engine, MainMenuState
 from sound import init_sound
 import constants
+import data
 
 def create_main_app(screen):
     """Create an app with a background widget."""
@@ -26,6 +27,8 @@ def main():
     """Main script."""
     init_sound()
     screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE)
+    pygame.display.set_icon(pygame.image.load(
+        data.filepath('icons/foxassault24x24.png')))
     main_app = create_main_app(screen)
 
     from engine import Engine, MainMenuState
