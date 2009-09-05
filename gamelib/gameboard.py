@@ -241,7 +241,7 @@ class GameBoard(object):
         self.disp = main_app
         self.tv = tiles.FarmVid()
         self.tv.png_folder_load_tiles(data.filepath('tiles'))
-        self.tv.tga_load_level(data.filepath('level1.tga'))
+        self.tv.tga_load_level(data.filepath('levels/farm.tga'))
         self.create_display()
 
         self.selected_tool = None
