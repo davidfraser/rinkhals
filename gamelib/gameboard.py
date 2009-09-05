@@ -442,7 +442,7 @@ class GameBoard(object):
 
     def sell_chicken(self, tile_pos):
 
-        def do_sell(chicken):
+        def do_sell(chicken, update_button=None):
             if not chicken:
                 return False # sanity check
             if len(self.chickens) == 1:
@@ -453,6 +453,9 @@ class GameBoard(object):
                 chicken.unequip(item)
             self.add_cash(constants.SELL_PRICE_CHICKEN)
             sound.play_sound("sell-chicken.ogg")
+            if update_button:
+                update_button(chicken, empty=True)
+            self.remove_chicken(chicken)
             return True
 
         chick = self.get_outside_chicken(tile_pos)
@@ -461,9 +464,7 @@ class GameBoard(object):
             if building and building.NAME in buildings.HENHOUSES:
                 self.open_building_dialog(building, do_sell)
             return
-
-        if do_sell(chick):
-            self.remove_chicken(chick)
+        do_sell(chick)
 
     def sell_one_egg(self, chicken):
         if chicken.eggs:
@@ -475,12 +476,14 @@ class GameBoard(object):
         return False
 
     def sell_egg(self, tile_pos):
-        def do_sell(chicken):
+        def do_sell(chicken, update_button=None):
             # We try sell and egg
             if self.sell_one_egg(chicken):
                 sound.play_sound("sell-chicken.ogg")
                 # Force toolbar update
                 self.toolbar.chsize()
+                if update_button:
+                    update_button(chicken)
             return False
 
         building = self.get_building(tile_pos)
@@ -594,8 +597,6 @@ class GameBoard(object):
 
         def nest_clicked(place, button):
             """Handle a nest being clicked."""
-            # sell_callback should return true if we need to remove the
-            # occupant
             if place.occupant:
                 # there is an occupant, select or sell it
                 if not sell_callback:
@@ -607,13 +608,7 @@ class GameBoard(object):
                     update_button(self.animal_to_place)
                 else:
                     # Attempt to sell the occupant
-                    if sell_callback(place.occupant):
-                        # empty the nest (on button)
-                        update_button(place.occupant, empty=True)
-                        self.remove_chicken(place.occupant)
-                    else:
-                        # Update for equipment changes, etc.
-                        update_button(place.occupant)
+                    sell_callback(place.occupant, update_button)
             else:
                 # there is no occupant, attempt to fill the space
                 if self.animal_to_place is not None:
@@ -713,11 +708,13 @@ class GameBoard(object):
 
         equipment = equipment_cls()
 
-        def do_equip(chicken):
+        def do_equip(chicken, update_button=None):
             # Try to equip the chicken
             if equipment.place(chicken):
                 self.add_cash(-equipment.buy_price())
                 chicken.equip(equipment)
+                if update_button:
+                    update_button(chicken)
             return False
 
         chicken = self.get_outside_chicken(tile_pos)
@@ -748,15 +745,17 @@ class GameBoard(object):
 
     def sell_equipment(self, tile_pos):
         x, y = 0, 0
-        def do_sell(chicken):
+        def do_sell(chicken, update_button=None):
             if not chicken.equipment:
                 return
             elif len(chicken.equipment) == 1:
                 item = chicken.equipment[0]
                 self.add_cash(item.sell_price())
                 chicken.unequip(item)
+                if update_button:
+                    update_button(chicken)
             else:
-                self.open_equipment_dialog(chicken, x, y)
+                self.open_equipment_dialog(chicken, x, y, update_button)
             return False
 
         chicken = self.get_outside_chicken(tile_pos)
@@ -769,13 +768,15 @@ class GameBoard(object):
             x, y = 50, 0
             self.open_building_dialog(building, do_sell)
 
-    def open_equipment_dialog(self, chicken, x, y):
+    def open_equipment_dialog(self, chicken, x, y, update_button=None):
         tbl = gui.Table()
 
         def sell_item(item, button):
             """Select item of equipment."""
             self.add_cash(item.sell_price())
             chicken.unequip(item)
+            if update_button:
+                update_button(chicken)
             self.disp.close(dialog)
 
         kwargs = { 'style': { 'padding_left': 10, 'padding_bottom': 10 }}
