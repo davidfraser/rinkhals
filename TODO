@@ -1,11 +1,8 @@
 == TODO ==
 
-* Still price text for (Hodgestar):
-  -- Non-Constant
-      -- Sell equipment
-      -- Sell building
+* Price pop-up (Neil).
 
-* Level layout refactoring and autogeneration of tiles (Jerith).
+* Level layout refactoring (Jerith, Confluence).
 
 * Balance game (game length, profits & costs, etc.) (All).
 
