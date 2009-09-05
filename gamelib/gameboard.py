@@ -778,13 +778,17 @@ class GameBoard(object):
         """Add some random chickens to start the game"""
         x, y = 0, 0
         width, height = self.tv.size
+        tries = 0
         while len(self.chickens) < 10:
             if x < width:
                 tile = self.tv.get((x, y))
             else:
                 y += 1
                 if y >= height:
-                    break
+                    y = 0
+                    tries += 1
+                    if tries > 3:
+                        break # Things have gone wierd
                 x = 0
                 continue
             # See if we place a chicken
