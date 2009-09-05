@@ -19,7 +19,6 @@
 
 * <Nitwit> And we need to start testing for lose conditions, and set an upper time limit
   -- High score needs finishing
-  -- Should esc take us to a different state than won / lost?
   -- Think about length of game (i.e. number of days)
 
 

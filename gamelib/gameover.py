@@ -1,5 +1,6 @@
 """The Game Over Screen"""
 import tempfile
+import random
 
 from pgu import gui
 from pgu.high import High
@@ -8,6 +9,13 @@ import pygame
 import engine
 import constants
 import imagecache
+
+WON, LOST, LEFT = range(3)
+
+LOST_MESSAGES = ["You lost", 'You failed to protect yur chickens']
+WON_MESSAGES = ["You survived"]
+LEFT_MESSAGES = ["You sold your farm", "You gave up",
+        "Real life got in the way"]
 
 def ScoreTable():
     """Create and initialise a score table"""
@@ -27,10 +35,15 @@ class GameOverContainer(gui.Container):
     def __init__(self, game_over, *args, **kwargs):
         gui.Container.__init__(self, *args, **kwargs)
         self.add(game_over, 0, 0)
-        if game_over.survived:
-            self.splash = imagecache.load_image("images/gameover_win.png", ["darken_center"])
+        if game_over.survived == WON:
+            self.splash = imagecache.load_image("images/gameover_win.png",
+                    ["darken_center"])
+        elif game_over.survived == LOST:
+            self.splash = imagecache.load_image("images/gameover_lose.png",
+                    ["darken_center"])
         else:
-            self.splash = imagecache.load_image("images/gameover_lose.png", ["darken_center"])
+            self.splash = imagecache.load_image("images/splash.png",
+                    ["darken_center"])
 
     def paint(self, s):
         pygame.display.set_caption('Game Over')
@@ -38,6 +51,7 @@ class GameOverContainer(gui.Container):
         gui.Container.paint(self, s)
 
 class GameOver(gui.Table):
+
     def __init__(self, gameboard, scoreboard, **params):
         gui.Table.__init__(self, **params)
 
@@ -47,21 +61,24 @@ class GameOver(gui.Table):
         def quit_pressed():
             pygame.event.post(engine.QUIT)
 
-
         score = gameboard.cash + \
                 constants.SELL_PRICE_CHICKEN * len(gameboard.chickens) + \
                 constants.SELL_PRICE_EGG * gameboard.eggs
 
         self.tr()
-        if len(gameboard.chickens) > 0:
-            self.survived = True
-            self.td(gui.Label("You Survived", color=constants.FG_COLOR),
-                    colspan=3)
-            scoreboard.submit(score, 'Player')
+        if gameboard.is_game_over():
+            if len(gameboard.chickens) > 0:
+                self.survived = WON
+                scoreboard.submit(score, 'Player')
+                message = random.choice(WON_MESSAGES)
+            else:
+                self.survived = LOST
+                message = random.choice(LOST_MESSAGES)
         else:
-            self.survived = False
-            self.td(gui.Label("You Lost", color=constants.FG_COLOR),
-                    colspan=3)
+            self.survived = LEFT
+            message = random.choice(LEFT_MESSAGES)
+        self.td(gui.Label(message, color=constants.FG_COLOR),
+                colspan=3)
         # show the scoreboard
 
         for highscore in scoreboard:
@@ -81,7 +98,7 @@ class GameOver(gui.Table):
             color=constants.FG_COLOR), colspan=3)
         if scoreboard.check(score) is not None:
             self.tr()
-            if self.survived:
+            if self.survived == WON:
                 self.td(gui.Label("You made the high scores",
                     color=constants.FG_COLOR), colspan=3)
             else:
