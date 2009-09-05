@@ -186,8 +186,19 @@ class NightState(State):
         sound.background_music("nighttime.ogg")
 
         self.game.gameboard.lay_eggs()
+        self.dialog = None
 
     def event(self, e):
+        if self.dialog and self.dialog.running:
+            if self.dialog.event(e):
+                return
+        elif self.dialog:
+            if self.dialog.do_quit:
+                self.dialog = None
+                self.game.gameboard.reset_states()
+                return GameOver(self.game)
+            self.dialog=None
+            return
         if events_equal(e, START_DAY):
             if self.game.gameboard.is_game_over():
                 return GameOver(self.game)
@@ -201,9 +212,7 @@ class NightState(State):
             pygame.time.set_timer(ANIM_ID, self.cycle_time)
             pygame.time.set_timer(MOVE_FOX_ID, 4*self.cycle_time)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
-            if check_dialog(self.game.main_app):
-                self.game.gameboard.reset_states()
-                return GameOver(self.game)
+            self.dialog = check_exit()
         elif e.type is ANIM_ID:
             self.game.gameboard.run_animations()
         elif e.type is MOVE_FOX_ID:
