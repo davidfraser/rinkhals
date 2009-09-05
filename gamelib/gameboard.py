@@ -16,6 +16,7 @@ import sound
 import cursors
 import sprite_cursor
 import misc
+import engine
 
 class OpaqueLabel(gui.Label):
     def __init__(self, value, **params):
@@ -115,7 +116,7 @@ class ToolBar(gui.Table):
         self.add_tool("Price Reference", self.show_prices)
         self.add_spacer(20)
 
-        self.add_tool("Finished Day", self.day_done)
+        self.fin_tool = self.add_tool("Finished Day", self.day_done)
 
         self.anim_clear_tool = False # Flag to clear the tool on an anim loop
         # pgu's tool widget fiddling happens after the tool action, so calling
@@ -123,8 +124,19 @@ class ToolBar(gui.Table):
         # the anim loop
 
     def day_done(self):
-        import engine
-        pygame.event.post(engine.START_NIGHT)
+        if self.gameboard.day:
+            pygame.event.post(engine.START_NIGHT)
+        else:
+            self.anim_clear_tool = True
+            pygame.event.post(engine.FAST_FORWARD)
+
+    def update_fin_tool(self, day):
+        if day:
+            self.fin_tool.widget = gui.basic.Label('Finished Day')
+            self.fin_tool.resize()
+        else:
+            self.fin_tool.widget = gui.basic.Label('Fast Forward')
+            self.fin_tool.resize()
 
     def show_prices(self):
         """Popup dialog of prices"""
@@ -210,6 +222,7 @@ class ToolBar(gui.Table):
         tool.connect(gui.CLICK, func)
         self.tr()
         self.td(tool, align=-1, colspan=2)
+        return tool
 
     def clear_tool(self):
         self.group.value = None
@@ -386,11 +399,13 @@ class GameBoard(object):
         self.day, self.night = False, True
         self.tv.sun(False)
         self.reset_states()
+        self.toolbar.update_fin_tool(self.day)
 
     def start_day(self):
         self.day, self.night = True, False
         self.tv.sun(True)
         self.reset_states()
+        self.toolbar.update_fin_tool(self.day)
 
     def in_bounds(self, pos):
         """Check if a position is within the game boundaries"""

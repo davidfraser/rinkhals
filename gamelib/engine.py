@@ -179,7 +179,8 @@ class NightState(State):
             if self.game.gameboard.is_game_over():
                 return GameOver(self.game)
             return DayState(self.game)
-        elif e.type is KEYDOWN and e.key == K_d:
+        elif (e.type is KEYDOWN and e.key == K_d) or \
+                events_equal(e, FAST_FORWARD):
             if self.cycle_time > FAST_ANIM_SPEED:
                 self.cycle_time = FAST_ANIM_SPEED
             else:
@@ -254,6 +255,7 @@ START_DAY = pygame.event.Event(USEREVENT, name="START_DAY")
 START_NIGHT = pygame.event.Event(USEREVENT, name="START_NIGHT")
 GO_MAIN_MENU = pygame.event.Event(USEREVENT, name="GO_MAIN_MENU")
 GO_HELP_SCREEN = pygame.event.Event(USEREVENT, name="GO_HELP_SCREEN")
+FAST_FORWARD = pygame.event.Event(USEREVENT, name="FAST_FORWARD")
 MOVE_FOX_ID = USEREVENT + 1
 ANIM_ID = USEREVENT + 6
 MOVE_FOXES = pygame.event.Event(MOVE_FOX_ID, name="MOVE_FOXES")
