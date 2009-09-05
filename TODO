@@ -1,8 +1,10 @@
 == TODO ==
 
-* Balance game (game length, profits & costs, etc.) (All).
+* Balance game (game length, profits & costs, etc.) (All)
 
-* Py2exe packaging (Hodgestar).
+* Py2exe packaging (Hodgestar)
+
+* Py2app packaging (jerith)
 
 * Sell equipment from chickens in buildings (Neil)
 
