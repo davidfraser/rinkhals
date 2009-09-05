@@ -1,6 +1,6 @@
 """Operation Fox Assault Version Information"""
 
-VERSION = (1, 0, 0, 'alpha', 1)
+VERSION = (1, 0, 0, 'final', 0)
 BASE_VERSION_STR = '.'.join([str(x) for x in VERSION[:3]])
 VERSION_STR = {
     'final': BASE_VERSION_STR,
