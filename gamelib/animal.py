@@ -465,6 +465,10 @@ class DemoFox(Fox):
     DIG_ANIMATION = animations.FenceExplosion
     IMAGE_FILE = 'sprites/sapper_fox.png'
 
+    def __init__(self, pos):
+        Fox.__init__(self, pos)
+        self.costs['fence'] = 2 # We don't worry about fences
+
     def _dig(self, gameboard, dig_pos):
         """Setup dig parameters, to be overridden if needed"""
         self.tick = 0 # Costs us nothing to go through a fence.
