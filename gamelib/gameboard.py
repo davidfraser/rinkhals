@@ -464,7 +464,8 @@ class GameBoard(object):
             if not chicken:
                 return False # sanity check
             if len(self.chickens) == 1:
-                print "You can't sell your last chicken!"
+                msg = "You can't sell your last chicken!"
+                TextDialog("Squuaaawwwwwk!", msg).open()
                 return False
             for item in list(chicken.equipment):
                 self.add_cash(item.sell_price())
@@ -1061,3 +1062,31 @@ class GameBoard(object):
             return True
         if len(self.chickens) == 0:
             return True
+
+
+class TextDialog(gui.Dialog):
+    def __init__(self, title, text, **params):
+        title_label = gui.Label(title)
+
+        doc = gui.Document()
+
+        space = doc.style.font.size(" ")
+
+        for paragraph in text.split('\n\n'):
+            doc.block(align=-1)
+            for word in paragraph.split():
+                doc.add(gui.Label(word))
+                doc.space(space)
+            doc.br(space[1])
+        doc.br(space[1])
+
+        done_button = gui.Button("Close")
+        done_button.connect(gui.CLICK, self.close)
+
+        tbl = gui.Table()
+        tbl.tr()
+        tbl.td(doc)
+        tbl.tr()
+        tbl.td(done_button, align=1)
+
+        gui.Dialog.__init__(self, title_label, tbl, **params)
