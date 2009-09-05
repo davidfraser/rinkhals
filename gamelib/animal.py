@@ -395,6 +395,9 @@ class Fox(Animal):
                 if cost < min_cost:
                     min_cost = cost
                     final_pos = poss
+                if cost == min_cost and random.randint(0, 1) > 0:
+                    # Add some randomness in this case
+                    final_pos = poss
         if not final_pos:
             # No good choice, so stay put
             return self.pos
