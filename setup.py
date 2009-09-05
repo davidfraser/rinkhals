@@ -76,11 +76,11 @@ setup   (   # Metadata
             'py2app': {
                 'argv_emulation': 1,
                 'iconfile': 'data/icons/foxassault.icns',
-                'dist_dir': 'dist/foxassault-%s' % version.VERSION_STR,
+#                 'dist_dir': 'dist/foxassault-%s' % version.VERSION_STR,
+#                 'bdist_base': 'build/bdist',
                 'packages': [
                     'logging', 'encodings', 'pygame', 'pgu', 'gamelib', 'data',
                 ],
-                'resources': ['share'],
                 'excludes': ['numpy'],
             }},
             data_files = [
