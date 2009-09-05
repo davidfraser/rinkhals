@@ -50,11 +50,11 @@ class Animal(Sprite):
         self._fix_face(new_pos)
         self.pos = new_pos
 
-    def _fix_face(self, final_pos):
+    def _fix_face(self, facing_pos):
         """Set the face correctly"""
-        if final_pos.left_of(self.pos):
+        if facing_pos.left_of(self.pos):
             self._set_image_facing('left')
-        elif final_pos.right_of(self.pos):
+        elif facing_pos.right_of(self.pos):
             self._set_image_facing('right')
 
     def _set_image_facing(self, facing):
@@ -181,6 +181,7 @@ class Chicken(Animal):
         fox = self._find_killable_fox(weapon, gameboard)
         if not fox:
             return
+        self._fix_face(fox.pos)
         if weapon.hit(gameboard, self, fox):
             sound.play_sound("kill-fox.ogg")
             gameboard.kill_fox(fox)
