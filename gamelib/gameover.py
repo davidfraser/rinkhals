@@ -94,6 +94,7 @@ class GameOver(gui.Table):
             message = random.choice(LEFT_MESSAGES)
         self.td(gui.Label(message, color=constants.FG_COLOR),
                 colspan=3)
+        self.add_spacer()
         # show the scoreboard
 
         for highscore in scoreboard:
@@ -108,6 +109,11 @@ class GameOver(gui.Table):
             color=constants.FG_COLOR))
         self.td(gui.Label("   Eggs : %d" % gameboard.eggs,
             color=constants.FG_COLOR))
+        self.add_spacer()
+        self.tr()
+        self.td(gui.Label("You killed %d foxes" % gameboard.killed_foxes,
+            color=constants.FG_COLOR), colspan=3)
+        self.add_spacer()
         self.tr()
         self.td(gui.Label("Final score : %d" % score,
             color=constants.FG_COLOR), colspan=3)
@@ -120,8 +126,7 @@ class GameOver(gui.Table):
                 self.td(gui.Label("Pity, you could have made the high scores",
                     color=constants.FG_COLOR), colspan=3)
 
-        self.tr()
-        self.td(gui.Spacer(0, 50), colspan=3)
+        self.add_spacer(50)
 
         return_button = gui.Button("Return to Main Menu")
         return_button.connect(gui.CLICK, return_pressed)
@@ -143,3 +148,7 @@ class GameOver(gui.Table):
 
         self.tr()
         self.td(quit_button, **td_kwargs)
+
+    def add_spacer(self, height=5):
+        self.tr()
+        self.td(gui.Spacer(0, height), colspan=3)
