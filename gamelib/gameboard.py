@@ -227,7 +227,6 @@ class GameBoard(object):
     def __init__(self, main_app):
         self.disp = main_app
         self.tv = tiles.FarmVid()
-        self.tv.tga_load_tiles(data.filepath('tiles.tga'), self.TILE_DIMENSIONS)
         self.tv.png_folder_load_tiles(data.filepath('tiles'))
         self.tv.tga_load_level(data.filepath('level1.tga'))
         self.create_display()
