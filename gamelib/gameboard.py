@@ -163,25 +163,29 @@ class VidWidget(gui.Widget):
         us = []
         x, y = self.vid.view.x, self.vid.view.y
         for anim in self.gameboard.animations[:]:
-            # We process removed animations 1st, so we redraw things correctly
-            if anim.removed:
+            if anim.updated or anim.removed:
+                # We flag that we need to redraw stuff undeneath the animation
                 us.append(pygame.Rect(anim.irect.x - x, anim.irect.y - y,
                     anim.irect.width, anim.irect.height))
-                self.gameboard.animations.remove(anim)
-                # Flag the underlying tiles/sprites to be redrawn
                 self.vid.alayer[anim.pos.y][anim.pos.x]=1
                 self.vid.updates.append(anim.pos.to_tuple())
+            if anim.removed:
+                # Remove the animation from the draw loop
+                self.gameboard.animations.remove(anim)
         us.extend(self.vid.update(surface))
         for anim in self.gameboard.animations:
             if anim.updated: 
                 anim.fix_pos(self.vid)
-                # setimage has happened
+                # setimage has happened, so redraw
                 anim.irect.x = anim.rect.x - anim.shape.x
                 anim.irect.y = anim.rect.y - anim.shape.y
                 surface.blit(anim.image, (anim.irect.x - x, anim.irect.y - y))
                 anim.updated = 0
                 us.append(pygame.Rect(anim.irect.x - x, anim.irect.y - y,
                     anim.irect.width, anim.irect.height))
+                # This is enough, because sprite changes happen disjoint
+                # from the animation sequence, so we don't need to worry
+                # other changes forcing us to redraw the animation frame.
         return us
 
     def move_view(self, x, y):
