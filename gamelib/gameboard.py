@@ -99,7 +99,7 @@ class ToolBar(gui.Table):
                     cursors.cursors.get('build', None))
         for equipment_cls in equipment.EQUIPMENT:
             self.add_tool_button(equipment_cls.NAME.title(), equipment_cls,
-                    cursors.cursors.get(equipment_cls.NAME, None))
+                    cursors.cursors.get('buy', None))
         self.add_spacer(30)
 
         self.add_tool("Finished Day", self.day_done)
@@ -279,7 +279,9 @@ class GameBoard(object):
         sprite_curs = None
         if buildings.is_building(tool):
             sprite_curs = sprite_cursor.SpriteCursor(tool.IMAGE, self.tv, tool.BUY_PRICE)
-        if tool == constants.TOOL_BUY_FENCE:
+        elif equipment.is_equipment(tool):
+            sprite_curs = sprite_cursor.SpriteCursor(tool.CHICKEN_IMAGE_FILE, self.tv)
+        elif tool == constants.TOOL_BUY_FENCE:
             sprite_curs = sprite_cursor.SpriteCursor("tiles/fence.png", self.tv)
         self.set_cursor(cursor, sprite_curs)
 
