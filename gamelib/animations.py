@@ -13,6 +13,8 @@ class Animation(Sprite):
        the sprites list.
        
        Ideally, animations should be quite short."""
+       # In the current implementation, sequences longer than 3 frames
+       # will cause issues as this will overrun the next move loop.
 
     def __init__(self, sequence, tile_pos):
         # Create the first frame
