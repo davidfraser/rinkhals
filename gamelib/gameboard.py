@@ -117,6 +117,8 @@ class ToolBar(gui.Table):
 
         self.add_tool("Finished Day", self.day_done)
 
+        self.anim_clear_tool = False # Flag to clear the tool on an anim loop
+
     def day_done(self):
         import engine
         pygame.event.post(engine.START_NIGHT)
@@ -175,6 +177,7 @@ class ToolBar(gui.Table):
         dialog = gui.Dialog(gui.Label('Price Reference'), tbl)
         close_button.connect(gui.CLICK, dialog.close)
         dialog.open()
+        self.anim_clear_tool = True
 
     update_cash_counter = mkcountupdate('cash_counter')
     update_fox_counter = mkcountupdate('killed_foxes')
@@ -209,6 +212,7 @@ class ToolBar(gui.Table):
         self.group.value = None
         for item in self.group.widgets:
             item.pcls = ""
+        self.anim_clear_tool = False
 
     def add_counter(self, icon, label):
         self.tr()
@@ -784,6 +788,8 @@ class GameBoard(object):
     def run_animations(self):
         for anim in self.animations:
             anim.animate()
+        if self.toolbar.anim_clear_tool:
+            self.toolbar.clear_tool()
 
     def move_foxes(self):
         """Move the foxes.
