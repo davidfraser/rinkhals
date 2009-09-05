@@ -76,13 +76,13 @@ class ToolBar(gui.Table):
         self.add_counter(mklabel("Eggs:"), self.egg_counter)
         self.add_counter(icons.CHKN_ICON, self.chicken_counter)
         self.add_counter(icons.KILLED_FOX, self.killed_foxes)
-        self.add_spacer(20)
+        self.add_spacer(15)
 
         self.add_tool_button("Move Hen", constants.TOOL_PLACE_ANIMALS,
                 None, cursors.cursors['select'])
         self.add_tool_button("Cut Trees", constants.TOOL_LOGGING,
                 constants.LOGGING_PRICE, cursors.cursors['ball'])
-        self.add_spacer(20)
+        self.add_spacer(15)
 
         self.add_heading("Sell ...")
         self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
@@ -93,7 +93,7 @@ class ToolBar(gui.Table):
                 None, cursors.cursors['sell'])
         self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
                 None, cursors.cursors['sell'])
-        self.add_spacer(20)
+        self.add_spacer(15)
 
         self.add_heading("Buy ...")
 
@@ -111,8 +111,9 @@ class ToolBar(gui.Table):
                     equipment_cls.BUY_PRICE,
                     cursors.cursors.get('buy', None))
 
+        self.add_spacer(10)
         self.add_tool("Price Reference", self.show_prices)
-        self.add_spacer(30)
+        self.add_spacer(20)
 
         self.add_tool("Finished Day", self.day_done)
 
