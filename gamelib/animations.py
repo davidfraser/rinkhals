@@ -42,9 +42,12 @@ class Animation(Sprite):
 
 class MuzzleFlash(Animation):
 
-    SEQUENCE_LEFT = [imagecache.load_image('sprites/muzzle_flash.png')]
-    SEQUENCE_RIGHT = [imagecache.load_image('sprites/muzzle_flash.png',
-        ("right_facing",))]
+    FLASH_LEFT = imagecache.load_image('sprites/muzzle_flash.png')
+    FLASH_RIGHT = imagecache.load_image('sprites/muzzle_flash.png',
+            ("right_facing",))
+
+    SEQUENCE_LEFT = [FLASH_LEFT, FLASH_LEFT]
+    SEQUENCE_RIGHT = [FLASH_RIGHT, FLASH_RIGHT]
 
     def __init__(self, chicken):
         if chicken.facing == 'right':
