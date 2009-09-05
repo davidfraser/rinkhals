@@ -81,7 +81,7 @@ class Weapon(Equipment):
 
 class Rifle(Weapon):
     TYPE = "GUN"
-    NAME = "rifle"
+    NAME = "Rifle"
     BUY_PRICE = 100
     SELL_PRICE = 75
 
@@ -96,7 +96,7 @@ class Rifle(Weapon):
 
 class Knife(Weapon):
     TYPE = "KNIFE"
-    NAME = "knife"
+    NAME = "Knife"
     BUY_PRICE = 25
     SELL_PRICE = 15
 
@@ -128,7 +128,7 @@ class Armour(Equipment):
         return False
 
 class Helmet(Armour):
-    NAME = "helmet"
+    NAME = "Helmet"
     BUY_PRICE = 25
     SELL_PRICE = 15
     DRAW_LAYER = 6
@@ -139,7 +139,7 @@ class Helmet(Armour):
     UNDER_EYE = True
 
 class Kevlar(Armour):
-    NAME = "kevlar"
+    NAME = "Kevlar"
     BUY_PRICE = 100
     SELL_PRICE = 75
 
@@ -161,17 +161,17 @@ class Accoutrement(Equipment):
         return True
 
 class Spotlight(Accoutrement):
-    NAME = "spotlight"
+    NAME = "Spotlight"
     CHICKEN_IMAGE_FILE = 'sprites/select_chkn.png'
     DRAW_LAYER = -5
 
 class Nest(Accoutrement):
-    NAME = "nest"
+    NAME = "Nest"
     CHICKEN_IMAGE_FILE = 'sprites/nest.png'
     DRAW_LAYER = 15
 
 class NestEgg(Accoutrement):
-    NAME = "nestegg"
+    NAME = "Nestegg"
     CHICKEN_IMAGE_FILE = 'sprites/equip_egg.png'
     DRAW_LAYER = 14
 

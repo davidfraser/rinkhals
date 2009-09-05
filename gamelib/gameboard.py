@@ -354,7 +354,7 @@ class GameBoard(object):
         self.selected_tool = tool
         if self.animal_to_place:
             # Clear any highlights
-            self.animal_to_place.unequip_by_name("spotlight")
+            self.animal_to_place.unequip_by_name("Spotlight")
         self.select_animal_to_place(None)
         sprite_curs = None
         if buildings.is_building(tool):
@@ -489,7 +489,7 @@ class GameBoard(object):
 
     def select_animal_to_place(self, animal):
         if self.animal_to_place:
-            self.animal_to_place.unequip_by_name("spotlight")
+            self.animal_to_place.unequip_by_name("Spotlight")
         self.animal_to_place = animal
         if self.animal_to_place:
             self.animal_to_place.equip(equipment.Spotlight())
@@ -525,7 +525,7 @@ class GameBoard(object):
             return
         if self.tv.get(tile_pos) == self.GRASSLAND:
             if self.animal_to_place is not None:
-                self.animal_to_place.unequip_by_name("nest")
+                self.animal_to_place.unequip_by_name("Nest")
                 self.relocate_animal(self.animal_to_place, tile_pos=tile_pos)
                 self.eggs -= self.animal_to_place.get_num_eggs()
                 self.animal_to_place.remove_eggs()

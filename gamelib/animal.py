@@ -167,13 +167,13 @@ class Chicken(Animal):
     def remove_eggs(self):
         """Clean up the egg state"""
         self.eggs = []
-        self.unequip_by_name("nestegg")
+        self.unequip_by_name("Nestegg")
 
     def remove_one_egg(self):
         """Clean up the egg state"""
         self.eggs.pop()
         if not self.eggs:
-            self.unequip_by_name("nestegg")
+            self.unequip_by_name("Nestegg")
 
     def get_num_eggs(self):
         return len(self.eggs)
