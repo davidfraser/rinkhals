@@ -19,7 +19,7 @@ Game mechanics:
 
 You lose if you end a night with no chickens left.
 
-You win if you survive 14 nights.
+Depending on the game length you select, you win if you survive for two weeks, three months or until you have chopped down all the trees in the forest and caused the complete extinction of the fox population.
 
 Chickens only lay eggs in henhouses, and must stay on the egg for 2 days to
 hatch a new chicken. Chickens that hatch in already full henhouses are
