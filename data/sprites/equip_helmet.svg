@@ -43,14 +43,14 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.0152381"
-     inkscape:cx="262.5"
+     inkscape:zoom="1.0057143"
+     inkscape:cx="97.940341"
      inkscape:cy="262.5"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="735"
+     inkscape:window-width="1278"
+     inkscape:window-height="730"
      inkscape:window-x="0"
      inkscape:window-y="24" />
   <metadata
@@ -70,15 +70,14 @@
      id="layer1"
      transform="translate(-169.70945,-261.08105)">
     <g
-       id="g3187"
-       transform="translate(62.114447,-354.76448)">
+       id="g2417">
       <path
          sodipodi:nodetypes="cczc"
          id="path2402"
-         d="M 189.26169,732.31239 C 240.26771,735.85128 286.19192,717.3488 316.35126,676.58849 C 297.02103,700.29873 282.15816,591.11682 215.65722,621.84221 C 149.15627,652.5676 216.70172,720.90275 189.26169,732.31239 z"
-         style="fill:#537508;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+         d="M 222.55938,435.78133 C 299.06841,441.08967 367.95473,413.33595 413.19374,352.19549 C 384.19839,387.76085 361.90409,223.98798 262.15268,270.07606 C 162.40125,316.16415 263.71943,418.66688 222.55938,435.78133 z"
+         style="fill:#537508;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
       <path
-         transform="matrix(3.2654973,1.9561603,-1.4135534,2.3597018,-243.02366,47.976007)"
+         transform="matrix(3.467498,2.6650197,-2.2284733,1.357212,-145.28921,-350.39437)"
          d="M 194.94088,91.856651 A 4.3871236,4.577868 0 1 1 186.16663,91.856651 A 4.3871236,4.577868 0 1 1 194.94088,91.856651 z"
          sodipodi:ry="4.577868"
          sodipodi:rx="4.3871236"

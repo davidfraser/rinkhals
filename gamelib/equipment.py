@@ -131,6 +131,7 @@ class Helmet(Armour):
     NAME = "helmet"
     BUY_PRICE = 25
     SELL_PRICE = 15
+    DRAW_LAYER = 6
 
     STARTING_HITPOINTS = 1
 
