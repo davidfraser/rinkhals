@@ -338,8 +338,8 @@ class GameBoard(object):
         if not self.day:
             return
         if e.button == 3: # Right button
-            self.selected_tool = None
-            self.set_cursor()
+            self.set_selected_tool(None, None)
+            self.toolbar.clear_tool()
         elif e.button != 1: # Left button
             return
         if self.selected_tool == constants.TOOL_SELL_CHICKEN:
