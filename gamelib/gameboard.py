@@ -705,13 +705,27 @@ class GameBoard(object):
             self.add_building(building)
 
     def buy_equipment(self, tile_pos, equipment_cls):
-        chicken = self.get_outside_chicken(tile_pos)
+
         equipment = equipment_cls()
-        if chicken is None or self.cash < equipment.buy_price():
+
+        def do_equip(chicken):
+            # Try to equip the chicken
+            if equipment.place(chicken):
+                self.add_cash(-equipment.buy_price())
+                chicken.equip(equipment)
+            return False
+
+        chicken = self.get_outside_chicken(tile_pos)
+        if self.cash < equipment.buy_price():
             return
-        if equipment.place(chicken):
-            self.add_cash(-equipment.buy_price())
-            chicken.equip(equipment)
+        if chicken is None:
+            building = self.get_building(tile_pos)
+            if building is None:
+                return
+            # Bounce through open dialog once more
+            self.open_building_dialog(building, do_equip)
+        else:
+            do_equip(chicken)
 
     def sell_building(self, tile_pos):
         if self.tv.get(tile_pos) in [self.FENCE, self.BROKEN_FENCE]:
