@@ -32,14 +32,29 @@ class MainMenu(gui.Table):
         def quit_pressed():
             pygame.event.post(engine.QUIT)
 
-        def start_pressed():
+        def fortnight_pressed():
+            constants.TURN_LIMIT = 14
+            pygame.event.post(engine.START_DAY)
+
+        def quarter_pressed():
+            constants.TURN_LIMIT = 90
+            pygame.event.post(engine.START_DAY)
+
+        def unlimited_pressed():
+            constants.TURN_LIMIT = 0
             pygame.event.post(engine.START_DAY)
 
         def help_pressed():
             pygame.event.post(engine.GO_HELP_SCREEN)
 
-        start_button = gui.Button("Start")
-        start_button.connect(gui.CLICK, start_pressed)
+        fortnight_button = gui.Button("Fortnight")
+        fortnight_button.connect(gui.CLICK, fortnight_pressed)
+
+        quarter_button = gui.Button("Quarter")
+        quarter_button.connect(gui.CLICK, quarter_pressed)
+
+        unlim_button = gui.Button("Unlimited")
+        unlim_button.connect(gui.CLICK, unlimited_pressed)
 
         quit_button = gui.Button("Quit")
         quit_button.connect(gui.CLICK, quit_pressed)
@@ -59,7 +74,13 @@ class MainMenu(gui.Table):
         }
 
         self.tr()
-        self.td(start_button, **td_kwargs)
+        self.td(fortnight_button, **td_kwargs)
+
+        self.tr()
+        self.td(quarter_button, **td_kwargs)
+
+        self.tr()
+        self.td(unlim_button, **td_kwargs)
 
         self.tr()
         self.td(help_button, **td_kwargs)

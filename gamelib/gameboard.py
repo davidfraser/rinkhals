@@ -1030,9 +1030,15 @@ class GameBoard(object):
                 building.place(self.tv)
                 self.add_building(building)
 
+    def trees_left(self):
+        width, height = self.tv.size
+        return len([(x,y) for x in range(width) for y in range(height) if self.tv.get((x,y)) == self.WOODLAND])
+
     def is_game_over(self):
         """Return true if we're complete"""
-        if self.days > constants.TURN_LIMIT:
+        if self.trees_left() == 0:
+            return True
+        if constants.TURN_LIMIT > 0 and self.days > constants.TURN_LIMIT:
             return True
         if len(self.chickens) == 0:
             return True
