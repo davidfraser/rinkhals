@@ -1039,7 +1039,7 @@ class GameBoard(object):
         """Return true if we're complete"""
         if self.trees_left() == 0:
             return True
-        if constants.TURN_LIMIT > 0 and self.days > constants.TURN_LIMIT:
+        if constants.TURN_LIMIT > 0 and self.days >= constants.TURN_LIMIT:
             return True
         if len(self.chickens) == 0:
             return True
