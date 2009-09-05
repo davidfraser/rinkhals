@@ -56,6 +56,8 @@ if __name__ == "__main__":
     cursor_path = "data/cursors"
     sprites = [
         ("chkn", 20, 20),
+        ("wing", 20, 20),
+        ("eye", 20, 20),
         ("select_chkn", 20, 20),
         ("chkn_death", 20, 20),
         ("egg", 20, 20),
@@ -66,8 +68,8 @@ if __name__ == "__main__":
         ("equip_rifle", 20, 20),
         ("equip_knife", 20, 20),
         ("muzzle_flash", 20, 20),
-        ("kevlar", 20, 20),
-        ("helmet", 20, 20),
+        ("equip_kevlar", 20, 20),
+        ("equip_helmet", 20, 20),
         ("henhouse", 60, 40),
         ("select_henhouse", 60, 40),
         ("hendominium", 40, 60),

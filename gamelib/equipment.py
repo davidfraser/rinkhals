@@ -8,6 +8,8 @@ import animations
 class Equipment(object):
     IS_EQUIPMENT = True
     DRAW_LAYER = 0
+    UNDER_LIMB = False
+    UNDER_EYE = False
 
     def __init__(self):
         self._buy_price = self.BUY_PRICE
@@ -29,11 +31,24 @@ class Equipment(object):
             return None
         eq_image_left = imagecache.load_image(eq_image_file)
         eq_image_right = imagecache.load_image(eq_image_file, ("right_facing",))
+        if eq_image_attr == "CHICKEN_IMAGE_FILE":
+            # a bit hacky; eventually the chicken should have a stack of images and layering should take care of everything
+            if self.UNDER_LIMB:
+                wing_left = imagecache.load_image("sprites/wing.png")
+                wing_right = imagecache.load_image("sprites/wing.png", ("right_facing",))
+                eq_image_left.blit(wing_left, (0,0))
+                eq_image_right.blit(wing_right, (0,0))
+            if self.UNDER_EYE:
+                eye_left = imagecache.load_image("sprites/eye.png")
+                eye_right = imagecache.load_image("sprites/eye.png", ("right_facing",))
+                eq_image_left.blit(eye_left, (0,0))
+                eq_image_right.blit(eye_right, (0,0))
         return eq_image_left, eq_image_right, self.DRAW_LAYER
 
 class Weapon(Equipment):
     IS_WEAPON = True
     DRAW_LAYER = 10
+    UNDER_LIMB = True
 
     def _get_parameter(self, parameter, wielder):
         param = getattr(self, parameter)
@@ -119,7 +134,8 @@ class Helmet(Armour):
 
     STARTING_HITPOINTS = 1
 
-    CHICKEN_IMAGE_FILE = 'sprites/helmet.png'
+    CHICKEN_IMAGE_FILE = 'sprites/equip_helmet.png'
+    UNDER_EYE = True
 
 class Kevlar(Armour):
     NAME = "kevlar"
@@ -128,7 +144,7 @@ class Kevlar(Armour):
 
     STARTING_HITPOINTS = 2
 
-    CHICKEN_IMAGE_FILE = 'sprites/kevlar.png'
+    CHICKEN_IMAGE_FILE = 'sprites/equip_kevlar.png'
 
 class Accoutrement(Equipment):
     """Things which are not equipment, but are displayed in the same way"""
