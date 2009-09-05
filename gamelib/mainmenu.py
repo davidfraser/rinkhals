@@ -69,8 +69,8 @@ class MainMenu(gui.Table):
         self.tr()
         self.td(help_button, **td_kwargs)
 
-        self.tr()
-        self.td(fullscreen_toggle, **td_kwargs)
+        # self.tr()
+        # self.td(fullscreen_toggle, **td_kwargs)
 
         self.tr()
         self.td(quit_button, **td_kwargs)
