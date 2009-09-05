@@ -82,6 +82,10 @@ SPRITES = [
     ("muzzle_flash", 20, 20),
     ("chkn_death", 20, 20),
     ("fox_death", 20, 20),
+    ("boom1", 20, 20),
+    ("boom2", 20, 20),
+    ("boom3", 20, 20),
+    ("boom4", 20, 20),
     # other
     ("egg", 20, 20),
 ]
