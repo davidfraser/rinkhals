@@ -17,6 +17,7 @@ class Engine(Game):
         self.main_menu = mainmenu.make_main_menu()
         self._open_window = None
         self.scoreboard = gameover.ScoreTable()
+        self.gameboard = None
 
     def tick(self):
         """Tic toc."""
@@ -46,7 +47,13 @@ class Engine(Game):
     def create_game_over(self):
         """Create and open the Game Over window"""
         game_over = gameover.create_game_over(self.gameboard, self.scoreboard)
+        self.gameboard = None
         self.open_window(game_over)
+
+    def event(self, e):
+        if not Game.event(self, e) and self.gameboard:
+            self.gameboard.event(e)
+        
 
 class MainMenuState(State):
     def init(self):
