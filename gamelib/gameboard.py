@@ -818,7 +818,8 @@ class GameBoard(object):
         # Foxes spawn just outside the map
         x, y = 0, 0
         width, height = self.tv.size
-        new_foxes = random.randint(3, 7)
+        min_foxes = (self.days+3)/2 # always more than one fox
+        new_foxes = random.randint(min_foxes, min_foxes*2)
         while len(self.foxes) < new_foxes:
             side = random.randint(0, 3)
             if side == 0:
