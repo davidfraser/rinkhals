@@ -27,7 +27,9 @@ echo "  executable size correctly set)."
 echo ""
 
 rm -rf "dist/${BUILD_FOLDER}"
+mkdir -p "dist/${BUILD_FOLDER}"
 rm -rf "dist/${ZIP_NAME}"
+
 wine python setup.py py2exe >${PY2EXE_LOG} 2>&1
 
 #
