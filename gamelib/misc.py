@@ -2,6 +2,9 @@
 
 import random
 
+from pygame.locals import KEYDOWN, K_ESCAPE
+from pgu import gui
+
 class Position(object):
     """2D position / vector"""
 
@@ -47,3 +50,40 @@ class WeightedSelection(object):
             if roll < weight:
                 return item
             roll -= weight
+
+class CheckDialog(gui.Dialog):
+    def __init__(self, **params):
+        title = gui.Label('Are You sure')
+        self.do_quit = False
+        self.running = True
+        tbl = gui.Table()
+        tbl.tr()
+        tbl.td(gui.Label("Do you REALLY want to exit this game?"), colspan=2)
+        tbl.tr()
+        tbl.td(gui.Spacer(0, 15), colspan=2)
+        tbl.tr()
+        yes_button = gui.Button('Yes')
+        yes_button.connect(gui.CLICK, self.clicked, True)
+        no_button = gui.Button('No')
+        no_button.connect(gui.CLICK, self.clicked, False)
+        tbl.td(no_button, align=-1)
+        tbl.td(yes_button, align=1)
+        gui.Dialog.__init__(self, title, tbl, **params)
+
+    def clicked(self, val):
+        self.do_quit = val
+        self.running = False
+        self.close()
+
+    def event(self, e):
+        if e.type == KEYDOWN and e.key == K_ESCAPE:
+            self.clicked(True)
+            return True
+        return gui.Dialog.event(self, e)
+
+def check_exit():
+    dialog = CheckDialog()
+    dialog.open()
+    return dialog
+
+

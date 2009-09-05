@@ -1091,3 +1091,5 @@ class TextDialog(gui.Dialog):
         tbl.td(done_button, align=1)
 
         gui.Dialog.__init__(self, title_label, tbl, **params)
+
+

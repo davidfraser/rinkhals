@@ -9,6 +9,7 @@ import sound
 import constants
 import mainmenu
 import helpscreen
+from misc import check_exit
 
 class Engine(Game):
     def __init__(self, main_app):
@@ -128,14 +129,24 @@ class DayState(State):
         self.game.gameboard.clear_foxes()
         sound.background_music("daytime.ogg")
         self.game.gameboard.hatch_eggs()
+        self.dialog = None
 
     def event(self, e):
+        if self.dialog and self.dialog.running:
+            if self.dialog.event(e):
+                return
+        elif self.dialog:
+            if self.dialog.do_quit:
+                self.dialog = None
+                self.game.gameboard.reset_states()
+                return GameOver(self.game)
+            self.dialog=None
+            return
         if events_equal(e, START_NIGHT):
             self.game.gameboard.reset_states()
             return NightState(self.game)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
-            self.game.gameboard.reset_states()
-            return GameOver(self.game)
+            self.dialog = check_exit()
         elif e.type is ANIM_ID:
             self.game.gameboard.run_animations()
         elif e.type is KEYDOWN and e.key == K_n:
@@ -188,8 +199,9 @@ class NightState(State):
             pygame.time.set_timer(ANIM_ID, self.cycle_time)
             pygame.time.set_timer(MOVE_FOX_ID, 4*self.cycle_time)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
-            self.game.gameboard.set_cursor()
-            return GameOver(self.game)
+            if check_dialog(self.game.main_app):
+                self.game.gameboard.reset_states()
+                return GameOver(self.game)
         elif e.type is ANIM_ID:
             self.game.gameboard.run_animations()
         elif e.type is MOVE_FOX_ID:
