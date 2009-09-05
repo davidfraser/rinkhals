@@ -562,7 +562,15 @@ class GameBoard(object):
             building.selected(False)
 
         def evict_callback():
-            print 'evict called', self.animal_to_place
+            if not self.animal_to_place:
+                return
+            for tile_pos in building.adjacent_tiles():
+                if self.tv.get(tile_pos) != self.GRASSLAND:
+                    continue
+                if self.get_outside_chicken(tile_pos) is None:
+                    update_button(self.animal_to_place, empty=True)
+                    self.place_animal(tile_pos)
+                    break
 
         if not sell_callback:
             tbl.tr()
