@@ -47,10 +47,10 @@ class MainMenu(gui.Table):
         def help_pressed():
             pygame.event.post(engine.GO_HELP_SCREEN)
 
-        fortnight_button = gui.Button("Fortnight")
+        fortnight_button = gui.Button("Two weeks")
         fortnight_button.connect(gui.CLICK, fortnight_pressed)
 
-        quarter_button = gui.Button("Quarter")
+        quarter_button = gui.Button("Three months")
         quarter_button.connect(gui.CLICK, quarter_pressed)
 
         unlim_button = gui.Button("Unlimited")
