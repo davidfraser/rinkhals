@@ -74,6 +74,8 @@ You will need to install these before running the game:
   PyGame:                   http://www.pygame.org/
   Python Game Utilities:    http://code.google.com/p/pgu 
 
+Fox Assault requires python 2.5 or later, pygame 1.8 or later and
+pgu 0.12.3.
 
 LICENSE
 =======
