@@ -737,6 +737,8 @@ class GameBoard(object):
 
         def do_equip(chicken, update_button=None):
             # Try to equip the chicken
+            if self.cash < equipment.buy_price():
+                return False
             if equipment.place(chicken):
                 self.add_cash(-equipment.buy_price())
                 chicken.equip(equipment)
@@ -745,8 +747,6 @@ class GameBoard(object):
             return False
 
         chicken = self.get_outside_chicken(tile_pos)
-        if self.cash < equipment.buy_price():
-            return
         if chicken is None:
             building = self.get_building(tile_pos)
             if building is None:
