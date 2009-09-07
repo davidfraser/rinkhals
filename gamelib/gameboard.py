@@ -271,8 +271,11 @@ class VidWidget(gui.Widget):
         us = []
         x, y = self.vid.view.x, self.vid.view.y
         for anim in self.gameboard.animations[:]:
-            if anim.updated or anim.removed:
+            if (anim.updated or anim.removed) and \
+                    self.gameboard.in_bounds(anim.pos):
                 # We flag that we need to redraw stuff undeneath the animation
+                anim.irect.x = anim.rect.x - anim.shape.x
+                anim.irect.y = anim.rect.y - anim.shape.y
                 us.append(pygame.Rect(anim.irect.x - x, anim.irect.y - y,
                     anim.irect.width, anim.irect.height))
                 self.vid.alayer[anim.pos.y][anim.pos.x]=1
@@ -282,15 +285,12 @@ class VidWidget(gui.Widget):
                 self.gameboard.animations.remove(anim)
         us.extend(self.vid.update(surface))
         for anim in self.gameboard.animations:
-            if anim.updated: 
-                anim.fix_pos(self.vid)
+            if anim.updated:
                 # setimage has happened, so redraw
-                anim.irect.x = anim.rect.x - anim.shape.x
-                anim.irect.y = anim.rect.y - anim.shape.y
-                surface.blit(anim.image, (anim.irect.x - x, anim.irect.y - y))
                 anim.updated = 0
-                us.append(pygame.Rect(anim.irect.x - x, anim.irect.y - y,
-                    anim.irect.width, anim.irect.height))
+                anim.fix_pos(self.vid)
+                if self.gameboard.in_bounds(anim.pos): 
+                    surface.blit(anim.image, (anim.irect.x - x, anim.irect.y - y))
                 # This is enough, because sprite changes happen disjoint
                 # from the animation sequence, so we don't need to worry
                 # other changes forcing us to redraw the animation frame.
