@@ -18,6 +18,24 @@
 
 * Investigate using infinity symbol instead of dash for unlimited mode
 
+== ISSUES ==
+
+23:26 <@Derakon> Jerith: http://paste.ubuntu.com/266865/
+23:26 <@Derakon> That's with the OSX .dmg.
+
+From the pastebin URL above: """
+dyld: lazy symbol binding failed: Symbol not found: _pthread_cond_init$UNIX2003
+  Referenced from: /Volumes/Operation Fox Assault/Operation Fox Assault.app/Contents/Frameworks/libpython2.5.dylib
+  Expected in: /usr/lib/libSystem.B.dylib
+
+dyld: Symbol not found: _pthread_cond_init$UNIX2003
+  Referenced from: /Volumes/Operation Fox Assault/Operation Fox Assault.app/Contents/Frameworks/libpython2.5.dylib
+  Expected in: /usr/lib/libSystem.B.dylib
+
+Sep  7 14:25:21 Kleine crashdump[402]: Operation Fox Assault crashed
+Sep  7 14:25:21 Kleine crashdump[402]: crash report written to: /Users/chriswei/Library/Logs/CrashReporter/Operation Fox Assault.crash.log
+"""
+
 == COMMENTS ==
 
 23:41 <@Derakon> The instructions could also be more detailed, but the game's pretty intuitive once you realize that it's not realtime.
