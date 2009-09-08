@@ -17,3 +17,118 @@
 * Improve Fullscreen mode (on the fly scaling)
 
 * Investigate using infinity symbol instead of dash for unlimited mode
+
+== COMMENTS ==
+
+23:41 <@Derakon> The instructions could also be more detailed, but the game's pretty intuitive once you realize that it's not realtime.
+00:03 < Rhamphoryncus> hrm.  Instructions need work.. yup, that got said, heh
+
+00:10 <@Derakon> An auto-repair fences command would be handy.
+00:12 <@Derakon> Man, fence repair is nuking my budget.
+00:13 <@AnnoDomini> Fences made of wood are overrated.
+00:13 <@AnnoDomini> I make a fence of elite fighting fowl.
+00:13  * Derakon nods.
+00:15 <@Derakon> Suddenly the game gets much easier~
+
+00:28 <@Derakon> I want a faster way to sell eggs. ._.
+00:29 <@Derakon> Some way to say "Keep enough eggs to mature the maximum number of chickens as quickly as possible; sell the rest."
+00:33 <@jerith> Derakon: Superfluous eggs autosell.
+00:34 <@jerith> A chicken lays some number of eggs. On of those eggs will hatch, the rest will sell.
+00:34 <@Derakon> Oooh.
+00:34 <@Derakon> Okay, then I can stop bothering to click so much. Thanks.
+
+00:38 <@AnnoDomini> Needs an 'evict all' button.
+
+00:40 <@Derakon> And a way to drag-clear trees, drag-sell chickens (or auto-sell naked outdoor chickens).
+00:42 <@Derakon> So...much...clicking... ;.;
+
+00:50 <@AnnoDomini> http://i30.tinypic.com/sx15k1.jpg
+
+01:19 < Rhamphoryncus> Do you know what watch towers are for?
+01:20 <@Derakon> I think the watchtowers might make riflehens more effective somehow.
+01:20 <@Derakon> Or maybe they're bunkers.
+
+01:24 < Rhamphoryncus> And I have no idea what my income is from
+01:24 <@Derakon> Killing foxes and selling stuff.
+01:25 < Rhamphoryncus> I have spare room around my  henhouses, so autosell isn't happening.  It must be from killing foxes
+01:27 <@AnnoDomini> Rhamphoryncus: I expect you get eggs sold. Hens lay eggs every turn, but incubate for two. So you get N*5 cash for each hen in a henhouse/hendominium per turn.
+
+01:31 < Rhamphoryncus> It seems like, long term, you want to pack hendominiums in with no space around them
+01:32 < Rhamphoryncus> As you fill a grid like that you'll still have exposed edges, producing tons of chickens
+01:32 <@AnnoDomini> Aren't overflow chickens autokilled, rather the eggs never hatching and being sold?
+01:33 <@Derakon> No idea.
+01:33 <@AnnoDomini> That's what I read in the instructions.
+01:33 < Rhamphoryncus> I thought they were autosold.  I may have been confusing with the egg autosell though
+01:33 <@AnnoDomini> Eggs autosell if there's no room. Chickens die.
+
+05:41 <@Derakon> 2x2 pods of knifehens are almost invincible.
+05:57 <@Derakon> Oh, hey, the 2x2 pod of knifehens is not invulnerable. The foxes finally killed one after losing some 1500 of their own.
+
+05:45  * Vornicus-Latens thinks this game needs less shouty graphics.
+
+08:37 < Rhamphoryncus> jerith: feature request: automatically switch to an offset breeding schedule.  IOW, a henhouse should only do 3/day and a hendemonium should only do 6/day
+
+08:50 < Rhamphoryncus> and if I go and sell an egg in a henhouse/hendominium, is it supposed to take multiple clicks?
+[ed: He didn't know it was multiple eggs.]
+
+09:12 < Reivthia> Jerith: UI improvement: *Please* let us click&drag.
+09:12 < Reivthia> I want to be able to not have to click every single chicken/tree seperately when I have five thousand cash :P
+
+09:12 < Rhamphoryncus> My huts get ignored
+09:12 < Reivthia> Rham: I thought mine were too, until they got occasionally pounced.
+09:12 < Reivthia> Very, very occasionally
+
+
+And here's me rapid-fire rambling at #ctpug after finishing my first long game. (Unedited.)
+
+20:34 < jerith> Nitwit: Had some ideas while playing just now.
+20:34 <&Nitwit> ?
+20:35 < jerith> I want a "sell all naked outdoor chickens" button.
+20:35 < jerith> And a "sell all superfluous eggs" button.
+20:35 < jerith> Also, chickens should hatch into squares at the corners of the henhouses.
+20:36 <&Nitwit> We're either going to have to expand the game window, or somehow compress the other menu options
+20:37 < superfly> Nitwit: use a smaller font?
+20:37 -!- confluence [confluence@atrum-A04B64E5.telkomadsl.co.za] has joined #ctpug
+20:37 -!- mode/#ctpug [+ao confluence confluence] by ChanServ
+20:37 < jerith> I'd be happy with an "advanced" menu.
+20:37 < jerith> Hey confluence.
+20:37 <&Nitwit> I've been toying with the idea of unifying the buildings into a "buy building" button and "select building" dialog - that will free up a couple of 
+                buttons & give us space to put building prices
+20:37 <&confluence> Hello
+20:37 < jerith> Also, we need to do a proper toolbar thing.
+20:37 < jerith> That will save us space.
+20:37 < jerith> Nitwit: That also works.
+20:38 <&Nitwit> I don't want to do the same for equipment though, as I find I use those buttons much more often
+20:38 < jerith> If possible, I'd like to make the "right click cancels current thing" global.
+20:39 < jerith> Oh, there's a cursor display bug when moving chickens into and out of buildings.
+20:39 < jerith> Also when deslecting a chicken to move.
+20:40 < jerith> Then there are some nice-to-haves.
+20:41 < jerith> Generating the gameboard instead of using a template.
+20:41 < jerith> Being able to select groups of chickens to work with.
+20:41 < jerith> Possibly even customisable ones.
+20:41 < jerith> That makes no sense outside my head.
+20:42 < jerith> Okay, two things.
+20:42 <&Nitwit> I like the idea of being able to have pre-determined maps 
+20:42 < jerith> Select a group of chickens and say "put these over there".
+20:42 < jerith> Also, select a group of chickens and say "these are soldiers, re-equip them every turn if necessary".
+20:43 < jerith> So chicken classes, in other words.
+20:44 < jerith> If you sell a chicken with eggs, are you supposed to get paid out for the eggs too?
+20:44 < jerith> I think I tried it and didn't.
+20:44 < jerith> But I could be wrong.
+20:45 < jerith> We need some settings -- sound on/off at the least.
+20:45 < jerith> Why is resizing things in Windows a problem, by the way?
+20:46 < jerith> I seem to be throwing stuff into this channel at an alarming rate. Remind me to look at the logs when I have a moment or three.
+20:46 <&Nitwit> jerith: Not getting the money for the eggs probably a bug 
+20:47 < jerith> Wishlist for buildings: opening a building opens a dialog you can move around with little chicken slots in it.
+20:48 < jerith> That'll be hard in pgu, though.
+20:49 < jerith> We need some harder foxes.
+20:49 < jerith> Maybe foxes that hit harder and/or are tougher.
+20:49 < jerith> We can have them triggered by the killed foxes count.
+20:49 < jerith> Thus, you get harder baddies as you get better at killing baddies.
+20:50 < jerith> Saving and loading games would be great, especially for the longer games.
+20:51 < jerith> Also different game scenarios -- one where you start off with lots of money and only a week, but foxes come faster, for example.
+20:51 < jerith> And alternate win conditions, as confluence mentioned.
+20:52 < jerith> Maybe reachaing a certain cash level.
+20:52 < jerith> Also bigger game boards once we can scroll, although that getts difficult in night mode.
+20:52 < jerith> Forests should give foxes a stealth bonus.
+
