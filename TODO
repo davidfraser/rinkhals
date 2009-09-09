@@ -9,6 +9,9 @@
 * Persistent high scores 
 
 * Better fox move logic
+  - Tweak weighting of free chickens
+  - Foxes should eat the chickens immediately when they move onto the
+    occupied square - avoid the fox drawn on top of chicken thing.
 
 * More game levels / progression of difficulty
 
@@ -34,6 +37,29 @@ dyld: Symbol not found: _pthread_cond_init$UNIX2003
 
 Sep  7 14:25:21 Kleine crashdump[402]: Operation Fox Assault crashed
 Sep  7 14:25:21 Kleine crashdump[402]: crash report written to: /Users/chriswei/Library/Logs/CrashReporter/Operation Fox Assault.crash.log
+"""
+
+pygame event queue full bug.
+Sep 10 22:01: <eltigre> one IndexError and one pygame event overflow
+...
+Sep 10 23:15: <eltigre> Hodgestar, jerith : http://dpaste.com/91590/
+
+From pastebin:
+"""
+Traceback (most recent call last):
+  File "run_game.py", line 4, in <module>
+    main.main()
+  File "/home/andi/projekte/pyweek/Rinkhals/foxassault-1.0.0/gamelib/main.py", line 38, in main
+    engine.run(MainMenuState(engine), screen)
+  File "/home/andi/projekte/pyweek/Rinkhals/foxassault-1.0.0/pgu/engine.py", line 104, in run
+    self.loop()
+  File "/home/andi/projekte/pyweek/Rinkhals/foxassault-1.0.0/pgu/engine.py", line 123, in loop
+    if self.fnc('event',e): return
+  File "/home/andi/projekte/pyweek/Rinkhals/foxassault-1.0.0/pgu/engine.py", line 79, in fnc
+    if v != None: r = f(v)
+  File "/home/andi/projekte/pyweek/Rinkhals/foxassault-1.0.0/gamelib/engine.py", line 229, in event
+    return pygame.event.post(START_DAY)
+pygame.error: Event queue full
 """
 
 == COMMENTS ==
