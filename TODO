@@ -62,6 +62,10 @@ Traceback (most recent call last):
 pygame.error: Event queue full
 """
 
+Leaking weakref objects bug (reported by tumbleweed):
+ - this is probably http://pygame.motherhamster.org/bugzilla/show_bug.cgi?id=30
+
+
 == COMMENTS ==
 
 Farmer's weekly (daily?) -- egg/chicken/fox report thing. (Yay Marc!)
