@@ -349,7 +349,9 @@ class Fox(Animal):
             for chicken in gameboard.chickens:
                 dist = chicken.pos.dist(self.pos)
                 if chicken.abode:
-                    dist += 10 # Prefer free-ranging chickens
+                    dist += 5 # Prefer free-ranging chickens
+                if len(chicken.weapons()) > 0:
+                    dist += 5 # Prefer unarmed chickens
                 if dist < min_dist:
                     min_dist = dist
                     self.closest = chicken
