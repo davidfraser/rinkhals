@@ -35,6 +35,8 @@ CURRENT_MUSIC_FILE = None
 def stop_background_music():
     """stops any playing background music"""
     global CURRENT_MUSIC_FILE
+    if not SOUND_INITIALIZED:
+        return
     CURRENT_MUSIC_FILE = None
     # TODO: fadeout in a background thread
     pygame.mixer.music.stop()
