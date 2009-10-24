@@ -77,13 +77,13 @@ class ToolBar(gui.Table):
         self.add_counter(mklabel("Eggs:"), self.egg_counter)
         self.add_counter(icons.CHKN_ICON, self.chicken_counter)
         self.add_counter(icons.KILLED_FOX, self.killed_foxes)
-        self.add_spacer(15)
+        self.add_spacer(5)
 
         self.add_tool_button("Move Hen", constants.TOOL_PLACE_ANIMALS,
                 None, cursors.cursors['select'])
         self.add_tool_button("Cut Trees", constants.TOOL_LOGGING,
                 constants.LOGGING_PRICE, cursors.cursors['ball'])
-        self.add_spacer(15)
+        self.add_spacer(5)
 
         self.add_heading("Sell ...")
         self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
@@ -94,13 +94,9 @@ class ToolBar(gui.Table):
                 None, cursors.cursors['sell'])
         self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
                 None, cursors.cursors['sell'])
-        self.add_spacer(15)
+        self.add_spacer(5)
 
         self.add_heading("Buy ...")
-
-        self.add_tool_button("Fence", constants.TOOL_BUY_FENCE,
-                "%s/%s" % (constants.BUY_PRICE_FENCE,
-                           constants.REPAIR_PRICE_FENCE))
 
         for building_cls in buildings.BUILDINGS:
             self.add_tool_button(building_cls.NAME.title(), building_cls,
@@ -112,9 +108,12 @@ class ToolBar(gui.Table):
                     equipment_cls.BUY_PRICE,
                     cursors.cursors.get('buy', None))
 
-        self.add_spacer(10)
+        self.add_spacer(5)
+        self.add_tool_button("Repair", constants.TOOL_REPAIR_BUILDING, None, cursors.cursors['repair'])
+
+        self.add_spacer(5)
         self.add_tool("Price Reference", self.show_prices)
-        self.add_spacer(20)
+        self.add_spacer(10)
 
         self.fin_tool = self.add_tool("Finished Day", self.day_done)
 
@@ -163,32 +162,29 @@ class ToolBar(gui.Table):
 
         tbl = gui.Table()
         tbl.tr()
-        doc = gui.Document(width=380)
+        doc = gui.Document(width=510)
         space = doc.style.font.size(" ")
-        for header in ['Item', 'Buy Price', 'Sell Price']:
+        for header in ['Item', 'Buy Price', 'Sell Price', 'Repair Price']:
             doc.add(make_box(header))
         doc.br(space[1])
         for building in buildings.BUILDINGS:
             doc.add(make_box(building.NAME))
             doc.add(make_box('%d' % building.BUY_PRICE))
             doc.add(make_box('%d' % building.SELL_PRICE))
+            if building.BREAKABLE:
+                doc.add(make_box('%d' % building.REPAIR_PRICE))
+            else:
+                doc.add(make_box('N/A'))
             doc.br(space[1])
         for equip in equipment.EQUIPMENT:
             doc.add(make_box(equip.NAME))
             doc.add(make_box('%d' % equip.BUY_PRICE))
             doc.add(make_box('%d' % equip.SELL_PRICE))
+            doc.add(make_box('N/A'))
             doc.br(space[1])
 
-        doc.add(make_box("Fence"))
-        doc.add(make_box('%d' % constants.BUY_PRICE_FENCE))
-        doc.add(make_box('%d' % constants.SELL_PRICE_FENCE))
-
-        doc.add(make_box("Repair Fence"))
-        doc.add(make_box('%d' % constants.REPAIR_PRICE_FENCE))
-        doc.add(make_box(''))
-
         fix_widths(doc)
-        for word in "Damaged equipment or broken fences will be sold for" \
+        for word in "Damaged equipment or buildings will be sold for" \
                 " less than the sell price.".split():
             doc.add(gui.Label(word))
             doc.space(space)
@@ -385,8 +381,6 @@ class GameBoard(object):
             sprite_curs = sprite_cursor.SpriteCursor(tool.IMAGE, self.tv, tool.BUY_PRICE)
         elif equipment.is_equipment(tool):
             sprite_curs = sprite_cursor.SpriteCursor(tool.CHICKEN_IMAGE_FILE, self.tv)
-        elif tool == constants.TOOL_BUY_FENCE:
-            sprite_curs = sprite_cursor.SpriteCursor("tiles/fence.png", self.tv)
         self.set_cursor(cursor, sprite_curs)
 
     def set_cursor(self, cursor=None, sprite_curs=None):
@@ -441,12 +435,12 @@ class GameBoard(object):
             self.sell_egg(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_PLACE_ANIMALS:
             self.place_animal(self.tv.screen_to_tile(e.pos))
-        elif self.selected_tool == constants.TOOL_BUY_FENCE:
-            self.buy_fence(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELL_BUILDING:
             self.sell_building(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELL_EQUIPMENT:
             self.sell_equipment(self.tv.screen_to_tile(e.pos))
+        elif self.selected_tool == constants.TOOL_REPAIR_BUILDING:
+            self.repair_building(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_LOGGING:
             self.logging_forest(self.tv.screen_to_tile(e.pos))
         elif buildings.is_building(self.selected_tool):
@@ -540,7 +534,7 @@ class GameBoard(object):
                 pygame.mouse.set_cursor(*cursors.cursors['chicken'])
             return
         building = self.get_building(tile_pos)
-        if building:
+        if building and building.ABODE:
             if self.animal_to_place:
                 try:
                     place = building.first_empty_place()
@@ -686,33 +680,6 @@ class GameBoard(object):
 
         self.open_dialog(tbl, close_callback=close_callback)
 
-    def buy_fence(self, tile_pos):
-        this_tile = self.tv.get(tile_pos)
-        if this_tile not in [self.GRASSLAND, self.BROKEN_FENCE]:
-            return
-        if this_tile == self.GRASSLAND:
-            cost = constants.BUY_PRICE_FENCE
-        else:
-            cost = constants.REPAIR_PRICE_FENCE
-        if any((chicken.pos.x, chicken.pos.y) == tile_pos for chicken in self.chickens):
-            return
-
-        if self.cash < cost:
-            print "You can't afford a fence."
-            return
-        self.add_cash(-cost)
-        self.tv.set(tile_pos, self.FENCE)
-
-    def sell_fence(self, tile_pos):
-        this_tile = self.tv.get(tile_pos)
-        if this_tile not in [self.FENCE, self.BROKEN_FENCE]:
-            return
-        if this_tile == self.FENCE:
-            self.add_cash(constants.SELL_PRICE_FENCE)
-        elif this_tile == self.BROKEN_FENCE:
-            self.add_cash(constants.SELL_PRICE_BROKEN_FENCE)
-        self.tv.set(tile_pos, self.GRASSLAND)
-
     def logging_forest(self, tile_pos):
         if self.tv.get(tile_pos) != self.WOODLAND:
             return
@@ -749,7 +716,7 @@ class GameBoard(object):
         chicken = self.get_outside_chicken(tile_pos)
         if chicken is None:
             building = self.get_building(tile_pos)
-            if building is None:
+            if not (building and building.ABODE):
                 return
             # Bounce through open dialog once more
             self.open_building_dialog(building, do_equip)
@@ -757,8 +724,6 @@ class GameBoard(object):
             do_equip(chicken)
 
     def sell_building(self, tile_pos):
-        if self.tv.get(tile_pos) in [self.FENCE, self.BROKEN_FENCE]:
-            return self.sell_fence(tile_pos)
         building = self.get_building(tile_pos)
         if building is None:
             return
@@ -769,6 +734,13 @@ class GameBoard(object):
         self.add_cash(building.sell_price())
         building.remove(self.tv)
         self.remove_building(building)
+
+    def repair_building(self, tile_pos):
+        building = self.get_building(tile_pos)
+        if not (building and building.broken()):
+            return
+        self.add_cash(-building.repair_price())
+        building.repair(self.tv)
 
     def sell_equipment(self, tile_pos):
         x, y = 0, 0

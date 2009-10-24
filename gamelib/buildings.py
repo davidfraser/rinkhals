@@ -64,39 +64,59 @@ class Building(Sprite):
     GRASSLAND = tiles.REVERSE_TILE_MAP['grassland']
     MODIFY_KNIFE_RANGE = lambda s, x: 0
     MODIFY_GUN_RANGE = lambda s, x: -1
+    BREAKABLE = False
+    ABODE = False
 
     def __init__(self, pos):
         """Initial image, tile vid position, size and tile number for building."""
-        self.day_image = imagecache.load_image(self.IMAGE)
-        self.night_image = imagecache.load_image(self.IMAGE, ('night',))
-        self.selected_image = imagecache.load_image(self.SELECTED_IMAGE)
+        self._set_images()
         self.pos = pos
         self.size = self.SIZE
         self.tile_no = self.TILE_NO
         self._buy_price = self.BUY_PRICE
         self._sell_price = self.SELL_PRICE
+        self._repair_price = getattr(self, 'REPAIR_PRICE', None)
         self._sun_on = True
         self._font = pygame.font.SysFont('Vera', 30, bold=True)
-        self._font_image = pygame.Surface(self.day_image.get_size(), flags=SRCALPHA)
+        self._font_image = pygame.Surface(self.images['fixed']['day'].get_size(), flags=SRCALPHA)
         self._font_image.fill((0, 0, 0, 0))
+        self._broken = False
 
         self._floors = []
-        for f in range(self.FLOORS):
-            places = []
-            for j in range(self.size[1]):
-                row = []
-                for i in range(self.size[0]):
-                    row.append(Place(self, (i, j)))
-                places.append(row)
-            floor = Floor("Floor %s" % (f+1,), places)
-            self._floors.append(floor)
+        if self.FLOORS:
+            for f in range(self.FLOORS):
+                places = []
+                for j in range(self.size[1]):
+                    row = []
+                    for i in range(self.size[0]):
+                        row.append(Place(self, (i, j)))
+                    places.append(row)
+                floor = Floor("Floor %s" % (f+1,), places)
+                self._floors.append(floor)
 
-        # 0: the main iamge
+        # 0: the main image
         # 1: above, -1: below
-        self.draw_stack = {"main": (0, self.day_image)}
+        self.draw_stack = {"main": (0, self.images['fixed']['day'])}
 
         # Create the building somewhere far off screen
-        Sprite.__init__(self, self.day_image, (-1000, -1000))
+        Sprite.__init__(self, self.images['fixed']['day'], (-1000, -1000))
+
+    def _set_images(self):
+        self.images = {'fixed': {
+            'day': imagecache.load_image(self.IMAGE),
+            'night': imagecache.load_image(self.IMAGE, ('night',)),
+            'selected': imagecache.load_image(self.SELECTED_IMAGE),
+            }}
+        if self.BREAKABLE:
+            self.images['broken'] = {
+                'day': imagecache.load_image(self.IMAGE_BROKEN),
+                'night': imagecache.load_image(self.IMAGE_BROKEN, ('night',)),
+                'selected': imagecache.load_image(self.SELECTED_IMAGE_BROKEN),
+                }
+
+    def _set_main_image(self):
+        image_set = self.images[{True: 'broken',False: 'fixed'}[self._broken]]
+        self._replace_main(image_set[{True: 'day', False: 'night'}[self._sun_on]])
 
     def _redraw(self):
         items = self.draw_stack.values()
@@ -168,6 +188,27 @@ class Building(Sprite):
         return (xpos <= tile_pos[0] < xpos + xsize) and \
             (ypos <= tile_pos[1] < ypos + ysize)
 
+    def broken(self):
+        return self._broken
+
+    def damage(self, tv):
+        if not self.BREAKABLE:
+            return False
+        self._broken = True
+        self._sell_price = self.SELL_PRICE_BROKEN
+        self.tile_no = self.TILE_NO_BROKEN
+        for tile_pos in self.tile_positions():
+            tv.set(tile_pos, self.tile_no)
+        self._set_main_image()
+
+    def repair(self, tv):
+        self._broken = False
+        self._sell_price = self.SELL_PRICE
+        self.tile_no = self.TILE_NO
+        for tile_pos in self.tile_positions():
+            tv.set(tile_pos, self.tile_no)
+        self._set_main_image()
+
     def remove(self, tv):
         """Remove the building from its current position."""
         # remove tile
@@ -180,18 +221,18 @@ class Building(Sprite):
     def sell_price(self):
         return self._sell_price
 
+    def repair_price(self):
+        return self._repair_price
+
     def selected(self, selected):
         if selected:
-            self._replace_main(self.selected_image)
+            self._replace_main(self.images[{True: 'broken',False: 'fixed'}[self._broken]]['selected'])
         else:
-            self.sun(self._sun_on)
+            self._set_main_image()
 
     def sun(self, sun_on):
         self._sun_on = sun_on
-        if sun_on:
-            self._replace_main(self.day_image)
-        else:
-            self._replace_main(self.night_image)
+        self._set_main_image()
 
     def update_occupant_count(self):
         count = len(list(self.occupants()))
@@ -234,7 +275,10 @@ class Building(Sprite):
             if place.occupant is not None:
                 yield place.occupant
 
-class HenHouse(Building):
+class Abode(Building):
+    ABODE = True
+
+class HenHouse(Abode):
     """A HenHouse."""
 
     TILE_NO = tiles.REVERSE_TILE_MAP['henhouse']
@@ -258,7 +302,7 @@ class DoubleStoryHenHouse(HenHouse):
     NAME = 'Hendominium'
     FLOORS = 2
 
-class GuardTower(Building):
+class GuardTower(Abode):
     """A GuardTower."""
 
     TILE_NO = tiles.REVERSE_TILE_MAP['guardtower']
@@ -275,6 +319,25 @@ class GuardTower(Building):
     MODIFY_GUN_RANGE_PENALTY = lambda s, x: x-1
     MODIFY_VISION_BONUS = lambda s, x: x+10
     MODIFY_VISION_RANGE_PENALTY = lambda s, x: x-2
+
+class Fence(Building):
+    """A fence."""
+
+    TILE_NO = tiles.REVERSE_TILE_MAP['fence']
+    TILE_NO_BROKEN = tiles.REVERSE_TILE_MAP['broken fence']
+    BREAKABLE = True
+    BUY_PRICE = 50
+    SELL_PRICE = 25
+    REPAIR_PRICE = 25
+    SELL_PRICE_BROKEN = 5
+    SIZE = (1, 1)
+    IMAGE = 'tiles/fence.png'
+    SELECTED_IMAGE = 'tiles/fence.png'
+    IMAGE_BROKEN = 'tiles/broken_fence.png'
+    SELECTED_IMAGE_BROKEN = 'tiles/broken_fence.png'
+    NAME = 'Fence'
+    FLOORS = 0
+
 
 def is_building(obj):
     """Return true if obj is a build class."""
