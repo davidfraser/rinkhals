@@ -42,31 +42,50 @@ class TileMap(object):
 TILE_MAP = TileMap()
 REVERSE_TILE_MAP = TILE_MAP._reverse_map
 
-class FarmSprites(list):
-    def __init__(self):
-        list.__init__(self)
-        self.removed = []
-        self._cursor = None
 
-    def append(self, sprite):
-        if self._cursor is not None:
-            assert(self._cursor is self[-1])
-            list.insert(self, -1, sprite)
-        else:
-            list.append(self, sprite)
+class LayeredSprites(object):
+    # This is as small a subset of list behaviour as we can get away with.
+    # WARNING: It makes assumptions that may not be justified in the general case.
+    # Caveat utilitor and all the rest.
+
+    def __init__(self, layers=None, default_layer=None):
+        # Layers are ordered from bottom to top.
+        if layers is None:
+            layers = ['default']
+        self.layers = layers
+        if default_layer is None:
+            default_layer = layers[0]
+        self.default_layer = default_layer
+        self._sprites = {}
+        for layer in layers:
+            self._sprites[layer] = []
+        self.removed = []
+
+    def append(self, sprite, layer=None):
+        if layer is None:
+            layer = self.default_layer
+        self._sprites[layer].append(sprite)
         sprite.updated = 1
 
-    def remove(self, sprite):
-        list.remove(self, sprite)
+    def remove(self, sprite, layer=None):
+        if layer is None:
+            layer = self.default_layer
+        self._sprites[layer].remove(sprite)
         sprite.updated = 1
         self.removed.append(sprite)
 
-    def set_cursor(self, cursor):
-        if self._cursor is not None:
-            self.remove(self._cursor)
-        self._cursor = cursor
-        if cursor is not None:
-            list.append(self, cursor)
+    def __getitem__(self, key):
+        # vid.py uses sprites[:] to get a mutation-safe list copy, so we need this.
+        # No other indexing or slicing operations make sense.
+        if not isinstance(key, slice):
+            raise IndexError('[:] is the only supported slice/index operation.')
+        return iter(self)
+
+    def __iter__(self):
+        # We iterate over all sprites in layer order.
+        for layer in self.layers:
+            for sprite in self._sprites[layer]:
+                yield sprite
 
 
 class FarmVid(tilevid.Tilevid):
@@ -75,7 +94,7 @@ class FarmVid(tilevid.Tilevid):
        """
     def __init__(self):
         tilevid.Tilevid.__init__(self)
-        self.sprites = FarmSprites()
+        self.sprites = LayeredSprites(['animals', 'buildings', 'animations', 'cursor'], 'animals')
 
     def png_folder_load_tiles(self, path):
         """Load tiles from a folder of PNG files."""

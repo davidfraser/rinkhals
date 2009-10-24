@@ -388,8 +388,11 @@ class GameBoard(object):
             pygame.mouse.set_cursor(*cursor)
         else:
             pygame.mouse.set_cursor(*cursors.cursors['arrow'])
+        if self.sprite_cursor is not None:
+            self.tv.sprites.remove(self.sprite_cursor, layer='cursor')
         self.sprite_cursor = sprite_curs
-        self.tv.sprites.set_cursor(sprite_curs)
+        if self.sprite_cursor is not None:
+            self.tv.sprites.append(self.sprite_cursor, layer='cursor')
 
     def reset_states(self):
         """Clear current states (highlights, etc.)"""
