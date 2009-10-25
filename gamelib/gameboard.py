@@ -253,44 +253,9 @@ class VidWidget(gui.Widget):
 
     def paint(self, surface):
         self.vid.paint(surface)
-        # Blit animation frames on top of the drawing
-        x, y = self.vid.view.x, self.vid.view.y
-        for anim in self.gameboard.animations:
-            anim.fix_pos(self.vid)
-            anim.irect.x = anim.rect.x - anim.shape.x
-            anim.irect.y = anim.rect.y - anim.shape.y
-            surface.blit(anim.image, (anim.irect.x - x, anim.irect.y - y))
-            # We don't store anim._irect, since we only update anims if the
-            # image changes, which kills irect
 
     def update(self, surface):
-        us = []
-        x, y = self.vid.view.x, self.vid.view.y
-        for anim in self.gameboard.animations[:]:
-            if (anim.updated or anim.removed) and \
-                    self.gameboard.in_bounds(anim.pos):
-                # We flag that we need to redraw stuff undeneath the animation
-                anim.irect.x = anim.rect.x - anim.shape.x
-                anim.irect.y = anim.rect.y - anim.shape.y
-                us.append(pygame.Rect(anim.irect.x - x, anim.irect.y - y,
-                    anim.irect.width, anim.irect.height))
-                self.vid.alayer[anim.pos.y][anim.pos.x]=1
-                self.vid.updates.append(anim.pos.to_tuple())
-            if anim.removed:
-                # Remove the animation from the draw loop
-                self.gameboard.animations.remove(anim)
-        us.extend(self.vid.update(surface))
-        for anim in self.gameboard.animations:
-            if anim.updated:
-                # setimage has happened, so redraw
-                anim.updated = 0
-                anim.fix_pos(self.vid)
-                if self.gameboard.in_bounds(anim.pos): 
-                    surface.blit(anim.image, (anim.irect.x - x, anim.irect.y - y))
-                # This is enough, because sprite changes happen disjoint
-                # from the animation sequence, so we don't need to worry
-                # other changes forcing us to redraw the animation frame.
-        return us
+        return self.vid.update(surface)
 
     def move_view(self, x, y):
         self.vid.view.move_ip((x, y))
@@ -337,7 +302,6 @@ class GameBoard(object):
         self.chickens = set()
         self.foxes = set()
         self.buildings = []
-        self.animations = []
         self.cash = 0
         self.eggs = 0
         self.days = 0
@@ -826,8 +790,7 @@ class GameBoard(object):
         self.foxes = set() # Remove all the foxes
 
     def run_animations(self):
-        for anim in self.animations:
-            anim.animate()
+        # For legacy.
         if self.toolbar.anim_clear_tool:
             self.toolbar.clear_tool()
 

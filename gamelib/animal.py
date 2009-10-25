@@ -45,7 +45,7 @@ class Animal(Sprite):
         if hasattr(self, 'DEATH_SOUND'):
             sound.play_sound(self.DEATH_SOUND)
         if hasattr(self, 'DEATH_ANIMATION'):
-            gameboard.animations.append(self.DEATH_ANIMATION(self.pos))
+            self.DEATH_ANIMATION(gameboard.tv, self.pos.to_tuple())
         self._game_death(gameboard)
 
     def _game_death(self, gameboard):
@@ -474,7 +474,7 @@ class DemoFox(Fox):
         """Setup dig parameters, to be overridden if needed"""
         self.tick = 0 # Costs us nothing to go through a fence.
         self.dig_pos = dig_pos
-        gameboard.animations.append(self.DIG_ANIMATION(dig_pos))
+        self.DIG_ANIMATION(gameboard.tv, dig_pos.to_tuple())
         self._make_hole(gameboard)
 
 class GreedyFox(Fox):

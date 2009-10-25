@@ -67,7 +67,7 @@ class Weapon(Equipment):
         if hasattr(self, 'HIT_SOUND'):
             sound.play_sound(self.HIT_SOUND)
         if hasattr(self, 'ANIMATION'):
-            gameboard.animations.append(self.ANIMATION(wielder))
+            self.ANIMATION(gameboard.tv, wielder)
         roll = random.randint(1, 100)
         base_hit = self._get_parameter('BASE_HIT', wielder)
         range_penalty = self._get_parameter('RANGE_PENALTY', wielder)

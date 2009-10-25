@@ -17,31 +17,21 @@ class Animation(Sprite):
        # will cause issues as this will overrun the next move loop.
        # (assuming all animations are triggered by the move loop, of course)
 
-    def __init__(self, tile_pos, sequence=None):
+    def __init__(self, tv, tile_pos, sequence=None, layer='animations'):
         # Create the first frame
         if sequence is None:
             sequence = self.SEQUENCE
         self.iter = iter(sequence)
-        Sprite.__init__(self, self.iter.next(), (-1000, -1000))
-        if hasattr(tile_pos, 'to_tuple'):
-            self.pos = tile_pos
-        else:
-            self.pos = Position(tile_pos[0], tile_pos[1])
-        self.removed = False
+        self.layer = layer
+        Sprite.__init__(self, self.iter.next(), tv.tile_to_view(tile_pos))
+        tv.sprites.append(self, layer=self.layer)
 
-    def fix_pos(self, tv):
-        ppos = tv.tile_to_view(self.pos.to_tuple())
-        self.rect.x = ppos[0]
-        self.rect.y = ppos[1]
-
-    def animate(self):
-        """Step to the next frame.
-
-           Set removed flag when we hit the end of the sequence"""
+    def loop(self, tv, s):
+        """Step to the next frame, removing sprite when done."""
         try:
             self.setimage(self.iter.next())
         except StopIteration:
-            self.removed = True
+            tv.sprites.remove(self, layer=self.layer)
 
 class MuzzleFlash(Animation):
 
@@ -52,11 +42,11 @@ class MuzzleFlash(Animation):
     SEQUENCE_LEFT = [FLASH_LEFT, FLASH_LEFT]
     SEQUENCE_RIGHT = [FLASH_RIGHT, FLASH_RIGHT]
 
-    def __init__(self, chicken):
+    def __init__(self, tv, chicken, layer='animations'):
         if chicken.facing == 'right':
-            Animation.__init__(self, chicken.pos, self.SEQUENCE_RIGHT)
+            Animation.__init__(self, tv, chicken.pos.to_tuple(), self.SEQUENCE_RIGHT, layer=layer)
         else:
-            Animation.__init__(self, chicken.pos, self.SEQUENCE_LEFT)
+            Animation.__init__(self, tv, chicken.pos.to_tuple(), self.SEQUENCE_LEFT, layer=layer)
 
 class FenceExplosion(Animation):
     FLASH_1 = imagecache.load_image('sprites/boom1.png')
