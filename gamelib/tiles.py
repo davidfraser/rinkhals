@@ -94,7 +94,7 @@ class FarmVid(tilevid.Tilevid):
        """
     def __init__(self):
         tilevid.Tilevid.__init__(self)
-        self.sprites = LayeredSprites(['animals', 'buildings', 'animations', 'cursor'], 'animals')
+        self.sprites = LayeredSprites(['buildings', 'animals', 'animations', 'cursor'], 'animals')
 
     def png_folder_load_tiles(self, path):
         """Load tiles from a folder of PNG files."""

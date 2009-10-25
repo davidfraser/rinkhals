@@ -822,7 +822,7 @@ class GameBoard(object):
 
     def add_building(self, building):
         self.buildings.append(building)
-        self.tv.sprites.append(building)
+        self.tv.sprites.append(building, layer='buildings')
 
     def lay_eggs(self):
         self.eggs = 0
@@ -883,7 +883,7 @@ class GameBoard(object):
     def remove_building(self, building):
         if building in self.buildings:
             self.buildings.remove(building)
-            self.tv.sprites.remove(building)
+            self.tv.sprites.remove(building, layer='buildings')
 
     def add_cash(self, amount):
         self.cash += amount

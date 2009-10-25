@@ -9,12 +9,9 @@ class Animation(Sprite):
     """Animation loop.
 
        These are derived from sprites, since they behave similiary in most
-       respects, but, to ensure draw ordering, we don't add them to
-       the sprites list.
-       
-       Ideally, animations should be quite short."""
+       respects. Ideally, animations should be quite short."""
        # In the current implementation, sequences longer than 4 frames
-       # will cause issues as this will overrun the next move loop.
+       # will overrun the next move loop.
        # (assuming all animations are triggered by the move loop, of course)
 
     def __init__(self, tv, tile_pos, sequence=None, layer='animations'):
@@ -33,20 +30,19 @@ class Animation(Sprite):
         except StopIteration:
             tv.sprites.remove(self, layer=self.layer)
 
-class MuzzleFlash(Animation):
+class WeaponAnimation(Animation):
+    def __init__(self, tv, wielder, layer='animations'):
+        if wielder.facing == 'right':
+            Animation.__init__(self, tv, wielder.pos.to_tuple(), self.SEQUENCE_RIGHT, layer=layer)
+        else:
+            Animation.__init__(self, tv, wielder.pos.to_tuple(), self.SEQUENCE_LEFT, layer=layer)
 
+
+class MuzzleFlash(WeaponAnimation):
     FLASH_LEFT = imagecache.load_image('sprites/muzzle_flash.png')
-    FLASH_RIGHT = imagecache.load_image('sprites/muzzle_flash.png',
-            ("right_facing",))
-
+    FLASH_RIGHT = imagecache.load_image('sprites/muzzle_flash.png', ("right_facing",))
     SEQUENCE_LEFT = [FLASH_LEFT, FLASH_LEFT]
     SEQUENCE_RIGHT = [FLASH_RIGHT, FLASH_RIGHT]
-
-    def __init__(self, tv, chicken, layer='animations'):
-        if chicken.facing == 'right':
-            Animation.__init__(self, tv, chicken.pos.to_tuple(), self.SEQUENCE_RIGHT, layer=layer)
-        else:
-            Animation.__init__(self, tv, chicken.pos.to_tuple(), self.SEQUENCE_LEFT, layer=layer)
 
 class FenceExplosion(Animation):
     FLASH_1 = imagecache.load_image('sprites/boom1.png')
