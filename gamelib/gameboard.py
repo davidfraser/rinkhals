@@ -290,7 +290,7 @@ class GameBoard(object):
         self.tv = tiles.FarmVid()
         self.tv.png_folder_load_tiles('tiles')
         self.tv.tga_load_level(data.filepath('levels/farm.tga'))
-        height, width = self.tv.size
+        width, height = self.tv.size
         # Ensure we don't every try to create more foxes then is sane
         self.max_foxes = min(height+width-15, constants.ABS_MAX_NUM_FOXES)
         self.max_turns = max_turns
@@ -311,7 +311,11 @@ class GameBoard(object):
 
         self.fix_buildings()
 
-        self.add_some_chickens()
+        cdata = {
+                1 : (self.add_start_chickens, None),
+                }
+
+        self.tv.run_codes(cdata, (0,0,width,height))
 
     def get_top_widget(self):
         return self.top_widget
@@ -889,44 +893,10 @@ class GameBoard(object):
         self.cash += amount
         self.toolbar.update_cash_counter(self.cash)
 
-    def add_some_chickens(self):
-        """Add some random chickens to start the game"""
-        x, y = 0, 0
-        width, height = self.tv.size
-        tries = 0
-        while len(self.chickens) < constants.START_CHICKENS:
-            if x < width:
-                tile = self.tv.get((x, y))
-            else:
-                y += 1
-                if y >= height:
-                    y = 0
-                    tries += 1
-                    if tries > 3:
-                        break # Things have gone wierd
-                x = 0
-                continue
-            # See if we place a chicken
-            if 'grassland' == tiles.TILE_MAP[tile]:
-                # Farmland
-                roll = random.randint(1, 20)
-                # We don't place within a tile of the fence, this is to make things
-                # easier
-                for xx in range(x-1, x+2):
-                    if xx >= width or xx < 0:
-                        continue
-                    for yy in range(y-1, y+2):
-                        if yy >= height or yy < 0:
-                            continue
-                        neighbour = self.tv.get((xx, yy))
-                        if 'fence' == tiles.TILE_MAP[neighbour]:
-                            # Fence
-                            roll = 10
-                if roll == 1:
-                    # Create a chicken
-                    chick = animal.Chicken((x, y))
-                    self.add_chicken(chick)
-            x += 1
+    def add_start_chickens(self, _map, tile, _value):
+        """Add chickens as specified by the code layer"""
+        chick = animal.Chicken((tile.tx, tile.ty))
+        self.add_chicken(chick)
 
     def _choose_fox(self, (x, y)):
         fox_cls = misc.WeightedSelection(self.FOX_WEIGHTINGS).choose()
