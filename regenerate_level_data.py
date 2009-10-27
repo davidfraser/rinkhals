@@ -37,6 +37,15 @@ def get_tile_mappings():
             tile_map[tn] = generate_image(tile_png, regenerate_pngs.TILE_PATH)
     return tile_map
 
+def get_code_mappings():
+    code_map = {}
+    # this list needs to manually kept in sync. This should be fixed
+    for tn, sprite_name in [(1, 'chkn')]:
+        image = generate_image(sprite_name, regenerate_pngs.SPRITE_PATH)
+        if image:
+            code_map[tn] = image
+    return code_map
+
 if __name__ == '__main__':
     s = pygame.Surface((WIDTH, HEIGHT), SWSURFACE|SRCALPHA, 32)
     s.fill((0,0,0,0))
@@ -45,3 +54,9 @@ if __name__ == '__main__':
         print n, rect
         s.blit(img, rect)
     pygame.image.save(s, os.path.join(LEVEL_PATH, "tiles.tga"))
+    s.fill((0,0,0,0))
+    for n, img in get_code_mappings().items():
+        rect = (TILE_WIDTH*(n % TILES_X), TILE_HEIGHT*(n / TILES_X), TILE_WIDTH, TILE_HEIGHT)
+        print n, rect
+        s.blit(img, rect)
+    pygame.image.save(s, os.path.join(LEVEL_PATH, "codes.tga"))
