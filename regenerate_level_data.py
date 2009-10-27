@@ -19,6 +19,8 @@ HEIGHT = TILES_Y * TILE_HEIGHT
 def generate_image(name, basepath):
     fn, _ = os.path.splitext(os.path.basename(name))
     svg_name = os.path.join(basepath, fn+".svg")
+    if not os.path.exists(svg_name):
+        return None
     png_name = os.path.join(LEVEL_PATH, fn+".png")
     regenerate_pngs.svg_to_png(svg_name, png_name, TILE_WIDTH, TILE_HEIGHT)
     return pygame.image.load(png_name)
@@ -27,7 +29,9 @@ def get_tile_mappings():
     tile_map = {}
     for building in buildings.BUILDINGS:
         tn = building.TILE_NO
-        tile_map[tn] = generate_image(building.IMAGE, regenerate_pngs.SPRITE_PATH)
+        image = generate_image(building.IMAGE, regenerate_pngs.SPRITE_PATH)
+        if image:
+            tile_map[tn] = image
     for tn, (_, tile_png) in tiles.TileMap.DEFAULT_TILES.items():
         if tn not in tile_map:
             tile_map[tn] = generate_image(tile_png, regenerate_pngs.TILE_PATH)
