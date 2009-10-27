@@ -20,6 +20,7 @@ def generate_image(name, basepath):
     fn, _ = os.path.splitext(os.path.basename(name))
     svg_name = os.path.join(basepath, fn+".svg")
     if not os.path.exists(svg_name):
+        print 'Skipping %s, as it seems to be missing' % svg_name
         return None
     png_name = os.path.join(LEVEL_PATH, fn+".png")
     regenerate_pngs.svg_to_png(svg_name, png_name, TILE_WIDTH, TILE_HEIGHT)
