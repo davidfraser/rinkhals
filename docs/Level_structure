@@ -1,0 +1,32 @@
+Levels are stored as two files.
+
+The level.tga file provides the tilemap for the starting layout. We use
+two layers of pgu's tilemap - the tile layer, for the objects of interest,
+and the code layer, which indicates the starting chicken positions.
+
+The level.conf file allows the default game constants to be customised.
+
+Example level.conf:
+
+[Level]
+Map: farm.tga
+Goal: Survive
+# -1 for unlimited
+Turn limit: 14
+
+[Game values]
+Max Foxes: 10
+Starting Cash: 100
+Sell Price Egg: 10
+Sell Price Chicken: 5
+Sell Price Dead Fox: 5
+
+[Fox probabilities]
+Fox: 30
+GreedyFox: 30
+NinjaFox: 30
+DemoFox: 9
+Rinkhals: 1
+
+
+
