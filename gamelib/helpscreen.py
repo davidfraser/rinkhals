@@ -19,19 +19,21 @@ Game mechanics:
 
 You lose if you end a night with no chickens left.
 
-Depending on the game length you select, you win if you survive for two weeks,
-three months or until you have chopped down all the trees in the forest and
-caused the complete extinction of the fox population.
-
 Chickens only lay eggs in henhouses, and must stay on the egg for 2 days to
 hatch a new chicken. Chickens that hatch in already full henhouses are
 moved to just outside. If there is no space outside, they die immediately
 from overcrowding.
 """ % constants.NAME
 
-def make_help_screen():
+LEVEL_TEXT="""The currently selected level is %(name)s
+
+The goal is:
+    %(goal)s
+"""
+
+def make_help_screen(level):
     """Create a main menu"""
-    help_screen = HelpScreen(width=600)
+    help_screen = HelpScreen(level, width=600)
 
     c = HelpContainer(align=0, valign=0)
     c.add(help_screen, 0, 0)
@@ -46,7 +48,7 @@ class HelpContainer(gui.Container):
         gui.Container.paint(self, s)
 
 class HelpScreen(gui.Document):
-    def __init__(self, **params):
+    def __init__(self, level, **params):
         gui.Document.__init__(self, **params)
 
         def done_pressed():
@@ -57,7 +59,12 @@ class HelpScreen(gui.Document):
 
         space = self.style.font.size(" ")
 
-        for paragraph in HELP.split('\n\n'):
+        full_text = HELP + '\n\n' + LEVEL_TEXT % {
+                'name' : level.level_name,
+                'goal' : level.goal
+                }
+
+        for paragraph in full_text.split('\n\n'):
             self.block(align=-1)
             for word in paragraph.split():
                 self.add(gui.Label(word))

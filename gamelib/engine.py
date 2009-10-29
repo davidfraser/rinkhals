@@ -45,7 +45,7 @@ class Engine(Game):
 
     def set_help_screen(self):
         """Open the main menu"""
-        help_screen = helpscreen.make_help_screen()
+        help_screen = helpscreen.make_help_screen(self.level)
         self.open_window(help_screen)
 
     def create_game_over(self):
