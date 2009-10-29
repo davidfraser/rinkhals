@@ -243,6 +243,7 @@ class Fox(Animal):
     IMAGE_FILE = 'sprites/fox.png'
     DEATH_ANIMATION = animations.FoxDeath
     DEATH_SOUND = 'kill-fox.ogg'
+    CONFIG_NAME = 'fox'
 
     costs = {
             # weighting for movement calculation
@@ -459,12 +460,14 @@ class NinjaFox(Fox):
 
     STEALTH = 60
     IMAGE_FILE = 'sprites/ninja_fox.png'
+    CONFIG_NAME = 'ninja fox'
 
 class DemoFox(Fox):
     """Demolition Foxes destroy fences easily"""
 
     DIG_ANIMATION = animations.FenceExplosion
     IMAGE_FILE = 'sprites/sapper_fox.png'
+    CONFIG_NAME = 'sapper fox'
 
     def __init__(self, pos):
         Fox.__init__(self, pos)
@@ -479,6 +482,7 @@ class DemoFox(Fox):
 
 class GreedyFox(Fox):
     """Greedy foxes eat more chickens"""
+    CONFIG_NAME = 'greedy fox'
 
     def __init__(self, pos):
         Fox.__init__(self, pos)
@@ -496,6 +500,7 @@ class Rinkhals(Fox):
     """The Rinkhals has eclectic tastes"""
     STEALTH = 80
     IMAGE_FILE = 'sprites/rinkhals.png'
+    CONFIG_NAME = 'rinkhals'
 
     def _catch_chicken(self, chicken, gameboard):
         """The Rinkhals hunts for sport, catch and release style"""
@@ -527,3 +532,14 @@ def visible(watcher, watchee):
     distance = watcher.pos.dist(watchee.pos) - 1
     roll = random.randint(1, 100)
     return roll > watchee.STEALTH - vision_bonus + range_penalty*distance
+
+# These don't have to add up to 100, but it's easier to think
+# about them if they do.
+DEFAULT_FOX_WEIGHTINGS = (
+    (Fox, 59),
+    (GreedyFox, 30),
+    (NinjaFox, 5),
+    (DemoFox, 5),
+    (Rinkhals, 1),
+    )
+

@@ -32,19 +32,21 @@ LEFT_MESSAGES = [
     "What will your chickens do now?",
     ]
 
-def ScoreTable():
+def ScoreTable(level):
     """Create and initialise a score table"""
     # We need a true file, so load will work, but, as we never save,
     # the deletion doesn't bother us.
     our_scores = Highs(tempfile.NamedTemporaryFile(), 4)
-    for mode in constants.TURN_LIMITS:
-        for score in range(700,1000,100):
-            our_scores[mode].submit(score, 'No-one', None)
+    #for mode in constants.TURN_LIMITS:
+    #    for score in range(700,1000,100):
+    #        our_scores[mode].submit(score, 'No-one', None)
+    for score in range(700,1000,100):
+        our_scores[level.level_name].submit(score, 'No-one', None)
     return our_scores
 
-def create_game_over(gameboard, scores, mode):
+def create_game_over(gameboard, scores, level):
     """Create a game over screen"""
-    game_over = GameOver(gameboard, scores, mode)
+    game_over = GameOver(gameboard, scores, level)
     return GameOverContainer(game_over, align=0, valign=0)
 
 class GameOverContainer(gui.Container):
@@ -68,7 +70,7 @@ class GameOverContainer(gui.Container):
 
 class GameOver(gui.Table):
 
-    def __init__(self, gameboard, scoreboard, mode, **params):
+    def __init__(self, gameboard, scoreboard, level, **params):
         gui.Table.__init__(self, **params)
 
         def return_pressed():
@@ -78,8 +80,8 @@ class GameOver(gui.Table):
             pygame.event.post(engine.QUIT)
 
         score = gameboard.cash + \
-                constants.SELL_PRICE_CHICKEN * len(gameboard.chickens) + \
-                constants.SELL_PRICE_EGG * gameboard.eggs
+                level.sell_price_chicken * len(gameboard.chickens) + \
+                level.sell_price_egg * gameboard.eggs
 
         self.tr()
         made_list = scoreboard.check(score) is not None
@@ -100,7 +102,7 @@ class GameOver(gui.Table):
         # show the scoreboard
 
         self.tr()
-        self.td(gui.Label('Game Mode: %s' % mode, color=constants.FG_COLOR),
+        self.td(gui.Label('Level: %s' % level.level_name, color=constants.FG_COLOR),
                 colspan=3)
 
         for highscore in scoreboard:

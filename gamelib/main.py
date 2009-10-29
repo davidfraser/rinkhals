@@ -14,6 +14,7 @@ from pygame.locals import SWSURFACE
 from sound import init_sound
 import constants
 import data
+import sys
 
 def create_main_app(screen):
     """Create an app with a background widget."""
@@ -33,7 +34,12 @@ def main():
 
     from engine import Engine, MainMenuState
 
-    engine = Engine(main_app)
+    if len(sys.argv) > 1:
+        level_name = sys.argv[1]
+    else:
+        level_name = 'two_weeks'
+
+    engine = Engine(main_app, level_name)
     try:
         engine.run(MainMenuState(engine), screen)
     except KeyboardInterrupt:

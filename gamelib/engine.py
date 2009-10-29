@@ -9,15 +9,17 @@ import sound
 import constants
 import mainmenu
 import helpscreen
+import level
 from misc import check_exit
 
 class Engine(Game):
-    def __init__(self, main_app):
+    def __init__(self, main_app, level_name):
         self.main_app = main_app
+        self.level = level.Level(level_name)
         self.clock = pygame.time.Clock()
-        self.main_menu = mainmenu.make_main_menu()
+        self.main_menu = mainmenu.make_main_menu(self.level)
         self._open_window = None
-        self.scoreboard = gameover.ScoreTable()
+        self.scoreboard = gameover.ScoreTable(self.level)
         self.gameboard = None
 
     def tick(self):
@@ -33,11 +35,8 @@ class Engine(Game):
 
     def create_game_board(self):
         """Create and open a gameboard window."""
-        self.mode = self.main_menu.get_mode()
-        if not self.mode:
-            self.mode = constants.DEFAULT_MODE
         self.gameboard = gameboard.GameBoard(self.main_app,
-                constants.TURN_LIMITS[self.mode])
+                self.level)
         self.open_window(self.gameboard.get_top_widget())
 
     def set_main_menu(self):
@@ -52,7 +51,7 @@ class Engine(Game):
     def create_game_over(self):
         """Create and open the Game Over window"""
         game_over = gameover.create_game_over(self.gameboard,
-                self.scoreboard[self.mode], self.mode)
+                self.scoreboard[self.level.level_name], self.level)
         self.gameboard = None
         self.open_window(game_over)
 

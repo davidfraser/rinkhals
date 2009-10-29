@@ -58,7 +58,7 @@ def mkcountupdate(counter):
     return update_counter
 
 class ToolBar(gui.Table):
-    def __init__(self, gameboard, **params):
+    def __init__(self, gameboard, level, **params):
         gui.Table.__init__(self, **params)
         self.group = gui.Group(name='toolbar', value=None)
         self._next_tool_value = 0
@@ -87,9 +87,9 @@ class ToolBar(gui.Table):
 
         self.add_heading("Sell ...")
         self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
-                constants.SELL_PRICE_CHICKEN, cursors.cursors['sell'])
+                level.sell_price_chicken, cursors.cursors['sell'])
         self.add_tool_button("Egg", constants.TOOL_SELL_EGG,
-                constants.SELL_PRICE_EGG, cursors.cursors['sell'])
+                level.sell_price_egg, cursors.cursors['sell'])
         self.add_tool_button("Building", constants.TOOL_SELL_BUILDING,
                 None, cursors.cursors['sell'])
         self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
@@ -275,25 +275,15 @@ class GameBoard(object):
     WOODLAND = tiles.REVERSE_TILE_MAP['woodland']
     BROKEN_FENCE = tiles.REVERSE_TILE_MAP['broken fence']
 
-    # These don't have to add up to 100, but it's easier to think
-    # about them if they do.
-    FOX_WEIGHTINGS = (
-        (animal.Fox, 59),
-        (animal.GreedyFox, 30),
-        (animal.NinjaFox, 5),
-        (animal.DemoFox, 5),
-        (animal.Rinkhals, 1),
-        )
-
-    def __init__(self, main_app, max_turns):
+    def __init__(self, main_app, level):
         self.disp = main_app
+        self.level = level
         self.tv = tiles.FarmVid()
         self.tv.png_folder_load_tiles('tiles')
-        self.tv.tga_load_level(data.filepath('levels/farm.tga'))
+        self.tv.tga_load_level(level.map)
         width, height = self.tv.size
         # Ensure we don't every try to create more foxes then is sane
-        self.max_foxes = min(height+width-15, constants.ABS_MAX_NUM_FOXES)
-        self.max_turns = max_turns
+        self.max_foxes = min(height+width-15, level.max_foxes)
         self.create_display()
 
         self.selected_tool = None
@@ -306,7 +296,7 @@ class GameBoard(object):
         self.eggs = 0
         self.days = 0
         self.killed_foxes = 0
-        self.add_cash(constants.STARTING_CASH)
+        self.add_cash(level.starting_cash)
         self.day, self.night = True, False
 
         self.fix_buildings()
@@ -324,7 +314,7 @@ class GameBoard(object):
         width, height = self.disp.rect.w, self.disp.rect.h
         tbl = gui.Table()
         tbl.tr()
-        self.toolbar = ToolBar(self, width=self.TOOLBAR_WIDTH)
+        self.toolbar = ToolBar(self, self.level, width=self.TOOLBAR_WIDTH)
         tbl.td(self.toolbar, valign=-1)
         self.tvw = VidWidget(self, self.tv, width=width-self.TOOLBAR_WIDTH, height=height)
         tbl.td(self.tvw)
@@ -443,7 +433,7 @@ class GameBoard(object):
             for item in list(chicken.equipment):
                 self.add_cash(item.sell_price())
                 chicken.unequip(item)
-            self.add_cash(constants.SELL_PRICE_CHICKEN)
+            self.add_cash(self.level.sell_price_chicken)
             sound.play_sound("sell-chicken.ogg")
             if update_button:
                 update_button(chicken, empty=True)
@@ -460,7 +450,7 @@ class GameBoard(object):
 
     def sell_one_egg(self, chicken):
         if chicken.eggs:
-            self.add_cash(constants.SELL_PRICE_EGG)
+            self.add_cash(self.level.sell_price_egg)
             chicken.remove_one_egg()
             self.eggs -= 1
             self.toolbar.update_egg_counter(self.eggs)
@@ -777,10 +767,10 @@ class GameBoard(object):
 
     def advance_day(self):
         self.days += 1
-        if self.days == self.max_turns:
+        if self.days == self.level.turn_limit:
             self.toolbar.day_counter.style.color = (255, 0, 0)
         self.toolbar.update_day_counter("%s/%s" % (self.days,
-            self.max_turns if self.max_turns > 0 else "-"))
+            self.level.turn_limit if self.level.turn_limit > 0 else "-"))
 
     def clear_foxes(self):
         for fox in self.foxes.copy():
@@ -864,7 +854,7 @@ class GameBoard(object):
     def kill_fox(self, fox):
         self.killed_foxes += 1
         self.toolbar.update_fox_counter(self.killed_foxes)
-        self.add_cash(constants.SELL_PRICE_DEAD_FOX)
+        self.add_cash(self.level.sell_price_dead_fox)
         self.remove_fox(fox)
 
     def remove_fox(self, fox):
@@ -899,7 +889,7 @@ class GameBoard(object):
         self.add_chicken(chick)
 
     def _choose_fox(self, (x, y)):
-        fox_cls = misc.WeightedSelection(self.FOX_WEIGHTINGS).choose()
+        fox_cls = misc.WeightedSelection(self.level.fox_weightings).choose()
         return fox_cls((x, y))
 
     def spawn_foxes(self):
@@ -907,7 +897,7 @@ class GameBoard(object):
         # Foxes spawn just outside the map
         x, y = 0, 0
         width, height = self.tv.size
-        min_foxes = (self.days+3)/2 # always more than one fox
+        min_foxes = max(self.level.min_foxes, (self.days+3)/2) # always more than one fox
         new_foxes = min(random.randint(min_foxes, min_foxes*2), self.max_foxes)
         while len(self.foxes) < new_foxes:
             side = random.randint(0, 3)
@@ -977,7 +967,7 @@ class GameBoard(object):
         """Return true if we're complete"""
         if self.trees_left() == 0:
             return True
-        if self.max_turns > 0 and self.days >= self.max_turns:
+        if self.level.turn_limit > 0 and self.days >= self.level.turn_limit:
             return True
         if len(self.chickens) == 0:
             return True

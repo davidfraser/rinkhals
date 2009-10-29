@@ -6,9 +6,9 @@ import constants
 import engine
 import imagecache
 
-def make_main_menu():
+def make_main_menu(level):
     """Create a main menu"""
-    main_menu = MainMenu()
+    main_menu = MainMenu(level)
 
     c = MenuContainer(align=0, valign=0)
     c.add(main_menu, 0, 0)
@@ -26,7 +26,7 @@ class MenuContainer(gui.Container):
         return self.widgets[0].mode
 
 class MainMenu(gui.Table):
-    def __init__(self, **params):
+    def __init__(self, level, **params):
         gui.Table.__init__(self, **params)
         self.mode = None
 
@@ -36,9 +36,11 @@ class MainMenu(gui.Table):
         def quit_pressed():
             pygame.event.post(engine.QUIT)
 
-        def start_game(mode):
-            self.mode = mode
+        def start_game():
             pygame.event.post(engine.START_DAY)
+
+        def choose_level():
+            print 'Needs to be implemented. Specify the level name as a parameter'
 
         def help_pressed():
             pygame.event.post(engine.GO_HELP_SCREEN)
@@ -50,12 +52,16 @@ class MainMenu(gui.Table):
             "align": 0,
             "style": style,
         }
- 
-        for mode in constants.TURN_LIMITS:
-            button = gui.Button(mode)
-            button.connect(gui.CLICK, start_game, mode)
-            self.tr()
-            self.td(button, **td_kwargs)
+
+        change_button = gui.Button('Choose level')
+        change_button.connect(gui.CLICK, choose_level)
+        self.tr()
+        self.td(change_button, **td_kwargs)
+
+        start_button = gui.Button(level.level_name)
+        start_button.connect(gui.CLICK, start_game)
+        self.tr()
+        self.td(start_button, **td_kwargs)
 
         quit_button = gui.Button("Quit")
         quit_button.connect(gui.CLICK, quit_pressed)
