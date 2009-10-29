@@ -43,6 +43,13 @@ If you have obtained the source directly, you need to install the
 dependencies listed further down. Then run "python run_game.py".
 
 
+CHOOSING A LEVEL
+================
+
+The levels can be found in data/levels. Start the game with the level name
+as the first parameter.
+
+
 HOW TO PLAY THE GAME
 ====================
 
@@ -55,14 +62,14 @@ the chickens defend themselves.
 
 You lose if you end a night with no chickens left.
 
-Depending on the game length you select, you win if you survive for two weeks,
-three months or until you have chopped down all the trees in the forest and
-caused the complete extinction of the fox population.
-
 Chickens only lay eggs in henhouses, and must stay on the egg for 2 days to
 hatch a new chicken. Chickens that hatch in already full henhouses are
 moved to just outside. If there is no space outside, they die immediately
 from overcrowding.
+
+The the length of the game and the conditions required to win depend on the
+chosen level. The instructions for the level will be shown at the bottom
+of the instructions screen.
 
 
 DEPENDENCIES
