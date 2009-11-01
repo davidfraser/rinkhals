@@ -767,10 +767,10 @@ class GameBoard(object):
 
     def advance_day(self):
         self.days += 1
-        if self.days == self.level.turn_limit:
+        if self.level.is_last_day(self.days):
             self.toolbar.day_counter.style.color = (255, 0, 0)
         self.toolbar.update_day_counter("%s/%s" % (self.days,
-            self.level.turn_limit if self.level.turn_limit > 0 else "-"))
+            self.level.get_max_turns()))
 
     def clear_foxes(self):
         for fox in self.foxes.copy():
@@ -962,15 +962,6 @@ class GameBoard(object):
     def trees_left(self):
         width, height = self.tv.size
         return len([(x,y) for x in range(width) for y in range(height) if self.tv.get((x,y)) == self.WOODLAND])
-
-    def is_game_over(self):
-        """Return true if we're complete"""
-        if self.trees_left() == 0:
-            return True
-        if self.level.turn_limit > 0 and self.days >= self.level.turn_limit:
-            return True
-        if len(self.chickens) == 0:
-            return True
 
 
 class TextDialog(gui.Dialog):

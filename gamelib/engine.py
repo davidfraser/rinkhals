@@ -199,7 +199,7 @@ class NightState(State):
             self.dialog=None
             return
         if events_equal(e, START_DAY):
-            if self.game.gameboard.is_game_over():
+            if self.game.level.is_game_over(self.game.gameboard):
                 return GameOver(self.game)
             return DayState(self.game)
         elif (e.type is KEYDOWN and e.key == K_d) or \

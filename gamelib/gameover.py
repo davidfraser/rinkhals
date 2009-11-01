@@ -85,7 +85,7 @@ class GameOver(gui.Table):
 
         self.tr()
         made_list = scoreboard.check(score) is not None
-        if gameboard.is_game_over():
+        if level.is_game_over(gameboard):
             if len(gameboard.chickens) > 0:
                 self.survived = WON
                 scoreboard.submit(score, 'Player')
