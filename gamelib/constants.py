@@ -38,10 +38,6 @@ DEFAULT_MAX_FOXES = 50
 # Game constants, still to be made configurable
 
 LOGGING_PRICE = 50
-BUY_PRICE_FENCE = 50
-SELL_PRICE_FENCE = 25
-REPAIR_PRICE_FENCE = 25
-SELL_PRICE_BROKEN_FENCE = 5
 
 # Toolbar constants
 
