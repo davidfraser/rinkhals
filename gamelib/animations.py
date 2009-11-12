@@ -33,9 +33,9 @@ class Animation(Sprite):
 class WeaponAnimation(Animation):
     def __init__(self, tv, wielder, layer='animations'):
         if wielder.facing == 'right':
-            Animation.__init__(self, tv, wielder.pos.to_tuple(), self.SEQUENCE_RIGHT, layer=layer)
+            Animation.__init__(self, tv, wielder.pos.to_tile_tuple(), self.SEQUENCE_RIGHT, layer=layer)
         else:
-            Animation.__init__(self, tv, wielder.pos.to_tuple(), self.SEQUENCE_LEFT, layer=layer)
+            Animation.__init__(self, tv, wielder.pos.to_tile_tuple(), self.SEQUENCE_LEFT, layer=layer)
 
 
 class MuzzleFlash(WeaponAnimation):

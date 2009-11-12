@@ -26,17 +26,17 @@ class Animal(Sprite):
         self.image_left = image_left.copy()
         self._image_right = image_right
         self.image_right = image_right.copy()
-        if hasattr(tile_pos, 'to_tuple'):
+        if hasattr(tile_pos, 'to_tile_tuple'):
             self.pos = tile_pos
         else:
-            self.pos = Position(tile_pos[0], tile_pos[1])
+            self.pos = Position(tile_pos[0], tile_pos[1], 0)
         self.equipment = []
         self.accoutrements = []
         self.abode = None
         self.facing = 'left'
 
     def loop(self, tv, _sprite):
-        ppos = tv.tile_to_view(self.pos.to_tuple())
+        ppos = tv.tile_to_view(self.pos.to_tile_tuple())
         self.rect.x = ppos[0]
         self.rect.y = ppos[1]
 
@@ -45,7 +45,7 @@ class Animal(Sprite):
         if hasattr(self, 'DEATH_SOUND'):
             sound.play_sound(self.DEATH_SOUND)
         if hasattr(self, 'DEATH_ANIMATION'):
-            self.DEATH_ANIMATION(gameboard.tv, self.pos.to_tuple())
+            self.DEATH_ANIMATION(gameboard.tv, self.pos.to_tile_tuple())
         self._game_death(gameboard)
 
     def _game_death(self, gameboard):
@@ -274,7 +274,7 @@ class Fox(Animal):
 
     def _cost_tile(self, pos, gameboard):
         if gameboard.in_bounds(pos):
-            this_tile = gameboard.tv.get(pos.to_tuple())
+            this_tile = gameboard.tv.get(pos.to_tile_tuple())
             cost = self.costs.get(tiles.TILE_MAP[this_tile], 100)
         else:
             cost = 100 # Out of bounds is expensive
@@ -294,8 +294,8 @@ class Fox(Animal):
                 abs(start_pos.y - final_pos.y) < 2:
             # pgu gets this case wrong on occasion.
             return [final_pos]
-        start = start_pos.to_tuple()
-        end = final_pos.to_tuple()
+        start = start_pos.to_tile_tuple()
+        end = final_pos.to_tile_tuple()
         points = getline(start, end)
         points.remove(start) # exclude start_pos
         if end not in points:
@@ -307,6 +307,9 @@ class Fox(Animal):
         """Find the cheapest path to final_pos, and return the next step
            along the path."""
         # We calculate the cost of the direct path
+        if final_pos.z < self.pos.z:
+            # We need to try heading down.
+            return Position(self.pos.x, self.pos.y, self.pos.z - 1)
         direct_path = self._gen_path(self.pos, final_pos)
         min_cost = self._cost_path(direct_path, gameboard)
         min_path = direct_path
@@ -364,6 +367,13 @@ class Fox(Animal):
             # Caught a chicken
             self._catch_chicken(self.closest, gameboard)
             return self.pos
+        if self.closest.pos.to_tile_tuple() == self.pos.to_tile_tuple():
+            # Only differ in z, so next step is in z
+            if self.closest.pos.z < self.pos.z:
+                new_z = self.pos.z - 1
+            else:
+                new_z = self.pos.z + 1
+            return Position(self.pos.x, self.pos.y, new_z)
         return self._find_best_path_step(self.closest.pos, gameboard)
 
     def _catch_chicken(self, chicken, gameboard):
@@ -379,11 +389,17 @@ class Fox(Animal):
             # We're not moving, so we can skip all the checks
             return new_pos
         final_pos = new_pos
-        blocked = final_pos in self.last_steps
-        moves = [Position(x, y) for x in range(self.pos.x-1, self.pos.x + 2)
-                for y in range(self.pos.y-1, self.pos.y + 2)
-                if Position(x,y) != self.pos and \
-                        Position(x, y) not in self.last_steps]
+        blocked = False # We don't worry about loops on ladders
+        if new_pos.z != self.pos.z:
+            # We can only move up and down a ladder
+            moves = [Position(self.pos.x, self.pos.y, z) for z
+                    in range(self.pos.z-1, self.pos.z + 2) if z >= 0]
+        else:
+            blocked = final_pos in self.last_steps
+            moves = [Position(x, y) for x in range(self.pos.x-1, self.pos.x + 2)
+                    for y in range(self.pos.y-1, self.pos.y + 2)
+                    if Position(x,y) != self.pos and
+                    Position(x, y) not in self.last_steps and self.pos.z == 0]
         for fox in gameboard.foxes:
             if fox is not self and fox.pos == final_pos:
                 blocked = True
@@ -405,7 +421,7 @@ class Fox(Animal):
             # No good choice, so stay put
             return self.pos
         if gameboard.in_bounds(final_pos):
-            this_tile = gameboard.tv.get(final_pos.to_tuple())
+            this_tile = gameboard.tv.get(final_pos.to_tile_tuple())
         else:
             this_tile = tiles.REVERSE_TILE_MAP['woodland']
         if tiles.TILE_MAP[this_tile] == 'broken fence' and self.hunting:
@@ -426,7 +442,7 @@ class Fox(Animal):
 
     def _make_hole(self, gameboard):
         """Make a hole in the fence"""
-        fence = gameboard.get_building(self.dig_pos.to_tuple())
+        fence = gameboard.get_building(self.dig_pos.to_tile_tuple())
         # Another fox could have made the same hole this turn
         if fence:
             fence.damage(gameboard.tv)
@@ -442,7 +458,7 @@ class Fox(Animal):
                 # Check the another fox hasn't dug a hole for us
                 # We're too busy digging to notice if a hole appears nearby,
                 # but we'll notice if the fence we're digging vanishes
-                this_tile = gameboard.tv.get(self.dig_pos.to_tuple())
+                this_tile = gameboard.tv.get(self.dig_pos.to_tile_tuple())
                 if tiles.TILE_MAP[this_tile] == 'broken fence':
                     self.tick = 0 
                 return
@@ -480,7 +496,7 @@ class DemoFox(Fox):
         """Setup dig parameters, to be overridden if needed"""
         self.tick = 0 # Costs us nothing to go through a fence.
         self.dig_pos = dig_pos
-        self.DIG_ANIMATION(gameboard.tv, dig_pos.to_tuple())
+        self.DIG_ANIMATION(gameboard.tv, dig_pos.to_tile_tuple())
         self._make_hole(gameboard)
 
 class GreedyFox(Fox):
@@ -513,7 +529,7 @@ class Rinkhals(Fox):
 
     def _make_hole(self, gameboard):
         """The Rinkhals eats fences"""
-        fence = gameboard.get_building(self.dig_pos.to_tuple())
+        fence = gameboard.get_building(self.dig_pos.to_tile_tuple())
         if fence:
             fence.remove(gameboard.tv)
             gameboard.remove_building(fence)

@@ -8,23 +8,24 @@ from pgu import gui
 class Position(object):
     """2D position / vector"""
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, z=0):
         self.x = x
         self.y = y
+        self.z = z
 
-    def to_tuple(self):
+    def to_tile_tuple(self):
         return self.x, self.y
 
     def dist(self, b):
         """Gives the distance to another position"""
 
-        return max(abs(self.x - b.x), abs(self.y - b.y))
+        return max(abs(self.x - b.x), abs(self.y - b.y), abs(self.z - b.z))
 
     def __sub__(self, b):
-        return Position(self.x - b.x, self.y - b.y)
+        return Position(self.x - b.x, self.y - b.y, self.z - b.z)
 
     def __add__(self, b):
-        return Position(self.x + b.x, self.y + b.y)
+        return Position(self.x + b.x, self.y + b.y, self.z + b.z)
 
     def left_of(self, b):
         return self.x < b.x
@@ -33,7 +34,7 @@ class Position(object):
         return self.x > b.x
 
     def __eq__(self, b):
-        return self.x == b.x and self.y == b.y
+        return self.x == b.x and self.y == b.y and self.z == b.z
 
 class WeightedSelection(object):
     def __init__(self, weightings=None):

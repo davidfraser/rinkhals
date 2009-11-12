@@ -776,8 +776,8 @@ class GameBoard(object):
         for fox in self.foxes.copy():
             # Any foxes that didn't make it to the woods are automatically
             # killed
-            if self.in_bounds(fox.pos) and self.tv.get(fox.pos.to_tuple()) \
-                    != self.WOODLAND:
+            if self.in_bounds(fox.pos) and \
+                    self.tv.get(fox.pos.to_tile_tuple()) != self.WOODLAND:
                 self.kill_fox(fox)
             else:
                 self.tv.sprites.remove(fox)

@@ -36,7 +36,8 @@ class Place(object):
 
     def get_pos(self):
         bpos = self.building.pos
-        return (bpos[0] + self.offset[0], bpos[1] + self.offset[1])
+        return (bpos[0] + self.offset[0], bpos[1] + self.offset[1],
+                self.offset[2])
 
 class Floor(object):
     """A set of places within a building. Places on a
@@ -66,6 +67,7 @@ class Building(Sprite):
     MODIFY_GUN_RANGE = lambda s, x: -1
     BREAKABLE = False
     ABODE = False
+    FLOORS = None
 
     def __init__(self, pos):
         """Initial image, tile vid position, size and tile number for building."""
@@ -84,12 +86,12 @@ class Building(Sprite):
 
         self._floors = []
         if self.FLOORS:
-            for f in range(self.FLOORS):
+            for f, z in enumerate(self.FLOORS):
                 places = []
                 for j in range(self.size[1]):
                     row = []
                     for i in range(self.size[0]):
-                        row.append(Place(self, (i, j)))
+                        row.append(Place(self, (i, j, z)))
                     places.append(row)
                 floor = Floor("Floor %s" % (f+1,), places)
                 self._floors.append(floor)
@@ -288,7 +290,7 @@ class HenHouse(Abode):
     IMAGE = 'sprites/henhouse.png'
     SELECTED_IMAGE = 'sprites/select_henhouse.png'
     NAME = 'Henhouse'
-    FLOORS = 1
+    FLOORS = [0]
 
 class DoubleStoryHenHouse(HenHouse):
     """A double story hen house."""
@@ -300,7 +302,7 @@ class DoubleStoryHenHouse(HenHouse):
     IMAGE = 'sprites/hendominium.png'
     SELECTED_IMAGE = 'sprites/select_hendominium.png'
     NAME = 'Hendominium'
-    FLOORS = 2
+    FLOORS = [0, 1]
 
 class GuardTower(Abode):
     """A GuardTower."""
@@ -312,7 +314,7 @@ class GuardTower(Abode):
     IMAGE = 'sprites/watchtower.png'
     SELECTED_IMAGE = 'sprites/select_watchtower.png'
     NAME = 'Watchtower'
-    FLOORS = 1
+    FLOORS = [2]
 
     MODIFY_GUN_RANGE = lambda s, x: (3*x)/2
     MODIFY_GUN_BASE_HIT = lambda s, x: x-5
@@ -336,7 +338,6 @@ class Fence(Building):
     IMAGE_BROKEN = 'tiles/broken_fence.png'
     SELECTED_IMAGE_BROKEN = 'tiles/broken_fence.png'
     NAME = 'Fence'
-    FLOORS = 0
 
 
 def is_building(obj):
