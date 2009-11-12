@@ -426,7 +426,10 @@ class Fox(Animal):
 
     def _make_hole(self, gameboard):
         """Make a hole in the fence"""
-        gameboard.get_building(self.dig_pos.to_tuple()).damage(gameboard.tv)
+        fence = gameboard.get_building(self.dig_pos.to_tuple())
+        # Another fox could have made the same hole this turn
+        if fence:
+            fence.damage(gameboard.tv)
         self.dig_pos = None
 
     def move(self, gameboard):
@@ -511,8 +514,9 @@ class Rinkhals(Fox):
     def _make_hole(self, gameboard):
         """The Rinkhals eats fences"""
         fence = gameboard.get_building(self.dig_pos.to_tuple())
-        fence.remove(gameboard.tv)
-        gameboard.remove_building(fence)
+        if fence:
+            fence.remove(gameboard.tv)
+            gameboard.remove_building(fence)
         self.dig_pos = None
 
     def damage(self, gameboard):
