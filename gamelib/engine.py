@@ -226,7 +226,7 @@ class NightState(State):
             self.cycle_count += 1
             if self.cycle_count > constants.NIGHT_LENGTH:
                 return pygame.event.post(START_DAY)
-            if self.game.gameboard.move_foxes():
+            if self.game.gameboard.do_night_step():
                 # All foxes are gone/safe, so dawn happens
                 return pygame.event.post(START_DAY)
             # Re-enable timers

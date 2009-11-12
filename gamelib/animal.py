@@ -57,6 +57,11 @@ class Animal(Sprite):
         # Default is not to move
         pass
 
+    def attack(self, gameboard):
+        """Given the game state, attack a suitable target"""
+        # Default is not to attack
+        pass
+
     def set_pos(self, tile_pos):
         """Move an animal to the given tile_pos."""
         new_pos = Position(*tile_pos)
@@ -364,8 +369,7 @@ class Fox(Animal):
             self.hunting = False
             return self.pos
         if self.closest.pos == self.pos:
-            # Caught a chicken
-            self._catch_chicken(self.closest, gameboard)
+            # No need to move
             return self.pos
         if self.closest.pos.to_tile_tuple() == self.pos.to_tile_tuple():
             # Only differ in z, so next step is in z
@@ -375,6 +379,11 @@ class Fox(Animal):
                 new_z = self.pos.z + 1
             return Position(self.pos.x, self.pos.y, new_z)
         return self._find_best_path_step(self.closest.pos, gameboard)
+
+    def attack(self, gameboard):
+        """Attack a chicken"""
+        if self.closest and self.closest.pos == self.pos:
+            self._catch_chicken(self.closest, gameboard)
 
     def _catch_chicken(self, chicken, gameboard):
         """Catch a chicken"""

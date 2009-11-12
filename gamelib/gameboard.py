@@ -283,7 +283,7 @@ class GameBoard(object):
         self.tv.tga_load_level(level.map)
         width, height = self.tv.size
         # Ensure we don't every try to create more foxes then is sane
-        self.max_foxes = min(height+width-15, level.max_foxes)
+        self.max_foxes = min(2*height+2*width-15, level.max_foxes)
         self.create_display()
 
         self.selected_tool = None
@@ -788,21 +788,35 @@ class GameBoard(object):
         if self.toolbar.anim_clear_tool:
             self.toolbar.clear_tool()
 
-    def move_foxes(self):
-        """Move the foxes.
-        
+    def do_night_step(self):
+        """Handle the events of the night.
+
            We return True if there are no more foxes to move or all the
            foxes are safely back. This end's the night"""
         if not self.foxes:
             return True
+        # Move all the foxes
+        over = self.foxes_move()
+        if not over:
+            self.foxes_attack()
+            self.chickens_attack()
+        return over
+
+    def foxes_move(self):
         over = True
         for fox in self.foxes:
             fox.move(self)
             if not fox.safe:
                 over = False
+        return over
+
+    def foxes_attack(self):
+        for fox in self.foxes:
+            fox.attack(self)
+
+    def chickens_attack(self):
         for chicken in self.chickens:
             chicken.attack(self)
-        return over
 
     def add_chicken(self, chicken):
         self.chickens.add(chicken)
