@@ -20,7 +20,7 @@ class Place(object):
         self.building = building
         self.offset = offset
 
-    def set_occupant(self, occupant, _update=True):
+    def set_occupant(self, occupant, _update=True, _predator=False):
         self.clear_occupant(_update=False)
         self.occupant = occupant
         self.occupant.abode = self
@@ -83,6 +83,7 @@ class Building(Sprite):
         self._font_image = pygame.Surface(self.images['fixed']['day'].get_size(), flags=SRCALPHA)
         self._font_image.fill((0, 0, 0, 0))
         self._broken = False
+        self._predators = []
 
         self._floors = []
         if self.FLOORS:
@@ -238,16 +239,28 @@ class Building(Sprite):
 
     def update_occupant_count(self):
         count = len(list(self.occupants()))
-        if count == 0:
+        if count == 0 and not self._predators:
             if "count" in self.draw_stack:
                 del self.draw_stack["count"]
         else:
+            # Render chicken count
             image = self._font_image.copy()
-            text = self._font.render(str(count), True, constants.FG_COLOR)
             w, h = image.get_size()
-            x, y = text.get_size()
-            image.blit(text, (w - x, h - y))
+            if count:
+                text = self._font.render(str(count), True,
+                        constants.FG_COLOR)
+                # Blit to the right
+                x, y = text.get_size()
+                image.blit(text, (w - x, h - y))
+            # Render predator count
+            if self._predators:
+                text = self._font.render(str(len(self._predators)), True,
+                        constants.PREDATOR_COUNT_COLOR)
+                # Blit to the left
+                x, y = text.get_size()
+                image.blit(text, (0, h - y))
             self.draw_stack["count"] = (1, image)
+
         self._redraw()
 
     def floors(self):
@@ -276,6 +289,17 @@ class Building(Sprite):
         for place in self.places():
             if place.occupant is not None:
                 yield place.occupant
+
+    def add_predator(self, animal):
+        animal.building = self
+        self._predators.append(animal)
+        self.update_occupant_count()
+
+    def remove_predator(self, animal):
+        if animal in self._predators:
+            self._predators.remove(animal)
+            animal.building = None
+            self.update_occupant_count()
 
 class Abode(Building):
     ABODE = True

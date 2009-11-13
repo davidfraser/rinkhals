@@ -527,13 +527,13 @@ class GameBoard(object):
             chicken.set_pos(place.get_pos())
         self.set_visibility(chicken)
 
-    def set_visibility(self, chicken):
-        if chicken.outside():
-            if chicken not in self.tv.sprites:
-                self.tv.sprites.append(chicken)
+    def set_visibility(self, animal):
+        if animal.outside():
+            if animal not in self.tv.sprites:
+                self.tv.sprites.append(animal)
         else:
-            if chicken in self.tv.sprites:
-                self.tv.sprites.remove(chicken)
+            if animal in self.tv.sprites:
+                self.tv.sprites.remove(animal)
 
     def open_dialog(self, widget, x=None, y=None, close_callback=None):
         """Open a dialog for the given widget. Add close button."""
@@ -780,7 +780,7 @@ class GameBoard(object):
                     self.tv.get(fox.pos.to_tile_tuple()) != self.WOODLAND:
                 self.kill_fox(fox)
             else:
-                self.tv.sprites.remove(fox)
+                self.remove_fox(fox)
         self.foxes = set() # Remove all the foxes
 
     def run_animations(self):
@@ -873,6 +873,8 @@ class GameBoard(object):
 
     def remove_fox(self, fox):
         self.foxes.discard(fox)
+        if fox.building:
+            fox.building.remove_predator(fox)
         if fox in self.tv.sprites:
             self.tv.sprites.remove(fox)
 

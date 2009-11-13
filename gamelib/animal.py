@@ -273,6 +273,12 @@ class Fox(Animal):
         self.safe = False
         self.closest = None
         self.last_steps = []
+        # Foxes don't occupy places in the same way chickens do, but they
+        # can still be inside
+        self.building = None
+
+    def outside(self):
+        return self.building is None
 
     def _game_death(self, gameboard):
         gameboard.kill_fox(self)
@@ -469,12 +475,12 @@ class Fox(Animal):
                 # but we'll notice if the fence we're digging vanishes
                 this_tile = gameboard.tv.get(self.dig_pos.to_tile_tuple())
                 if tiles.TILE_MAP[this_tile] == 'broken fence':
-                    self.tick = 0 
+                    self.tick = 0
                 return
             else:
                 # We've dug through the fence, so make a hole
                 self._make_hole(gameboard)
-            return 
+            return
         if self.hunting:
             desired_pos = self._find_path_to_chicken(gameboard)
         else:
@@ -482,6 +488,25 @@ class Fox(Animal):
         final_pos = self._update_pos(gameboard, desired_pos)
         self._fix_face(final_pos)
         self.pos = final_pos
+        # See if we're entering/leaving a building
+        building = gameboard.get_building(final_pos.to_tile_tuple())
+        if building and self.outside():
+                # Check if we need to enter
+                if self.closest and not self.closest.outside() and \
+                        self.closest.abode.building is building:
+                    building.add_predator(self)
+        elif self.building and final_pos.z == 0:
+            # can only leave from the ground floor
+            if building == self.building:
+                # Check if we need to leave the building
+                if not self.hunting or (self.closest and
+                        self.closest.abode.building is not building):
+                    self.building.remove_predator(self)
+            else:
+                # we've moved away from the building we were in
+                self.building.remove_predator(self)
+        gameboard.set_visibility(self)
+
 
 class NinjaFox(Fox):
     """Ninja foxes are hard to see"""
