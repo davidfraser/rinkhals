@@ -466,7 +466,10 @@ class Fox(Animal):
     def move(self, gameboard):
         """Foxes will aim to move towards the closest henhouse or free
            chicken"""
-        if self.dig_pos:
+        if self.safe:
+            # We're safe, so do nothing
+            return
+        elif self.dig_pos:
             if self.tick:
                 self.tick -= 1
                 # We're still digging through the fence
@@ -476,25 +479,26 @@ class Fox(Animal):
                 this_tile = gameboard.tv.get(self.dig_pos.to_tile_tuple())
                 if tiles.TILE_MAP[this_tile] == 'broken fence':
                     self.tick = 0
-                return
             else:
                 # We've dug through the fence, so make a hole
                 self._make_hole(gameboard)
             return
-        if self.hunting:
+        elif self.hunting:
             desired_pos = self._find_path_to_chicken(gameboard)
         else:
             desired_pos = self._find_path_to_woodland(gameboard)
         final_pos = self._update_pos(gameboard, desired_pos)
         self._fix_face(final_pos)
         self.pos = final_pos
+        change_visible = False
         # See if we're entering/leaving a building
         building = gameboard.get_building(final_pos.to_tile_tuple())
         if building and self.outside():
-                # Check if we need to enter
-                if self.closest and not self.closest.outside() and \
-                        self.closest.abode.building is building:
-                    building.add_predator(self)
+            # Check if we need to enter
+            if self.closest and not self.closest.outside() and \
+                    self.closest.abode.building is building:
+                building.add_predator(self)
+                change_visible = True
         elif self.building and final_pos.z == 0:
             # can only leave from the ground floor
             if building == self.building:
@@ -502,10 +506,13 @@ class Fox(Animal):
                 if not self.hunting or (self.closest and
                         self.closest.abode.building is not building):
                     self.building.remove_predator(self)
+                    change_visible = True
             else:
                 # we've moved away from the building we were in
                 self.building.remove_predator(self)
-        gameboard.set_visibility(self)
+                change_visible = True
+        if change_visible:
+            gameboard.set_visibility(self)
 
 
 class NinjaFox(Fox):
