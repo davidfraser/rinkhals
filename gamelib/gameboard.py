@@ -811,7 +811,7 @@ class GameBoard(object):
                 for x in range(w)] # NB: Assumes z in [0, 4]
         for fox in self.foxes:
             if self.in_bounds(fox.pos):
-                self._fox_pos_cache[pos.x][pos.y][pos.z] = True
+                self._fox_pos_cache[fox.pos.x][fox.pos.y][fox.pos.z] = True
 
     def _update_fox_pos_cache(self, old_pos, new_pos):
         if self.is_fox_at_pos(old_pos):
