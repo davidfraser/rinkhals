@@ -292,6 +292,7 @@ class GameBoard(object):
         self.chickens = set()
         self.foxes = set()
         self.buildings = []
+        self._fox_pos_cache = []
         self.cash = 0
         self.eggs = 0
         self.days = 0
@@ -366,6 +367,7 @@ class GameBoard(object):
         self.tv.sun(False)
         self.reset_states()
         self.toolbar.update_fin_tool(self.day)
+        self._cache_fox_positions()
 
     def start_day(self):
         self.day, self.night = True, False
@@ -802,12 +804,35 @@ class GameBoard(object):
             self.chickens_attack()
         return over
 
+    def _cache_fox_positions(self):
+        """Cache the current set of fox positions for the avoiding checks"""
+        w, h = self.tv.size
+        self._fox_pos_cache = [[[False for z in range(5)] for y in range(h)]
+                for x in range(w)] # NB: Assumes z in [0, 4]
+        for fox in self.foxes:
+            if self.in_bounds(fox.pos):
+                self._fox_pos_cache[pos.x][pos.y][pos.z] = True
+
+    def _update_fox_pos_cache(self, old_pos, new_pos):
+        if self.is_fox_at_pos(old_pos):
+            self._fox_pos_cache[old_pos.x][old_pos.y][old_pos.z] = False
+        if new_pos and self.in_bounds(new_pos):
+            self._fox_pos_cache[new_pos.x][new_pos.y][new_pos.z] = True
+
+    def is_fox_at_pos(self, pos):
+        if self.in_bounds(pos):
+            return self._fox_pos_cache[pos.x][pos.y][pos.z]
+        return False
+
     def foxes_move(self):
         over = True
         for fox in self.foxes:
+            old_pos = fox.pos
             fox.move(self)
             if not fox.safe:
                 over = False
+            if fox.pos != old_pos:
+                self._update_fox_pos_cache(old_pos, fox.pos)
         return over
 
     def foxes_attack(self):
@@ -869,6 +894,7 @@ class GameBoard(object):
         self.killed_foxes += 1
         self.toolbar.update_fox_counter(self.killed_foxes)
         self.add_cash(self.level.sell_price_dead_fox)
+        self._update_fox_pos_cache(fox.pos, None)
         self.remove_fox(fox)
 
     def remove_fox(self, fox):

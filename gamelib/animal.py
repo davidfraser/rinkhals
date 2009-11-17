@@ -403,28 +403,28 @@ class Fox(Animal):
         if new_pos == self.pos:
             # We're not moving, so we can skip all the checks
             return new_pos
+        blocked = gameboard.is_fox_at_pos(new_pos)
+        if not blocked and new_pos.z == self.pos.z:
+            # We're only worried about loops when not on a ladder
+            blocked = new_pos in self.last_steps
         final_pos = new_pos
-        blocked = False # We don't worry about loops on ladders
-        if new_pos.z != self.pos.z:
-            # We can only move up and down a ladder
-            moves = [Position(self.pos.x, self.pos.y, z) for z
-                    in range(self.pos.z-1, self.pos.z + 2) if z >= 0]
-        else:
-            blocked = final_pos in self.last_steps
-            moves = [Position(x, y) for x in range(self.pos.x-1, self.pos.x + 2)
-                    for y in range(self.pos.y-1, self.pos.y + 2)
-                    if Position(x,y) != self.pos and
-                    Position(x, y) not in self.last_steps and self.pos.z == 0]
-        for fox in gameboard.foxes:
-            if fox is not self and fox.pos == final_pos:
-                blocked = True
-            if fox.pos in moves:
-                moves.remove(fox.pos)
         if blocked:
-            # find the cheapest point in moves to new_pos that's not blocked
+            if new_pos.z != self.pos.z:
+                # We can only move up and down a ladder
+                moves = [Position(self.pos.x, self.pos.y, z) for z
+                        in range(self.pos.z-1, self.pos.z + 2) if z >= 0]
+            else:
+                moves = [Position(x, y) for x in range(self.pos.x-1, self.pos.x + 2)
+                        for y in range(self.pos.y-1, self.pos.y + 2)
+                        if Position(x,y) != self.pos and
+                        Position(x, y) not in self.last_steps and
+                        self.pos.z == 0]
+            # find the cheapest point in moves that's not blocked
             final_pos = None
             min_cost = 1000
             for poss in moves:
+                if gameboard.is_fox_at_pos(poss):
+                    continue # blocked
                 cost = self._cost_tile(poss, gameboard)
                 if cost < min_cost:
                     min_cost = cost
