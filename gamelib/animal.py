@@ -388,8 +388,10 @@ class Fox(Animal):
 
     def attack(self, gameboard):
         """Attack a chicken"""
-        if self.closest and self.closest.pos == self.pos:
-            self._catch_chicken(self.closest, gameboard)
+        chicken = gameboard.get_animal_at_pos(self.pos, 'chicken')
+        if chicken:
+            # Always attack a chicken we step on, even if not hunting
+            self._catch_chicken(chicken, gameboard)
 
     def _catch_chicken(self, chicken, gameboard):
         """Catch a chicken"""
@@ -403,7 +405,7 @@ class Fox(Animal):
         if new_pos == self.pos:
             # We're not moving, so we can skip all the checks
             return new_pos
-        blocked = gameboard.is_fox_at_pos(new_pos)
+        blocked = gameboard.get_animal_at_pos(new_pos, 'fox') is not None
         if not blocked and new_pos.z == self.pos.z:
             # We're only worried about loops when not on a ladder
             blocked = new_pos in self.last_steps
@@ -423,7 +425,7 @@ class Fox(Animal):
             final_pos = None
             min_cost = 1000
             for poss in moves:
-                if gameboard.is_fox_at_pos(poss):
+                if gameboard.get_animal_at_pos(poss, 'fox'):
                     continue # blocked
                 cost = self._cost_tile(poss, gameboard)
                 if cost < min_cost:

@@ -292,7 +292,7 @@ class GameBoard(object):
         self.chickens = set()
         self.foxes = set()
         self.buildings = []
-        self._fox_pos_cache = []
+        self._pos_cache = { 'fox' : [], 'chicken' : []}
         self.cash = 0
         self.eggs = 0
         self.days = 0
@@ -367,13 +367,14 @@ class GameBoard(object):
         self.tv.sun(False)
         self.reset_states()
         self.toolbar.update_fin_tool(self.day)
-        self._cache_fox_positions()
+        self._cache_animal_positions()
 
     def start_day(self):
         self.day, self.night = True, False
         self.tv.sun(True)
         self.reset_states()
         self.toolbar.update_fin_tool(self.day)
+        self._pos_cache = { 'fox' : [], 'chicken' : []}
 
     def in_bounds(self, pos):
         """Check if a position is within the game boundaries"""
@@ -804,25 +805,35 @@ class GameBoard(object):
             self.chickens_attack()
         return over
 
-    def _cache_fox_positions(self):
+    def _cache_animal_positions(self):
         """Cache the current set of fox positions for the avoiding checks"""
         w, h = self.tv.size
-        self._fox_pos_cache = [[[False for z in range(5)] for y in range(h)]
+        self._pos_cache['fox'] = [[[None for z in range(5)] for y in range(h)]
                 for x in range(w)] # NB: Assumes z in [0, 4]
+        self._pos_cache['chicken'] = [[[None for z in range(5)] for y in range(h)]
+                for x in range(w)]
         for fox in self.foxes:
-            if self.in_bounds(fox.pos):
-                self._fox_pos_cache[fox.pos.x][fox.pos.y][fox.pos.z] = True
+            self._add_to_pos_cache(fox, 'fox')
+        for chick in self.chickens:
+            self._add_to_pos_cache(chick, 'chicken')
 
-    def _update_fox_pos_cache(self, old_pos, new_pos):
-        if self.is_fox_at_pos(old_pos):
-            self._fox_pos_cache[old_pos.x][old_pos.y][old_pos.z] = False
-        if new_pos and self.in_bounds(new_pos):
-            self._fox_pos_cache[new_pos.x][new_pos.y][new_pos.z] = True
+    def _add_to_pos_cache(self, animal, cache_type):
+        self._pos_cache[cache_type][animal.pos.x][animal.pos.y][animal.pos.z] = animal
 
-    def is_fox_at_pos(self, pos):
+    def _update_pos_cache(self, old_pos, animal, cache_type):
+        if self.in_bounds(old_pos):
+            self._pos_cache[cache_type][old_pos.x][old_pos.y][old_pos.z] = None
+        if animal:
+            pos = animal.pos
+            if self.in_bounds(pos):
+                self._pos_cache[cache_type][pos.x][pos.y][pos.z] = animal
+
+    def get_animal_at_pos(self, pos, cache_type):
+        if not self._pos_cache[cache_type]:
+            return None # We don't maintain the cache during the day
         if self.in_bounds(pos):
-            return self._fox_pos_cache[pos.x][pos.y][pos.z]
-        return False
+            return self._pos_cache[cache_type][pos.x][pos.y][pos.z]
+        return None
 
     def foxes_move(self):
         over = True
@@ -832,7 +843,7 @@ class GameBoard(object):
             if not fox.safe:
                 over = False
             if fox.pos != old_pos:
-                self._update_fox_pos_cache(old_pos, fox.pos)
+                self._update_pos_cache(old_pos, fox, 'fox')
         return over
 
     def foxes_attack(self):
@@ -894,7 +905,7 @@ class GameBoard(object):
         self.killed_foxes += 1
         self.toolbar.update_fox_counter(self.killed_foxes)
         self.add_cash(self.level.sell_price_dead_fox)
-        self._update_fox_pos_cache(fox.pos, None)
+        self._update_pos_cache(fox.pos, None, 'fox')
         self.remove_fox(fox)
 
     def remove_fox(self, fox):
@@ -915,6 +926,7 @@ class GameBoard(object):
         self.toolbar.update_chicken_counter(len(self.chickens))
         if chick in self.tv.sprites and chick.outside():
             self.tv.sprites.remove(chick)
+        self._update_pos_cache(chick.pos, None, 'chicken')
 
     def remove_building(self, building):
         if building in self.buildings:
