@@ -821,7 +821,7 @@ class GameBoard(object):
         self._pos_cache[cache_type][animal.pos.x][animal.pos.y][animal.pos.z] = animal
 
     def _update_pos_cache(self, old_pos, animal, cache_type):
-        if self.in_bounds(old_pos):
+        if self.in_bounds(old_pos) and self._pos_cache[cache_type]:
             self._pos_cache[cache_type][old_pos.x][old_pos.y][old_pos.z] = None
         if animal:
             pos = animal.pos
