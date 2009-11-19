@@ -348,10 +348,10 @@ class Fox(Animal):
         if self.pos == self.landmarks[-1]:
             if len(self.landmarks) > 1:
                 self.landmarks.pop() # Moving to the next landmark
-            else:
-                # Safely back at the start
-                self.safe = True
-                return self.pos
+        if not gameboard.in_bounds(self.pos) and not self.hunting:
+            # Safely out of sight
+            self.safe = True
+            return self.pos
         return self._find_best_path_step(self.landmarks[-1], gameboard)
 
     def _find_path_to_chicken(self, gameboard):
