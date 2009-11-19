@@ -255,7 +255,7 @@ class Fox(Animal):
             'grassland' : 2,
             'woodland' : 1, # Try to keep to the woods if possible
             'broken fence' : 2,
-            'fence' : 10,
+            'fence' : 25,
             'guardtower' : 2, # We can pass under towers
             'henhouse' : 30, # Don't go into a henhouse unless we're going to
                              # catch a chicken there
@@ -321,6 +321,32 @@ class Fox(Animal):
         if final_pos.z < self.pos.z:
             # We need to try heading down.
             return Position(self.pos.x, self.pos.y, self.pos.z - 1)
+        if final_pos.x == self.pos.x and final_pos.y == self.pos.y and \
+                final_pos.z > self.pos.z:
+            # We try heading up
+            return Position(self.pos.x, self.pos.y, self.pos.z + 1)
+        cur_dist = final_pos.dist(self.pos)
+        if cur_dist < 2:
+            # We're right ontop of our target, so just go there
+            return final_pos
+        # Find the cheapest spot close to us that moves us closer to the target
+        neighbours = [Position(self.pos.x + x, self.pos.y + y, self.pos.z) for
+                x in range(-1, 2) for y in range(-1, 2) if (x, y) != (0, 0)]
+        best_pos = self.pos
+        min_cost = 1000
+        min_dist = cur_dist
+        for point in neighbours:
+            dist = point.dist(final_pos)
+            if dist < cur_dist:
+                cost = self._cost_tile(point, gameboard)
+                if cost < min_cost or (min_cost == cost and dist < min_dist):
+                    # Prefer closest of equal cost points
+                    min_dist = dist
+                    min_cost = cost
+                    best = point
+        if min_cost < 20:
+            return best
+        # Else expensive step, so think further
         direct_path = self._gen_path(self.pos, final_pos)
         min_cost = self._cost_path(direct_path, gameboard)
         min_path = direct_path
@@ -328,9 +354,10 @@ class Fox(Animal):
         # This is delibrately not finding the optimal path, as I don't
         # want the foxes to be too intelligent, although the implementation
         # isn't well optimised yet
-        poss = [Position(x, y) for x in range(self.pos.x - 3, self.pos.x + 4)
-                for y in range(self.pos.y - 3, self.pos.y + 4)
-                if (x, y) != (0,0)]
+        # FIXME: Currently, this introduces loops, but the memory kind
+        # avoids that.  Fixing this is the next goal.
+        poss = [Position(self.pos.x + x, self.pos.y + y, self.pos.z) for
+                x in range(-3, 4) for y in range(-3, 4) if (x, y) != (0, 0)]
         for start in poss:
             cand_path = self._gen_path(self.pos, start) + \
                     self._gen_path(start, final_pos)
