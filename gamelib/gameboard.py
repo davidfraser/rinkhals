@@ -283,7 +283,7 @@ class GameBoard(object):
         self.tv.tga_load_level(level.map)
         width, height = self.tv.size
         # Ensure we don't every try to create more foxes then is sane
-        self.max_foxes = min(2*height+2*width-15, level.max_foxes)
+        self.max_foxes = level.max_foxes
         self.create_display()
 
         self.selected_tool = None
@@ -970,13 +970,7 @@ class GameBoard(object):
             else:
                 x = width
                 y = random.randint(-1, height)
-            skip = False
-            for other_fox in self.foxes:
-                if other_fox.pos.x == x and other_fox.pos.y == y:
-                    skip = True # Choose a new position
-                    break
-            if not skip:
-                self.add_fox(self._choose_fox((x, y)))
+            self.add_fox(self._choose_fox((x, y)))
 
     def fix_buildings(self):
         """Go through the level map looking for buildings that haven't
