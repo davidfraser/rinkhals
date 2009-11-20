@@ -558,6 +558,8 @@ class DemoFox(Fox):
     IMAGE_FILE = 'sprites/sapper_fox.png'
     CONFIG_NAME = 'sapper fox'
 
+    costs = Fox.costs.copy()
+
     def __init__(self, pos):
         Fox.__init__(self, pos)
         self.costs['fence'] = 2 # We don't worry about fences
