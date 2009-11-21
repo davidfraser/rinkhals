@@ -3,7 +3,6 @@
 from pgu import gui
 import os
 import pygame
-import constants
 import level
 import engine
 import data

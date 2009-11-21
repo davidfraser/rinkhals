@@ -5,7 +5,6 @@ from pygame.locals import MOUSEBUTTONDOWN, MOUSEMOTION, KEYDOWN, K_UP, K_DOWN, \
         K_LEFT, K_RIGHT
 from pgu import gui
 
-import data
 import tiles
 import icons
 import constants

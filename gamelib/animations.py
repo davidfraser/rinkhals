@@ -3,7 +3,6 @@
 from pgu.vid import Sprite
 
 import imagecache
-from misc import Position
 
 class Animation(Sprite):
     """Animation loop.
