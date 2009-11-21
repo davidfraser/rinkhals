@@ -3,7 +3,6 @@
 import random
 
 from pgu.vid import Sprite
-from pgu.algo import getline
 
 import imagecache
 import tiles
@@ -355,18 +354,7 @@ class Fox(Animal):
     def _gen_path(self, start_pos, final_pos):
         """Construct a direct path from start_pos to final_pos,
            excluding start_pos"""
-        if abs(start_pos.x - final_pos.x) < 2 and \
-                abs(start_pos.y - final_pos.y) < 2:
-            # pgu gets this case wrong on occasion.
-            return [final_pos]
-        start = start_pos.to_tile_tuple()
-        end = final_pos.to_tile_tuple()
-        points = getline(start, end)
-        points.remove(start) # exclude start_pos
-        if end not in points:
-            # Rounding errors in getline cause this
-            points.append(end)
-        return [Position(x[0], x[1]) for x in points]
+        return start_pos.intermediate_positions(final_pos)
 
     def _find_best_path_step(self, final_pos, gameboard):
         """Find the cheapest path to final_pos, and return the next step

@@ -4,6 +4,7 @@ import random
 
 from pygame.locals import KEYDOWN, K_ESCAPE
 from pgu import gui
+from pgu.algo import getline
 
 import serializer
 
@@ -39,6 +40,20 @@ class Position(serializer.Simplifiable):
 
     def __eq__(self, b):
         return self.x == b.x and self.y == b.y and self.z == b.z
+
+    def intermediate_positions(self, b):
+        """Only operates in two dimensions."""
+        if max(abs(self.x - b.x), abs(self.y - b.y)) <= 1:
+            # pgu gets this case wrong on occasion.
+            return [b]
+        start = self.to_tile_tuple()
+        end = b.to_tile_tuple()
+        points = getline(start, end)
+        points.remove(start) # exclude start_pos
+        if end not in points:
+            # Rounding errors in getline cause this
+            points.append(end)
+        return [Position(p[0], p[1]) for p in points]
 
 class WeightedSelection(object):
     def __init__(self, weightings=None):
