@@ -7,7 +7,7 @@ import level
 import engine
 import data
 import imagecache
-import tiles
+import gameboard
 
 def make_load_screen(level):
     """Create a screen for selecting the levels"""
@@ -45,9 +45,6 @@ class LoadScreen(gui.Document):
 
         if not self.cur_level:
             self.cur_level = self.levels[0]
-
-        self.tv = tiles.FarmVid()
-        self.tv.png_folder_load_tiles('tiles')
 
 
         def done_pressed():
@@ -98,16 +95,18 @@ class LoadScreen(gui.Document):
         self.clear()
         self.repaint()
 
-        self.tv.tga_load_level(self.cur_level.map)
+        board = gameboard.GameBoard(None, self.cur_level)
 
         space = self.style.font.size(" ")
+        w, h = board.tv.size
 
-        map_image = pygame.Surface((800, 800))
-        self.tv.paint(map_image)
+        map_image = pygame.Surface((20*w, 20*h))
+        board.tv.loop()
+        board.tv.paint(map_image)
 
         style = {
-                'width' : 300,
-                'height' : 300
+                'width' : min(300, 7*w),
+                'height' : min(300, 7*h),
                 }
 
         image = gui.Image(map_image, style=style)

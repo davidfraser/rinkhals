@@ -283,7 +283,6 @@ class GameBoard(object):
         width, height = self.tv.size
         # Ensure we don't every try to create more foxes then is sane
         self.max_foxes = level.max_foxes
-        self.create_display()
 
         self.selected_tool = None
         self.animal_to_place = None
@@ -297,8 +296,11 @@ class GameBoard(object):
         self.eggs = 0
         self.days = 0
         self.killed_foxes = 0
-        self.add_cash(level.starting_cash)
         self.day, self.night = True, False
+        # For the level loading case
+        if self.disp:
+            self.create_display()
+            self.add_cash(level.starting_cash)
 
         self.fix_buildings()
 
@@ -871,7 +873,8 @@ class GameBoard(object):
         self.chickens.add(chicken)
         if chicken.outside():
             self.tv.sprites.append(chicken)
-        self.toolbar.update_chicken_counter(len(self.chickens))
+        if self.disp:
+            self.toolbar.update_chicken_counter(len(self.chickens))
 
     def add_fox(self, fox):
         self.foxes.add(fox)
