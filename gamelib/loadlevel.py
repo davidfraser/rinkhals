@@ -8,6 +8,7 @@ import level
 import engine
 import data
 import imagecache
+import tiles
 
 def make_load_screen(level):
     """Create a screen for selecting the levels"""
@@ -27,8 +28,10 @@ class LoadContainer(gui.Container):
 
 class LoadScreen(gui.Document):
     def __init__(self, start_level, **params):
-        self.levels = {}
-        self.cur_level = start_level
+        gui.Document.__init__(self, **params)
+
+        self.levels = []
+        self.cur_level = None
         for name in os.listdir(data.filepath('levels/')):
             if name.endswith('.conf'):
                 try:
@@ -37,13 +40,16 @@ class LoadScreen(gui.Document):
                     continue # Skip levels that fail to load
                 if os.path.exists(this_level.map):
                     # Skip level if we can't see the map
-                    self.levels[this_level.level_name] = this_level
-        if not start_level.level_name in self.levels:
-            print 'Start level not found'
+                    self.levels.append(this_level)
+                    if this_level.level_name == start_level.level_name:
+                        self.cur_level = this_level
 
-        self.cur_level = self.levels.values()[0]
+        if not self.cur_level:
+            self.cur_level = self.levels[0]
 
-        gui.Document.__init__(self, **params)
+        self.tv = tiles.FarmVid()
+        self.tv.png_folder_load_tiles('tiles')
+
 
         def done_pressed():
             pygame.event.post(engine.DO_LOAD_LEVEL)
@@ -51,15 +57,84 @@ class LoadScreen(gui.Document):
         def cancel_pressed():
             pygame.event.post(engine.GO_MAIN_MENU)
 
-        done_button = gui.Button("Load This Level")
-        done_button.connect(gui.CLICK, done_pressed)
+        def next_pressed():
+            self.next_level()
+
+        def prev_pressed():
+            self.prev_level()
+
+        self.next_button = gui.Button("Next Level >>")
+        self.next_button.connect(gui.CLICK, next_pressed)
+
+        self.prev_button = gui.Button("<< Prev Level")
+        self.prev_button.connect(gui.CLICK, prev_pressed)
+
+        self.cancel_button = gui.Button("Cancel & return to main menu")
+        self.cancel_button.connect(gui.CLICK, cancel_pressed)
+
+        self.done_button = gui.Button("Load This Level")
+        self.done_button.connect(gui.CLICK, done_pressed)
 
         cancel_button = gui.Button("Cancel & return to main menu")
         cancel_button.connect(gui.CLICK, cancel_pressed)
 
-        self.add(done_button, align=0)
-        self.add(cancel_button, align=0)
+        self.render_level()
 
-    def get_level(self):
-        return self.cur_level_name
+
+    def next_level(self):
+        pos = self.levels.index(self.cur_level) + 1
+        if pos == len(self.levels):
+            pos = 0
+        self.cur_level = self.levels[pos]
+        self.render_level()
+
+    def prev_level(self):
+        pos = self.levels.index(self.cur_level) - 1
+        if pos == -1:
+            pos = len(self.levels) - 1
+        self.cur_level = self.levels[pos]
+        self.render_level()
+
+    def render_level(self):
+        self.tv.tga_load_level(self.cur_level.map)
+        self.clear()
+        self.repaint()
+
+        space = self.style.font.size(" ")
+
+        map_image = pygame.Surface((800, 800))
+        self.tv.paint(map_image)
+
+        style = {
+                'width' : 300,
+                'height' : 300
+                }
+
+        image = gui.Image(map_image, style=style)
+
+        self.block(align=0)
+        self.add(image)
+
+        self.block(align=0)
+        self.add(gui.Label(self.cur_level.level_name))
+        self.block(align=-1)
+        for word in self.cur_level.goal.split():
+            self.add(gui.Label(word))
+            self.space(space)
+
+        self.block(align=0)
+        self.add(self.prev_button)
+        self.space(space)
+        self.add(self.done_button)
+        self.space(space)
+        self.add(self.cancel_button)
+        self.space(space)
+        self.add(self.next_button)
+
+    def clear(self):
+        """Clear the document"""
+        for widget in self.widgets[:]:
+            self.remove(widget)
+
+
 
