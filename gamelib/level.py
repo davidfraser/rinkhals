@@ -2,6 +2,7 @@
 
 import constants
 import data
+import os
 from animal import DEFAULT_FOX_WEIGHTINGS
 from ConfigParser import RawConfigParser
 
@@ -9,8 +10,16 @@ class Level(object):
     """Container for level details"""
 
     def __init__(self, level_name):
+        level_info = None
         default_map = '%s.tga' % level_name
-        level_info = data.filepath('levels/%s.conf' % level_name)
+        for poss_file in ['levels/%s.conf' % level_name, '%s.conf' % level_name,
+                'levels/%s' % level_name, level_name]:
+            cand = data.filepath(poss_file)
+            if os.path.exists(cand):
+                level_info = cand
+                break
+        if not level_info:
+            raise RuntimeError('Unable to load %s' % level_name)
         # Load the level info file
         # setup defaults
         defaults = {
