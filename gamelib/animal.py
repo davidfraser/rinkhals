@@ -198,16 +198,20 @@ class Chicken(Animal):
         pos_options = [pos for pos in surrounds if gameboard.in_bounds(pos) and gameboard.tv.get(pos.to_tile_tuple()) == gameboard.GRASSLAND and not gameboard.get_outside_chicken(pos.to_tile_tuple())] + [self.pos]
         self.pos = pos_options[random.randint(0, len(pos_options)-1)]
 
+    def has_axe(self):
+        return bool([e for e in self.weapons() if item.NAME == "axe"])
+
     def chop(self, gameboard):
-        pos_x, pos_y = self.pos.to_tile_tuple()
-        surrounds = [Position(pos_x + dx, pos_y + dy) for dx in [-1, 0, 1] for dy in [-1, 0, 1]]
-        tree_options = [pos for pos in surrounds if gameboard.in_bounds(pos) and gameboard.tv.get(pos.to_tile_tuple()) == gameboard.WOODLAND]
-        if tree_options:
-            num_trees_to_cut = random.randint(1, len(tree_options))
-            trees_to_cut = random.sample(tree_options, num_trees_to_cut)
-            for tree_pos in trees_to_cut:
-                gameboard.add_wood(5)
-                gameboard.tv.set(tree_pos.to_tile_tuple(), gameboard.GRASSLAND)
+        if self.has_axe():
+            pos_x, pos_y = self.pos.to_tile_tuple()
+            surrounds = [Position(pos_x + dx, pos_y + dy) for dx in [-1, 0, 1] for dy in [-1, 0, 1]]
+            tree_options = [pos for pos in surrounds if gameboard.in_bounds(pos) and gameboard.tv.get(pos.to_tile_tuple()) == gameboard.WOODLAND]
+            if tree_options:
+                num_trees_to_cut = random.randint(1, len(tree_options))
+                trees_to_cut = random.sample(tree_options, num_trees_to_cut)
+                for tree_pos in trees_to_cut:
+                    gameboard.add_wood(5)
+                    gameboard.tv.set(tree_pos.to_tile_tuple(), gameboard.GRASSLAND)
 
     def lay(self, gameboard):
         """See if the chicken lays an egg"""
