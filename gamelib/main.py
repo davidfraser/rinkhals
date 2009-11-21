@@ -6,6 +6,8 @@ Feel free to put all your game code here, or in other modules in this "gamelib"
 package.
 '''
 
+import sys
+
 import pygame
 from pgu import gui
 from pygame.locals import SWSURFACE
@@ -13,8 +15,8 @@ from pygame.locals import SWSURFACE
 #from engine import Engine, MainMenuState
 from sound import init_sound
 import constants
+from config import config
 import data
-import sys
 
 def create_main_app(screen):
     """Create an app with a background widget."""
@@ -26,6 +28,7 @@ def create_main_app(screen):
 
 def main():
     """Main script."""
+    config.configure(sys.argv[1:])
     init_sound()
     screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE)
     pygame.display.set_icon(pygame.image.load(
@@ -34,12 +37,7 @@ def main():
 
     from engine import Engine, MainMenuState
 
-    if len(sys.argv) > 1:
-        level_name = sys.argv[1]
-    else:
-        level_name = 'two_weeks'
-
-    engine = Engine(main_app, level_name)
+    engine = Engine(main_app, config.level_name)
     try:
         engine.run(MainMenuState(engine), screen)
     except KeyboardInterrupt:

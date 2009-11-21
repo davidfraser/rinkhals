@@ -1,8 +1,10 @@
 import os
-import pygame
 import sys
 
+import pygame
+
 import data
+from config import config
 import constants
 
 SOUND_INITIALIZED = False
@@ -10,6 +12,8 @@ SOUND_INITIALIZED = False
 def init_sound():
     """initialize the sound system"""
     global SOUND_INITIALIZED
+    if not config.sound:
+        return
     try:
         pygame.mixer.init(constants.FREQ, constants.BITSIZE, constants.CHANNELS, constants.BUFFER)
         SOUND_INITIALIZED = True
@@ -20,7 +24,7 @@ SOUND_CACHE = {}
 
 def play_sound(filename):
     """plays the sound with the given filename from the data sounds directory"""
-    if not SOUND_INITIALIZED:
+    if not (SOUND_INITIALIZED and config.sound):
         return
     file_path = data.filepath("sounds", filename)
     sound = SOUND_CACHE.get(file_path, None)
@@ -35,7 +39,7 @@ CURRENT_MUSIC_FILE = None
 def stop_background_music():
     """stops any playing background music"""
     global CURRENT_MUSIC_FILE
-    if not SOUND_INITIALIZED:
+    if not (SOUND_INITIALIZED and config.sound):
         return
     CURRENT_MUSIC_FILE = None
     # TODO: fadeout in a background thread
@@ -44,7 +48,7 @@ def stop_background_music():
 def background_music(filename):
     """plays the background music with the given filename from the data sounds directory"""
     global CURRENT_MUSIC_FILE
-    if not SOUND_INITIALIZED:
+    if not (SOUND_INITIALIZED and config.sound):
         return
     file_path = data.filepath("sounds", filename)
     if CURRENT_MUSIC_FILE == file_path:

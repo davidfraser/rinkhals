@@ -148,8 +148,6 @@ class DayState(State):
             return NightState(self.game)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
             self.dialog = check_exit()
-        elif e.type is ANIM_ID:
-            self.game.gameboard.run_animations()
         elif e.type is KEYDOWN and e.key == K_n:
             return pygame.event.post(START_NIGHT)
         elif events_equal(e, GO_MAIN_MENU):
@@ -212,8 +210,6 @@ class NightState(State):
             pygame.time.set_timer(MOVE_FOX_ID, 4*self.cycle_time)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
             self.dialog = check_exit()
-        elif e.type is ANIM_ID:
-            self.game.gameboard.run_animations()
         elif e.type is MOVE_FOX_ID:
             # ensure no timers trigger while we're running
             pygame.time.set_timer(ANIM_ID, 0)
