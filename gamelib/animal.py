@@ -344,7 +344,9 @@ class Fox(Animal):
                     min_dist = dist
                     min_cost = cost
                     best = point
-        if min_cost < 20:
+        if min_cost < 20 or not gameboard.in_bounds(self.pos):
+            # If we're not on the gameboard yet, there's no point in looking
+            # for an optimal path.
             return best
         # Else expensive step, so think further
         direct_path = self._gen_path(self.pos, final_pos)
