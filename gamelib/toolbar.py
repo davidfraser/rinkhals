@@ -206,13 +206,29 @@ class ToolBar(gui.Table):
 
     def save_game(self):
         """Save game 'dialog'."""
-        data = self.gameboard.save_game()
-        open("foxassault.json", "wb").write(json.dumps(data))
+        dialog = gui.FileDialog("Save game ...", button_txt="Save")
+
+        def save():
+            if dialog.value is None:
+                return
+            data = self.gameboard.save_game()
+            open(dialog.value, "wb").write(json.dumps(data))
+
+        dialog.connect(gui.CHANGE, save)
+        dialog.open()
 
     def load_game(self):
         """Load game 'dialog'."""
-        data = json.loads(open("foxassault.json", "rb").read())
-        self.gameboard.restore_game(data)
+        dialog = gui.FileDialog("Load game ...", button_txt="Load")
+
+        def restore():
+            if dialog.value is None:
+                return
+            data = json.loads(open(dialog.value, "rb").read())
+            self.gameboard.restore_game(data)
+
+        dialog.connect(gui.CHANGE, restore)
+        dialog.open()
 
     update_cash_counter = mkcountupdate('cash_counter')
     update_wood_counter = mkcountupdate('wood_counter')
