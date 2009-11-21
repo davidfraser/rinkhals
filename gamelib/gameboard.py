@@ -369,9 +369,10 @@ class GameBoard(object):
         self.toolbar.update_fin_tool(self.day)
         self._cache_animal_positions()
         self.spawn_foxes()
-        self.lay_eggs()
+        self.eggs = 0
         for chicken in self.chickens:
-            chicken.reload_weapon()
+            chicken.start_night(self)
+        self.toolbar.update_egg_counter(self.eggs)
 
     def start_day(self):
         self.day, self.night = True, False
@@ -453,7 +454,7 @@ class GameBoard(object):
         chick = self.get_outside_chicken(tile_pos)
         if chick is None:
             building = self.get_building(tile_pos)
-            if building and building.NAME in buildings.HENHOUSES:
+            if building and building.HENHOUSE:
                 self.open_building_dialog(building, do_sell)
             return
         do_sell(chick)
@@ -479,7 +480,7 @@ class GameBoard(object):
             return False
 
         building = self.get_building(tile_pos)
-        if building and building.NAME in buildings.HENHOUSES:
+        if building and building.HENHOUSE:
             self.open_building_dialog(building, do_sell)
 
     def select_animal_to_place(self, animal):
@@ -875,18 +876,9 @@ class GameBoard(object):
         self.buildings.append(building)
         self.tv.sprites.append(building, layer='buildings')
 
-    def lay_eggs(self):
-        self.eggs = 0
-        for building in self.buildings:
-            if building.NAME in buildings.HENHOUSES:
-                for chicken in building.occupants():
-                    chicken.lay()
-                    self.eggs += chicken.get_num_eggs()
-        self.toolbar.update_egg_counter(self.eggs)
-
     def hatch_eggs(self):
         for building in self.buildings:
-            if building.NAME in buildings.HENHOUSES:
+            if building.HENHOUSE:
                 for chicken in building.occupants():
                     new_chick = chicken.hatch(self)
                     if new_chick:

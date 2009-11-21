@@ -155,6 +155,10 @@ class Chicken(Animal):
         Animal.__init__(self, image_left, image_right, pos)
         self.eggs = []
 
+    def start_night(self, gameboard):
+        self.lay(gameboard)
+        self.reload_weapon()
+
     def _game_death(self, gameboard):
         gameboard.remove_chicken(self)
 
@@ -162,12 +166,14 @@ class Chicken(Animal):
         """A free chicken will move away from other free chickens"""
         pass
 
-    def lay(self):
+    def lay(self, gameboard):
         """See if the chicken lays an egg"""
-        if not self.eggs:
-            for x in range(random.randint(1, 4)):
-                self.eggs.append(Egg(self.pos))
-            self.equip(equipment.NestEgg())
+        if self.abode and self.abode.building.HENHOUSE:
+            if not self.eggs:
+                for x in range(random.randint(1, 4)):
+                    self.eggs.append(Egg(self.pos))
+                self.equip(equipment.NestEgg())
+            gameboard.eggs += self.get_num_eggs()
 
     def remove_eggs(self):
         """Clean up the egg state"""

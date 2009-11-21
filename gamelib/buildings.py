@@ -68,6 +68,7 @@ class Building(Sprite):
     BREAKABLE = False
     ABODE = False
     FLOORS = None
+    HENHOUSE = False
 
     def __init__(self, pos):
         """Initial image, tile vid position, size and tile number for building."""
@@ -316,6 +317,8 @@ class HenHouse(Abode):
     NAME = 'Henhouse'
     FLOORS = [0]
 
+    HENHOUSE = True
+
 class DoubleStoryHenHouse(HenHouse):
     """A double story hen house."""
 
@@ -367,9 +370,6 @@ class Fence(Building):
 def is_building(obj):
     """Return true if obj is a build class."""
     return getattr(obj, "IS_BUILDING", False) and hasattr(obj, "NAME")
-
-# Building hens can lay eggs in
-HENHOUSES = [HenHouse.NAME, DoubleStoryHenHouse.NAME]
 
 BUILDINGS = []
 for name in dir():
