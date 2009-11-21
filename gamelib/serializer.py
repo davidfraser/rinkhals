@@ -6,34 +6,77 @@ the communications API.
 
 REGISTERED_CLASSES = {}
 
-def simplify(item):
+def simplify(item, refs=None):
     """Convert an item to a simple data structure."""
-    if issubclass(type(item), Simplifiable):
-        return item.simplify()
-    elif type(item) is list:
-        return { 'list': [simplify(x) for x in item] }
-    elif type(item) is tuple:
-        return { 'tuple': tuple([simplify(x) for x in item]) }
-    elif item is None:
-        return { 'none': '' }
-    else:
-        return { 'raw': item }
+    if refs is None:
+        refs = set()
 
-def unsimplify(value):
+    refid = id(item)
+
+    if refid in refs:
+        return { 'byref': refid }
+
+    if issubclass(type(item), Simplifiable):
+        refs.add(refid)
+        value = item.simplify(refs)
+        value['refid'] = refid
+    elif type(item) is list:
+        refs.add(refid)
+        value = { 'list': [simplify(x, refs) for x in item] }
+        value['refid'] = refid
+    elif type(item) is set:
+        refs.add(refid)
+        value = { 'set': [simplify(x, refs) for x in item] }
+        value['refid'] = refid
+    elif type(item) is tuple:
+        refs.add(refid)
+        value = { 'tuple': tuple([simplify(x, refs) for x in item]) }
+        value['refid'] = refid
+    elif item is None:
+        value = { 'none': '' }
+    else:
+        value = { 'raw': item }
+
+    return value
+
+def unsimplify(value, refs=None):
     """Reverse the simplify process."""
+    if refs is None:
+        refs = {}
+
+    if 'refid' in value:
+        refid = value['refid']
+
     if value.has_key('class'):
         cls = REGISTERED_CLASSES[value['class']]
-        return cls.unsimplify(value)
+        item = cls.unsimplify(value, refs)
     elif value.has_key('list'):
-        return [unsimplify(x) for x in value['list']]
+        item = []
+        refs[refid] = item
+        item.extend(unsimplify(x, refs) for x in value['list'])
+    elif value.has_key('set'):
+        item = set()
+        refs[refid] = item
+        item.update(unsimplify(x, refs) for x in value['set'])
     elif value.has_key('tuple'):
-        return tuple([unsimplify(x) for x in value['tuple']])
+        item = tuple([unsimplify(x, refs) for x in value['tuple']])
     elif value.has_key('none'):
-        return None
+        item = None
     elif value.has_key('raw'):
-        return value['raw']
+        item = value['raw']
+    elif value.has_key('byref'):
+        refid = value['byref']
+        if refid in refs:
+            item = refs[refid]
+        else:
+            raise SimplifyError("Unknown refid %r in byref." % (refid,))
     else:
-        raise SimplifyError("Unknown tar type key.")
+        raise SimplifyError("Unknown unsimplify type key.")
+
+    if 'refid' in value:
+        refs[value['refid']] = item
+
+    return item
 
 class SimplifyError(Exception):
     pass
@@ -64,7 +107,7 @@ class Simplifiable(object):
         return cls.__new__(cls)
     make = classmethod(make)
 
-    def unsimplify(cls, value):
+    def unsimplify(cls, value, refs=None):
         """
         Create an object of this class (or a sub-class) from its
         simplification.
@@ -79,13 +122,15 @@ class Simplifiable(object):
             raise SimplifyError("Wrong number of attributes for this class")
 
         obj = actual_cls.make()
+        refs[value['refid']] = obj
+
         for attr, value in zip(actual_cls.SIMPLIFY, attrs):
-            setattr(obj, attr, unsimplify(value))
+            setattr(obj, attr, unsimplify(value, refs))
 
         return obj
     unsimplify = classmethod(unsimplify)
 
-    def simplify(self):
+    def simplify(self, refs=None):
         """
         Create a simplified version (tar) of the object.
         """
@@ -95,7 +140,7 @@ class Simplifiable(object):
         attrs = []
         for attr in self.SIMPLIFY:
             o = getattr(self, attr)
-            attrs.append(simplify(o))
+            attrs.append(simplify(o, refs))
 
         value['attributes'] = attrs
         return value

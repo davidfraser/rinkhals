@@ -54,9 +54,9 @@ class Animal(Sprite, serializer.Simplifiable):
         return cls((0, 0))
     make = classmethod(make)
 
-    def unsimplify(cls, value):
+    def unsimplify(cls, *args, **kwargs):
         """Override default Simplifiable unsimplification."""
-        obj = super(Animal, cls).unsimplify(value)
+        obj = super(Animal, cls).unsimplify(*args, **kwargs)
         obj.redraw()
         return obj
     unsimplify = classmethod(unsimplify)

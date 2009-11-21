@@ -13,8 +13,14 @@ import serializer
 import warnings
 warnings.filterwarnings("ignore", "os.popen3 is deprecated.")
 
-class Place(object):
+class Place(serializer.Simplifiable):
     """Space within a building that can be occupied."""
+
+    SIMPLIFY = [
+        'occupant',
+        'building',
+        'offset',
+    ]
 
     def __init__(self, building, offset):
         self.occupant = None
@@ -40,10 +46,15 @@ class Place(object):
         return (bpos[0] + self.offset[0], bpos[1] + self.offset[1],
                 self.offset[2])
 
-class Floor(object):
+class Floor(serializer.Simplifiable):
     """A set of places within a building. Places on a
        floor are organised into rows and columns.
        """
+
+    SIMPLIFY = [
+        'title',
+        'places',
+    ]
 
     def __init__(self, title, places):
         self.title = title # str
@@ -81,7 +92,7 @@ class Building(Sprite, serializer.Simplifiable):
         '_repair_price',
         '_sun_on',
         '_broken',
-        '_predators',
+        '_floors',
     ]
 
     def __init__(self, pos):
