@@ -11,7 +11,7 @@ def simplify(item, refs=None):
     if refs is None:
         refs = set()
 
-    refid = id(item)
+    refid = str(id(item))
 
     if refid in refs:
         return { 'byref': refid }

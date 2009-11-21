@@ -1,4 +1,5 @@
 import pygame
+import xmlrpclib
 from pgu import gui
 
 import icons
@@ -7,10 +8,6 @@ import buildings
 import equipment
 import cursors
 import engine
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 class OpaqueLabel(gui.Label):
     def __init__(self, value, **params):
@@ -166,7 +163,11 @@ class BaseToolBar(gui.Table):
             if dialog.value is None:
                 return
             data = self.gameboard.save_game()
-            open(dialog.value, "wb").write(json.dumps(data))
+            xml = xmlrpclib.dumps((data,), "foxassault")
+            try:
+                open(dialog.value, "wb").write(xml)
+            except Exception, e:
+                print "Failed to save game: %s" % (e,)
 
         dialog.connect(gui.CHANGE, save)
         dialog.open()
@@ -178,7 +179,16 @@ class BaseToolBar(gui.Table):
         def restore():
             if dialog.value is None:
                 return
-            data = json.loads(open(dialog.value, "rb").read())
+            try:
+                xml = open(dialog.value, "rb").read()
+                params, methodname = xmlrpclib.loads(xml)
+                if methodname != "foxassault":
+                    raise ValueError("Bad XML save game.")
+                data = params[0]
+            except Exception, e:
+                "Failed to load game: %s" % (e,)
+                return
+
             self.gameboard.restore_game(data)
 
         dialog.connect(gui.CHANGE, restore)
