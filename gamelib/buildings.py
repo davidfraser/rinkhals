@@ -135,6 +135,14 @@ class Building(Sprite, serializer.Simplifiable):
         return cls((0, 0))
     make = classmethod(make)
 
+    def unsimplify(cls, *args, **kwargs):
+        """Override default Simplifiable unsimplification."""
+        obj = super(Building, cls).unsimplify(*args, **kwargs)
+        obj._set_main_image()
+        obj.update_occupant_count()
+        return obj
+    unsimplify = classmethod(unsimplify)
+
     def _set_images(self):
         self.images = {'fixed': {
             'day': imagecache.load_image(self.IMAGE),
