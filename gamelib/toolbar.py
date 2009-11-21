@@ -131,17 +131,17 @@ class BaseToolBar(gui.Table):
         doc.br(space[1])
         for building in buildings.BUILDINGS:
             doc.add(make_box(building.NAME))
-            doc.add(make_box('%d' % building.BUY_PRICE))
-            doc.add(make_box('%d' % building.SELL_PRICE))
+            doc.add(make_box('%d planks' % building.BUY_PRICE))
+            doc.add(make_box('%d planks' % building.SELL_PRICE))
             if building.BREAKABLE:
-                doc.add(make_box('%d' % building.REPAIR_PRICE))
+                doc.add(make_box('%d planks' % building.REPAIR_PRICE))
             else:
                 doc.add(make_box('N/A'))
             doc.br(space[1])
         for equip in equipment.EQUIPMENT:
             doc.add(make_box(equip.NAME))
-            doc.add(make_box('%d' % equip.BUY_PRICE))
-            doc.add(make_box('%d' % equip.SELL_PRICE))
+            doc.add(make_box('%d groats' % equip.BUY_PRICE))
+            doc.add(make_box('%d groats' % equip.SELL_PRICE))
             doc.add(make_box('N/A'))
             doc.br(space[1])
 
