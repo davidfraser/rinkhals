@@ -250,7 +250,7 @@ class Chicken(Animal):
         """Choose a random fox within range of this weapon."""
         killable_foxes = []
         for fox in gameboard.foxes:
-            if not visible(self, fox):
+            if not visible(self, fox, gameboard):
                 continue
             if weapon.in_range(gameboard, self, fox):
                 killable_foxes.append(fox)
@@ -659,9 +659,15 @@ def _get_vision_param(parameter, watcher):
         param = modifier(param)
     return param
 
-def visible(watcher, watchee):
+def visible(watcher, watchee, gameboard):
     vision_bonus = _get_vision_param('VISION_BONUS', watcher)
     range_penalty = _get_vision_param('VISION_RANGE_PENALTY', watcher)
+    positions = watcher.pos.intermediate_positions(watchee.pos)
+    for pos in positions:
+        building = gameboard.get_building(pos.to_tile_tuple())
+        # This allows chickens to fire across GuardTowers and Fences.
+        if building and building.BLOCKS_VISION and not (watcher in building.occupants()):
+            return False
     distance = watcher.pos.dist(watchee.pos) - 1
     roll = random.randint(1, 100)
     return roll > watchee.STEALTH - vision_bonus + range_penalty*distance

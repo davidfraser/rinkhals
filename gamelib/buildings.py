@@ -70,6 +70,7 @@ class Building(Sprite, serializer.Simplifiable):
     ABODE = False
     FLOORS = None
     HENHOUSE = False
+    BLOCKS_VISION = True
 
     SIMPLIFY = [
         'pos',
@@ -366,6 +367,7 @@ class GuardTower(Abode):
     MODIFY_GUN_RANGE_PENALTY = lambda s, x: x-1
     MODIFY_VISION_BONUS = lambda s, x: x+10
     MODIFY_VISION_RANGE_PENALTY = lambda s, x: x-2
+    BLOCKS_VISION = False
 
 class Fence(Building):
     """A fence."""
@@ -383,6 +385,8 @@ class Fence(Building):
     IMAGE_BROKEN = 'tiles/broken_fence.png'
     SELECTED_IMAGE_BROKEN = 'tiles/broken_fence.png'
     NAME = 'Fence'
+
+    BLOCKS_VISION = False
 
 
 def is_building(obj):
