@@ -132,7 +132,7 @@ class SniperRifle(Weapon):
     RANGE_PENALTY = 10
     HIT_SOUND = "fire-rifle.ogg"
 
-    CHICKEN_IMAGE_FILE = 'sprites/equip_rifle.png'
+    CHICKEN_IMAGE_FILE = 'sprites/equip_sniper_rifle.png'
 
     ANIMATION = animations.MuzzleFlash
 
