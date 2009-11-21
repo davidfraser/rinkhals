@@ -199,7 +199,7 @@ class Chicken(Animal):
         self.pos = pos_options[random.randint(0, len(pos_options)-1)]
 
     def has_axe(self):
-        return bool([e for e in self.weapons() if item.NAME == "axe"])
+        return bool([e for e in self.weapons() if e.TYPE == "AXE"])
 
     def chop(self, gameboard):
         if self.has_axe():
