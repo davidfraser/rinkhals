@@ -852,6 +852,7 @@ class GameBoard(serializer.Simplifiable):
             if attr in ('chickens', 'buildings'):
                 continue
             setattr(self, attr, getattr(newself, attr))
+        self.redraw_counters()
 
 
 class TextDialog(gui.Dialog):
