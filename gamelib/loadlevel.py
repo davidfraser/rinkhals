@@ -96,9 +96,10 @@ class LoadScreen(gui.Document):
         self.render_level()
 
     def render_level(self):
-        self.tv.tga_load_level(self.cur_level.map)
         self.clear()
         self.repaint()
+
+        self.tv.tga_load_level(self.cur_level.map)
 
         space = self.style.font.size(" ")
 
@@ -135,6 +136,7 @@ class LoadScreen(gui.Document):
         """Clear the document"""
         for widget in self.widgets[:]:
             self.remove(widget)
+        self.layout.init()
 
 
 
