@@ -369,12 +369,12 @@ class GameBoard(object):
         self.tv.sun(False)
         self.reset_states()
         self.toolbar.update_fin_tool(self.day)
-        self._cache_animal_positions()
         self.spawn_foxes()
         self.eggs = 0
         for chicken in self.chickens.copy():
             chicken.start_night(self)
         self.toolbar.update_egg_counter(self.eggs)
+        self._cache_animal_positions()
 
     def start_day(self):
         self.day, self.night = True, False
@@ -788,6 +788,10 @@ class GameBoard(object):
                 self.remove_fox(fox)
         self.foxes = set() # Remove all the foxes
 
+    def clear_chickens(self):
+        for chicken in self.chickens.copy():
+            self.remove_chicken(chicken)
+
     def run_animations(self):
         # For legacy.
         if self.toolbar.anim_clear_tool:
@@ -820,7 +824,8 @@ class GameBoard(object):
             self._add_to_pos_cache(chick, 'chicken')
 
     def _add_to_pos_cache(self, animal, cache_type):
-        self._pos_cache[cache_type][animal.pos.x][animal.pos.y][animal.pos.z] = animal
+        if self.in_bounds(animal.pos):
+            self._pos_cache[cache_type][animal.pos.x][animal.pos.y][animal.pos.z] = animal
 
     def _update_pos_cache(self, old_pos, animal, cache_type):
         if self.in_bounds(old_pos) and self._pos_cache[cache_type]:
