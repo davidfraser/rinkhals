@@ -301,6 +301,7 @@ class GameBoard(object):
         if self.disp:
             self.create_display()
             self.add_cash(level.starting_cash)
+            self.add_wood(level.starting_wood)
 
         self.fix_buildings()
 
@@ -656,12 +657,12 @@ class GameBoard(object):
 
     def buy_building(self, tile_pos, building_cls):
         building = building_cls(tile_pos)
-        if self.cash < building.buy_price():
+        if self.wood < building.buy_price():
             return
         if any(building.covers((chicken.pos.x, chicken.pos.y)) for chicken in self.chickens):
             return
         if building.place(self.tv):
-            self.add_cash(-building.buy_price())
+            self.add_wood(-building.buy_price())
             self.add_building(building)
 
     def buy_equipment(self, tile_pos, equipment_cls):
@@ -697,7 +698,7 @@ class GameBoard(object):
             warning = gui.Button("Occupied buildings may not be sold.")
             self.open_dialog(warning)
             return
-        self.add_cash(building.sell_price())
+        self.add_wood(building.sell_price())
         building.remove(self.tv)
         self.remove_building(building)
 
@@ -705,7 +706,9 @@ class GameBoard(object):
         building = self.get_building(tile_pos)
         if not (building and building.broken()):
             return
-        self.add_cash(-building.repair_price())
+        if self.wood < building.repair_price():
+            return
+        self.add_wood(-building.repair_price())
         building.repair(self.tv)
 
     def sell_equipment(self, tile_pos):

@@ -28,6 +28,7 @@ FRAMERATE = 30 # how often to check if playback has finished
 # Default values that can be overridden by the levels
 
 DEFAULT_STARTING_CASH = 1000
+DEFAULT_STARTING_WOOD = 0
 DEFAULT_SELL_PRICE_CHICKEN = 10
 DEFAULT_SELL_PRICE_EGG = 5
 DEFAULT_SELL_PRICE_DEAD_FOX = 15

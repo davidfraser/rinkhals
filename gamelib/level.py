@@ -33,6 +33,7 @@ class Level(object):
                 'max foxes' : constants.DEFAULT_MAX_FOXES,
                 'min foxes' : 0,
                 'starting cash' : constants.DEFAULT_STARTING_CASH,
+                'starting wood' : constants.DEFAULT_STARTING_WOOD,
                 }
         # Add default fox weightings
         for animal, prob in DEFAULT_FOX_WEIGHTINGS:
@@ -54,6 +55,7 @@ class Level(object):
         self.sell_price_dead_fox = config.getint('Game values',
                 'sell price dead fox')
         self.starting_cash = config.getint('Game values', 'starting cash')
+        self.starting_wood = config.getint('Game values', 'starting wood')
         self.fox_weightings = []
         for animal, _prob in DEFAULT_FOX_WEIGHTINGS:
             self.fox_weightings.append((animal, config.getint('Fox probablities',

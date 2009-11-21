@@ -327,8 +327,8 @@ class HenHouse(Abode):
     """A HenHouse."""
 
     TILE_NO = tiles.REVERSE_TILE_MAP['henhouse']
-    BUY_PRICE = 100
-    SELL_PRICE = 90
+    BUY_PRICE = 20
+    SELL_PRICE = 18
     SIZE = (3, 2)
     IMAGE = 'sprites/henhouse.png'
     SELECTED_IMAGE = 'sprites/select_henhouse.png'
@@ -341,8 +341,8 @@ class DoubleStoryHenHouse(HenHouse):
     """A double story hen house."""
 
     TILE_NO = tiles.REVERSE_TILE_MAP['hendominium']
-    BUY_PRICE = 300
-    SELL_PRICE = 150
+    BUY_PRICE = 60
+    SELL_PRICE = 30
     SIZE = (2, 3)
     IMAGE = 'sprites/hendominium.png'
     SELECTED_IMAGE = 'sprites/select_hendominium.png'
@@ -353,8 +353,8 @@ class GuardTower(Abode):
     """A GuardTower."""
 
     TILE_NO = tiles.REVERSE_TILE_MAP['guardtower']
-    BUY_PRICE = 200
-    SELL_PRICE = 150
+    BUY_PRICE = 40
+    SELL_PRICE = 30
     SIZE = (2, 2)
     IMAGE = 'sprites/watchtower.png'
     SELECTED_IMAGE = 'sprites/select_watchtower.png'
@@ -373,10 +373,10 @@ class Fence(Building):
     TILE_NO = tiles.REVERSE_TILE_MAP['fence']
     TILE_NO_BROKEN = tiles.REVERSE_TILE_MAP['broken fence']
     BREAKABLE = True
-    BUY_PRICE = 50
-    SELL_PRICE = 25
-    REPAIR_PRICE = 25
-    SELL_PRICE_BROKEN = 5
+    BUY_PRICE = 10
+    SELL_PRICE = 5
+    REPAIR_PRICE = 5
+    SELL_PRICE_BROKEN = 1
     SIZE = (1, 1)
     IMAGE = 'tiles/fence.png'
     SELECTED_IMAGE = 'tiles/fence.png'

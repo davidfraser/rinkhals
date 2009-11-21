@@ -203,7 +203,7 @@ class Chicken(Animal):
         surrounds = [Position(pos_x + dx, pos_y + dy) for dx in [-1, 0, 1] for dy in [-1, 0, 1]]
         tree_options = [pos for pos in surrounds if gameboard.in_bounds(pos) and gameboard.tv.get(pos.to_tile_tuple()) == gameboard.WOODLAND]
         if tree_options:
-            num_trees_to_cut = random.randint(0, len(tree_options)-1)
+            num_trees_to_cut = random.randint(1, len(tree_options))
             trees_to_cut = random.sample(tree_options, num_trees_to_cut)
             for tree_pos in trees_to_cut:
                 gameboard.add_wood(5)
