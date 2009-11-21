@@ -49,6 +49,11 @@ class Animal(Sprite, serializer.Simplifiable):
         self.abode = None
         self.facing = 'left'
 
+    def make(cls):
+        """Override default Simplifiable object creation."""
+        return cls((0, 0))
+    make = classmethod(make)
+
     def loop(self, tv, _sprite):
         ppos = tv.tile_to_view(self.pos.to_tile_tuple())
         self.rect.x = ppos[0]

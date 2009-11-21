@@ -118,6 +118,11 @@ class Building(Sprite, serializer.Simplifiable):
         # Create the building somewhere far off screen
         Sprite.__init__(self, self.images['fixed']['day'], (-1000, -1000))
 
+    def make(cls):
+        """Override default Simplifiable object creation."""
+        return cls((0, 0))
+    make = classmethod(make)
+
     def _set_images(self):
         self.images = {'fixed': {
             'day': imagecache.load_image(self.IMAGE),

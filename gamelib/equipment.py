@@ -24,6 +24,11 @@ class Equipment(serializer.Simplifiable):
         self._sell_price = self.SELL_PRICE
         self._name = self.NAME
 
+    def make(cls):
+        """Override default Simplifiable object creation."""
+        return cls()
+    make = classmethod(make)
+
     def buy_price(self):
         return self._buy_price
 
