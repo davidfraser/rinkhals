@@ -48,7 +48,7 @@ def mkcountupdate(counter):
     return update_counter
 
 class ToolBar(gui.Table):
-    def __init__(self, gameboard, level, **params):
+    def __init__(self, gameboard, **params):
         gui.Table.__init__(self, **params)
         self.group = gui.Group(name='toolbar', value=None)
         self._next_tool_value = 0
@@ -60,6 +60,9 @@ class ToolBar(gui.Table):
         self.day_counter = mklabel(align=1)
         self.killed_foxes = mklabel(align=1)
 
+        self.make_default_toolbar()
+
+    def make_default_toolbar(self):
         self.tr()
         self.td(gui.Spacer(self.rect.w/2, 0))
         self.td(gui.Spacer(self.rect.w/2, 0))
@@ -77,9 +80,9 @@ class ToolBar(gui.Table):
 
         self.add_heading("Sell ...")
         self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
-                level.sell_price_chicken, cursors.cursors['sell'])
+                self.gameboard.level.sell_price_chicken, cursors.cursors['sell'])
         self.add_tool_button("Egg", constants.TOOL_SELL_EGG,
-                level.sell_price_egg, cursors.cursors['sell'])
+                self.gameboard.level.sell_price_egg, cursors.cursors['sell'])
         self.add_tool_button("Building", constants.TOOL_SELL_BUILDING,
                 None, cursors.cursors['sell'])
         self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
@@ -106,25 +109,33 @@ class ToolBar(gui.Table):
 
         self.fin_tool = self.add_tool("Finished Day", self.day_done)
 
-        self.anim_clear_tool = False # Flag to clear the tool on an anim loop
-        # pgu's tool widget fiddling happens after the tool action, so calling
-        # clear_tool in the tool's action doesn't work, so we punt it to
-        # the anim loop
-
     def day_done(self):
         if self.gameboard.day:
             pygame.event.post(engine.START_NIGHT)
         else:
-            self.anim_clear_tool = True
             pygame.event.post(engine.FAST_FORWARD)
 
-    def update_fin_tool(self, day):
-        if day:
-            self.fin_tool.widget = gui.basic.Label('Finished Day')
-            self.fin_tool.resize()
-        else:
-            self.fin_tool.widget = gui.basic.Label('Fast Forward')
-            self.fin_tool.resize()
+    def start_night(self):
+        self.clear_tool()
+        self._set_all_disabled(True)
+        self.fin_tool.widget = gui.basic.Label('Fast Forward')
+        self.fin_tool.resize()
+        self.fin_tool.disabled = False # Can always select this
+        self.fin_tool.focusable = True # Can always select this
+
+    def start_day(self):
+        self.clear_tool()
+        self._set_all_disabled(False)
+        self.fin_tool.widget = gui.basic.Label('Finished Day')
+        self.fin_tool.resize()
+
+    def _set_all_disabled(self, state):
+        """Sets the disabled flag on all the buttons in the toolbar"""
+        for td in self.widgets:
+            for widget in td.widgets:
+                if hasattr(widget, 'group'): # Tool
+                    widget.disabled = state
+                    widget.focusable = not state
 
     def show_prices(self):
         """Popup dialog of prices"""
@@ -184,7 +195,6 @@ class ToolBar(gui.Table):
         dialog = gui.Dialog(gui.Label('Price Reference'), tbl)
         close_button.connect(gui.CLICK, dialog.close)
         dialog.open()
-        self.anim_clear_tool = True
 
     update_cash_counter = mkcountupdate('cash_counter')
     update_wood_counter = mkcountupdate('wood_counter')
@@ -221,7 +231,6 @@ class ToolBar(gui.Table):
         self.group.value = None
         for item in self.group.widgets:
             item.pcls = ""
-        self.anim_clear_tool = False
 
     def add_counter(self, icon, label):
         self.tr()

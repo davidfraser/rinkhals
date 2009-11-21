@@ -256,7 +256,6 @@ class NightState(State):
             pygame.event.clear(ANIM_ID)
             pygame.event.clear(MOVE_FOX_ID)
             # Ensure any outstanding animitions get cleaned up
-            self.game.gameboard.run_animations()
             self.cycle_count += 1
             if self.cycle_count > constants.NIGHT_LENGTH:
                 return pygame.event.post(START_DAY)

@@ -91,7 +91,7 @@ class GameBoard(object):
         width, height = self.disp.rect.w, self.disp.rect.h
         tbl = gui.Table()
         tbl.tr()
-        self.toolbar = toolbar.ToolBar(self, self.level, width=constants.TOOLBAR_WIDTH)
+        self.toolbar = toolbar.ToolBar(self, width=constants.TOOLBAR_WIDTH)
         tbl.td(self.toolbar, valign=-1)
         self.tvw = VidWidget(self, self.tv, width=width-constants.TOOLBAR_WIDTH, height=height)
         tbl.td(self.tvw)
@@ -142,7 +142,7 @@ class GameBoard(object):
         self.day, self.night = False, True
         self.tv.sun(False)
         self.reset_states()
-        self.toolbar.update_fin_tool(self.day)
+        self.toolbar.start_night()
         self.spawn_foxes()
         self.eggs = 0
         for chicken in self.chickens.copy():
@@ -154,7 +154,7 @@ class GameBoard(object):
         self.day, self.night = True, False
         self.tv.sun(True)
         self.reset_states()
-        self.toolbar.update_fin_tool(self.day)
+        self.toolbar.start_day()
         self._pos_cache = { 'fox' : [], 'chicken' : []}
         self.advance_day()
         self.clear_foxes()
@@ -567,11 +567,6 @@ class GameBoard(object):
     def clear_chickens(self):
         for chicken in self.chickens.copy():
             self.remove_chicken(chicken)
-
-    def run_animations(self):
-        # For legacy.
-        if self.toolbar.anim_clear_tool:
-            self.toolbar.clear_tool()
 
     def do_night_step(self):
         """Handle the events of the night.
