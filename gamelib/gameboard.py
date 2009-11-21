@@ -84,6 +84,7 @@ class GameBoard(serializer.Simplifiable):
         self.day, self.night = True, False
         # For the level loading case
         if self.disp:
+            self.toolbar = None
             self.create_display()
             self.add_cash(level.starting_cash)
             self.add_wood(level.starting_wood)
@@ -103,11 +104,21 @@ class GameBoard(serializer.Simplifiable):
         width, height = self.disp.rect.w, self.disp.rect.h
         tbl = gui.Table()
         tbl.tr()
-        self.toolbar = toolbar.ToolBar(self, width=constants.TOOLBAR_WIDTH)
+        self.toolbar = toolbar.DefaultToolBar(self, width=constants.TOOLBAR_WIDTH)
         tbl.td(self.toolbar, valign=-1)
         self.tvw = VidWidget(self, self.tv, width=width-constants.TOOLBAR_WIDTH, height=height)
         tbl.td(self.tvw)
         self.top_widget = tbl
+
+    def change_toolbar(self, new_toolbar):
+        """Replace the toolbar"""
+        td = self.toolbar.container
+        td.remove(self.toolbar)
+        td.add(new_toolbar, 0, 0)
+        self.toolbar = new_toolbar
+        self.toolbar.rect.size = self.toolbar.resize(height=td.rect.height)
+        td.resize()
+        td.repaint()
 
     def update(self):
         self.tvw.reupdate()

@@ -51,10 +51,10 @@ def mkcountupdate(counter):
         self.repaint()
     return update_counter
 
-class ToolBar(gui.Table):
+class BaseToolBar(gui.Table):
     def __init__(self, gameboard, **params):
         gui.Table.__init__(self, **params)
-        self.group = gui.Group(name='toolbar', value=None)
+        self.group = gui.Group(name='base_toolbar', value=None)
         self._next_tool_value = 0
         self.gameboard = gameboard
         self.cash_counter = mklabel(align=1)
@@ -63,10 +63,9 @@ class ToolBar(gui.Table):
         self.egg_counter = mklabel(align=1)
         self.day_counter = mklabel(align=1)
         self.killed_foxes = mklabel(align=1)
+        self.add_labels()
 
-        self.make_default_toolbar()
-
-    def make_default_toolbar(self):
+    def add_labels(self):
         self.tr()
         self.td(gui.Spacer(self.rect.w/2, 0))
         self.td(gui.Spacer(self.rect.w/2, 0))
@@ -77,51 +76,6 @@ class ToolBar(gui.Table):
         self.add_counter(icons.CHKN_ICON, self.chicken_counter)
         self.add_counter(icons.KILLED_FOX, self.killed_foxes)
         self.add_spacer(5)
-
-        self.add_tool_button("Move Hen", constants.TOOL_PLACE_ANIMALS,
-                None, cursors.cursors['select'])
-        self.add_spacer(5)
-
-        self.add_heading("Sell ...")
-        self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
-                self.gameboard.level.sell_price_chicken, cursors.cursors['sell'])
-        self.add_tool_button("Egg", constants.TOOL_SELL_EGG,
-                self.gameboard.level.sell_price_egg, cursors.cursors['sell'])
-        self.add_tool_button("Building", constants.TOOL_SELL_BUILDING,
-                None, cursors.cursors['sell'])
-        self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
-                None, cursors.cursors['sell'])
-        self.add_spacer(5)
-
-        self.add_heading("Buy ...")
-
-        for building_cls in buildings.BUILDINGS:
-            self.add_tool_button(building_cls.NAME.title(), building_cls,
-                    None, cursors.cursors.get('build', None))
-
-        for equipment_cls in equipment.EQUIPMENT:
-            self.add_tool_button(equipment_cls.NAME.title(),
-                    equipment_cls,
-                    equipment_cls.BUY_PRICE,
-                    cursors.cursors.get('buy', None))
-
-        self.add_spacer(5)
-        self.add_tool_button("Repair", constants.TOOL_REPAIR_BUILDING, None, cursors.cursors['repair'])
-
-        self.add_spacer(5)
-        self.add_tool("Price Reference", self.show_prices)
-
-        #self.add_spacer(5)
-        #self.add_tool("Save Game", self.save_game)
-        #self.add_tool("Load Game", self.load_game)
-
-        self.fin_tool = self.add_tool("Finished Day", self.day_done)
-
-    def day_done(self):
-        if self.gameboard.day:
-            pygame.event.post(engine.START_NIGHT)
-        else:
-            pygame.event.post(engine.FAST_FORWARD)
 
     def start_night(self):
         self.clear_tool()
@@ -275,4 +229,104 @@ class ToolBar(gui.Table):
         width, height = gui.Table.resize(self, width, height)
         width = constants.TOOLBAR_WIDTH
         return width, height
+
+class DefaultToolBar(BaseToolBar):
+    def __init__(self, gameboard, **params):
+        BaseToolBar.__init__(self, gameboard, **params)
+        self.group = gui.Group(name='default_toolbar', value=None)
+        self.make_toolbar()
+
+    def make_toolbar(self):
+        self.add_tool_button("Select chicken", constants.TOOL_SELECT_CHICKENS,
+                None, cursors.cursors['select'])
+
+        self.add_spacer(5)
+
+        self.add_heading("Sell ...")
+        self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
+                self.gameboard.level.sell_price_chicken, cursors.cursors['sell'])
+        self.add_tool_button("Egg", constants.TOOL_SELL_EGG,
+                self.gameboard.level.sell_price_egg, cursors.cursors['sell'])
+        self.add_tool_button("Building", constants.TOOL_SELL_BUILDING,
+                None, cursors.cursors['sell'])
+        self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
+                None, cursors.cursors['sell'])
+        self.add_spacer(5)
+
+        self.add_heading(" ")
+
+        self.add_tool('Buy building', self.add_building_toolbar)
+
+        self.add_heading("For selection, ...")
+
+        self.add_tool('Buy equipment', self.add_equipment_toolbar)
+
+        self.add_tool_button("Move selected hen", constants.TOOL_PLACE_ANIMALS,
+                None, cursors.cursors['select'])
+
+        self.add_heading(" ")
+        self.add_tool_button("Repair", constants.TOOL_REPAIR_BUILDING, None, cursors.cursors['repair'])
+
+        self.add_heading("Help")
+        self.add_tool("Price Reference", self.show_prices)
+
+        self.add_spacer(5)
+        self.add_tool("Save Game", self.save_game)
+        self.add_tool("Load Game", self.load_game)
+
+        self.add_heading(" ")
+        self.add_spacer(10)
+        self.fin_tool = self.add_tool("Finished Day", self.day_done)
+
+    def add_building_toolbar(self):
+        self.gameboard.change_toolbar(BuildingToolBar(self.gameboard,
+                width=self.style.width))
+
+    def add_equipment_toolbar(self):
+        self.gameboard.change_toolbar(EquipmentToolBar(self.gameboard,
+                width=self.style.width))
+
+    def day_done(self):
+        if self.gameboard.day:
+            pygame.event.post(engine.START_NIGHT)
+        else:
+            pygame.event.post(engine.FAST_FORWARD)
+
+class BuildingToolBar(BaseToolBar):
+    def __init__(self, gameboard, **params):
+        BaseToolBar.__init__(self, gameboard, **params)
+        self.group = gui.Group(name='building_toolbar', value=None)
+        self.make_toolbar()
+
+    def make_toolbar(self):
+        self.gameboard.set_cursor(cursors.cursors['arrow'], None)
+        for building_cls in buildings.BUILDINGS:
+            self.add_tool_button(building_cls.NAME.title(), building_cls,
+                    None, cursors.cursors.get('build', None))
+        self.add_spacer(15)
+        self.add_tool('Done', self.add_default_toolbar)
+
+    def add_default_toolbar(self):
+        self.gameboard.change_toolbar(DefaultToolBar(self.gameboard,
+                width=self.style.width))
+
+class EquipmentToolBar(BaseToolBar):
+    def __init__(self, gameboard, **params):
+        BaseToolBar.__init__(self, gameboard, **params)
+        self.group = gui.Group(name='building_toolbar', value=None)
+        self.make_toolbar()
+
+    def make_toolbar(self):
+        self.gameboard.set_cursor(cursors.cursors['arrow'], None)
+        for equipment_cls in equipment.EQUIPMENT:
+            self.add_tool_button(equipment_cls.NAME.title(),
+                    equipment_cls,
+                    equipment_cls.BUY_PRICE,
+                    cursors.cursors.get('buy', None))
+        self.add_spacer(15)
+        self.add_tool('Done', self.add_default_toolbar)
+
+    def add_default_toolbar(self):
+        self.gameboard.change_toolbar(DefaultToolBar(self.gameboard,
+                width=self.style.width))
 
