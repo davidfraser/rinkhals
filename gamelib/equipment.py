@@ -4,12 +4,20 @@ import random
 import sound
 import imagecache
 import animations
+import serializer
 
-class Equipment(object):
+
+class Equipment(serializer.Simplifiable):
     IS_EQUIPMENT = True
     DRAW_LAYER = 0
     UNDER_LIMB = False
     UNDER_EYE = False
+
+    SIMPLIFY = [
+        '_buy_price',
+        '_sell_price',
+        '_name',
+    ]
 
     def __init__(self):
         self._buy_price = self.BUY_PRICE

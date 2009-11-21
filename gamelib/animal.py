@@ -11,13 +11,22 @@ from misc import Position
 import sound
 import equipment
 import animations
+import serializer
 
-class Animal(Sprite):
+class Animal(Sprite, serializer.Simplifiable):
     """Base class for animals"""
 
     STEALTH = 0
     VISION_BONUS = 0
     VISION_RANGE_PENALTY = 10
+
+    SIMPLIFY = [
+        'pos',
+        'equipment',
+        'accoutrements',
+        'abode',
+        'facing',
+    ]
 
     def __init__(self, image_left, image_right, tile_pos):
         # Create the animal somewhere far off screen
