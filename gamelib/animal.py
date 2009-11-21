@@ -20,6 +20,10 @@ class Animal(Sprite, serializer.Simplifiable):
     VISION_BONUS = 0
     VISION_RANGE_PENALTY = 10
 
+    # sub-class must set this to the name of an image
+    # file
+    IMAGE_FILE = None
+
     SIMPLIFY = [
         'pos',
         'equipment',
@@ -28,13 +32,14 @@ class Animal(Sprite, serializer.Simplifiable):
         'facing',
     ]
 
-    def __init__(self, image_left, image_right, tile_pos):
+    def __init__(self, tile_pos):
+        # load images
+        self._image_left = imagecache.load_image(self.IMAGE_FILE)
+        self._image_right = imagecache.load_image(self.IMAGE_FILE, ("right_facing",))
         # Create the animal somewhere far off screen
-        Sprite.__init__(self, image_left, (-1000, -1000))
-        self._image_left = image_left
-        self.image_left = image_left.copy()
-        self._image_right = image_right
-        self.image_right = image_right.copy()
+        Sprite.__init__(self, self._image_left, (-1000, -1000))
+        self.image_left = self._image_left.copy()
+        self.image_right = self._image_right.copy()
         if hasattr(tile_pos, 'to_tile_tuple'):
             self.pos = tile_pos
         else:
@@ -156,12 +161,10 @@ class Chicken(Animal):
     EQUIPMENT_IMAGE_ATTRIBUTE = 'CHICKEN_IMAGE_FILE'
     DEATH_ANIMATION = animations.ChickenDeath
     DEATH_SOUND = 'kill-chicken.ogg'
+    IMAGE_FILE = 'sprites/chkn.png'
 
     def __init__(self, pos):
-        image_left = imagecache.load_image('sprites/chkn.png')
-        image_right = imagecache.load_image('sprites/chkn.png',
-                ("right_facing",))
-        Animal.__init__(self, image_left, image_right, pos)
+        Animal.__init__(self, pos)
         self.eggs = []
 
     def start_night(self, gameboard):
@@ -254,9 +257,10 @@ class Chicken(Animal):
 class Egg(Animal):
     """An egg"""
 
+    IMAGE_FILE = 'sprites/equip_egg.png'
+
     def __init__(self, pos):
-        image = imagecache.load_image('sprites/equip_egg.png')
-        Animal.__init__(self, image, image, pos)
+        Animal.__init__(self, pos)
         self.timer = 2
 
     # Eggs don't move
@@ -289,9 +293,7 @@ class Fox(Animal):
             }
 
     def __init__(self, pos):
-        image_left = imagecache.load_image(self.IMAGE_FILE)
-        image_right = imagecache.load_image(self.IMAGE_FILE, ("right_facing",))
-        Animal.__init__(self, image_left, image_right, pos)
+        Animal.__init__(self, pos)
         self.landmarks = [self.pos]
         self.hunting = True
         self.dig_pos = None
