@@ -168,6 +168,8 @@ class Chicken(Animal):
     DEATH_SOUND = 'kill-chicken.ogg'
     IMAGE_FILE = 'sprites/chkn.png'
 
+    SIMPLIFY = Animal.SIMPLIFY + ['eggs']
+
     def __init__(self, pos):
         Animal.__init__(self, pos)
         self.eggs = []
@@ -277,6 +279,8 @@ class Egg(Animal):
     """An egg"""
 
     IMAGE_FILE = 'sprites/equip_egg.png'
+
+    SIMPLIFY = Animal.SIMPLIFY + ['timer']
 
     def __init__(self, pos):
         Animal.__init__(self, pos)
@@ -608,10 +612,7 @@ class DemoFox(Fox):
     CONFIG_NAME = 'sapper fox'
 
     costs = Fox.costs.copy()
-
-    def __init__(self, pos):
-        Fox.__init__(self, pos)
-        self.costs['fence'] = 2 # We don't worry about fences
+    costs['fence'] = 2
 
     def _dig(self, gameboard, dig_pos):
         """Setup dig parameters, to be overridden if needed"""
