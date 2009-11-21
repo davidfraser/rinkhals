@@ -165,7 +165,6 @@ class DayState(State):
         sound.play_sound("daybreak.ogg")
         # disable timer
         pygame.time.set_timer(MOVE_FOX_ID, 0)
-        pygame.time.set_timer(ANIM_ID, SLOW_ANIM_SPEED)
         sound.background_music("daytime.ogg")
         self.dialog = None
 
@@ -216,9 +215,8 @@ class NightState(State):
         self.game.gameboard.chickens_chop_wood()
         # Add a timer to the event queue
         self.cycle_count = 0
-        self.cycle_time = SLOW_ANIM_SPEED
-        pygame.time.set_timer(MOVE_FOX_ID, 4*self.cycle_time)
-        pygame.time.set_timer(ANIM_ID, self.cycle_time)
+        self.cycle_time = SLOW__SPEED
+        pygame.time.set_timer(MOVE_FOX_ID, self.cycle_time)
         sound.background_music("nighttime.ogg")
 
         self.dialog = None
@@ -240,20 +238,17 @@ class NightState(State):
             return DayState(self.game)
         elif (e.type is KEYDOWN and e.key == K_d) or \
                 events_equal(e, FAST_FORWARD):
-            if self.cycle_time > FAST_ANIM_SPEED:
-                self.cycle_time = FAST_ANIM_SPEED
+            if self.cycle_time > FAST__SPEED:
+                self.cycle_time = FAST__SPEED
             else:
-                self.cycle_time = SLOW_ANIM_SPEED
-            pygame.time.set_timer(ANIM_ID, self.cycle_time)
-            pygame.time.set_timer(MOVE_FOX_ID, 4*self.cycle_time)
+                self.cycle_time = SLOW__SPEED
+            pygame.time.set_timer(MOVE_FOX_ID, self.cycle_time)
         elif e.type is KEYDOWN and e.key == K_ESCAPE:
             self.dialog = check_exit()
         elif e.type is MOVE_FOX_ID:
             # ensure no timers trigger while we're running
-            pygame.time.set_timer(ANIM_ID, 0)
             pygame.time.set_timer(MOVE_FOX_ID, 0)
             # Clear any queued timer events, so we don't full the queue
-            pygame.event.clear(ANIM_ID)
             pygame.event.clear(MOVE_FOX_ID)
             # Ensure any outstanding animitions get cleaned up
             self.cycle_count += 1
@@ -263,8 +258,7 @@ class NightState(State):
                 # All foxes are gone/safe, so dawn happens
                 return pygame.event.post(START_DAY)
             # Re-enable timers
-            pygame.time.set_timer(ANIM_ID, self.cycle_time)
-            pygame.time.set_timer(MOVE_FOX_ID, 4*self.cycle_time)
+            pygame.time.set_timer(MOVE_FOX_ID, self.cycle_time)
         elif e.type is not QUIT:
             self.game.main_app.event(e)
 
@@ -286,7 +280,6 @@ class GameOver(State):
         sound.stop_background_music()
         self.game.create_game_over()
         pygame.time.set_timer(MOVE_FOX_ID, 0)
-        pygame.time.set_timer(ANIM_ID, 0)
 
     def event(self, e):
         if e.type is KEYDOWN:
@@ -320,11 +313,10 @@ GO_LEVEL_SCREEN = pygame.event.Event(USEREVENT, name="GO_LEVEL_SCREEN")
 DO_LOAD_LEVEL = pygame.event.Event(USEREVENT, name="DO_LEVEL_SCREEN")
 FAST_FORWARD = pygame.event.Event(USEREVENT, name="FAST_FORWARD")
 MOVE_FOX_ID = USEREVENT + 1
-ANIM_ID = USEREVENT + 6
 MOVE_FOXES = pygame.event.Event(MOVE_FOX_ID, name="MOVE_FOXES")
 QUIT = pygame.event.Event(QUIT)
 
 # Due to the way pgu's loop timing works, these will only get proceesed
 # at intervals of 10ms, so there's no point in them not being multiples of 10
-FAST_ANIM_SPEED=20
-SLOW_ANIM_SPEED=50
+FAST__SPEED=80
+SLOW__SPEED=200
