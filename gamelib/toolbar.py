@@ -7,6 +7,10 @@ import buildings
 import equipment
 import cursors
 import engine
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 class OpaqueLabel(gui.Label):
     def __init__(self, value, **params):
@@ -107,6 +111,10 @@ class ToolBar(gui.Table):
         self.add_spacer(5)
         self.add_tool("Price Reference", self.show_prices)
 
+        #self.add_spacer(5)
+        #self.add_tool("Save Game", self.save_game)
+        #self.add_tool("Load Game", self.load_game)
+
         self.fin_tool = self.add_tool("Finished Day", self.day_done)
 
     def day_done(self):
@@ -195,6 +203,16 @@ class ToolBar(gui.Table):
         dialog = gui.Dialog(gui.Label('Price Reference'), tbl)
         close_button.connect(gui.CLICK, dialog.close)
         dialog.open()
+
+    def save_game(self):
+        """Save game 'dialog'."""
+        data = self.gameboard.save_game()
+        open("foxassault.json", "wb").write(json.dumps(data))
+
+    def load_game(self):
+        """Load game 'dialog'."""
+        data = json.loads(open("foxassault.json", "rb").read())
+        self.gameboard.restore_game(data)
 
     update_cash_counter = mkcountupdate('cash_counter')
     update_wood_counter = mkcountupdate('wood_counter')

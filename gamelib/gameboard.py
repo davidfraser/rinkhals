@@ -15,8 +15,8 @@ import sound
 import cursors
 import sprite_cursor
 import misc
-import engine
 import toolbar
+import serializer
 
 class VidWidget(gui.Widget):
     def __init__(self, gameboard, vid, **params):
@@ -40,12 +40,24 @@ class VidWidget(gui.Widget):
         elif e.type == MOUSEMOTION and self.gameboard.sprite_cursor:
             self.gameboard.update_sprite_cursor(e)
 
-class GameBoard(object):
+class GameBoard(serializer.Simplifiable):
 
     GRASSLAND = tiles.REVERSE_TILE_MAP['grassland']
     FENCE = tiles.REVERSE_TILE_MAP['fence']
     WOODLAND = tiles.REVERSE_TILE_MAP['woodland']
     BROKEN_FENCE = tiles.REVERSE_TILE_MAP['broken fence']
+
+    SIMPLIFY = [
+        'chickens',
+        'buildings',
+        'foxes',
+        'cash',
+        'wood',
+        'eggs',
+        'days',
+        'killed_foxes',
+        'day', 'night',
+    ]
 
     def __init__(self, main_app, level):
         self.disp = main_app
@@ -62,7 +74,7 @@ class GameBoard(object):
         self.sprite_cursor = None
         self.chickens = set()
         self.foxes = set()
-        self.buildings = []
+        self.buildings = set()
         self._pos_cache = { 'fox' : [], 'chicken' : []}
         self.cash = 0
         self.wood = 0
@@ -568,6 +580,10 @@ class GameBoard(object):
         for chicken in self.chickens.copy():
             self.remove_chicken(chicken)
 
+    def clear_buildings(self):
+        for building in self.buildings.copy():
+            self.remove_building(building)
+
     def do_night_step(self):
         """Handle the events of the night.
 
@@ -657,7 +673,7 @@ class GameBoard(object):
         self.tv.sprites.append(fox)
 
     def add_building(self, building):
-        self.buildings.append(building)
+        self.buildings.add(building)
         self.tv.sprites.append(building, layer='buildings')
 
     def place_hatched_chicken(self, new_chick, building):
@@ -707,7 +723,7 @@ class GameBoard(object):
 
     def remove_building(self, building):
         if building in self.buildings:
-            self.buildings.remove(building)
+            self.buildings.discard(building)
             self.tv.sprites.remove(building, layer='buildings')
 
     def add_cash(self, amount):
@@ -794,6 +810,27 @@ class GameBoard(object):
     def trees_left(self):
         width, height = self.tv.size
         return len([(x,y) for x in range(width) for y in range(height) if self.tv.get((x,y)) == self.WOODLAND])
+
+    def save_game(self):
+        return serializer.simplify(self)
+
+    def restore_game(self, data):
+        if 'refid' not in data or 'class' not in data or data['class'] != self.__class__.__name__:
+            import pprint
+            pprint.pprint(data)
+            print self.__class__.__name__
+            raise ValueError("Invalid save game.")
+        newself = serializer.unsimplify(data)
+        self.clear_chickens()
+        self.clear_buildings()
+        for chicken in newself.chickens:
+            self.add_chicken(chicken)
+        for building in newself.buildings:
+            self.add_building(building)
+        for attr in self.SIMPLIFY:
+            if attr in ('chickens', 'buildings'):
+                continue
+            setattr(self, attr, getattr(newself, attr))
 
 
 class TextDialog(gui.Dialog):
