@@ -63,6 +63,7 @@ class ToolBar(gui.Table):
         self._next_tool_value = 0
         self.gameboard = gameboard
         self.cash_counter = mklabel(align=1)
+        self.wood_counter = mklabel(align=1)
         self.chicken_counter = mklabel(align=1)
         self.egg_counter = mklabel(align=1)
         self.day_counter = mklabel(align=1)
@@ -73,6 +74,7 @@ class ToolBar(gui.Table):
         self.td(gui.Spacer(self.rect.w/2, 0))
         self.add_counter(mklabel("Day:"), self.day_counter)
         self.add_counter(mklabel("Groats:"), self.cash_counter)
+        self.add_counter(mklabel("Planks:"), self.wood_counter)
         self.add_counter(mklabel("Eggs:"), self.egg_counter)
         self.add_counter(icons.CHKN_ICON, self.chicken_counter)
         self.add_counter(icons.KILLED_FOX, self.killed_foxes)
@@ -80,8 +82,6 @@ class ToolBar(gui.Table):
 
         self.add_tool_button("Move Hen", constants.TOOL_PLACE_ANIMALS,
                 None, cursors.cursors['select'])
-        self.add_tool_button("Cut Trees", constants.TOOL_LOGGING,
-                constants.LOGGING_PRICE, cursors.cursors['ball'])
         self.add_spacer(5)
 
         self.add_heading("Sell ...")
@@ -112,7 +112,6 @@ class ToolBar(gui.Table):
 
         self.add_spacer(5)
         self.add_tool("Price Reference", self.show_prices)
-        self.add_spacer(10)
 
         self.fin_tool = self.add_tool("Finished Day", self.day_done)
 
@@ -197,6 +196,7 @@ class ToolBar(gui.Table):
         self.anim_clear_tool = True
 
     update_cash_counter = mkcountupdate('cash_counter')
+    update_wood_counter = mkcountupdate('wood_counter')
     update_fox_counter = mkcountupdate('killed_foxes')
     update_chicken_counter = mkcountupdate('chicken_counter')
     update_egg_counter = mkcountupdate('egg_counter')
@@ -293,6 +293,7 @@ class GameBoard(object):
         self.buildings = []
         self._pos_cache = { 'fox' : [], 'chicken' : []}
         self.cash = 0
+        self.wood = 0
         self.eggs = 0
         self.days = 0
         self.killed_foxes = 0
@@ -414,8 +415,6 @@ class GameBoard(object):
             self.sell_equipment(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_REPAIR_BUILDING:
             self.repair_building(self.tv.screen_to_tile(e.pos))
-        elif self.selected_tool == constants.TOOL_LOGGING:
-            self.logging_forest(self.tv.screen_to_tile(e.pos))
         elif buildings.is_building(self.selected_tool):
             self.buy_building(self.tv.screen_to_tile(e.pos), self.selected_tool)
         elif equipment.is_equipment(self.selected_tool):
@@ -653,14 +652,6 @@ class GameBoard(object):
 
         self.open_dialog(tbl, close_callback=close_callback)
 
-    def logging_forest(self, tile_pos):
-        if self.tv.get(tile_pos) != self.WOODLAND:
-            return
-        if self.cash < constants.LOGGING_PRICE:
-            return
-        self.add_cash(-constants.LOGGING_PRICE)
-        self.tv.set(tile_pos, self.GRASSLAND)
-
     def buy_building(self, tile_pos, building_cls):
         building = building_cls(tile_pos)
         if self.cash < building.buy_price():
@@ -844,6 +835,19 @@ class GameBoard(object):
             return self._pos_cache[cache_type][pos.x][pos.y][pos.z]
         return None
 
+    def chickens_scatter(self):
+        """Chickens outside move around randomly a bit"""
+        for chicken in [chick for chick in self.chickens if chick.outside()]:
+            old_pos = chicken.pos
+            chicken.move(self)
+            if chicken.pos != old_pos:
+                self._update_pos_cache(old_pos, chicken, 'chicken')
+
+    def chickens_chop_wood(self):
+        """Chickens with axes chop down trees near them"""
+        for chicken in [chick for chick in self.chickens if chick.outside()]:
+            chicken.chop(self)
+
     def foxes_move(self):
         over = True
         for fox in self.foxes:
@@ -930,6 +934,10 @@ class GameBoard(object):
     def add_cash(self, amount):
         self.cash += amount
         self.toolbar.update_cash_counter(self.cash)
+
+    def add_wood(self, planks):
+        self.wood += planks
+        self.toolbar.update_wood_counter(self.wood)
 
     def add_start_chickens(self, _map, tile, value):
         """Add chickens as specified by the code layer"""

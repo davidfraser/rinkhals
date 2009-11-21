@@ -49,6 +49,7 @@ SPRITES = [
     ("equip_knife", 20, 20),
     ("equip_kevlar", 20, 20),
     ("equip_helmet", 20, 20),
+    ("equip_axe", 20, 20),
     ("select_chkn", 20, 20),
     ("nest", 20, 20),
     ("equip_egg", 20, 20),

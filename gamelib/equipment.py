@@ -137,6 +137,18 @@ class Knife(Weapon):
 
     CHICKEN_IMAGE_FILE = 'sprites/equip_knife.png'
 
+class Axe(Weapon):
+    TYPE = "AXE"
+    NAME = "Axe"
+    BUY_PRICE = 50
+    SELL_PRICE = 30
+
+    RANGE = 1
+    BASE_HIT = 25
+    RANGE_PENALTY = 0
+
+    CHICKEN_IMAGE_FILE = 'sprites/equip_axe.png'
+
 class Armour(Equipment):
     IS_ARMOUR = True
     DRAW_LAYER = 5
@@ -242,4 +254,8 @@ EQUIP_MAP = { # Map chicken level codes to equipment
         10 : [Helmet, Rifle],
         11 : [Kevlar, Rifle],
         12 : [Kevlar, Helmet, Rifle],
+        13 : [Axe],
+        14 : [Helmet, Axe],
+        15 : [Kevlar, Axe],
+        16 : [Kevlar, Helmet, Axe],
         }
