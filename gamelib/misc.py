@@ -5,8 +5,12 @@ import random
 from pygame.locals import KEYDOWN, K_ESCAPE
 from pgu import gui
 
-class Position(object):
+import serializer
+
+class Position(serializer.Simplifiable):
     """2D position / vector"""
+
+    SIMPLIFY = ['x', 'y', 'z']
 
     def __init__(self, x, y, z=0):
         self.x = x

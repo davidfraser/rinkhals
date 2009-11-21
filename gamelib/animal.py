@@ -54,6 +54,13 @@ class Animal(Sprite, serializer.Simplifiable):
         return cls((0, 0))
     make = classmethod(make)
 
+    def unsimplify(cls, value):
+        """Override default Simplifiable unsimplification."""
+        obj = super(Animal, cls).unsimplify(value)
+        obj.redraw()
+        return obj
+    unsimplify = classmethod(unsimplify)
+
     def loop(self, tv, _sprite):
         ppos = tv.tile_to_view(self.pos.to_tile_tuple())
         self.rect.x = ppos[0]
