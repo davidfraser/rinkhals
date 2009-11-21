@@ -136,6 +136,7 @@ class LoadScreen(gui.Document):
         """Clear the document"""
         for widget in self.widgets[:]:
             self.remove(widget)
+        self.layout._widgets = []
         self.layout.init()
 
 
