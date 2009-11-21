@@ -5,7 +5,7 @@ import os.path
 import pygame
 from pygame.locals import SWSURFACE, SRCALPHA
 
-from gamelib import tiles, buildings
+from gamelib import tiles, buildings, equipment
 import regenerate_pngs
 
 LEVEL_PATH = "data/levels"
@@ -40,9 +40,19 @@ def get_tile_mappings():
 
 def get_code_mappings():
     code_map = {}
-    # this list needs to manually kept in sync. This should be fixed
-    for tn, sprite_name in [(1, 'chkn')]:
-        image = generate_image(sprite_name, regenerate_pngs.SPRITE_PATH)
+    # Needs better handling of wings
+    for tn, sprites in equipment.EQUIP_MAP.iteritems():
+        image = generate_image('chkn', regenerate_pngs.SPRITE_PATH)
+        need_wing = False
+        for equip in sprites:
+            sub_image = generate_image(equip.CHICKEN_IMAGE_FILE,
+                    regenerate_pngs.SPRITE_PATH)
+            image.blit(sub_image, (0, 0))
+            if equip.UNDER_LIMB:
+                need_wing = True
+        if need_wing:
+            sub_image = generate_image('wing', regenerate_pngs.SPRITE_PATH)
+            image.blit(sub_image, (0, 0))
         if image:
             code_map[tn] = image
     return code_map

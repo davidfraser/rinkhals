@@ -4,6 +4,21 @@ The level.tga file provides the tilemap for the starting layout. We use
 two layers of pgu's tilemap - the tile layer, for the objects of interest,
 and the code layer, which indicates the starting chicken positions.
 
+Different codes mean chickens ahve different levels of equipment.
+
+01 - chicken with no equipment
+02 - chicken with helmet
+03 - chicken with kevlar
+04 - chicken with knife
+05 - chicken with rifle
+06 - chicken with kevlar & helmet
+07 - chicken with helmet & knife
+08 - chicken with kevlar & knife
+09 - chicken with kevlar, helmet & knife
+10 - chicken with helmet & rifle
+11 - chicken with kevlar & rifle
+12 - chicken with kevlar, helmet & rifle
+
 The level.conf file allows the default game constants to be customised.
 
 Example level.conf:

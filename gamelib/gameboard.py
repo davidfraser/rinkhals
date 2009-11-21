@@ -302,9 +302,9 @@ class GameBoard(object):
 
         self.fix_buildings()
 
-        cdata = {
-                1 : (self.add_start_chickens, None),
-                }
+        cdata = {}
+        for tn in equipment.EQUIP_MAP:
+            cdata[tn]  = (self.add_start_chickens, tn)
 
         self.tv.run_codes(cdata, (0,0,width,height))
 
@@ -937,9 +937,12 @@ class GameBoard(object):
         self.cash += amount
         self.toolbar.update_cash_counter(self.cash)
 
-    def add_start_chickens(self, _map, tile, _value):
+    def add_start_chickens(self, _map, tile, value):
         """Add chickens as specified by the code layer"""
         chick = animal.Chicken((tile.tx, tile.ty))
+        for equip_cls in equipment.EQUIP_MAP[value]:
+            item = equip_cls()
+            chick.equip(item)
         self.add_chicken(chick)
 
     def _choose_fox(self, (x, y)):

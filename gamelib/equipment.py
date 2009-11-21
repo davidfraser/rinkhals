@@ -196,3 +196,19 @@ for name in dir():
             EQUIPMENT.append(obj)
     except TypeError:
         pass
+
+
+EQUIP_MAP = { # Map chicken level codes to equipment
+        1  : [],
+        2  : [Helmet],
+        3  : [Kevlar],
+        4  : [Knife],
+        5  : [Rifle],
+        6  : [Kevlar, Helmet],
+        7  : [Helmet, Knife],
+        8  : [Kevlar, Knife],
+        9  : [Kevlar, Helmet, Knife],
+        10 : [Helmet, Rifle],
+        11 : [Kevlar, Rifle],
+        12 : [Kevlar, Helmet, Rifle],
+        }
