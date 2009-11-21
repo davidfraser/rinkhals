@@ -275,12 +275,8 @@ class Chicken(Animal):
 
     def reload_weapon(self):
         """If we have a weapon that takes ammunition, reload it."""
-        if not self.weapons():
-            # Nothing to reload
-            return
         for weapon in self.weapons():
-            if hasattr(weapon, 'AMMUNITION'):
-                weapon.ammunition = weapon.AMMUNITION
+            weapon.refresh_ammo()
 
 class Egg(Animal):
     """An egg"""

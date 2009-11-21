@@ -12,17 +12,20 @@ class Equipment(serializer.Simplifiable):
     DRAW_LAYER = 0
     UNDER_LIMB = False
     UNDER_EYE = False
+    AMMUNITION = None
 
     SIMPLIFY = [
         '_buy_price',
         '_sell_price',
         '_name',
+        'ammunition',
     ]
 
     def __init__(self):
         self._buy_price = self.BUY_PRICE
         self._sell_price = self.SELL_PRICE
         self._name = self.NAME
+        self.refresh_ammo()
 
     def make(cls):
         """Override default Simplifiable object creation."""
@@ -58,6 +61,9 @@ class Equipment(serializer.Simplifiable):
                 eq_image_right.blit(eye_right, (0,0))
         return eq_image_left, eq_image_right, self.DRAW_LAYER
 
+    def refresh_ammo(self):
+        self.ammunition = getattr(self, 'AMMUNITION', None)
+
 class Weapon(Equipment):
     IS_WEAPON = True
     DRAW_LAYER = 10
@@ -77,7 +83,7 @@ class Weapon(Equipment):
 
     def hit(self, gameboard, wielder, target):
         """Is the potentially unlucky target actually unlucky?"""
-        if hasattr(self, 'AMMUNITION'):
+        if self.ammunition is not None:
             if self.ammunition <= 0:
                 # Out of ammunition, so we don't get to shoot.
                 return
