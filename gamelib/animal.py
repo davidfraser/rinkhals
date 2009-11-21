@@ -168,6 +168,9 @@ class Chicken(Animal):
         self.lay(gameboard)
         self.reload_weapon()
 
+    def start_day(self, gameboard):
+        self.hatch(gameboard)
+
     def _game_death(self, gameboard):
         gameboard.remove_chicken(self)
 
@@ -211,8 +214,7 @@ class Chicken(Animal):
                 for egg in self.eggs[:]:
                     gameboard.sell_one_egg(self)
                 self.remove_eggs() # clean up stale images, etc.
-            return chick
-        return None
+                gameboard.place_hatched_chicken(chick, self.abode.building)
 
     def _find_killable_fox(self, weapon, gameboard):
         """Choose a random fox within range of this weapon."""

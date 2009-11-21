@@ -370,7 +370,7 @@ class GameBoard(object):
         self._cache_animal_positions()
         self.spawn_foxes()
         self.eggs = 0
-        for chicken in self.chickens:
+        for chicken in self.chickens.copy():
             chicken.start_night(self)
         self.toolbar.update_egg_counter(self.eggs)
 
@@ -382,7 +382,9 @@ class GameBoard(object):
         self._pos_cache = { 'fox' : [], 'chicken' : []}
         self.advance_day()
         self.clear_foxes()
-        self.hatch_eggs()
+        for chicken in self.chickens.copy():
+            chicken.start_day(self)
+        self.toolbar.update_egg_counter(self.eggs)
 
     def in_bounds(self, pos):
         """Check if a position is within the game boundaries"""
@@ -876,29 +878,23 @@ class GameBoard(object):
         self.buildings.append(building)
         self.tv.sprites.append(building, layer='buildings')
 
-    def hatch_eggs(self):
-        for building in self.buildings:
-            if building.HENHOUSE:
-                for chicken in building.occupants():
-                    new_chick = chicken.hatch(self)
-                    if new_chick:
-                        try:
-                            building.add_occupant(new_chick)
-                            self.add_chicken(new_chick)
-                            new_chick.equip(equipment.Nest())
-                        except buildings.BuildingFullError:
-                            # No space in the hen house, look nearby
-                            for tile_pos in building.adjacent_tiles():
-                                if self.tv.get(tile_pos) != self.GRASSLAND:
-                                    continue
-                                if self.get_outside_chicken(tile_pos) is None:
-                                    self.add_chicken(new_chick)
-                                    self.relocate_animal(new_chick, tile_pos=tile_pos)
-                                    break
-                            # if there isn't a space for the
-                            # new chick it dies. :/ Farm life
-                            # is cruel.
-        self.toolbar.update_egg_counter(self.eggs)
+    def place_hatched_chicken(self, new_chick, building):
+        try:
+            building.add_occupant(new_chick)
+            self.add_chicken(new_chick)
+            new_chick.equip(equipment.Nest())
+        except buildings.BuildingFullError:
+            # No space in the hen house, look nearby
+            for tile_pos in building.adjacent_tiles():
+                if self.tv.get(tile_pos) != self.GRASSLAND:
+                    continue
+                if self.get_outside_chicken(tile_pos) is None:
+                    self.add_chicken(new_chick)
+                    self.relocate_animal(new_chick, tile_pos=tile_pos)
+                    break
+                # if there isn't a space for the
+                # new chick it dies. :/ Farm life
+                # is cruel.
 
     def kill_fox(self, fox):
         self.killed_foxes += 1
