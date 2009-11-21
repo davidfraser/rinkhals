@@ -166,10 +166,7 @@ class DayState(State):
         # disable timer
         pygame.time.set_timer(MOVE_FOX_ID, 0)
         pygame.time.set_timer(ANIM_ID, SLOW_ANIM_SPEED)
-        self.game.gameboard.advance_day()
-        self.game.gameboard.clear_foxes()
         sound.background_music("daytime.ogg")
-        self.game.gameboard.hatch_eggs()
         self.dialog = None
 
     def event(self, e):
@@ -219,10 +216,8 @@ class NightState(State):
         self.cycle_time = SLOW_ANIM_SPEED
         pygame.time.set_timer(MOVE_FOX_ID, 4*self.cycle_time)
         pygame.time.set_timer(ANIM_ID, self.cycle_time)
-        self.game.gameboard.spawn_foxes()
         sound.background_music("nighttime.ogg")
 
-        self.game.gameboard.lay_eggs()
         self.dialog = None
 
     def event(self, e):

@@ -368,6 +368,10 @@ class GameBoard(object):
         self.reset_states()
         self.toolbar.update_fin_tool(self.day)
         self._cache_animal_positions()
+        self.spawn_foxes()
+        self.lay_eggs()
+        for chicken in self.chickens:
+            chicken.reload_weapon()
 
     def start_day(self):
         self.day, self.night = True, False
@@ -375,6 +379,9 @@ class GameBoard(object):
         self.reset_states()
         self.toolbar.update_fin_tool(self.day)
         self._pos_cache = { 'fox' : [], 'chicken' : []}
+        self.advance_day()
+        self.clear_foxes()
+        self.hatch_eggs()
 
     def in_bounds(self, pos):
         """Check if a position is within the game boundaries"""

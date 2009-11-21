@@ -64,6 +64,12 @@ class Weapon(Equipment):
 
     def hit(self, gameboard, wielder, target):
         """Is the potentially unlucky target actually unlucky?"""
+        if hasattr(self, 'AMMUNITION'):
+            if self.ammunition <= 0:
+                # Out of ammunition, so we don't get to shoot.
+                return
+            else:
+                self.ammunition -= 1
         if hasattr(self, 'HIT_SOUND'):
             sound.play_sound(self.HIT_SOUND)
         if hasattr(self, 'ANIMATION'):
@@ -84,10 +90,27 @@ class Rifle(Weapon):
     NAME = "Rifle"
     BUY_PRICE = 100
     SELL_PRICE = 75
+    AMMUNITION = 30
 
     RANGE = 3
     BASE_HIT = 55
     RANGE_PENALTY = 15
+    HIT_SOUND = "fire-rifle.ogg"
+
+    CHICKEN_IMAGE_FILE = 'sprites/equip_rifle.png'
+
+    ANIMATION = animations.MuzzleFlash
+
+class SniperRifle(Weapon):
+    TYPE = "GUN"
+    NAME = "Sniper Rifle"
+    BUY_PRICE = 150
+    SELL_PRICE = 100
+    AMMUNITION = 3
+
+    RANGE = 5
+    BASE_HIT = 80
+    RANGE_PENALTY = 10
     HIT_SOUND = "fire-rifle.ogg"
 
     CHICKEN_IMAGE_FILE = 'sprites/equip_rifle.png'
