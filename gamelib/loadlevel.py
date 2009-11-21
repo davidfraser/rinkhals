@@ -8,6 +8,7 @@ import engine
 import data
 import imagecache
 import gameboard
+import constants
 
 def make_load_screen(level):
     """Create a screen for selecting the levels"""
@@ -100,7 +101,8 @@ class LoadScreen(gui.Document):
         space = self.style.font.size(" ")
         w, h = board.tv.size
 
-        map_image = pygame.Surface((20*w, 20*h))
+        map_image = pygame.Surface((constants.TILE_DIMENSIONS[0] * w,
+            constants.TILE_DIMENSIONS[1] * h))
         board.tv.loop()
         board.tv.paint(map_image)
 
