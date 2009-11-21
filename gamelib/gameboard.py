@@ -117,6 +117,10 @@ class GameBoard(serializer.Simplifiable):
         td.add(new_toolbar, 0, 0)
         self.toolbar = new_toolbar
         self.toolbar.rect.size = self.toolbar.resize()
+        self.redraw_counters()
+        td.repaint()
+
+    def redraw_counters(self):
         self.toolbar.update_egg_counter(self.eggs)
         self.toolbar.update_day_counter("%s/%s" % (self.days,
             self.level.get_max_turns()))
@@ -125,7 +129,6 @@ class GameBoard(serializer.Simplifiable):
         self.toolbar.update_wood_counter(self.wood)
         if self.killed_foxes:
             self.toolbar.update_fox_counter(self.killed_foxes)
-        td.repaint()
 
     def update(self):
         self.tvw.reupdate()
