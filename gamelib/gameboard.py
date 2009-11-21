@@ -116,8 +116,7 @@ class GameBoard(serializer.Simplifiable):
         td.remove(self.toolbar)
         td.add(new_toolbar, 0, 0)
         self.toolbar = new_toolbar
-        self.toolbar.rect.size = self.toolbar.resize(height=td.rect.height)
-        td.resize()
+        self.toolbar.rect.size = self.toolbar.resize()
         td.repaint()
 
     def update(self):
