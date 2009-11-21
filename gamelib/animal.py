@@ -665,6 +665,9 @@ def _get_vision_param(parameter, watcher):
     return param
 
 def visible(watcher, watchee, gameboard):
+    if not gameboard.in_bounds(watchee.pos):
+        # We can't see anything off the edge of the board.
+        return False
     vision_bonus = _get_vision_param('VISION_BONUS', watcher)
     range_penalty = _get_vision_param('VISION_RANGE_PENALTY', watcher)
     positions = watcher.pos.intermediate_positions(watchee.pos)
