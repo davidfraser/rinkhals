@@ -248,6 +248,7 @@ class NightState(State):
         elif e.type is MOVE_FOX_ID:
             # ensure no timers trigger while we're running
             pygame.time.set_timer(MOVE_FOX_ID, 0)
+            cur_time = pygame.time.get_ticks()
             # Clear any queued timer events, so we don't full the queue
             pygame.event.clear(MOVE_FOX_ID)
             # Ensure any outstanding animitions get cleaned up
@@ -258,7 +259,11 @@ class NightState(State):
                 # All foxes are gone/safe, so dawn happens
                 return pygame.event.post(START_DAY)
             # Re-enable timers
-            pygame.time.set_timer(MOVE_FOX_ID, self.cycle_time)
+            diff = pygame.time.get_ticks() - cur_time
+            time_left = self.cycle_time - diff
+            if time_left < 0:
+                time_left = self.cycle_time
+            pygame.time.set_timer(MOVE_FOX_ID, time_left)
         elif e.type is not QUIT:
             self.game.main_app.event(e)
 
