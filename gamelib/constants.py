@@ -40,6 +40,7 @@ DEFAULT_MAX_FOXES = 50
 # Game constants, still to be made configurable
 
 LOGGING_PRICE = 50
+WOODLAND_CONCEALMENT = 10
 
 # Toolbar constants
 

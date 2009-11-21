@@ -11,6 +11,7 @@ import sound
 import equipment
 import animations
 import serializer
+import constants
 
 class Animal(Sprite, serializer.Simplifiable):
     """Base class for animals"""
@@ -669,8 +670,10 @@ def visible(watcher, watchee, gameboard):
         if building and building.BLOCKS_VISION and not (watcher in building.occupants()):
             return False
     distance = watcher.pos.dist(watchee.pos) - 1
+    # Intervening forests get in the way a bit.
+    woods = len([pos for pos in positions if gameboard.tv.get(pos.to_tile_tuple()) == gameboard.WOODLAND])
     roll = random.randint(1, 100)
-    return roll > watchee.STEALTH - vision_bonus + range_penalty*distance
+    return roll > watchee.STEALTH - vision_bonus + range_penalty*distance + constants.WOODLAND_CONCEALMENT*woods
 
 # These don't have to add up to 100, but it's easier to think
 # about them if they do.
