@@ -9,22 +9,25 @@ import sound
 import constants
 import mainmenu
 import helpscreen
+import loadlevel
 import level
 from misc import check_exit
 
 class Engine(Game):
     def __init__(self, main_app, level_name):
         self.main_app = main_app
-        self.level = level.Level(level_name)
         self.clock = pygame.time.Clock()
-        self.main_menu = mainmenu.make_main_menu(self.level)
+        self.level = level.Level(level_name)
         self._open_window = None
-        self.scoreboard = gameover.ScoreTable(self.level)
         self.gameboard = None
+        self.level_loader = None
 
     def tick(self):
         """Tic toc."""
         pygame.time.wait(10)
+
+    def load_new_level(self):
+        self.level = self.level_loader.cur_level
 
     def open_window(self, window):
         """Open a widget as the main window."""
@@ -41,12 +44,20 @@ class Engine(Game):
 
     def set_main_menu(self):
         """Open the main menu"""
-        self.open_window(self.main_menu)
+        self.scoreboard = gameover.ScoreTable(self.level)
+        self.level_loader = None
+        main_menu = mainmenu.make_main_menu(self.level)
+        self.open_window(main_menu)
 
     def set_help_screen(self):
         """Open the main menu"""
         help_screen = helpscreen.make_help_screen(self.level)
         self.open_window(help_screen)
+
+    def set_level_screen(self):
+        """Open the Load Level screen"""
+        level_screen, self.level_loader = loadlevel.make_load_screen(self.level)
+        self.open_window(level_screen)
 
     def create_game_over(self):
         """Create and open the Game Over window"""
@@ -61,7 +72,7 @@ class Engine(Game):
                 return self.gameboard.event(e)
             return False
         return True
-        
+
 
 class MainMenuState(State):
     def init(self):
@@ -74,6 +85,8 @@ class MainMenuState(State):
             return DayState(self.game)
         elif events_equal(e, GO_HELP_SCREEN):
             return HelpScreenState(self.game)
+        elif events_equal(e, GO_LEVEL_SCREEN):
+            return LevelScreenState(self.game)
         elif e.type is KEYDOWN:
             if e.key == K_ESCAPE:
                 return Quit(self.game)
@@ -115,6 +128,33 @@ class HelpScreenState(State):
     def update(self, screen):
         update = self.game.main_app.update(screen)
         pygame.display.update(update)
+
+
+class LevelScreenState(State):
+    def init(self):
+        sound.stop_background_music()
+        self.game.set_level_screen()
+
+    def event(self, e):
+        if e.type is KEYDOWN and e.key == K_ESCAPE:
+            return MainMenuState(self.game)
+        elif events_equal(e, GO_MAIN_MENU):
+            return MainMenuState(self.game)
+        elif events_equal(e, DO_LOAD_LEVEL):
+            self.game.load_new_level()
+            return MainMenuState(self.game)
+        elif e.type is not QUIT:
+            self.game.main_app.event(e)
+
+    def paint(self, screen):
+        screen.fill((0,0,0))
+        self.game.main_app.paint(screen)
+        pygame.display.flip()
+
+    def update(self, screen):
+        update = self.game.main_app.update(screen)
+        pygame.display.update(update)
+
 
 class DayState(State):
     def init(self):
@@ -279,6 +319,8 @@ START_DAY = pygame.event.Event(USEREVENT, name="START_DAY")
 START_NIGHT = pygame.event.Event(USEREVENT, name="START_NIGHT")
 GO_MAIN_MENU = pygame.event.Event(USEREVENT, name="GO_MAIN_MENU")
 GO_HELP_SCREEN = pygame.event.Event(USEREVENT, name="GO_HELP_SCREEN")
+GO_LEVEL_SCREEN = pygame.event.Event(USEREVENT, name="GO_LEVEL_SCREEN")
+DO_LOAD_LEVEL = pygame.event.Event(USEREVENT, name="DO_LEVEL_SCREEN")
 FAST_FORWARD = pygame.event.Event(USEREVENT, name="FAST_FORWARD")
 MOVE_FOX_ID = USEREVENT + 1
 ANIM_ID = USEREVENT + 6

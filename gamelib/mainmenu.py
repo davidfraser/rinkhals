@@ -40,7 +40,7 @@ class MainMenu(gui.Table):
             pygame.event.post(engine.START_DAY)
 
         def choose_level():
-            print 'Needs to be implemented. Specify the level name as a parameter'
+            pygame.event.post(engine.GO_LEVEL_SCREEN)
 
         def help_pressed():
             pygame.event.post(engine.GO_HELP_SCREEN)

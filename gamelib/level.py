@@ -10,15 +10,15 @@ class Level(object):
     """Container for level details"""
 
     def __init__(self, level_name):
-        level_info = None
+        self.level_file = None
         default_map = '%s.tga' % level_name
         for poss_file in ['levels/%s.conf' % level_name, '%s.conf' % level_name,
                 'levels/%s' % level_name, level_name]:
             cand = data.filepath(poss_file)
             if os.path.exists(cand):
-                level_info = cand
+                self.level_file = cand
                 break
-        if not level_info:
+        if not self.level_file:
             raise RuntimeError('Unable to load %s' % level_name)
         # Load the level info file
         # setup defaults
@@ -38,7 +38,7 @@ class Level(object):
         for animal, prob in DEFAULT_FOX_WEIGHTINGS:
             defaults[animal.CONFIG_NAME] = prob
         config = RawConfigParser(defaults)
-        config.read(level_info)
+        config.read(self.level_file)
         # NB. This assumes the level file is correctly formatted. No provision
         # is made for missing sections or incorrectly specified values.
         # i.e. Things may blow up
