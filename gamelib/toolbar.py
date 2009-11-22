@@ -252,16 +252,7 @@ class DefaultToolBar(BaseToolBar):
 
         self.add_spacer(5)
 
-        self.add_heading("Sell ...")
-        self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
-                self.gameboard.level.sell_price_chicken, cursors.cursors['sell'])
-        self.add_tool_button("Egg", constants.TOOL_SELL_EGG,
-                self.gameboard.level.sell_price_egg, cursors.cursors['sell'])
-        self.add_tool_button("Building", constants.TOOL_SELL_BUILDING,
-                None, cursors.cursors['sell'])
-        self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
-                None, cursors.cursors['sell'])
-        self.add_spacer(5)
+        self.add_tool('Sell stuff', self.add_sell_toolbar)
 
         self.add_heading(" ")
 
@@ -290,6 +281,10 @@ class DefaultToolBar(BaseToolBar):
 
     def add_building_toolbar(self):
         self.gameboard.change_toolbar(BuildingToolBar(self.gameboard,
+                width=self.style.width))
+
+    def add_sell_toolbar(self):
+        self.gameboard.change_toolbar(SellToolBar(self.gameboard,
                 width=self.style.width))
 
     def add_equipment_toolbar(self):
@@ -333,6 +328,31 @@ class EquipmentToolBar(BaseToolBar):
                     equipment_cls,
                     equipment_cls.BUY_PRICE,
                     cursors.cursors.get('buy', None))
+        self.add_spacer(15)
+        self.add_tool('Done', self.add_default_toolbar)
+
+    def add_default_toolbar(self):
+        self.gameboard.change_toolbar(DefaultToolBar(self.gameboard,
+                width=self.style.width))
+
+class SellToolBar(BaseToolBar):
+    def __init__(self, gameboard, **params):
+        BaseToolBar.__init__(self, gameboard, **params)
+        self.group = gui.Group(name='building_toolbar', value=None)
+        self.make_toolbar()
+
+    def make_toolbar(self):
+        self.gameboard.set_cursor(cursors.cursors['arrow'], None)
+
+        self.add_heading("Sell ...")
+        self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
+                self.gameboard.level.sell_price_chicken, cursors.cursors['sell'])
+        self.add_tool_button("Egg", constants.TOOL_SELL_EGG,
+                self.gameboard.level.sell_price_egg, cursors.cursors['sell'])
+        self.add_tool_button("Building", constants.TOOL_SELL_BUILDING,
+                None, cursors.cursors['sell'])
+        self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
+                None, cursors.cursors['sell'])
         self.add_spacer(15)
         self.add_tool('Done', self.add_default_toolbar)
 
