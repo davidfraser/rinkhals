@@ -3,7 +3,6 @@
 import cairo
 import rsvg
 import os
-from Image import open
 
 def svg_to_png(svg_name, png_name, w, h):
     """Convert an SVG file to a PNG file."""
