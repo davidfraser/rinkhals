@@ -252,31 +252,37 @@ class DefaultToolBar(BaseToolBar):
 
         self.add_spacer(5)
 
+        self.add_tool('Equip chickens', self.add_equipment_toolbar)
+
+        self.add_tool_button("Move chickens", constants.TOOL_PLACE_ANIMALS,
+                None, cursors.cursors['select'])
+
         self.add_tool('Sell stuff', self.add_sell_toolbar)
 
-        self.add_heading(" ")
+        self.add_spacer(5)
+
+        self.add_heading("Buildings")
 
         self.add_tool('Buy building', self.add_building_toolbar)
 
-        self.add_heading("For selection, ...")
+        self.add_tool_button("Sell building", constants.TOOL_SELL_BUILDING,
+                None, cursors.cursors['sell'])
 
-        self.add_tool('Buy equipment', self.add_equipment_toolbar)
-
-        self.add_tool_button("Move selected hen", constants.TOOL_PLACE_ANIMALS,
-                None, cursors.cursors['select'])
-
-        self.add_heading(" ")
         self.add_tool_button("Repair", constants.TOOL_REPAIR_BUILDING, None, cursors.cursors['repair'])
 
+        self.add_spacer(5)
         self.add_heading("Help")
         self.add_tool("Price Reference", self.show_prices)
 
         self.add_spacer(5)
+        self.add_heading("Game")
         self.add_tool("Save Game", self.save_game)
         self.add_tool("Load Game", self.load_game)
 
         self.add_heading(" ")
-        self.add_spacer(10)
+        # Dear pgu, is there a better way to get the current height?
+        _cur_width, cur_height = self.resize()
+        self.add_spacer(570-cur_height)
         self.fin_tool = self.add_tool("Finished Day", self.day_done)
 
     def add_building_toolbar(self):
@@ -349,8 +355,6 @@ class SellToolBar(BaseToolBar):
                 self.gameboard.level.sell_price_chicken, cursors.cursors['sell'])
         self.add_tool_button("Egg", constants.TOOL_SELL_EGG,
                 self.gameboard.level.sell_price_egg, cursors.cursors['sell'])
-        self.add_tool_button("Building", constants.TOOL_SELL_BUILDING,
-                None, cursors.cursors['sell'])
         self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
                 None, cursors.cursors['sell'])
         self.add_spacer(15)
