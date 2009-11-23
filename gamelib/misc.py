@@ -9,7 +9,7 @@ from pgu.algo import getline
 import serializer
 
 class Position(serializer.Simplifiable):
-    """2D position / vector"""
+    """2D/3D position / vector. Assumed immutable."""
 
     SIMPLIFY = ['x', 'y', 'z']
 
@@ -20,6 +20,9 @@ class Position(serializer.Simplifiable):
 
     def to_tile_tuple(self):
         return self.x, self.y
+
+    def to_3d_tuple(self):
+        return self.x, self.y, self.z
 
     def dist(self, b):
         """Gives the distance to another position"""
@@ -38,8 +41,14 @@ class Position(serializer.Simplifiable):
     def right_of(self, b):
         return self.x > b.x
 
+    def __hash__(self):
+        return hash(self.to_3d_tuple())
+
     def __eq__(self, b):
-        return self.x == b.x and self.y == b.y and self.z == b.z
+        return self.to_3d_tuple() == b.to_3d_tuple()
+
+    def __str__(self):
+        return "<Position: %s>" % (self.to_3d_tuple(),)
 
     def intermediate_positions(self, b):
         """Only operates in two dimensions."""
@@ -63,7 +72,7 @@ class WeightedSelection(object):
             for item, weight in weightings:
                 self.weightings.append((item, weight))
                 self.total += weight
-        
+
     def choose(self):
         roll = random.uniform(0, self.total)
         for item, weight in self.weightings:

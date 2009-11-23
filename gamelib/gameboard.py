@@ -40,6 +40,34 @@ class VidWidget(gui.Widget):
         elif e.type == MOUSEMOTION and self.gameboard.sprite_cursor:
             self.gameboard.update_sprite_cursor(e)
 
+
+class AnimalPositionCache(object):
+    def __init__(self, gameboard):
+        self.gameboard = gameboard
+        self.clear()
+
+    def clear(self):
+        self._cache = {'chicken': {}, 'fox': {}}
+
+    def _in_bounds(self, pos):
+        return self.gameboard.in_bounds(pos)
+
+    def add(self, animal, animal_type):
+        if animal and self._in_bounds(animal.pos):
+            self._cache[animal_type][animal.pos] = animal
+
+    def remove(self, pos, animal_type):
+        if pos in self._cache:
+            del self._cache[animal_type][pos]
+
+    def update(self, old_pos, animal, animal_type):
+        self.remove(old_pos, animal_type)
+        self.add(animal, animal_type)
+
+    def get(self, pos, animal_type):
+        return self._cache[animal_type].get(pos, None)
+
+
 class GameBoard(serializer.Simplifiable):
 
     GRASSLAND = tiles.REVERSE_TILE_MAP['grassland']
@@ -75,7 +103,7 @@ class GameBoard(serializer.Simplifiable):
         self.chickens = set()
         self.foxes = set()
         self.buildings = set()
-        self._pos_cache = { 'fox' : [], 'chicken' : []}
+        self._pos_cache = AnimalPositionCache(self)
         self.cash = 0
         self.wood = 0
         self.eggs = 0
@@ -188,7 +216,7 @@ class GameBoard(serializer.Simplifiable):
         self.tv.sun(True)
         self.reset_states()
         self.toolbar.start_day()
-        self._pos_cache = { 'fox' : [], 'chicken' : []}
+        self._pos_cache.clear()
         self.advance_day()
         self.clear_foxes()
         for chicken in self.chickens.copy():
@@ -621,42 +649,21 @@ class GameBoard(serializer.Simplifiable):
 
     def _cache_animal_positions(self):
         """Cache the current set of fox positions for the avoiding checks"""
-        w, h = self.tv.size
-        self._pos_cache['fox'] = [[[None for z in range(5)] for y in range(h)]
-                for x in range(w)] # NB: Assumes z in [0, 4]
-        self._pos_cache['chicken'] = [[[None for z in range(5)] for y in range(h)]
-                for x in range(w)]
+        self._pos_cache.clear()
         for fox in self.foxes:
-            self._add_to_pos_cache(fox, 'fox')
+            self._pos_cache.add(fox, 'fox')
         for chick in self.chickens:
-            self._add_to_pos_cache(chick, 'chicken')
+            self._pos_cache.add(chick, 'chicken')
 
-    def _add_to_pos_cache(self, animal, cache_type):
-        if self.in_bounds(animal.pos):
-            self._pos_cache[cache_type][animal.pos.x][animal.pos.y][animal.pos.z] = animal
-
-    def _update_pos_cache(self, old_pos, animal, cache_type):
-        if self.in_bounds(old_pos) and self._pos_cache[cache_type]:
-            self._pos_cache[cache_type][old_pos.x][old_pos.y][old_pos.z] = None
-        if animal:
-            pos = animal.pos
-            if self.in_bounds(pos):
-                self._pos_cache[cache_type][pos.x][pos.y][pos.z] = animal
-
-    def get_animal_at_pos(self, pos, cache_type):
-        if not self._pos_cache[cache_type]:
-            return None # We don't maintain the cache during the day
-        if self.in_bounds(pos):
-            return self._pos_cache[cache_type][pos.x][pos.y][pos.z]
-        return None
+    def get_animal_at_pos(self, pos, animal_type):
+        return self._pos_cache.get(pos, animal_type)
 
     def chickens_scatter(self):
         """Chickens outside move around randomly a bit"""
         for chicken in [chick for chick in self.chickens if chick.outside()]:
             old_pos = chicken.pos
             chicken.move(self)
-            if chicken.pos != old_pos:
-                self._update_pos_cache(old_pos, chicken, 'chicken')
+            self._pos_cache.update(old_pos, chicken, 'chicken')
 
     def chickens_chop_wood(self):
         """Chickens with axes chop down trees near them"""
@@ -670,8 +677,7 @@ class GameBoard(serializer.Simplifiable):
             fox.move(self)
             if not fox.safe:
                 over = False
-            if fox.pos != old_pos:
-                self._update_pos_cache(old_pos, fox, 'fox')
+            self._pos_cache.update(old_pos, fox, 'fox')
         return over
 
     def foxes_attack(self):
@@ -719,10 +725,10 @@ class GameBoard(serializer.Simplifiable):
         self.killed_foxes += 1
         self.toolbar.update_fox_counter(self.killed_foxes)
         self.add_cash(self.level.sell_price_dead_fox)
-        self._update_pos_cache(fox.pos, None, 'fox')
         self.remove_fox(fox)
 
     def remove_fox(self, fox):
+        self._pos_cache.remove(fox.pos, 'fox')
         self.foxes.discard(fox)
         if fox.building:
             fox.building.remove_predator(fox)
@@ -740,7 +746,7 @@ class GameBoard(serializer.Simplifiable):
         self.toolbar.update_chicken_counter(len(self.chickens))
         if chick in self.tv.sprites and chick.outside():
             self.tv.sprites.remove(chick)
-        self._update_pos_cache(chick.pos, None, 'chicken')
+        self._pos_cache.remove(chick.pos, 'chicken')
 
     def remove_building(self, building):
         if building in self.buildings:
