@@ -57,7 +57,7 @@ class AnimalPositionCache(object):
             self._cache[animal_type][animal.pos] = animal
 
     def remove(self, pos, animal_type):
-        if pos in self._cache:
+        if pos in self._cache[animal_type]:
             del self._cache[animal_type][pos]
 
     def update(self, old_pos, animal, animal_type):

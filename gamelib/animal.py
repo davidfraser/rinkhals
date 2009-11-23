@@ -255,9 +255,9 @@ class Chicken(Animal):
         """Choose a random fox within range of this weapon."""
         killable_foxes = []
         for fox in gameboard.foxes:
-            if not visible(self, fox, gameboard):
+            if not weapon.in_range(gameboard, self, fox):
                 continue
-            if weapon.in_range(gameboard, self, fox):
+            if visible(self, fox, gameboard):
                 killable_foxes.append(fox)
         if not killable_foxes:
             return None
