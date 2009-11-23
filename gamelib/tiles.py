@@ -4,6 +4,7 @@ from pgu import tilevid, vid
 import os
 import data
 import imagecache
+import serializer
 
 class TileMap(object):
     """Helper class for describing all the game tiles."""
@@ -88,13 +89,40 @@ class LayeredSprites(object):
                 yield sprite
 
 
-class FarmVid(tilevid.Tilevid):
+class FarmVid(tilevid.Tilevid, serializer.Simplifiable):
     """Extension of pgu's TileVid class to handle the complications
        of raising chickens.
        """
+
+    SIMPLIFY = [
+        'size',
+        'layers',
+        'tlayer',
+        'alayer',
+        'blayer',
+        'clayer',
+    ]
+
     def __init__(self):
         tilevid.Tilevid.__init__(self)
         self.sprites = LayeredSprites(['buildings', 'animals', 'animations', 'cursor'], 'animals')
+
+    def make(cls):
+        """Override default Simplifiable object creation."""
+        return cls()
+    make = classmethod(make)
+
+    def unsimplify(cls, *args, **kwargs):
+        """Override default Simplifiable unsimplification."""
+        obj = serializer.Simplifiable.unsimplify(*args, **kwargs)
+
+        obj.view.x, obj.view.y = 0,0
+        obj._view.x, obj._view.y = 0,0
+        obj.bounds = None
+        obj.updates = []
+
+        return obj
+    unsimplify = classmethod(unsimplify)
 
     def png_folder_load_tiles(self, path):
         """Load tiles from a folder of PNG files."""

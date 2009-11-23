@@ -76,6 +76,7 @@ class GameBoard(serializer.Simplifiable):
     BROKEN_FENCE = tiles.REVERSE_TILE_MAP['broken fence']
 
     SIMPLIFY = [
+        'tv',
         'chickens',
         'buildings',
         'foxes',
@@ -849,26 +850,42 @@ class GameBoard(serializer.Simplifiable):
         self.wood_sell_price, self.wood_buy_price = int(sell_price), int(buy_price)
 
     def save_game(self):
+        # clear selected animals and tool states before saving
+        self.reset_states()
         return serializer.simplify(self)
 
     def restore_game(self, data):
         if 'refid' not in data or 'class' not in data or data['class'] != self.__class__.__name__:
-            import pprint
-            pprint.pprint(data)
-            print self.__class__.__name__
             raise ValueError("Invalid save game.")
-        newself = serializer.unsimplify(data)
+
+        # clear old state
         self.clear_chickens()
         self.clear_buildings()
-        for chicken in newself.chickens:
-            self.add_chicken(chicken)
-        for building in newself.buildings:
-            self.add_building(building)
+
+        # set new state
+        newself = serializer.unsimplify(data)
+
+        #import pdb
+        #pdb.set_trace()
+
         for attr in self.SIMPLIFY:
             if attr in ('chickens', 'buildings'):
                 continue
             setattr(self, attr, getattr(newself, attr))
+
+        self.tv.png_folder_load_tiles('tiles')
+        self.tvw.vid = self.tv
+        self.tvw.vid.bounds = pygame.Rect((0, 0), self.tv.tile_to_view(self.tv.size))
+
+        for chicken in newself.chickens:
+            self.add_chicken(chicken)
+
+        for building in newself.buildings:
+            self.add_building(building)
+
+        self.reset_states()
         self.redraw_counters()
+        self.update()
 
 
 class TextDialog(gui.Dialog):
