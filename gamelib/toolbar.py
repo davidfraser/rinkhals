@@ -141,6 +141,11 @@ class BaseToolBar(gui.Table):
             doc.add(make_box('%d groats' % equip.SELL_PRICE))
             doc.add(make_box('N/A'))
             doc.br(space[1])
+        doc.add(make_box("Plank"))
+        doc.add(make_box('%d groats' % self.gameboard.wood_buy_price))
+        doc.add(make_box('%d groats' % self.gameboard.wood_sell_price))
+        doc.add(make_box('N/A'))
+        doc.br(space[1])
 
         fix_widths(doc)
         for word in "Damaged equipment or buildings will be sold for" \
@@ -259,6 +264,8 @@ class DefaultToolBar(BaseToolBar):
 
         self.add_tool('Sell stuff', self.add_sell_toolbar)
 
+        self.add_tool('Trade wood', self.add_wood_toolbar)
+
         self.add_spacer(5)
 
         self.add_heading("Buildings")
@@ -280,9 +287,9 @@ class DefaultToolBar(BaseToolBar):
         self.add_tool("Load Game", self.load_game)
 
         self.add_heading(" ")
-        # Dear pgu, is there a better way to get the current height?
-        _cur_width, cur_height = self.resize()
-        self.add_spacer(570-cur_height)
+        ## Dear pgu, is there a better way to get the current height?
+        #_cur_width, cur_height = self.resize()
+        #self.add_spacer(570-cur_height)
         self.fin_tool = self.add_tool("Finished Day", self.day_done)
 
     def add_building_toolbar(self):
@@ -291,6 +298,10 @@ class DefaultToolBar(BaseToolBar):
 
     def add_sell_toolbar(self):
         self.gameboard.change_toolbar(SellToolBar(self.gameboard,
+                width=self.style.width))
+
+    def add_wood_toolbar(self):
+        self.gameboard.change_toolbar(WoodToolBar(self.gameboard,
                 width=self.style.width))
 
     def add_equipment_toolbar(self):
@@ -364,3 +375,32 @@ class SellToolBar(BaseToolBar):
         self.gameboard.change_toolbar(DefaultToolBar(self.gameboard,
                 width=self.style.width))
 
+class WoodToolBar(BaseToolBar):
+    def __init__(self, gameboard, **params):
+        BaseToolBar.__init__(self, gameboard, **params)
+        self.group = gui.Group(name='building_toolbar', value=None)
+        self.make_toolbar()
+
+    def make_toolbar(self):
+        self.gameboard.set_cursor(cursors.cursors['arrow'], None)
+
+        self.add_heading("Trade...")
+        self.add_tool("Buy (%s)" % self.gameboard.wood_buy_price, self.buy_wood)
+        self.add_tool("Sell (%s)" % self.gameboard.wood_sell_price, self.sell_wood)
+
+        self.add_spacer(15)
+        self.add_tool('Done', self.add_default_toolbar)
+
+    def add_default_toolbar(self):
+        self.gameboard.change_toolbar(DefaultToolBar(self.gameboard,
+                width=self.style.width))
+
+    def buy_wood(self):
+        if self.gameboard.cash >= self.gameboard.wood_buy_price:
+            self.gameboard.add_wood(1)
+            self.gameboard.add_cash(-self.gameboard.wood_buy_price)
+
+    def sell_wood(self):
+        if self.gameboard.wood > 0:
+            self.gameboard.add_wood(-1)
+            self.gameboard.add_cash(self.gameboard.wood_sell_price)

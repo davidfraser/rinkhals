@@ -96,6 +96,7 @@ class GameBoard(serializer.Simplifiable):
         width, height = self.tv.size
         # Ensure we don't every try to create more foxes then is sane
         self.max_foxes = level.max_foxes
+        self.calculate_wood_groat_exchange_rate()
 
         self.selected_tool = None
         self.animal_to_place = None
@@ -669,6 +670,7 @@ class GameBoard(serializer.Simplifiable):
         """Chickens with axes chop down trees near them"""
         for chicken in [chick for chick in self.chickens if chick.outside()]:
             chicken.chop(self)
+        self.calculate_wood_groat_exchange_rate()
 
     def foxes_move(self):
         over = True
@@ -837,6 +839,12 @@ class GameBoard(serializer.Simplifiable):
     def trees_left(self):
         width, height = self.tv.size
         return len([(x,y) for x in range(width) for y in range(height) if self.tv.get((x,y)) == self.WOODLAND])
+
+    def calculate_wood_groat_exchange_rate(self):
+        width, height = self.tv.size
+        sell_price = float(10*width*height)/self.trees_left()
+        buy_price = sell_price*(1.1)
+        self.wood_sell_price, self.wood_buy_price = int(sell_price), int(buy_price)
 
     def save_game(self):
         return serializer.simplify(self)
