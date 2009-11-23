@@ -841,6 +841,7 @@ class GameBoard(serializer.Simplifiable):
         return len([(x,y) for x in range(width) for y in range(height) if self.tv.get((x,y)) == self.WOODLAND])
 
     def calculate_wood_groat_exchange_rate(self):
+        # per five planks
         width, height = self.tv.size
         sell_price = float(10*width*height)/self.trees_left()
         buy_price = sell_price*(1.1)

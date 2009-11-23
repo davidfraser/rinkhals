@@ -141,7 +141,7 @@ class BaseToolBar(gui.Table):
             doc.add(make_box('%d groats' % equip.SELL_PRICE))
             doc.add(make_box('N/A'))
             doc.br(space[1])
-        doc.add(make_box("Plank"))
+        doc.add(make_box("5 planks"))
         doc.add(make_box('%d groats' % self.gameboard.wood_buy_price))
         doc.add(make_box('%d groats' % self.gameboard.wood_sell_price))
         doc.add(make_box('N/A'))
@@ -385,8 +385,8 @@ class WoodToolBar(BaseToolBar):
         self.gameboard.set_cursor(cursors.cursors['arrow'], None)
 
         self.add_heading("Trade...")
-        self.add_tool("Buy (%s)" % self.gameboard.wood_buy_price, self.buy_wood)
-        self.add_tool("Sell (%s)" % self.gameboard.wood_sell_price, self.sell_wood)
+        self.add_tool("Buy 5 planks (%s)" % self.gameboard.wood_buy_price, self.buy_wood)
+        self.add_tool("Sell 5 planks (%s)" % self.gameboard.wood_sell_price, self.sell_wood)
 
         self.add_spacer(15)
         self.add_tool('Done', self.add_default_toolbar)
@@ -397,10 +397,10 @@ class WoodToolBar(BaseToolBar):
 
     def buy_wood(self):
         if self.gameboard.cash >= self.gameboard.wood_buy_price:
-            self.gameboard.add_wood(1)
+            self.gameboard.add_wood(5)
             self.gameboard.add_cash(-self.gameboard.wood_buy_price)
 
     def sell_wood(self):
-        if self.gameboard.wood > 0:
-            self.gameboard.add_wood(-1)
+        if self.gameboard.wood >= 5:
+            self.gameboard.add_wood(-5)
             self.gameboard.add_cash(self.gameboard.wood_sell_price)
