@@ -10,6 +10,7 @@ EGG_ICON = Image(imagecache.load_image('icons/egg.png'))
 WOOD_ICON = Image(imagecache.load_image('icons/wood.png'))
 GROATS_ICON = Image(imagecache.load_image('icons/groats.png'))
 EMPTY_NEST_ICON = Image(imagecache.load_image('sprites/nest.png'))
+DAY_ICON = Image(imagecache.load_image('icons/sun.png'))
 
 def animal_icon(animal):
     return Image(animal.image_left)
