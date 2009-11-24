@@ -66,14 +66,11 @@ class LoadScreen(gui.Document):
         self.prev_button = gui.Button("<< Prev Level")
         self.prev_button.connect(gui.CLICK, prev_pressed)
 
-        self.cancel_button = gui.Button("Cancel & return to main menu")
+        self.cancel_button = gui.Button("Cancel")
         self.cancel_button.connect(gui.CLICK, cancel_pressed)
 
         self.done_button = gui.Button("Load This Level")
         self.done_button.connect(gui.CLICK, done_pressed)
-
-        cancel_button = gui.Button("Cancel & return to main menu")
-        cancel_button.connect(gui.CLICK, cancel_pressed)
 
         self.render_level()
 
@@ -116,7 +113,7 @@ class LoadScreen(gui.Document):
         self.block(align=0)
         self.add(image)
 
-        self.block(align=0)
+        self.block(align=-1)
         self.add(gui.Label(self.cur_level.level_name))
         self.block(align=-1)
         for word in self.cur_level.goal.split():
@@ -124,13 +121,11 @@ class LoadScreen(gui.Document):
             self.space(space)
 
         self.block(align=0)
-        self.add(self.prev_button)
-        self.space(space)
+        # NB: pgu 's layout engine is sensitive to ordering here
+        self.add(self.prev_button, align=-1)
+        self.add(self.next_button, align=1)
         self.add(self.done_button)
-        self.space(space)
         self.add(self.cancel_button)
-        self.space(space)
-        self.add(self.next_button)
 
     def clear(self):
         """Clear the document"""
