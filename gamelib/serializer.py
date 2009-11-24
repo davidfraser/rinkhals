@@ -116,10 +116,12 @@ class Simplifiable(object):
         attrs = value['attributes']
 
         if not issubclass(actual_cls, cls):
-            raise SimplifyError("Real class not a subclass of this class")
+            raise SimplifyError("Actual class (%r) not a subclass of"
+                " this class (%r)" % (actual_cls, cls))
 
         if not len(attrs) == len(actual_cls.SIMPLIFY):
-            raise SimplifyError("Wrong number of attributes for this class")
+            raise SimplifyError("Wrong number of attributes for this"
+                " class (%r)" % (actual_cls,))
 
         obj = actual_cls.make()
         refs[value['refid']] = obj
