@@ -154,6 +154,11 @@ class GameBoard(serializer.Simplifiable):
 
     def redraw_counters(self):
         self.toolbar.update_egg_counter(self.eggs)
+        if self.level.is_last_day(self.days):
+            self.toolbar.day_counter.style.color = (255, 0, 0)
+        else:
+            # can come back from last day when restoring a saved game
+            self.toolbar.day_counter.style.color = (255, 255, 255)
         self.toolbar.update_day_counter("%s/%s" % (self.days,
             self.level.get_max_turns()))
         self.toolbar.update_chicken_counter(len(self.chickens))
@@ -225,7 +230,7 @@ class GameBoard(serializer.Simplifiable):
         self.clear_foxes()
         for chicken in self.chickens.copy():
             chicken.start_day(self)
-        self.toolbar.update_egg_counter(self.eggs)
+        self.redraw_counters()
 
     def in_bounds(self, pos):
         """Check if a position is within the game boundaries"""
@@ -613,10 +618,6 @@ class GameBoard(serializer.Simplifiable):
 
     def advance_day(self):
         self.days += 1
-        if self.level.is_last_day(self.days):
-            self.toolbar.day_counter.style.color = (255, 0, 0)
-        self.toolbar.update_day_counter("%s/%s" % (self.days,
-            self.level.get_max_turns()))
 
     def clear_foxes(self):
         for fox in self.foxes.copy():
