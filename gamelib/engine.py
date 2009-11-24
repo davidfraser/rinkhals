@@ -61,8 +61,9 @@ class Engine(Game):
 
     def create_game_over(self):
         """Create and open the Game Over window"""
+        level = self.gameboard.level
         game_over = gameover.create_game_over(self.gameboard,
-                self.scoreboard[self.level.level_name], self.level)
+                self.scoreboard[level.level_name], level)
         self.gameboard = None
         self.open_window(game_over)
 
@@ -233,7 +234,7 @@ class NightState(State):
             self.dialog=None
             return
         if events_equal(e, START_DAY):
-            if self.game.level.is_game_over(self.game.gameboard):
+            if self.game.gameboard.level.is_game_over(self.game.gameboard):
                 return GameOver(self.game)
             return DayState(self.game)
         elif (e.type is KEYDOWN and e.key == K_d) or \
