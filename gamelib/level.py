@@ -1,30 +1,36 @@
 # level.py
 
 import constants
+import serializer
 import data
 import os
 from animal import DEFAULT_FOX_WEIGHTINGS
 from ConfigParser import RawConfigParser
 
-class Level(object):
+class Level(serializer.Simplifiable):
     """Container for level details"""
 
-    def __init__(self, level_name):
+    SIMPLIFY = [
+        'config_name',
+    ]
+
+    def __init__(self, config_name):
+        self.config_name = config_name
         self.level_file = None
-        default_map = '%s.tga' % level_name
-        for poss_file in ['levels/%s.conf' % level_name, '%s.conf' % level_name,
-                'levels/%s' % level_name, level_name]:
+        default_map = '%s.tga' % config_name
+        for poss_file in ['levels/%s.conf' % config_name, '%s.conf' % config_name,
+                'levels/%s' % config_name, config_name]:
             cand = data.filepath(poss_file)
             if os.path.exists(cand):
                 self.level_file = cand
                 break
         if not self.level_file:
-            raise RuntimeError('Unable to load %s' % level_name)
+            raise RuntimeError('Unable to load %s' % config_name)
         # Load the level info file
         # setup defaults
         defaults = {
                 'map' : default_map,
-                'level name' : level_name,
+                'level name' : config_name,
                 'sell price chicken' : constants.DEFAULT_SELL_PRICE_CHICKEN,
                 'sell price egg' : constants.DEFAULT_SELL_PRICE_EGG,
                 'sell price dead fox' : constants.DEFAULT_SELL_PRICE_DEAD_FOX,
@@ -60,6 +66,13 @@ class Level(object):
         for animal, _prob in DEFAULT_FOX_WEIGHTINGS:
             self.fox_weightings.append((animal, config.getint('Fox probablities',
                 animal.CONFIG_NAME)))
+
+    def unsimplify(cls, *args, **kwargs):
+        """Override default Simplifiable unsimplification."""
+        obj = super(Level, cls).unsimplify(*args, **kwargs)
+        obj.__init__(obj.config_name)
+        return obj
+    unsimplify = classmethod(unsimplify)
 
     # Utility functions, so we can make things more flexible later
 

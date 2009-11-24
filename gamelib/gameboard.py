@@ -76,7 +76,9 @@ class GameBoard(serializer.Simplifiable):
     BROKEN_FENCE = tiles.REVERSE_TILE_MAP['broken fence']
 
     SIMPLIFY = [
+        'level',
         'tv',
+        'max_foxes',
         'chickens',
         'buildings',
         'foxes',
