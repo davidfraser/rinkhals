@@ -8,6 +8,9 @@ VERSION_STR = {
     'rc': BASE_VERSION_STR + 'rc' + str(VERSION[4]),
 }[VERSION[3]]
 
+# incremement whenever a change breaks the save game file format
+SAVE_GAME_VERSION = 1
+
 NAME = 'Operation Fox Assault'
 DESCRIPTION = 'Turn-based strategy game written using Pygame.'
 

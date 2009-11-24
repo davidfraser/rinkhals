@@ -8,6 +8,7 @@ import buildings
 import equipment
 import cursors
 import engine
+import version
 
 class OpaqueLabel(gui.Label):
     def __init__(self, value, **params):
@@ -168,7 +169,8 @@ class BaseToolBar(gui.Table):
             if dialog.value is None:
                 return
             data = self.gameboard.save_game()
-            xml = xmlrpclib.dumps((data,), "foxassault")
+            params = (version.SAVE_GAME_VERSION, data)
+            xml = xmlrpclib.dumps(params, "foxassault")
             try:
                 open(dialog.value, "wb").write(xml)
             except Exception, e:
@@ -188,8 +190,12 @@ class BaseToolBar(gui.Table):
                 xml = open(dialog.value, "rb").read()
                 params, methodname = xmlrpclib.loads(xml)
                 if methodname != "foxassault":
-                    raise ValueError("Bad XML save game.")
-                data = params[0]
+                    raise ValueError("File does not appear to be a "
+                        "Fox Assault save game.")
+                save_version = params[0]
+                if save_version != version.SAVE_GAME_VERSION:
+                    raise ValueError("Incompatible save game version.")
+                data = params[1]
             except Exception, e:
                 "Failed to load game: %s" % (e,)
                 return
