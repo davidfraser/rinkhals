@@ -6,7 +6,8 @@ import constants
 import engine
 import imagecache
 
-HELP="""Welcome to %s
+HELP = [
+"""Welcome to %s
 
 Introduction:
 
@@ -23,7 +24,11 @@ Chickens only lay eggs in henhouses, and must stay on the egg for 2 days to
 hatch a new chicken. Chickens that hatch in already full henhouses are
 moved to just outside. If there is no space outside, they die immediately
 from overcrowding.
-""" % constants.NAME
+""" % constants.NAME,
+
+"""Second Page of Help Text.
+"""
+]
 
 LEVEL_TEXT="""The currently selected level is %(name)s
 
@@ -51,17 +56,47 @@ class HelpScreen(gui.Document):
     def __init__(self, level, **params):
         gui.Document.__init__(self, **params)
 
+        self.cur_page = 0
+
+        self.level = level
+
         def done_pressed():
             pygame.event.post(engine.GO_MAIN_MENU)
 
-        done_button = gui.Button("Return to Main Menu")
-        done_button.connect(gui.CLICK, done_pressed)
+        def next_page():
+            self.cur_page += 1
+            if self.cur_page >= len(HELP):
+                self.cur_page = 0
+            self.redraw()
+
+        def prev_page():
+            self.cur_page -= 1
+            if self.cur_page < 0:
+                self.cur_page = len(HELP) - 1
+            self.redraw()
+
+        self.done_button = gui.Button("Return to Main Menu")
+        self.done_button.connect(gui.CLICK, done_pressed)
+
+        self.prev_button = gui.Button("Prev Page")
+        self.prev_button.connect(gui.CLICK, prev_page)
+
+        self.next_button = gui.Button("Next Page")
+        self.next_button.connect(gui.CLICK, next_page)
+
+        self.redraw()
+
+    def redraw(self):
+        for widget in self.widgets[:]:
+            self.remove(widget)
+        self.layout._widgets = []
+        self.layout.init()
 
         space = self.style.font.size(" ")
 
-        full_text = HELP + '\n\n' + LEVEL_TEXT % {
-                'name' : level.level_name,
-                'goal' : level.goal
+        full_text = HELP[self.cur_page] + '\n\n' + LEVEL_TEXT % {
+                'name' : self.level.level_name,
+                'goal' : self.level.goal
                 }
 
         for paragraph in full_text.split('\n\n'):
@@ -71,5 +106,6 @@ class HelpScreen(gui.Document):
                 self.space(space)
             self.br(space[1])
         self.br(space[1])
-        self.block(align=0)
-        self.add(done_button, align=0)
+        self.add(self.prev_button, align=-1)
+        self.add(self.next_button, align=1)
+        self.add(self.done_button, align=0)
