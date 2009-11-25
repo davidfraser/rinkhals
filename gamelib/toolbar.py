@@ -62,6 +62,7 @@ def mkcountupdate(counter):
 class BaseToolBar(gui.Table):
 
     IS_DEFAULT = False
+    MOVE_SELECT_PERMITTED = False
 
     def __init__(self, gameboard, **params):
         gui.Table.__init__(self, **params)
@@ -232,6 +233,7 @@ class BaseToolBar(gui.Table):
 class DefaultToolBar(BaseToolBar):
 
     IS_DEFAULT = True
+    MOVE_SELECT_PERMITTED = True
 
     def __init__(self, gameboard, **params):
         BaseToolBar.__init__(self, gameboard, **params)
@@ -339,6 +341,9 @@ class BuildingToolBar(BaseToolBar):
                 width=self.style.width))
 
 class EquipmentToolBar(BaseToolBar):
+
+    MOVE_SELECT_PERMITTED = True
+
     def __init__(self, gameboard, **params):
         BaseToolBar.__init__(self, gameboard, **params)
         self.group = gui.Group(name='equipment_toolbar', value=None)
@@ -383,6 +388,9 @@ class SellToolBar(BaseToolBar):
                 width=self.style.width))
 
 class WoodToolBar(BaseToolBar):
+
+    MOVE_SELECT_PERMITTED = True
+
     def __init__(self, gameboard, **params):
         BaseToolBar.__init__(self, gameboard, **params)
         self.group = gui.Group(name='wood_toolbar', value=None)

@@ -265,14 +265,15 @@ class GameBoard(serializer.Simplifiable):
         if not self.day:
             return
         if e.button == 3: # Right button
-            if self.selected_tool == constants.TOOL_PLACE_ANIMALS:
-                self.set_selected_tool(constants.TOOL_SELECT_CHICKENS, cursors.cursors["select"])
-                if self.toolbar.IS_DEFAULT:
-                    self.toolbar.toggle_select_on()
-            elif self.selected_tool == constants.TOOL_SELECT_CHICKENS:
-                self.set_selected_tool(constants.TOOL_PLACE_ANIMALS, cursors.cursors["chicken"])
-                if self.toolbar.IS_DEFAULT:
-                    self.toolbar.toggle_move_on()
+            if self.toolbar.MOVE_SELECT_PERMITTED:
+                if self.selected_tool != constants.TOOL_SELECT_CHICKENS:
+                    self.set_selected_tool(constants.TOOL_SELECT_CHICKENS, cursors.cursors["select"])
+                    if self.toolbar.IS_DEFAULT:
+                        self.toolbar.toggle_select_on()
+                elif self.selected_tool == constants.TOOL_SELECT_CHICKENS:
+                    self.set_selected_tool(constants.TOOL_PLACE_ANIMALS, cursors.cursors["chicken"])
+                    if self.toolbar.IS_DEFAULT:
+                        self.toolbar.toggle_move_on()
             return
         elif e.button == 2: # Middle button
             self.reset_states()
