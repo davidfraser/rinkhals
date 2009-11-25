@@ -239,7 +239,7 @@ class GameBoard(serializer.Simplifiable):
         self.spawn_foxes()
         self.eggs = 0
         for chicken in self.chickens.copy():
-            chicken.start_night(self)
+            chicken.start_night()
         self.toolbar.update_egg_counter(self.eggs)
         self._cache_animal_positions()
 
@@ -252,7 +252,7 @@ class GameBoard(serializer.Simplifiable):
         self.advance_day()
         self.clear_foxes()
         for chicken in self.chickens.copy():
-            chicken.start_day(self)
+            chicken.start_day()
         self.redraw_counters()
 
     def in_bounds(self, pos):
@@ -340,7 +340,7 @@ class GameBoard(serializer.Simplifiable):
     def sell_one_egg(self, chicken):
         if chicken.eggs:
             self.add_cash(self.level.sell_price_egg)
-            chicken.remove_one_egg(self)
+            chicken.remove_one_egg()
             return True
         return False
 
@@ -453,7 +453,7 @@ class GameBoard(serializer.Simplifiable):
                     if try_pos:
                         chicken.unequip_by_name("Nest")
                         self.relocate_animal(chicken, tile_pos=try_pos)
-                        chicken.remove_eggs(self)
+                        chicken.remove_eggs()
 
     def relocate_animal(self, chicken, tile_pos=None, place=None):
         assert((tile_pos, place) != (None, None))
@@ -751,20 +751,20 @@ class GameBoard(serializer.Simplifiable):
         """Chickens outside move around randomly a bit"""
         for chicken in [chick for chick in self.chickens if chick.outside()]:
             old_pos = chicken.pos
-            chicken.move(self)
+            chicken.move()
             self._pos_cache.update(old_pos, chicken, 'chicken')
 
     def chickens_chop_wood(self):
         """Chickens with axes chop down trees near them"""
         for chicken in [chick for chick in self.chickens if chick.outside()]:
-            chicken.chop(self)
+            chicken.chop()
         self.calculate_wood_groat_exchange_rate()
 
     def foxes_move(self):
         over = True
         for fox in self.foxes:
             old_pos = fox.pos
-            fox.move(self)
+            fox.move()
             if not fox.safe:
                 over = False
             self._pos_cache.update(old_pos, fox, 'fox')
@@ -772,11 +772,11 @@ class GameBoard(serializer.Simplifiable):
 
     def foxes_attack(self):
         for fox in self.foxes:
-            fox.attack(self)
+            fox.attack()
 
     def chickens_attack(self):
         for chicken in self.chickens:
-            chicken.attack(self)
+            chicken.attack()
 
     def add_chicken(self, chicken):
         self.chickens.add(chicken)
@@ -853,7 +853,7 @@ class GameBoard(serializer.Simplifiable):
 
     def add_start_chickens(self, _map, tile, value):
         """Add chickens as specified by the code layer"""
-        chick = animal.Chicken((tile.tx, tile.ty))
+        chick = animal.Chicken((tile.tx, tile.ty), self)
         for equip_cls in equipment.EQUIP_MAP[value]:
             item = equip_cls()
             chick.equip(item)
@@ -861,7 +861,7 @@ class GameBoard(serializer.Simplifiable):
 
     def _choose_fox(self, (x, y)):
         fox_cls = misc.WeightedSelection(self.level.fox_weightings).choose()
-        return fox_cls((x, y))
+        return fox_cls((x, y), self)
 
     def spawn_foxes(self):
         """The foxes come at night, and this is where they come from."""

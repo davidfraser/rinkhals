@@ -32,7 +32,7 @@ class Animal(Sprite, serializer.Simplifiable):
         'facing',
     ]
 
-    def __init__(self, tile_pos):
+    def __init__(self, tile_pos, gameboard):
         # load images
         self._image_left = imagecache.load_image(self.IMAGE_FILE)
         self._image_right = imagecache.load_image(self.IMAGE_FILE, ("right_facing",))
@@ -48,6 +48,7 @@ class Animal(Sprite, serializer.Simplifiable):
         self.accoutrements = []
         self.abode = None
         self.facing = 'left'
+        self.gameboard = gameboard
 
     def make(cls):
         """Override default Simplifiable object creation."""
@@ -66,15 +67,15 @@ class Animal(Sprite, serializer.Simplifiable):
         self.rect.x = ppos[0]
         self.rect.y = ppos[1]
 
-    def die(self, gameboard):
+    def die(self):
         """Play death animation, noises, whatever."""
         if hasattr(self, 'DEATH_SOUND'):
             sound.play_sound(self.DEATH_SOUND)
         if hasattr(self, 'DEATH_ANIMATION'):
-            self.DEATH_ANIMATION(gameboard.tv, self.pos.to_tile_tuple())
-        self._game_death(gameboard)
+            self.DEATH_ANIMATION(self.gameboard.tv, self.pos.to_tile_tuple())
+        self._game_death()
 
-    def _game_death(self, gameboard):
+    def _game_death(self):
         # Call appropriate gameboard cleanup here.
         pass
 
@@ -83,7 +84,7 @@ class Animal(Sprite, serializer.Simplifiable):
         # Default is not to move
         pass
 
-    def attack(self, gameboard):
+    def attack(self):
         """Given the game state, attack a suitable target"""
         # Default is not to attack
         pass
@@ -159,12 +160,12 @@ class Animal(Sprite, serializer.Simplifiable):
     def outside(self):
         return self.abode is None
 
-    def damage(self, gameboard):
+    def damage(self):
         for a in self.armour():
             if not a.survive_damage():
                 self.unequip(a)
             return True
-        self.die(gameboard)
+        self.die()
         return False
 
 class Chicken(Animal):
@@ -177,107 +178,106 @@ class Chicken(Animal):
 
     SIMPLIFY = Animal.SIMPLIFY + ['eggs']
 
-    def __init__(self, pos):
-        Animal.__init__(self, pos)
+    def __init__(self, pos, gameboard):
+        Animal.__init__(self, pos, gameboard)
         self.eggs = []
 
-    def start_night(self, gameboard):
-        self.lay(gameboard)
+    def start_night(self):
+        self.lay()
         self.reload_weapon()
 
-    def start_day(self, gameboard):
-        self.hatch(gameboard)
+    def start_day(self):
+        self.hatch()
 
-    def _game_death(self, gameboard):
-        gameboard.remove_chicken(self)
+    def _game_death(self):
+        self.gameboard.remove_chicken(self)
 
-    def move(self, gameboard):
+    def move(self):
         """A free chicken will wander around aimlessly"""
         pos_x, pos_y = self.pos.to_tile_tuple()
         surrounds = [Position(pos_x + dx, pos_y + dy) for dx in [-1, 0, 1] for dy in [-1, 0, 1]]
-        pos_options = [pos for pos in surrounds if gameboard.in_bounds(pos) and gameboard.tv.get(pos.to_tile_tuple()) == gameboard.GRASSLAND and not gameboard.get_outside_chicken(pos.to_tile_tuple())] + [self.pos]
+        pos_options = [pos for pos in surrounds if self.gameboard.in_bounds(pos) and self.gameboard.tv.get(pos.to_tile_tuple()) == self.gameboard.GRASSLAND and not self.gameboard.get_outside_chicken(pos.to_tile_tuple())] + [self.pos]
         self.pos = pos_options[random.randint(0, len(pos_options)-1)]
 
     def has_axe(self):
         return bool([e for e in self.weapons() if e.TYPE == "AXE"])
 
-    def chop(self, gameboard):
+    def chop(self):
         if self.has_axe():
             pos_x, pos_y = self.pos.to_tile_tuple()
             surrounds = [Position(pos_x + dx, pos_y + dy) for dx in [-1, 0, 1] for dy in [-1, 0, 1]]
-            tree_options = [pos for pos in surrounds if gameboard.in_bounds(pos) and gameboard.tv.get(pos.to_tile_tuple()) == gameboard.WOODLAND]
+            tree_options = [pos for pos in surrounds if self.gameboard.in_bounds(pos) and self.gameboard.tv.get(pos.to_tile_tuple()) == self.gameboard.WOODLAND]
             if tree_options:
                 num_trees_to_cut = random.randint(1, len(tree_options))
                 trees_to_cut = random.sample(tree_options, num_trees_to_cut)
                 for tree_pos in trees_to_cut:
-                    gameboard.add_wood(5)
-                    gameboard.tv.set(tree_pos.to_tile_tuple(), gameboard.GRASSLAND)
+                    self.gameboard.add_wood(5)
+                    self.gameboard.tv.set(tree_pos.to_tile_tuple(), self.gameboard.GRASSLAND)
 
-    def lay(self, gameboard):
+    def lay(self):
         """See if the chicken lays an egg"""
         if self.abode and self.abode.building.HENHOUSE:
             if not self.eggs:
                 for x in range(random.randint(1, 4)):
-                    self.eggs.append(Egg(self.pos))
+                    self.eggs.append(Egg(self.pos, self.gameboard))
                 self.equip(equipment.NestEgg())
-            gameboard.eggs += self.get_num_eggs()
+            self.gameboard.eggs += self.get_num_eggs()
 
-    def remove_eggs(self, gameboard):
+    def remove_eggs(self):
         """Clean up the egg state"""
-        gameboard.remove_eggs(len(self.eggs))
+        self.gameboard.remove_eggs(len(self.eggs))
         self.eggs = []
         self.unequip_by_name("Nestegg")
 
-    def remove_one_egg(self, gameboard):
+    def remove_one_egg(self):
         """Clean up the egg state"""
         self.eggs.pop()
-        gameboard.remove_eggs(1)
+        self.gameboard.remove_eggs(1)
         if not self.eggs:
             self.unequip_by_name("Nestegg")
 
     def get_num_eggs(self):
         return len(self.eggs)
 
-    def hatch(self, gameboard):
+    def hatch(self):
         """See if we have an egg to hatch"""
         if self.eggs:
             chick = self.eggs[0].hatch()
             if chick:
                 # sell the remaining eggs
                 # Remove hatched egg
-                self.eggs.pop() 
-                gameboard.eggs -= 1
+                self.remove_one_egg()
                 # Sell other eggs
                 for egg in self.eggs[:]:
-                    gameboard.sell_one_egg(self)
-                self.remove_eggs(gameboard) # clean up stale images, etc.
-                gameboard.place_hatched_chicken(chick, self.abode.building)
+                    self.gameboard.sell_one_egg(self)
+                self.remove_eggs() # clean up stale images, etc.
+                self.gameboard.place_hatched_chicken(chick, self.abode.building)
 
-    def _find_killable_fox(self, weapon, gameboard):
+    def _find_killable_fox(self, weapon):
         """Choose a random fox within range of this weapon."""
         killable_foxes = []
-        for fox in gameboard.foxes:
-            if not weapon.in_range(gameboard, self, fox):
+        for fox in self.gameboard.foxes:
+            if not weapon.in_range(self.gameboard, self, fox):
                 continue
-            if visible(self, fox, gameboard):
+            if visible(self, fox, self.gameboard):
                 killable_foxes.append(fox)
         if not killable_foxes:
             return None
         return random.choice(killable_foxes)
 
-    def attack(self, gameboard):
+    def attack(self):
         """An armed chicken will attack a fox within range."""
         if not self.weapons():
             # Not going to take on a fox bare-winged.
             return
         # Choose the first weapon equipped.
         weapon = self.weapons()[0]
-        fox = self._find_killable_fox(weapon, gameboard)
+        fox = self._find_killable_fox(weapon)
         if not fox:
             return
         self._fix_face(fox.pos)
-        if weapon.hit(gameboard, self, fox):
-            fox.damage(gameboard)
+        if weapon.hit(self.gameboard, self, fox):
+            fox.damage()
 
     def reload_weapon(self):
         """If we have a weapon that takes ammunition, reload it."""
@@ -291,8 +291,8 @@ class Egg(Animal):
 
     SIMPLIFY = Animal.SIMPLIFY + ['timer']
 
-    def __init__(self, pos):
-        Animal.__init__(self, pos)
+    def __init__(self, pos, gameboard):
+        Animal.__init__(self, pos, gameboard)
         self.timer = 2
 
     # Eggs don't move
@@ -300,7 +300,7 @@ class Egg(Animal):
     def hatch(self):
         self.timer -= 1
         if self.timer == 0:
-            return Chicken(self.pos)
+            return Chicken(self.pos, self.gameboard)
         return None
 
 class Fox(Animal):
@@ -324,8 +324,8 @@ class Fox(Animal):
             'hendominium' : 30,
             }
 
-    def __init__(self, pos):
-        Animal.__init__(self, pos)
+    def __init__(self, pos, gameboard):
+        Animal.__init__(self, pos, gameboard)
         self.landmarks = [self.pos]
         self.hunting = True
         self.dig_pos = None
@@ -340,22 +340,22 @@ class Fox(Animal):
     def outside(self):
         return self.building is None
 
-    def _game_death(self, gameboard):
-        gameboard.kill_fox(self)
+    def _game_death(self):
+        self.gameboard.kill_fox(self)
 
-    def _cost_tile(self, pos, gameboard):
-        if gameboard.in_bounds(pos):
-            this_tile = gameboard.tv.get(pos.to_tile_tuple())
+    def _cost_tile(self, pos):
+        if self.gameboard.in_bounds(pos):
+            this_tile = self.gameboard.tv.get(pos.to_tile_tuple())
             cost = self.costs.get(tiles.TILE_MAP[this_tile], 100)
         else:
             cost = 100 # Out of bounds is expensive
         return cost
 
-    def _cost_path(self, path, gameboard):
+    def _cost_path(self, path):
         """Calculate the cost of a path"""
         total = 0
         for pos in path:
-            total += self._cost_tile(pos, gameboard)
+            total += self._cost_tile(pos)
         return total
 
     def _gen_path(self, start_pos, final_pos):
@@ -363,7 +363,7 @@ class Fox(Animal):
            excluding start_pos"""
         return start_pos.intermediate_positions(final_pos)
 
-    def _find_best_path_step(self, final_pos, gameboard):
+    def _find_best_path_step(self, final_pos):
         """Find the cheapest path to final_pos, and return the next step
            along the path."""
         # We calculate the cost of the direct path
@@ -387,19 +387,19 @@ class Fox(Animal):
         for point in neighbours:
             dist = point.dist(final_pos)
             if dist < cur_dist:
-                cost = self._cost_tile(point, gameboard)
+                cost = self._cost_tile(point)
                 if cost < min_cost or (min_cost == cost and dist < min_dist):
                     # Prefer closest of equal cost points
                     min_dist = dist
                     min_cost = cost
                     best = point
-        if min_cost < 20 or not gameboard.in_bounds(self.pos):
+        if min_cost < 20 or not self.gameboard.in_bounds(self.pos):
             # If we're not on the gameboard yet, there's no point in looking
             # for an optimal path.
             return best
         # Else expensive step, so think further
         direct_path = self._gen_path(self.pos, final_pos)
-        min_cost = self._cost_path(direct_path, gameboard)
+        min_cost = self._cost_path(direct_path)
         min_path = direct_path
         # is there a point nearby that gives us a cheaper direct path?
         # This is delibrately not finding the optimal path, as I don't
@@ -412,7 +412,7 @@ class Fox(Animal):
         for start in poss:
             cand_path = self._gen_path(self.pos, start) + \
                     self._gen_path(start, final_pos)
-            cost = self._cost_path(cand_path, gameboard)
+            cost = self._cost_path(cand_path)
             if cost < min_cost:
                 min_cost = cost
                 min_path = cand_path
@@ -420,22 +420,22 @@ class Fox(Animal):
             return final_pos
         return min_path[0]
 
-    def _find_path_to_woodland(self, gameboard):
+    def _find_path_to_woodland(self):
         """Dive back to woodland through the landmarks"""
         # find the closest point to our current location in walked path
         if self.pos == self.landmarks[-1]:
             if len(self.landmarks) > 1:
                 self.landmarks.pop() # Moving to the next landmark
-        if not gameboard.in_bounds(self.pos) and not self.hunting:
+        if not self.gameboard.in_bounds(self.pos) and not self.hunting:
             # Safely out of sight
             self.safe = True
             return self.pos
-        return self._find_best_path_step(self.landmarks[-1], gameboard)
+        return self._find_best_path_step(self.landmarks[-1])
 
-    def _select_target(self, gameboard):
+    def _select_target(self):
         min_dist = 999
         self.closest = None
-        for chicken in gameboard.chickens:
+        for chicken in self.gameboard.chickens:
             dist = chicken.pos.dist(self.pos)
             if chicken.abode:
                 dist += 5 # Prefer free-ranging chickens
@@ -445,12 +445,12 @@ class Fox(Animal):
                 min_dist = dist
                 self.closest = chicken
 
-    def _find_path_to_chicken(self, gameboard):
+    def _find_path_to_chicken(self):
         """Find the path to the closest chicken"""
         # Find the closest chicken
-        if self.closest not in gameboard.chickens:
+        if self.closest not in self.gameboard.chickens:
             # Either no target, or someone ate it
-            self._select_target(gameboard)
+            self._select_target()
         if not self.closest:
             # No more chickens, so leave
             self.hunting = False
@@ -465,28 +465,28 @@ class Fox(Animal):
             else:
                 new_z = self.pos.z + 1
             return Position(self.pos.x, self.pos.y, new_z)
-        return self._find_best_path_step(self.closest.pos, gameboard)
+        return self._find_best_path_step(self.closest.pos)
 
-    def attack(self, gameboard):
+    def attack(self):
         """Attack a chicken"""
-        chicken = gameboard.get_animal_at_pos(self.pos, 'chicken')
+        chicken = self.gameboard.get_animal_at_pos(self.pos, 'chicken')
         if chicken:
             # Always attack a chicken we step on, even if not hunting
-            self._catch_chicken(chicken, gameboard)
+            self._catch_chicken(chicken)
 
-    def _catch_chicken(self, chicken, gameboard):
+    def _catch_chicken(self, chicken):
         """Catch a chicken"""
-        chicken.damage(gameboard)
+        chicken.damage()
         self.closest = None
         self.hunting = False
         self.last_steps = [] # Forget history here
 
-    def _update_pos(self, gameboard, new_pos):
+    def _update_pos(self, new_pos):
         """Update the position, making sure we don't step on other foxes"""
         if new_pos == self.pos:
             # We're not moving, so we can skip all the checks
             return new_pos
-        blocked = gameboard.get_animal_at_pos(new_pos, 'fox') is not None
+        blocked = self.gameboard.get_animal_at_pos(new_pos, 'fox') is not None
         if not blocked and new_pos.z == self.pos.z:
             # We're only worried about loops when not on a ladder
             blocked = new_pos in self.last_steps
@@ -506,9 +506,9 @@ class Fox(Animal):
             final_pos = None
             min_cost = 1000
             for poss in moves:
-                if gameboard.get_animal_at_pos(poss, 'fox'):
+                if self.gameboard.get_animal_at_pos(poss, 'fox'):
                     continue # blocked
-                cost = self._cost_tile(poss, gameboard)
+                cost = self._cost_tile(poss)
                 if cost < min_cost:
                     min_cost = cost
                     final_pos = poss
@@ -518,35 +518,35 @@ class Fox(Animal):
         if not final_pos:
             # No good choice, so stay put
             return self.pos
-        if gameboard.in_bounds(final_pos):
-            this_tile = gameboard.tv.get(final_pos.to_tile_tuple())
+        if self.gameboard.in_bounds(final_pos):
+            this_tile = self.gameboard.tv.get(final_pos.to_tile_tuple())
         else:
             this_tile = tiles.REVERSE_TILE_MAP['woodland']
         if tiles.TILE_MAP[this_tile] == 'broken fence' and self.hunting:
             # We'll head back towards the holes we make/find
             self.landmarks.append(final_pos)
         elif tiles.TILE_MAP[this_tile] == 'fence' and not self.dig_pos:
-            return self._dig(gameboard, final_pos)
+            return self._dig(final_pos)
         self.last_steps.append(final_pos)
         if len(self.last_steps) > 3:
             self.last_steps.pop(0)
         return final_pos
 
-    def _dig(self, gameboard, dig_pos):
+    def _dig(self, dig_pos):
         """Setup dig parameters, to be overridden if needed"""
         self.tick = 5
         self.dig_pos = dig_pos
         return self.pos
 
-    def _make_hole(self, gameboard):
+    def _make_hole(self):
         """Make a hole in the fence"""
-        fence = gameboard.get_building(self.dig_pos.to_tile_tuple())
+        fence = self.gameboard.get_building(self.dig_pos.to_tile_tuple())
         # Another fox could have made the same hole this turn
         if fence:
-            fence.damage(gameboard.tv)
+            fence.damage(self.gameboard.tv)
         self.dig_pos = None
 
-    def move(self, gameboard):
+    def move(self):
         """Foxes will aim to move towards the closest henhouse or free
            chicken"""
         if self.safe:
@@ -559,23 +559,23 @@ class Fox(Animal):
                 # Check the another fox hasn't dug a hole for us
                 # We're too busy digging to notice if a hole appears nearby,
                 # but we'll notice if the fence we're digging vanishes
-                this_tile = gameboard.tv.get(self.dig_pos.to_tile_tuple())
+                this_tile = self.gameboard.tv.get(self.dig_pos.to_tile_tuple())
                 if tiles.TILE_MAP[this_tile] != 'fence':
                     self.tick = 0
             else:
                 # We've dug through the fence, so make a hole
-                self._make_hole(gameboard)
+                self._make_hole()
             return
         elif self.hunting:
-            desired_pos = self._find_path_to_chicken(gameboard)
+            desired_pos = self._find_path_to_chicken()
         else:
-            desired_pos = self._find_path_to_woodland(gameboard)
-        final_pos = self._update_pos(gameboard, desired_pos)
+            desired_pos = self._find_path_to_woodland()
+        final_pos = self._update_pos(desired_pos)
         self._fix_face(final_pos)
         self.pos = final_pos
         change_visible = False
         # See if we're entering/leaving a building
-        building = gameboard.get_building(final_pos.to_tile_tuple())
+        building = self.gameboard.get_building(final_pos.to_tile_tuple())
         if building and self.outside():
             # Check if we need to enter
             if self.closest and not self.closest.outside() and \
@@ -595,7 +595,7 @@ class Fox(Animal):
                 self.building.remove_predator(self)
                 change_visible = True
         if change_visible:
-            gameboard.set_visibility(self)
+            self.gameboard.set_visibility(self)
 
 
 class NinjaFox(Fox):
@@ -615,24 +615,24 @@ class DemoFox(Fox):
     costs = Fox.costs.copy()
     costs['fence'] = 2
 
-    def _dig(self, gameboard, dig_pos):
+    def _dig(self, dig_pos):
         """Setup dig parameters, to be overridden if needed"""
         self.tick = 0 # Costs us nothing to go through a fence.
         self.dig_pos = dig_pos
-        self.DIG_ANIMATION(gameboard.tv, dig_pos.to_tile_tuple())
-        self._make_hole(gameboard)
+        self.DIG_ANIMATION(self.gameboard.tv, dig_pos.to_tile_tuple())
+        self._make_hole()
         return self.pos
 
 class GreedyFox(Fox):
     """Greedy foxes eat more chickens"""
     CONFIG_NAME = 'greedy fox'
 
-    def __init__(self, pos):
-        Fox.__init__(self, pos)
+    def __init__(self, pos, gameboard):
+        Fox.__init__(self, pos, gameboard)
         self.chickens_eaten = 0
 
-    def _catch_chicken(self, chicken, gameboard):
-        chicken.damage(gameboard)
+    def _catch_chicken(self, chicken):
+        chicken.damage()
         self.closest = None
         self.chickens_eaten += 1
         if self.chickens_eaten > 2:
@@ -645,11 +645,11 @@ class Rinkhals(Fox):
     IMAGE_FILE = 'sprites/rinkhals.png'
     CONFIG_NAME = 'rinkhals'
 
-    def _select_target(self, gameboard):
+    def _select_target(self):
         """The Rinkhals eats eggs"""
         min_dist = 999
         self.closest = None
-        for chicken in gameboard.chickens:
+        for chicken in self.gameboard.chickens:
             dist = chicken.pos.dist(self.pos)
             if not chicken.eggs:
                 dist += 100 # The closest eggs have to be *far* away to be safe
@@ -657,18 +657,18 @@ class Rinkhals(Fox):
                 min_dist = dist
                 self.closest = chicken
 
-    def _catch_chicken(self, chicken, gameboard):
+    def _catch_chicken(self, chicken):
         """The Rinkhals eats eggs, but does not harm chickens"""
-        chicken.remove_eggs(gameboard)
+        chicken.remove_eggs()
         self.closest = None
         self.hunting = False
         self.last_steps = []
 
-    def _dig(self, gameboard, dig_pos):
+    def _dig(self, dig_pos):
         """Snakes ignore fences"""
         return dig_pos
 
-    def damage(self, gameboard):
+    def damage(self):
         """The Rinkhals is invincible!"""
         return True
 
