@@ -970,6 +970,13 @@ class GameBoard(serializer.Simplifiable):
         buy_price = sell_price*(1.1)
         self.wood_sell_price, self.wood_buy_price = int(sell_price), int(buy_price)
 
+    def snapshot(self, scale=0.25):
+        """Return a snapshot of the gameboard."""
+        w, h = self.disp.screen.get_size()
+        w, h = int(w * scale), int(h * scale)
+        snapshot = pygame.transform.smoothscale(self.disp.screen, (w, h))
+        return snapshot
+
     def save_game(self):
         # clear selected animals and tool states before saving
         self.reset_states()

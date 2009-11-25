@@ -2,8 +2,11 @@
 
 import xmlrpclib
 import os
+import StringIO
+import base64
 
 from pgu import gui
+import pygame
 
 import config
 import version
@@ -19,11 +22,33 @@ def open_save_game(fullpath):
         save_version = params[0]
         if save_version != version.SAVE_GAME_VERSION:
             raise SaveGameError("Incompatible save game version.")
+
         data = params[1]
+
+        try:
+            snapshot = decode_snapshot(params[2])
+        except Exception, e:
+            snapshot = None
+
     except Exception, e:
         raise SaveGameError("Failed to load game: %s" % (e,))
 
-    return data, None
+    return data, snapshot
+
+def encode_snapshot(snapshot):
+    """Encode a snapshot."""
+    snapshot_file = StringIO.StringIO()
+    pygame.image.save(snapshot, snapshot_file)
+    data = snapshot_file.getvalue()
+    data = base64.standard_b64encode(data)
+    return data
+
+def decode_snapshot(data):
+    """Decode a snapshot."""
+    data = base64.standard_b64decode(data)
+    snapshot_file = StringIO.StringIO(data)
+    snapshot = pygame.image.load(snapshot_file, "snapshot.tga")
+    return snapshot
 
 
 class SaveGameError(Exception):
@@ -149,8 +174,13 @@ class SaveDialog(BaseSaveRestoreDialog):
         filename = self.get_fullpath()
         if filename is None:
             return
+
         data = gameboard.save_game()
-        params = (version.SAVE_GAME_VERSION, data)
+
+        snapshot = gameboard.snapshot()
+        snapshot_data = encode_snapshot(snapshot)
+
+        params = (version.SAVE_GAME_VERSION, data, snapshot_data)
         xml = xmlrpclib.dumps(params, "foxassault")
         try:
             open(filename, "wb").write(xml)
