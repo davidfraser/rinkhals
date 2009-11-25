@@ -264,12 +264,16 @@ class GameBoard(serializer.Simplifiable):
         if not self.day:
             return
         if e.button == 3: # Right button
-            #self.set_selected_tool(None, None)
-            #self.toolbar.clear_tool()
             if self.selected_tool == constants.TOOL_PLACE_ANIMALS:
                 self.set_selected_tool(constants.TOOL_SELECT_CHICKENS, cursors.cursors["select"])
+                self.toolbar._select_tool.group.value = self.toolbar._select_tool.value
+                self.toolbar._move_tool.pcls = ""
+                self.toolbar._select_tool.pcls = "down"
             elif self.selected_tool == constants.TOOL_SELECT_CHICKENS:
                 self.set_selected_tool(constants.TOOL_PLACE_ANIMALS, cursors.cursors["chicken"])
+                self.toolbar._move_tool.group.value = self.toolbar._move_tool.value
+                self.toolbar._select_tool.pcls = ""
+                self.toolbar._move_tool.pcls = "down"
             return
         elif e.button != 1: # Left button
             return

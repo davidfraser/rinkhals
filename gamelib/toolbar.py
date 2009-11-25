@@ -234,7 +234,7 @@ class BaseToolBar(gui.Table):
     def add_tool_button(self, text, tool, price=None, cursor=None):
         if price is not None:
             text = "%s  (%s)" % (text, price)
-        self.add_tool(text, lambda: self.gameboard.set_selected_tool(tool,
+        return self.add_tool(text, lambda: self.gameboard.set_selected_tool(tool,
             cursor))
 
     def add_tool(self, text, func):
@@ -270,14 +270,14 @@ class DefaultToolBar(BaseToolBar):
         self.make_toolbar()
 
     def make_toolbar(self):
-        self.add_tool_button("Select chicken", constants.TOOL_SELECT_CHICKENS,
+        self._select_tool = self.add_tool_button("Select chicken", constants.TOOL_SELECT_CHICKENS,
                 None, cursors.cursors['select'])
 
         self.add_spacer(5)
 
         self.add_tool('Equip chickens', self.add_equipment_toolbar)
 
-        self.add_tool_button("Move chickens", constants.TOOL_PLACE_ANIMALS,
+        self._move_tool = self.add_tool_button("Move chickens", constants.TOOL_PLACE_ANIMALS,
                 None, cursors.cursors['select'])
 
         self.add_tool('Sell stuff', self.add_sell_toolbar)
