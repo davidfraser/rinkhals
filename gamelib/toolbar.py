@@ -285,8 +285,6 @@ class DefaultToolBar(BaseToolBar):
             self.toggle_move_on()
         elif self.gameboard.selected_tool == constants.TOOL_SELECT_CHICKENS:
             self.toggle_select_on()
-        else:
-            self.gameboard.set_selected_tool(None, None)
 
     def toggle_move_on(self):
         self._select_tool.group.value = self._move_tool.value
@@ -301,12 +299,10 @@ class DefaultToolBar(BaseToolBar):
     def add_building_toolbar(self):
         self.gameboard.change_toolbar(BuildingToolBar(self.gameboard,
                 width=self.style.width))
-        self.gameboard.unselect_all()
 
     def add_sell_toolbar(self):
         self.gameboard.change_toolbar(SellToolBar(self.gameboard,
                 width=self.style.width))
-        self.gameboard.unselect_all()
 
     def add_wood_toolbar(self):
         self.gameboard.change_toolbar(WoodToolBar(self.gameboard,
@@ -329,7 +325,6 @@ class BuildingToolBar(BaseToolBar):
         self.make_toolbar()
 
     def make_toolbar(self):
-        self.gameboard.set_selected_tool(None, None)
         for building_cls in buildings.BUILDINGS:
             self.add_tool_button(building_cls.NAME.title(), building_cls,
                     None, cursors.cursors.get('build', None))
@@ -350,8 +345,6 @@ class EquipmentToolBar(BaseToolBar):
         self.make_toolbar()
 
     def make_toolbar(self):
-        if self.gameboard.selected_tool not in [constants.TOOL_SELECT_CHICKENS, constants.TOOL_PLACE_ANIMALS]:
-            self.gameboard.set_selected_tool(None, None)
         for equipment_cls in equipment.EQUIPMENT:
             self.add_tool_button(equipment_cls.NAME.title(),
                     equipment_cls,
@@ -371,8 +364,6 @@ class SellToolBar(BaseToolBar):
         self.make_toolbar()
 
     def make_toolbar(self):
-        self.gameboard.set_selected_tool(None, None)
-
         self.add_heading("Sell ...")
         self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
                 self.gameboard.level.sell_price_chicken, cursors.cursors['sell'])
@@ -397,9 +388,6 @@ class WoodToolBar(BaseToolBar):
         self.make_toolbar()
 
     def make_toolbar(self):
-        if self.gameboard.selected_tool not in [constants.TOOL_SELECT_CHICKENS, constants.TOOL_PLACE_ANIMALS]:
-            self.gameboard.set_selected_tool(None, None)
-
         self.add_heading("Trade...")
         self.add_tool("Buy 5 planks (%s)" % self.gameboard.wood_buy_price, self.buy_wood)
         self.add_tool("Sell 5 planks (%s)" % self.gameboard.wood_sell_price, self.sell_wood)

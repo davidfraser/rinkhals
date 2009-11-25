@@ -154,6 +154,13 @@ class GameBoard(serializer.Simplifiable):
         self.redraw_counters()
         td.repaint()
 
+        if new_toolbar.MOVE_SELECT_PERMITTED:
+            if self.selected_tool not in [constants.TOOL_SELECT_CHICKENS, constants.TOOL_PLACE_ANIMALS]:
+                self.set_selected_tool(None, None)
+        else:
+            self.set_selected_tool(None, None)
+            self.unselect_all()
+
     def redraw_counters(self):
         self.toolbar.update_egg_counter(self.eggs)
         if self.level.is_last_day(self.days):
