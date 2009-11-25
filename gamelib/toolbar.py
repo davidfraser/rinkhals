@@ -361,7 +361,7 @@ class BuildingToolBar(BaseToolBar):
 class EquipmentToolBar(BaseToolBar):
     def __init__(self, gameboard, **params):
         BaseToolBar.__init__(self, gameboard, **params)
-        self.group = gui.Group(name='building_toolbar', value=None)
+        self.group = gui.Group(name='equipment_toolbar', value=None)
         self.make_toolbar()
 
     def make_toolbar(self):
@@ -381,7 +381,7 @@ class EquipmentToolBar(BaseToolBar):
 class SellToolBar(BaseToolBar):
     def __init__(self, gameboard, **params):
         BaseToolBar.__init__(self, gameboard, **params)
-        self.group = gui.Group(name='building_toolbar', value=None)
+        self.group = gui.Group(name='sell_toolbar', value=None)
         self.make_toolbar()
 
     def make_toolbar(self):
@@ -404,7 +404,7 @@ class SellToolBar(BaseToolBar):
 class WoodToolBar(BaseToolBar):
     def __init__(self, gameboard, **params):
         BaseToolBar.__init__(self, gameboard, **params)
-        self.group = gui.Group(name='building_toolbar', value=None)
+        self.group = gui.Group(name='wood_toolbar', value=None)
         self.make_toolbar()
 
     def make_toolbar(self):
