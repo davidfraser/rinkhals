@@ -10,6 +10,17 @@ import cursors
 import engine
 import version
 
+class RinkhalsTool(gui.Tool):
+    def __init__(self, group, label, value, func, **params):
+        gui.Tool.__init__(self, group, label, value, **params)
+        self.func = func
+
+    def click(self):
+        gui.Tool.click(self)
+        if not self.func():
+            # Don't hightlight if the function says so
+            self.group.value = None
+
 class OpaqueLabel(gui.Label):
     def __init__(self, value, **params):
         gui.Label.__init__(self, value, **params)
@@ -230,8 +241,9 @@ class BaseToolBar(gui.Table):
         label = gui.basic.Label(text)
         value = self._next_tool_value
         self._next_tool_value += 1
-        tool = gui.Tool(self.group, label, value, width=self.rect.w, style={"padding_left": 0})
-        tool.connect(gui.CLICK, func)
+        tool = RinkhalsTool(self.group, label, value, func, width=self.rect.w,
+                style={"padding_left": 0})
+        #tool.connect(gui.CLICK, func)
         self.tr()
         self.td(tool, align=-1, colspan=2)
         return tool
@@ -301,6 +313,7 @@ class DefaultToolBar(BaseToolBar):
     def add_building_toolbar(self):
         self.gameboard.change_toolbar(BuildingToolBar(self.gameboard,
                 width=self.style.width))
+        self.gameboard.unselect_all()
 
     def add_sell_toolbar(self):
         self.gameboard.change_toolbar(SellToolBar(self.gameboard,
@@ -309,6 +322,7 @@ class DefaultToolBar(BaseToolBar):
     def add_wood_toolbar(self):
         self.gameboard.change_toolbar(WoodToolBar(self.gameboard,
                 width=self.style.width))
+        self.gameboard.unselect_all()
 
     def add_equipment_toolbar(self):
         self.gameboard.change_toolbar(EquipmentToolBar(self.gameboard,
