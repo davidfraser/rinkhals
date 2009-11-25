@@ -222,14 +222,16 @@ class Chicken(Animal):
                 self.equip(equipment.NestEgg())
             gameboard.eggs += self.get_num_eggs()
 
-    def remove_eggs(self):
+    def remove_eggs(self, gameboard):
         """Clean up the egg state"""
+        gameboard.remove_eggs(len(self.eggs))
         self.eggs = []
         self.unequip_by_name("Nestegg")
 
-    def remove_one_egg(self):
+    def remove_one_egg(self, gameboard):
         """Clean up the egg state"""
         self.eggs.pop()
+        gameboard.remove_eggs(1)
         if not self.eggs:
             self.unequip_by_name("Nestegg")
 
@@ -248,7 +250,7 @@ class Chicken(Animal):
                 # Sell other eggs
                 for egg in self.eggs[:]:
                     gameboard.sell_one_egg(self)
-                self.remove_eggs() # clean up stale images, etc.
+                self.remove_eggs(gameboard) # clean up stale images, etc.
                 gameboard.place_hatched_chicken(chick, self.abode.building)
 
     def _find_killable_fox(self, weapon, gameboard):
@@ -430,22 +432,25 @@ class Fox(Animal):
             return self.pos
         return self._find_best_path_step(self.landmarks[-1], gameboard)
 
+    def _select_target(self, gameboard):
+        min_dist = 999
+        self.closest = None
+        for chicken in gameboard.chickens:
+            dist = chicken.pos.dist(self.pos)
+            if chicken.abode:
+                dist += 5 # Prefer free-ranging chickens
+            if len(chicken.weapons()) > 0:
+                dist += 5 # Prefer unarmed chickens
+            if dist < min_dist:
+                min_dist = dist
+                self.closest = chicken
+
     def _find_path_to_chicken(self, gameboard):
         """Find the path to the closest chicken"""
         # Find the closest chicken
-        min_dist = 999
         if self.closest not in gameboard.chickens:
             # Either no target, or someone ate it
-            self.closest = None
-            for chicken in gameboard.chickens:
-                dist = chicken.pos.dist(self.pos)
-                if chicken.abode:
-                    dist += 5 # Prefer free-ranging chickens
-                if len(chicken.weapons()) > 0:
-                    dist += 5 # Prefer unarmed chickens
-                if dist < min_dist:
-                    min_dist = dist
-                    self.closest = chicken
+            self._select_target(gameboard)
         if not self.closest:
             # No more chickens, so leave
             self.hunting = False
@@ -521,8 +526,7 @@ class Fox(Animal):
             # We'll head back towards the holes we make/find
             self.landmarks.append(final_pos)
         elif tiles.TILE_MAP[this_tile] == 'fence' and not self.dig_pos:
-            self._dig(gameboard, final_pos)
-            return self.pos
+            return self._dig(gameboard, final_pos)
         self.last_steps.append(final_pos)
         if len(self.last_steps) > 3:
             self.last_steps.pop(0)
@@ -532,6 +536,7 @@ class Fox(Animal):
         """Setup dig parameters, to be overridden if needed"""
         self.tick = 5
         self.dig_pos = dig_pos
+        return self.pos
 
     def _make_hole(self, gameboard):
         """Make a hole in the fence"""
@@ -555,7 +560,7 @@ class Fox(Animal):
                 # We're too busy digging to notice if a hole appears nearby,
                 # but we'll notice if the fence we're digging vanishes
                 this_tile = gameboard.tv.get(self.dig_pos.to_tile_tuple())
-                if tiles.TILE_MAP[this_tile] == 'broken fence':
+                if tiles.TILE_MAP[this_tile] != 'fence':
                     self.tick = 0
             else:
                 # We've dug through the fence, so make a hole
@@ -616,6 +621,7 @@ class DemoFox(Fox):
         self.dig_pos = dig_pos
         self.DIG_ANIMATION(gameboard.tv, dig_pos.to_tile_tuple())
         self._make_hole(gameboard)
+        return self.pos
 
 class GreedyFox(Fox):
     """Greedy foxes eat more chickens"""
@@ -639,19 +645,28 @@ class Rinkhals(Fox):
     IMAGE_FILE = 'sprites/rinkhals.png'
     CONFIG_NAME = 'rinkhals'
 
+    def _select_target(self, gameboard):
+        """The Rinkhals eats eggs"""
+        min_dist = 999
+        self.closest = None
+        for chicken in gameboard.chickens:
+            dist = chicken.pos.dist(self.pos)
+            if not chicken.eggs:
+                dist += 100 # The closest eggs have to be *far* away to be safe
+            if dist < min_dist:
+                min_dist = dist
+                self.closest = chicken
+
     def _catch_chicken(self, chicken, gameboard):
-        """The Rinkhals hunts for sport, catch and release style"""
+        """The Rinkhals eats eggs, but does not harm chickens"""
+        chicken.remove_eggs(gameboard)
         self.closest = None
         self.hunting = False
         self.last_steps = []
 
-    def _make_hole(self, gameboard):
-        """The Rinkhals eats fences"""
-        fence = gameboard.get_building(self.dig_pos.to_tile_tuple())
-        if fence:
-            fence.remove(gameboard.tv)
-            gameboard.remove_building(fence)
-        self.dig_pos = None
+    def _dig(self, gameboard, dig_pos):
+        """Snakes ignore fences"""
+        return dig_pos
 
     def damage(self, gameboard):
         """The Rinkhals is invincible!"""

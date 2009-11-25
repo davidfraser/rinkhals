@@ -340,11 +340,13 @@ class GameBoard(serializer.Simplifiable):
     def sell_one_egg(self, chicken):
         if chicken.eggs:
             self.add_cash(self.level.sell_price_egg)
-            chicken.remove_one_egg()
-            self.eggs -= 1
-            self.toolbar.update_egg_counter(self.eggs)
+            chicken.remove_one_egg(self)
             return True
         return False
+
+    def remove_eggs(self, num):
+        self.eggs -= num
+        self.toolbar.update_egg_counter(self.eggs)
 
     def sell_egg(self, tile_pos):
         def do_sell(chicken, update_button=None):
@@ -451,9 +453,7 @@ class GameBoard(serializer.Simplifiable):
                     if try_pos:
                         chicken.unequip_by_name("Nest")
                         self.relocate_animal(chicken, tile_pos=try_pos)
-                        self.eggs -= chicken.get_num_eggs()
-                        chicken.remove_eggs()
-                        self.toolbar.update_egg_counter(self.eggs)
+                        chicken.remove_eggs(self)
 
     def relocate_animal(self, chicken, tile_pos=None, place=None):
         assert((tile_pos, place) != (None, None))
