@@ -577,14 +577,15 @@ class GameBoard(serializer.Simplifiable):
         def evict_callback():
             if not self.selected_chickens:
                 return
-            for chicken in self.selected_chickens:
-                for tile_pos in building.adjacent_tiles():
-                    if self.tv.get(tile_pos) != self.GRASSLAND:
-                        continue
-                    if self.get_outside_chicken(tile_pos) is None:
+            for tile_pos in building.adjacent_tiles():
+                if self.tv.get(tile_pos) != self.GRASSLAND:
+                    continue
+                if self.get_outside_chicken(tile_pos) is None:
+                    for chicken in self.selected_chickens:
                         update_button(chicken, empty=True)
-                        self.place_animal(tile_pos)
-                        break
+                    # this will place all the chickens
+                    self.place_animal(tile_pos)
+                    break
 
         if not sell_callback:
             tbl.tr()
