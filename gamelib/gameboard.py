@@ -189,6 +189,8 @@ class GameBoard(serializer.Simplifiable):
             sprite_curs = sprite_cursor.SpriteCursor(tool.IMAGE, self.tv, tool.BUY_PRICE)
         elif equipment.is_equipment(tool):
             sprite_curs = sprite_cursor.SpriteCursor(tool.CHICKEN_IMAGE_FILE, self.tv)
+        elif tool == constants.TOOL_PLACE_ANIMALS and self.selected_chickens:
+            cursor = cursors.cursors['chicken']
         self.set_cursor(cursor, sprite_curs)
         return True
 
@@ -328,7 +330,7 @@ class GameBoard(serializer.Simplifiable):
             if chick is None:
                 building = self.get_building(tile_pos)
                 if building and building.HENHOUSE:
-                    self.open_building_dialog(building, do_sell)
+                    self.open_building_dialog(building, False, do_sell)
                 return
             do_sell(chick)
         else:
@@ -358,7 +360,7 @@ class GameBoard(serializer.Simplifiable):
         if tile_pos:
             building = self.get_building(tile_pos)
             if building and building.HENHOUSE:
-                 self.open_building_dialog(building, do_sell)
+                 self.open_building_dialog(building, False, do_sell)
         else:
             for chicken in self.selected_chickens:
                 do_sell(chicken)
@@ -389,7 +391,7 @@ class GameBoard(serializer.Simplifiable):
             return chicken
         building = self.get_building(tile_pos)
         if building:
-            self.open_building_dialog(building)
+            self.open_building_dialog(building, False)
 
     def select_chicken(self, tile_pos):
         """Handle a select chicken event"""
@@ -427,14 +429,28 @@ class GameBoard(serializer.Simplifiable):
                     except buildings.BuildingFullError:
                         pass
                 else:
-                    self.open_building_dialog(building)
+                    self.open_building_dialog(building, True)
                 return
             if self.tv.get(tile_pos) == self.GRASSLAND:
                 for chicken in self.selected_chickens:
-                    # FIXME: find free square nearby
-                    if not self.get_outside_chicken(tile_pos):
+                    try_pos = tile_pos
+                    if self.get_outside_chicken(try_pos):
+                        try_pos = None
+                        # find a free square nearby
+                        poss = [(tile_pos[0] + x, tile_pos[1] + y)
+                                for x in range(-1, 2) for y in range(-1, 2)
+                                if (x, y) != (0, 0)]
+                        poss.extend([(tile_pos[0] + x, tile_pos[1] + y)
+                                for x in range(-2, 3, 2) for y in range(-2, 3)
+                                if (x, y) != (0, 0)])
+                        for cand in poss:
+                            if self.tv.get(cand) == self.GRASSLAND and \
+                                    not self.get_outside_chicken(cand):
+                                try_pos = cand
+                                break
+                    if try_pos:
                         chicken.unequip_by_name("Nest")
-                        self.relocate_animal(chicken, tile_pos=tile_pos)
+                        self.relocate_animal(chicken, tile_pos=try_pos)
                         self.eggs -= chicken.get_num_eggs()
                         chicken.remove_eggs()
                         self.toolbar.update_egg_counter(self.eggs)
@@ -485,7 +501,7 @@ class GameBoard(serializer.Simplifiable):
         self.disp.open(tbl, pos=offset)
         return tbl
 
-    def open_building_dialog(self, building, sell_callback=None):
+    def open_building_dialog(self, building, fill_empty, sell_callback=None):
         """Create dialog for manipulating the contents of a building."""
 
         place_button_map = {}
@@ -513,7 +529,7 @@ class GameBoard(serializer.Simplifiable):
                     sell_callback(place.occupant, update_button)
             else:
                 # there is no occupant, attempt to fill the space
-                if self.selected_chickens:
+                if self.selected_chickens and fill_empty:
                     # empty old nest (on button)
                     update_button(self.selected_chickens[0], empty=True)
                     self.relocate_animal(self.selected_chickens[0], place=place)
@@ -594,7 +610,7 @@ class GameBoard(serializer.Simplifiable):
                 if not (building and building.ABODE):
                      return
                 # Bounce through open dialog once more
-                self.open_building_dialog(building, do_equip)
+                self.open_building_dialog(building, False, do_equip)
             else:
                 do_equip(chicken)
         else:
@@ -645,7 +661,7 @@ class GameBoard(serializer.Simplifiable):
             if building is None:
                 return
             x, y = 50, 0
-            self.open_building_dialog(building, do_sell)
+            self.open_building_dialog(building, False, do_sell)
 
     def open_equipment_dialog(self, chicken, x, y, update_button=None):
         tbl = gui.Table()
