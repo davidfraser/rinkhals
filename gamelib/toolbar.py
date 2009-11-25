@@ -319,6 +319,9 @@ class DefaultToolBar(BaseToolBar):
             pygame.event.post(engine.FAST_FORWARD)
 
 class BuildingToolBar(BaseToolBar):
+
+    MOVE_SELECT_PERMITTED = True
+
     def __init__(self, gameboard, **params):
         BaseToolBar.__init__(self, gameboard, **params)
         self.group = gui.Group(name='building_toolbar', value=None)
