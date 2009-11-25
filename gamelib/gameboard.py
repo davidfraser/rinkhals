@@ -446,7 +446,10 @@ class GameBoard(serializer.Simplifiable):
             if self.tv.get(tile_pos) == self.GRASSLAND:
                 for chicken in self.selected_chickens:
                     try_pos = tile_pos
-                    if self.get_outside_chicken(try_pos):
+                    cur_chick = self.get_outside_chicken(try_pos)
+                    if cur_chick == chicken:
+                        continue
+                    if cur_chick:
                         try_pos = None
                         # find a free square nearby
                         poss = [(tile_pos[0] + x, tile_pos[1] + y)
