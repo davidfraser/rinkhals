@@ -16,17 +16,23 @@ farm. The problem is the foxes, which want to eat your chickens.  Since hiring
 guards is both too expensive and unreliable, the obvious solution is to help
 the chickens defend themselves.
 
-Game mechanics:
-
 You lose if you end a night with no chickens left.
+
+""" % constants.NAME,
+
+"""Important Game mechanics:
 
 Chickens only lay eggs in henhouses, and must stay on the egg for 2 days to
 hatch a new chicken. Chickens that hatch in already full henhouses are
 moved to just outside. If there is no space outside, they die immediately
 from overcrowding.
-""" % constants.NAME,
 
-"""Second Page of Help Text.
+Buildings require wood to construct. You can either trade money for wood,
+or, by equipping a chicken with an axes, and placing it near trees, your
+chickens will chop down trees at the end of the day.
+
+Chickens that aren't in buildings will move around at the end of the day.
+
 """
 ]
 
@@ -94,10 +100,15 @@ class HelpScreen(gui.Document):
 
         space = self.style.font.size(" ")
 
-        full_text = HELP[self.cur_page] + '\n\n' + LEVEL_TEXT % {
-                'name' : self.level.level_name,
-                'goal' : self.level.goal
-                }
+        if self.cur_page == 0:
+            full_text = "Page %d / %d\n\n" % (self.cur_page + 1, len(HELP)) + \
+                    HELP[self.cur_page] + '\n\n' + LEVEL_TEXT % {
+                            'name' : self.level.level_name,
+                            'goal' : self.level.goal
+                            }
+        else:
+            full_text = "Page %d / %d\n\n" % (self.cur_page + 1, len(HELP)) + \
+                    HELP[self.cur_page]
 
         for paragraph in full_text.split('\n\n'):
             self.block(align=-1)
