@@ -270,6 +270,8 @@ class GameBoard(serializer.Simplifiable):
         if e.button == 3: # Right button
             self.set_selected_tool(None, None)
             self.toolbar.clear_tool()
+        elif e.button == 2: # Middle button
+            self.unselect_all()
         elif e.button != 1: # Left button
             return
         if self.selected_tool == constants.TOOL_SELL_CHICKEN:
