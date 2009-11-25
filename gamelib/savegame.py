@@ -8,6 +8,27 @@ from pgu import gui
 import config
 import version
 
+def open_save_game(fullpath):
+    """Open a save game file."""
+    try:
+        xml = open(fullpath, "rb").read()
+        params, methodname = xmlrpclib.loads(xml)
+        if methodname != "foxassault":
+            raise SaveGameError("File does not appear to be a "
+                "Fox Assault save game.")
+        save_version = params[0]
+        if save_version != version.SAVE_GAME_VERSION:
+            raise SaveGameError("Incompatible save game version.")
+        data = params[1]
+    except Exception, e:
+        raise SaveGameError("Failed to load game: %s" % (e,))
+
+    return data, None
+
+
+class SaveGameError(Exception):
+    pass
+
 
 class BaseSaveRestoreDialog(gui.Dialog):
     """Save game dialog."""
@@ -39,6 +60,8 @@ class BaseSaveRestoreDialog(gui.Dialog):
         self.save_list.set_vertical_scroll(0)
         self.save_list.connect(gui.CHANGE, self._save_list_change)
 
+        self.image_container = gui.Container()
+
         button_ok = gui.Button(button_txt)
         button_ok.connect(gui.CLICK, self._click_ok)
 
@@ -48,7 +71,7 @@ class BaseSaveRestoreDialog(gui.Dialog):
         body = gui.Table()
         body.tr()
         body.td(self.save_list, style=td_style, colspan=2)
-        body.td(gui.Label("Image"), style=td_style, colspan=2)
+        body.td(self.image_container, style=td_style, colspan=2)
         body.tr()
         if self.name_input:
             body.td(gui.Label("Save as:"), style=td_style, align=1)
@@ -76,11 +99,29 @@ class BaseSaveRestoreDialog(gui.Dialog):
                 continue
             if ext != ".xml":
                 continue
-            self.save_games[root] = None
+            self.save_games[root] = self._create_image_widget(fullpath)
+
+    def _create_image_widget(self, fullpath):
+        """Create an image showing the contents of a save game file."""
+        try:
+            data, screenshot = open_save_game(fullpath)
+        except SaveGameError:
+            return gui.Label("Bad Save Game")
+
+        if screenshot is None:
+            return gui.Label("No screenshot")
+
+        return gui.Image(screenshot)
 
     def _save_list_change(self):
         if self.name_input:
             self.name_input.value = self.save_list.value
+
+        for w in self.image_container.widgets:
+            self.image_container.remove(w)
+
+        image_widget = self.save_games[self.save_list.value]
+        self.image_container.add(image_widget, 0, 0)
 
     def _click_ok(self):
         if self.name_input:
@@ -128,18 +169,11 @@ class RestoreDialog(BaseSaveRestoreDialog):
         filename = self.get_fullpath()
         if filename is None:
             return
+
         try:
-            xml = open(filename, "rb").read()
-            params, methodname = xmlrpclib.loads(xml)
-            if methodname != "foxassault":
-                raise ValueError("File does not appear to be a "
-                    "Fox Assault save game.")
-            save_version = params[0]
-            if save_version != version.SAVE_GAME_VERSION:
-                raise ValueError("Incompatible save game version.")
-            data = params[1]
+            data, screenshot = open_save_game(filename)
         except Exception, e:
-            "Failed to load game: %s" % (e,)
+            print "Failed to load game: %s" % (e,)
             return
 
         gameboard.restore_game(data)
