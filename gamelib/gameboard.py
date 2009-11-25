@@ -406,7 +406,7 @@ class GameBoard(serializer.Simplifiable):
             return chicken
         building = self.get_building(tile_pos)
         if building and building.ABODE:
-            self.open_building_dialog(building, False)
+            self.open_building_dialog(building, True)
 
     def select_chicken(self, tile_pos):
         """Handle a select chicken event"""
@@ -435,16 +435,23 @@ class GameBoard(serializer.Simplifiable):
         elif tile_pos:
             building = self.get_building(tile_pos)
             if building and building.ABODE:
-                for chicken in self.selected_chickens:
+                for chicken in self.selected_chickens[:]:
                     try:
                         place = building.first_empty_place()
                         self.relocate_animal(chicken, place=place)
                         chicken.equip(equipment.Nest())
-                        pygame.mouse.set_cursor(*cursors.cursors['select'])
+                        self.unselect_animal(chicken)
                     except buildings.BuildingFullError:
                         pass
-                else:
+                try:
+                    # if there's a space left, open the building
+                    building.first_empty_place()
                     self.open_building_dialog(building, True)
+                except buildings.BuildingFullError:
+                    pass
+                if not self.selected_chickens:
+                    # if we placed all the chickens, switch to select cursor
+                    pygame.mouse.set_cursor(*cursors.cursors['select'])
                 return
             if self.tv.get(tile_pos) == self.GRASSLAND:
                 for chicken in self.selected_chickens:
@@ -537,7 +544,16 @@ class GameBoard(serializer.Simplifiable):
             if place.occupant:
                 # there is an occupant, select or sell it
                 if not sell_callback:
-                    self.select_animal(place.occupant)
+                    mods = pygame.key.get_mods()
+                    if not (mods & KMOD_SHIFT):
+                        chkns = self.selected_chickens
+                        self.unselect_all()
+                        for chkn in chkns:
+                            update_button(chkn)
+                    if place.occupant in self.selected_chickens:
+                        self.unselect_animal(place.occupant)
+                    else:
+                        self.select_animal(place.occupant)
                     # select new animal (on button)
                     update_button(place.occupant)
                 else:
@@ -572,6 +588,11 @@ class GameBoard(serializer.Simplifiable):
 
         building.selected(True)
         def close_callback():
+            for floor in building.floors():
+                for row in floor.rows():
+                    for place in row:
+                        if place.occupant is not None:
+                            self.unselect_animal(place.occupant)
             building.selected(False)
 
         def evict_callback():
