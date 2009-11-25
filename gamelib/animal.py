@@ -30,6 +30,7 @@ class Animal(Sprite, serializer.Simplifiable):
         'accoutrements',
         'abode',
         'facing',
+        'gameboard',
     ]
 
     def __init__(self, tile_pos, gameboard):
@@ -52,7 +53,7 @@ class Animal(Sprite, serializer.Simplifiable):
 
     def make(cls):
         """Override default Simplifiable object creation."""
-        return cls((0, 0))
+        return cls((0, 0), None)
     make = classmethod(make)
 
     def unsimplify(cls, *args, **kwargs):
