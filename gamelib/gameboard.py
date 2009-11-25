@@ -396,7 +396,7 @@ class GameBoard(serializer.Simplifiable):
         if chicken:
             return chicken
         building = self.get_building(tile_pos)
-        if building:
+        if building and building.ABODE:
             self.open_building_dialog(building, False)
 
     def select_chicken(self, tile_pos):
