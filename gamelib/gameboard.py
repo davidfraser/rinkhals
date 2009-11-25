@@ -2,7 +2,8 @@ import random
 
 import pygame
 from pygame.locals import MOUSEBUTTONDOWN, MOUSEMOTION, KEYDOWN, K_UP, K_DOWN, \
-        K_LEFT, K_RIGHT, KMOD_SHIFT
+        K_LEFT, K_RIGHT, KMOD_SHIFT, K_0, K_1, K_2, K_3, K_4, K_5, K_6, K_7, \
+        K_8, K_9, KMOD_CTRL
 from pgu import gui
 
 import tiles
@@ -104,6 +105,7 @@ class GameBoard(serializer.Simplifiable):
         self.selected_tool = None
         self.sprite_cursor = None
         self.selected_chickens = []
+        self.stored_selections = {}
         self.chickens = set()
         self.foxes = set()
         self.buildings = set()
@@ -375,14 +377,9 @@ class GameBoard(serializer.Simplifiable):
             for chicken in self.selected_chickens:
                 do_sell(chicken)
 
-    def select_animal(self, animal, extend=True):
-        if extend:
-            self.selected_chickens.append(animal)
-            animal.equip(equipment.Spotlight())
-        else:
-            self.unselect_all()
-            self.selected_chickens.append(animal)
-            animal.equip(equipment.Spotlight())
+    def select_animal(self, animal):
+        self.selected_chickens.append(animal)
+        animal.equip(equipment.Spotlight())
 
     def unselect_all(self):
         # Clear any highlights
@@ -709,7 +706,24 @@ class GameBoard(serializer.Simplifiable):
             if e.key == K_RIGHT:
                 self.tvw.move_view(constants.TILE_DIMENSIONS[0], 0)
             return True
+        elif e.type == KEYDOWN and e.key in \
+                [K_0, K_1, K_2, K_3, K_4, K_5, K_6, K_7, K_8, K_9]:
+             mods = pygame.key.get_mods()
+             if mods & KMOD_CTRL:
+                 # store current selection
+                 self.stored_selections[e.key] = self.selected_chickens[:]
+             else:
+                 self.restore_selection(self.stored_selections.get(e.key, []))
         return False
+
+    def restore_selection(self, selection):
+        self.unselect_all()
+        for chick in selection[:]:
+            if chick in self.chickens:
+                self.select_animal(chick)
+            else:
+                # Update stored selection
+                selection.remove(chick)
 
     def advance_day(self):
         self.days += 1
