@@ -275,7 +275,7 @@ class GameBoard(serializer.Simplifiable):
                     self.toolbar.toggle_move_on()
             return
         elif e.button == 2: # Middle button
-            self.set_selected_tool(None, None)
+            self.reset_states()
             self.unselect_all()
         elif e.button != 1: # Left button
             return
