@@ -973,8 +973,12 @@ class GameBoard(serializer.Simplifiable):
     def snapshot(self, scale=0.25):
         """Return a snapshot of the gameboard."""
         w, h = self.disp.screen.get_size()
-        w, h = int(w * scale), int(h * scale)
-        snapshot = pygame.transform.smoothscale(self.disp.screen, (w, h))
+        snap_w, snap_h = int(w * scale), int(h * scale)
+        dummy_screen = pygame.surface.Surface((w, h), 0, self.disp.screen)
+        top_widget = self.get_top_widget()
+
+        top_widget.paint(dummy_screen)
+        snapshot = pygame.transform.smoothscale(dummy_screen, (snap_w, snap_h))
         return snapshot
 
     def save_game(self):
