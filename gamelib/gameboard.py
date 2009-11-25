@@ -2,7 +2,7 @@ import random
 
 import pygame
 from pygame.locals import MOUSEBUTTONDOWN, MOUSEMOTION, KEYDOWN, K_UP, K_DOWN, \
-        K_LEFT, K_RIGHT
+        K_LEFT, K_RIGHT, KMOD_SHIFT
 from pgu import gui
 
 import tiles
@@ -274,6 +274,7 @@ class GameBoard(serializer.Simplifiable):
             self.unselect_all()
         elif e.button != 1: # Left button
             return
+        mods = pygame.key.get_mods()
         if self.selected_tool == constants.TOOL_SELL_CHICKEN:
             self.sell_chicken(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELL_EGG:
@@ -281,6 +282,8 @@ class GameBoard(serializer.Simplifiable):
         elif self.selected_tool == constants.TOOL_PLACE_ANIMALS:
             self.place_animal(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELECT_CHICKENS:
+            if not (mods & KMOD_SHIFT):
+                self.unselect_all()
             self.select_chicken(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELL_BUILDING:
             self.sell_building(self.tv.screen_to_tile(e.pos))
