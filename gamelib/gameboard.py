@@ -272,6 +272,9 @@ class GameBoard(serializer.Simplifiable):
                 if self.toolbar.IS_DEFAULT:
                     self.toolbar.toggle_move_on()
             return
+        elif e.button == 2: # Middle button
+            self.set_selected_tool(None, None)
+            self.unselect_all()
         elif e.button != 1: # Left button
             return
         mods = pygame.key.get_mods()
