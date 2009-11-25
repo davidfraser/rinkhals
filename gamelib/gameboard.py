@@ -103,6 +103,7 @@ class GameBoard(serializer.Simplifiable):
 
         self.selected_tool = None
         self.sprite_cursor = None
+        self.selected_chickens = []
         self.chickens = set()
         self.foxes = set()
         self.buildings = set()
@@ -127,8 +128,6 @@ class GameBoard(serializer.Simplifiable):
             cdata[tn]  = (self.add_start_chickens, tn)
 
         self.tv.run_codes(cdata, (0,0,width,height))
-
-        self.selected_chickens = []
 
     def get_top_widget(self):
         return self.top_widget
@@ -267,15 +266,11 @@ class GameBoard(serializer.Simplifiable):
             if self.selected_tool == constants.TOOL_PLACE_ANIMALS:
                 self.set_selected_tool(constants.TOOL_SELECT_CHICKENS, cursors.cursors["select"])
                 if self.toolbar.IS_DEFAULT:
-                    self.toolbar._select_tool.group.value = self.toolbar._select_tool.value
-                    self.toolbar._move_tool.pcls = ""
-                    self.toolbar._select_tool.pcls = "down"
+                    self.toolbar.toggle_select_on()
             elif self.selected_tool == constants.TOOL_SELECT_CHICKENS:
                 self.set_selected_tool(constants.TOOL_PLACE_ANIMALS, cursors.cursors["chicken"])
                 if self.toolbar.IS_DEFAULT:
-                    self.toolbar._move_tool.group.value = self.toolbar._move_tool.value
-                    self.toolbar._select_tool.pcls = ""
-                    self.toolbar._move_tool.pcls = "down"
+                    self.toolbar.toggle_move_on()
             return
         elif e.button != 1: # Left button
             return
