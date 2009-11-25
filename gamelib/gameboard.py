@@ -355,9 +355,13 @@ class GameBoard(serializer.Simplifiable):
                     update_button(chicken)
             return False
 
-        building = self.get_building(tile_pos)
-        if building and building.HENHOUSE:
-            self.open_building_dialog(building, do_sell)
+        if tile_pos:
+            building = self.get_building(tile_pos)
+            if building and building.HENHOUSE:
+                 self.open_building_dialog(building, do_sell)
+        else:
+            for chicken in self.selected_chickens:
+                do_sell(chicken)
 
     def select_animal(self, animal, extend=True):
         if extend:
