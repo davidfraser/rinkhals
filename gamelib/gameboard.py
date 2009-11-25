@@ -180,10 +180,6 @@ class GameBoard(serializer.Simplifiable):
         if self.apply_tool_to_selected(tool):
             return False # Using the tool on selected chickens is immediate
         self.selected_tool = tool
-        if tool in [None, constants.TOOL_SELL_BUILDING,
-                constants.TOOL_REPAIR_BUILDING]:
-            # FIXME - this special casing is sucky
-            self.unselect_all()
         sprite_curs = None
         if buildings.is_building(tool):
             sprite_curs = sprite_cursor.SpriteCursor(tool.IMAGE, self.tv, tool.BUY_PRICE)
@@ -268,10 +264,13 @@ class GameBoard(serializer.Simplifiable):
         if not self.day:
             return
         if e.button == 3: # Right button
-            self.set_selected_tool(None, None)
-            self.toolbar.clear_tool()
-        elif e.button == 2: # Middle button
-            self.unselect_all()
+            #self.set_selected_tool(None, None)
+            #self.toolbar.clear_tool()
+            if self.selected_tool == constants.TOOL_PLACE_ANIMALS:
+                self.set_selected_tool(constants.TOOL_SELECT_CHICKENS, cursors.cursors["select"])
+            elif self.selected_tool == constants.TOOL_SELECT_CHICKENS:
+                self.set_selected_tool(constants.TOOL_PLACE_ANIMALS, cursors.cursors["chicken"])
+            return
         elif e.button != 1: # Left button
             return
         mods = pygame.key.get_mods()
