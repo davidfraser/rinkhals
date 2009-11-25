@@ -61,6 +61,9 @@ def mkcountupdate(counter):
     return update_counter
 
 class BaseToolBar(gui.Table):
+
+    IS_DEFAULT = False
+
     def __init__(self, gameboard, **params):
         gui.Table.__init__(self, **params)
         self.group = gui.Group(name='base_toolbar', value=None)
@@ -264,6 +267,9 @@ class BaseToolBar(gui.Table):
         return width, height
 
 class DefaultToolBar(BaseToolBar):
+
+    IS_DEFAULT = True
+
     def __init__(self, gameboard, **params):
         BaseToolBar.__init__(self, gameboard, **params)
         self.group = gui.Group(name='default_toolbar', value=None)
