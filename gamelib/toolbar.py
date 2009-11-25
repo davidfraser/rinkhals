@@ -1,5 +1,4 @@
 import pygame
-import xmlrpclib
 from pgu import gui
 
 import icons
@@ -8,7 +7,7 @@ import buildings
 import equipment
 import cursors
 import engine
-import version
+import savegame
 
 class RinkhalsTool(gui.Tool):
     def __init__(self, group, label, value, func, **params):
@@ -177,47 +176,11 @@ class BaseToolBar(gui.Table):
 
     def save_game(self):
         """Save game 'dialog'."""
-        dialog = gui.FileDialog("Save game ...", button_txt="Save")
-
-        def save():
-            if dialog.value is None:
-                return
-            data = self.gameboard.save_game()
-            params = (version.SAVE_GAME_VERSION, data)
-            xml = xmlrpclib.dumps(params, "foxassault")
-            try:
-                open(dialog.value, "wb").write(xml)
-            except Exception, e:
-                print "Failed to save game: %s" % (e,)
-
-        dialog.connect(gui.CHANGE, save)
-        dialog.open()
+        savegame.SaveDialog(self.gameboard).open()
 
     def load_game(self):
         """Load game 'dialog'."""
-        dialog = gui.FileDialog("Load game ...", button_txt="Load")
-
-        def restore():
-            if dialog.value is None:
-                return
-            try:
-                xml = open(dialog.value, "rb").read()
-                params, methodname = xmlrpclib.loads(xml)
-                if methodname != "foxassault":
-                    raise ValueError("File does not appear to be a "
-                        "Fox Assault save game.")
-                save_version = params[0]
-                if save_version != version.SAVE_GAME_VERSION:
-                    raise ValueError("Incompatible save game version.")
-                data = params[1]
-            except Exception, e:
-                "Failed to load game: %s" % (e,)
-                return
-
-            self.gameboard.restore_game(data)
-
-        dialog.connect(gui.CHANGE, restore)
-        dialog.open()
+        savegame.RestoreDialog(self.gameboard).open()
 
     update_cash_counter = mkcountupdate('cash_counter')
     update_wood_counter = mkcountupdate('wood_counter')
