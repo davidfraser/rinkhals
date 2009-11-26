@@ -739,16 +739,19 @@ class GameBoard(serializer.Simplifiable):
             else:
                 self.open_equipment_dialog(chicken, x, y, update_button)
             return False
-
-        chicken = self.get_outside_chicken(tile_pos)
-        if chicken is not None:
-            do_sell(chicken)
+        if tile_pos:
+            chicken = self.get_outside_chicken(tile_pos)
+            if chicken is not None:
+                do_sell(chicken)
+            else:
+                building = self.get_building(tile_pos)
+                if building is None:
+                    return
+                x, y = 50, 0
+                self.open_building_dialog(building, False, do_sell)
         else:
-            building = self.get_building(tile_pos)
-            if building is None:
-                return
-            x, y = 50, 0
-            self.open_building_dialog(building, False, do_sell)
+            for chicken in self.selected_chickens[:]:
+                do_sell(chicken)
 
     def open_equipment_dialog(self, chicken, x, y, update_button=None):
         tbl = gui.Table()
