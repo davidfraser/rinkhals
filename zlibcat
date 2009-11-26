@@ -1,0 +1,17 @@
+#!/usr/bin/python
+
+import zlib
+
+def main(args):
+    filenames = args[1:]
+
+    try:
+        for name in filenames:
+            print zlib.decompress(open(name).read())
+    except IOError, e:
+        if e.errno != 32:
+            raise
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(main(sys.argv))
