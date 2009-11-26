@@ -80,9 +80,14 @@ class GameBoard(serializer.Simplifiable):
         'level',
         'tv',
         'max_foxes',
+        #'selected_tool',
+        #'sprite_cursor',
+        'selected_chickens',
+        'stored_selections',
         'chickens',
-        'buildings',
         'foxes',
+        'buildings',
+        #'_pos_cache',
         'cash',
         'wood',
         'eggs',
@@ -131,6 +136,48 @@ class GameBoard(serializer.Simplifiable):
 
         self.tv.run_codes(cdata, (0,0,width,height))
 
+    @classmethod
+    def unsimplify(cls, *args, **kwargs):
+        """Override default Simplifiable unsimplification."""
+        obj = super(GameBoard, cls).unsimplify(*args, **kwargs)
+
+        obj.tv.png_folder_load_tiles('tiles')
+        obj.calculate_wood_groat_exchange_rate()
+
+        obj._pos_cache = AnimalPositionCache(obj)
+        obj._cache_animal_positions()
+
+        obj.sprite_cursor = None
+        obj.set_selected_tool(None, None)
+
+        obj.disp = None
+
+        # put chickens, foxes and buildings into sprite list
+
+        existing_chickens = obj.chickens
+        obj.chickens = set()
+        for chicken in existing_chickens:
+            obj.add_chicken(chicken)
+
+        existing_foxes = obj.foxes
+        obj.foxes = set()
+        for fox in existing_foxes:
+            obj.add_fox(fox)
+
+        existing_buildings = obj.buildings
+        obj.buildings = set()
+        for building in existing_buildings:
+            obj.add_building(building)
+
+        # self.disp is not set properly here
+        # whoever unsimplifies the gameboard needs to arrange for it to be
+        # set and then call .create_display() and so create:
+        #  - .toolbar
+        #  - .tvw
+        #  - .top_widget
+
+        return obj
+
     def get_top_widget(self):
         return self.top_widget
 
@@ -143,6 +190,7 @@ class GameBoard(serializer.Simplifiable):
         self.tvw = VidWidget(self, self.tv, width=width-constants.TOOLBAR_WIDTH, height=height)
         tbl.td(self.tvw)
         self.top_widget = tbl
+        self.redraw_counters()
 
     def change_toolbar(self, new_toolbar):
         """Replace the toolbar"""
@@ -1012,34 +1060,10 @@ class GameBoard(serializer.Simplifiable):
         if 'refid' not in data or 'class' not in data or data['class'] != self.__class__.__name__:
             raise ValueError("Invalid save game.")
 
-        # clear old state
-        self.clear_chickens()
-        self.clear_buildings()
+        new_gameboard = serializer.unsimplify(data)
 
-        # set new state
-        newself = serializer.unsimplify(data)
-
-        #import pdb
-        #pdb.set_trace()
-
-        for attr in self.SIMPLIFY:
-            if attr in ('chickens', 'buildings'):
-                continue
-            setattr(self, attr, getattr(newself, attr))
-
-        self.tv.png_folder_load_tiles('tiles')
-        self.tvw.vid = self.tv
-        self.tvw.vid.bounds = pygame.Rect((0, 0), self.tv.tile_to_view(self.tv.size))
-
-        for chicken in newself.chickens:
-            self.add_chicken(chicken)
-
-        for building in newself.buildings:
-            self.add_building(building)
-
-        self.reset_states()
-        self.redraw_counters()
-        self.update()
+        import engine
+        pygame.event.post(pygame.event.Event(engine.DO_LOAD_SAVEGAME, gameboard=new_gameboard))
 
 
 class TextDialog(gui.Dialog):

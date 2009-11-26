@@ -42,6 +42,13 @@ class Engine(Game):
                 self.level)
         self.open_window(self.gameboard.get_top_widget())
 
+    def switch_gameboard(self, gameboard):
+        """Switch over to a new gameboard."""
+        self.gameboard = gameboard
+        self.gameboard.disp = self.main_app
+        self.gameboard.create_display()
+        self.open_window(self.gameboard.get_top_widget())
+
     def set_main_menu(self):
         """Open the main menu"""
         self.scoreboard = gameover.ScoreTable(self.level)
@@ -189,6 +196,9 @@ class DayState(State):
             return pygame.event.post(START_NIGHT)
         elif events_equal(e, GO_MAIN_MENU):
             return MainMenuState(self.game)
+        elif e.type is DO_LOAD_SAVEGAME:
+            self.game.switch_gameboard(e.gameboard)
+            return
         elif e.type is not QUIT:
             self.game.main_app.event(e)
 
@@ -320,6 +330,7 @@ DO_LOAD_LEVEL = pygame.event.Event(USEREVENT, name="DO_LEVEL_SCREEN")
 FAST_FORWARD = pygame.event.Event(USEREVENT, name="FAST_FORWARD")
 MOVE_FOX_ID = USEREVENT + 1
 MOVE_FOXES = pygame.event.Event(MOVE_FOX_ID, name="MOVE_FOXES")
+DO_LOAD_SAVEGAME = USEREVENT + 2
 QUIT = pygame.event.Event(QUIT)
 
 # Due to the way pgu's loop timing works, these will only get proceesed
