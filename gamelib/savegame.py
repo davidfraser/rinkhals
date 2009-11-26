@@ -5,12 +5,15 @@ import os
 import StringIO
 import base64
 import zlib
+import datetime
 
 from pgu import gui
 import pygame
 
 import config
 import version
+
+TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 def read_savegame(fullpath):
     """Open a save game file."""
@@ -31,16 +34,27 @@ def read_savegame(fullpath):
         except Exception, e:
             snapshot = None
 
+        try:
+            level_name = params[3]
+        except Exception, e:
+            level_name = None
+
+        try:
+            timestamp = datetime.datetime.strptime(params[4], TIMESTAMP_FORMAT)
+        except Exception, e:
+            timestamp = None
+
     except Exception, e:
         raise SaveGameError("Failed to load game: %s" % (e,))
 
-    return data, snapshot
+    return data, snapshot, level_name, timestamp
 
-def write_savegame(fullpath, data, snapshot):
+def write_savegame(fullpath, data, snapshot, level_name, timestamp):
     """Write a save game file."""
     try:
         snapshot_data = encode_snapshot(snapshot)
-        params = (version.SAVE_GAME_VERSION, data, snapshot_data)
+        timestamp_str = timestamp.strftime(TIMESTAMP_FORMAT)
+        params = (version.SAVE_GAME_VERSION, data, snapshot_data, level_name, timestamp_str)
         xml = xmlrpclib.dumps(params, "foxassault")
         open(fullpath, "wb").write(zlib.compress(xml))
     except Exception, e:
@@ -68,6 +82,8 @@ class SaveGameError(Exception):
 
 class BaseSaveRestoreDialog(gui.Dialog):
     """Save game dialog."""
+
+    TIMESTAMP_DISPLAY = "%H:%M, %d %b %Y"
 
     def __init__(self, title_txt, button_txt, allow_new, cls="dialog"):
         self.value = None
@@ -140,14 +156,29 @@ class BaseSaveRestoreDialog(gui.Dialog):
     def _create_image_widget(self, fullpath):
         """Create an image showing the contents of a save game file."""
         try:
-            data, screenshot = read_savegame(fullpath)
+            data, screenshot, level_name, timestamp = read_savegame(fullpath)
         except SaveGameError:
             return gui.Label("Bad Save Game")
 
-        if screenshot is None:
-            return gui.Label("No screenshot")
+        tbl = gui.Table()
 
-        return gui.Image(screenshot)
+        tbl.tr()
+        if screenshot is None:
+            tbl.td(gui.Label("No screenshot"))
+        else:
+            tbl.td(gui.Image(screenshot))
+
+        tbl.tr()
+        if level_name is None:
+            tbl.td(gui.Label("Level: ???"))
+        else:
+            tbl.td(gui.Label("Level: %s" % (level_name,)))
+
+        if timestamp is not None:
+            tbl.tr()
+            tbl.td(gui.Label(timestamp.strftime(self.TIMESTAMP_DISPLAY)))
+
+        return tbl
 
     def _save_list_change(self):
         if self.name_input:
@@ -188,9 +219,11 @@ class SaveDialog(BaseSaveRestoreDialog):
 
         data = gameboard.save_game()
         snapshot = gameboard.snapshot()
+        level_name = gameboard.level.level_name
+        timestamp = datetime.datetime.now()
 
         try:
-            write_savegame(filename, data, snapshot)
+            write_savegame(filename, data, snapshot, level_name, timestamp)
         except Exception, e:
             print "Failed to save game: %s" % (e,)
 
@@ -208,7 +241,7 @@ class RestoreDialog(BaseSaveRestoreDialog):
             return
 
         try:
-            data, screenshot = read_savegame(filename)
+            data, screenshot, level_name, timestamp = read_savegame(filename)
         except Exception, e:
             print "Failed to load game: %s" % (e,)
             return
