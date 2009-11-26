@@ -306,7 +306,7 @@ class Building(Sprite, serializer.Simplifiable):
         return self._floors
 
     def places(self):
-        for floor in self._floors:
+        for floor in reversed(self._floors):
             for row in floor.rows():
                 for place in row:
                     yield place
