@@ -136,6 +136,9 @@ class BaseSaveRestoreDialog(gui.Dialog):
         title = gui.Label(title_txt, cls=cls + ".title.label")
         gui.Dialog.__init__(self, title, body)
 
+        if games:
+            self.save_list.group.value = games[0]
+
     def get_fullpath(self):
         """Return the fullpath of the select save game file or None."""
         if self.value is None:
@@ -151,7 +154,7 @@ class BaseSaveRestoreDialog(gui.Dialog):
                 continue
             if ext != ".xml":
                 continue
-            self.save_games[root] = self._create_image_widget(fullpath)
+            self.save_games[root] = (fullpath, None)
 
     def _create_image_widget(self, fullpath):
         """Create an image showing the contents of a save game file."""
@@ -187,8 +190,13 @@ class BaseSaveRestoreDialog(gui.Dialog):
         for w in self.image_container.widgets:
             self.image_container.remove(w)
 
-        image_widget = self.save_games[self.save_list.value]
-        self.image_container.add(image_widget, 0, 0)
+        name = self.save_list.value
+        fullpath, widget = self.save_games[name]
+        if widget is None:
+            widget = self._create_image_widget(fullpath)
+            self.save_games[name] = (fullpath, widget)
+
+        self.image_container.add(widget, 0, 0)
 
     def _click_ok(self):
         if self.name_input:
