@@ -4,6 +4,7 @@ import xmlrpclib
 import os
 import StringIO
 import base64
+import zlib
 
 from pgu import gui
 import pygame
@@ -11,10 +12,10 @@ import pygame
 import config
 import version
 
-def open_save_game(fullpath):
+def read_savegame(fullpath):
     """Open a save game file."""
     try:
-        xml = open(fullpath, "rb").read()
+        xml = zlib.decompress(open(fullpath, "rb").read())
         params, methodname = xmlrpclib.loads(xml)
         if methodname != "foxassault":
             raise SaveGameError("File does not appear to be a "
@@ -34,6 +35,16 @@ def open_save_game(fullpath):
         raise SaveGameError("Failed to load game: %s" % (e,))
 
     return data, snapshot
+
+def write_savegame(fullpath, data, snapshot):
+    """Write a save game file."""
+    try:
+        snapshot_data = encode_snapshot(snapshot)
+        params = (version.SAVE_GAME_VERSION, data, snapshot_data)
+        xml = xmlrpclib.dumps(params, "foxassault")
+        open(fullpath, "wb").write(zlib.compress(xml))
+    except Exception, e:
+        raise SaveGameError("Failed to save game: %s" % (e,))
 
 def encode_snapshot(snapshot):
     """Encode a snapshot."""
@@ -129,7 +140,7 @@ class BaseSaveRestoreDialog(gui.Dialog):
     def _create_image_widget(self, fullpath):
         """Create an image showing the contents of a save game file."""
         try:
-            data, screenshot = open_save_game(fullpath)
+            data, screenshot = read_savegame(fullpath)
         except SaveGameError:
             return gui.Label("Bad Save Game")
 
@@ -176,14 +187,10 @@ class SaveDialog(BaseSaveRestoreDialog):
             return
 
         data = gameboard.save_game()
-
         snapshot = gameboard.snapshot()
-        snapshot_data = encode_snapshot(snapshot)
 
-        params = (version.SAVE_GAME_VERSION, data, snapshot_data)
-        xml = xmlrpclib.dumps(params, "foxassault")
         try:
-            open(filename, "wb").write(xml)
+            write_savegame(filename, data, snapshot)
         except Exception, e:
             print "Failed to save game: %s" % (e,)
 
@@ -201,7 +208,7 @@ class RestoreDialog(BaseSaveRestoreDialog):
             return
 
         try:
-            data, screenshot = open_save_game(filename)
+            data, screenshot = read_savegame(filename)
         except Exception, e:
             print "Failed to load game: %s" % (e,)
             return
