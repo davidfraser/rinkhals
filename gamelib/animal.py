@@ -377,17 +377,6 @@ class Fox(Animal):
         while steps < max_steps:
             if not border_func(cur_pos):
                 # Not walking the edge
-                # Is there a 4-NEIGHBOUR, to path[-1], not in the path that
-                # is a continue
-                if not path:
-                    # Rest of search will cover neighbours
-                    return None
-                for cand in [path[-1] + x for x in NEIGHBOUR_4]:
-                    if cand in path:
-                        continue
-                    if border_func(cand):
-                        cur_pos = cand
-                        break
                 return None
             path.append(cur_pos)
             if end_func(cur_pos):
@@ -396,6 +385,8 @@ class Fox(Animal):
                 dist = self.target.dist(cur_pos)
                 fin_pos = None
                 for pos in [cur_pos + x for x in NEIGHBOUR_8]:
+                    if pos in path:
+                        continue
                     if end_func(pos) and self.target.dist(pos) < dist:
                         fin_pos = pos
                         dist = self.target.dist(pos)
