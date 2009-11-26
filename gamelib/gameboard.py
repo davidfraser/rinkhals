@@ -239,6 +239,7 @@ class GameBoard(serializer.Simplifiable):
         self.day, self.night = False, True
         self.tv.sun(False)
         self.reset_states()
+        self.unselect_all()
         self.toolbar.start_night()
         self.spawn_foxes()
         self.eggs = 0
