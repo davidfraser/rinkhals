@@ -51,17 +51,17 @@ class Animal(Sprite, serializer.Simplifiable):
         self.facing = 'left'
         self.gameboard = gameboard
 
+    @classmethod
     def make(cls):
         """Override default Simplifiable object creation."""
         return cls((0, 0), None)
-    make = classmethod(make)
 
+    @classmethod
     def unsimplify(cls, *args, **kwargs):
         """Override default Simplifiable unsimplification."""
         obj = super(Animal, cls).unsimplify(*args, **kwargs)
         obj.redraw()
         return obj
-    unsimplify = classmethod(unsimplify)
 
     def loop(self, tv, _sprite):
         ppos = tv.tile_to_view(self.pos.to_tile_tuple())

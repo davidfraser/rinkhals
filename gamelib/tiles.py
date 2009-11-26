@@ -107,11 +107,12 @@ class FarmVid(tilevid.Tilevid, serializer.Simplifiable):
         tilevid.Tilevid.__init__(self)
         self.sprites = LayeredSprites(['buildings', 'animals', 'animations', 'cursor'], 'animals')
 
+    @classmethod
     def make(cls):
         """Override default Simplifiable object creation."""
         return cls()
-    make = classmethod(make)
 
+    @classmethod
     def unsimplify(cls, *args, **kwargs):
         """Override default Simplifiable unsimplification."""
         obj = serializer.Simplifiable.unsimplify(*args, **kwargs)
@@ -122,7 +123,6 @@ class FarmVid(tilevid.Tilevid, serializer.Simplifiable):
         obj.updates = []
 
         return obj
-    unsimplify = classmethod(unsimplify)
 
     def png_folder_load_tiles(self, path):
         """Load tiles from a folder of PNG files."""

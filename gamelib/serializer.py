@@ -100,13 +100,14 @@ class Simplifiable(object):
     # List of attributes which need to be stored and restored
     SIMPLIFY = []
 
+    @classmethod
     def make(cls):
         """
         Create an object of this class without any attributes set.
         """
         return cls.__new__(cls)
-    make = classmethod(make)
 
+    @classmethod
     def unsimplify(cls, value, refs=None):
         """
         Create an object of this class (or a sub-class) from its
@@ -130,7 +131,6 @@ class Simplifiable(object):
             setattr(obj, attr, unsimplify(value, refs))
 
         return obj
-    unsimplify = classmethod(unsimplify)
 
     def simplify(self, refs=None):
         """

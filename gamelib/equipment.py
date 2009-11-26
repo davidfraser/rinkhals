@@ -27,10 +27,10 @@ class Equipment(serializer.Simplifiable):
         self._name = self.NAME
         self.refresh_ammo()
 
+    @classmethod
     def make(cls):
         """Override default Simplifiable object creation."""
         return cls()
-    make = classmethod(make)
 
     def buy_price(self):
         return self._buy_price

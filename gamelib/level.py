@@ -67,12 +67,12 @@ class Level(serializer.Simplifiable):
             self.fox_weightings.append((animal, config.getint('Fox probablities',
                 animal.CONFIG_NAME)))
 
+    @classmethod
     def unsimplify(cls, *args, **kwargs):
         """Override default Simplifiable unsimplification."""
         obj = super(Level, cls).unsimplify(*args, **kwargs)
         obj.__init__(obj.config_name)
         return obj
-    unsimplify = classmethod(unsimplify)
 
     # Utility functions, so we can make things more flexible later
 
