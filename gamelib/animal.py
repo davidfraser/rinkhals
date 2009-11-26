@@ -470,7 +470,6 @@ class Fox(Animal):
                 return False
             for tpos in [pos + step for step in NEIGHBOUR_8]:
                 if self._is_fence(tpos) or self._cost_tile(tpos) >= COST_MARGIN:
-                    print 'border pos', pos, self._cost_tile(pos)
                     return True
             return False
 
