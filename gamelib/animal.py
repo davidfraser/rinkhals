@@ -13,6 +13,16 @@ import animations
 import serializer
 import constants
 
+
+NEIGHBOUR_4 = [Position(-1, 0), Position(1, 0), Position(0, 1), Position(0, -1)]
+
+
+NEIGHBOUR_8 = [Position(-1, 0), Position(1, 0), Position(0, 1), Position(0, -1),
+        Position(1, 1), Position(1, -1), Position(-1, 1), Position(-1, -1)]
+
+
+TILE_FENCE = tiles.REVERSE_TILE_MAP['fence']
+
 class Animal(Sprite, serializer.Simplifiable):
     """Base class for animals"""
 
@@ -80,8 +90,8 @@ class Animal(Sprite, serializer.Simplifiable):
         # Call appropriate gameboard cleanup here.
         pass
 
-    def move(self, state):
-        """Given the game state, return a new position for the object"""
+    def move(self):
+        """Return a new position for the object"""
         # Default is not to move
         pass
 
@@ -317,7 +327,7 @@ class Fox(Animal):
             # weighting for movement calculation
             'grassland' : 2,
             'woodland' : 1, # Try to keep to the woods if possible
-            'broken fence' : 2,
+            'broken fence' : 1,
             'fence' : 25,
             'guardtower' : 2, # We can pass under towers
             'henhouse' : 30, # Don't go into a henhouse unless we're going to
@@ -327,16 +337,18 @@ class Fox(Animal):
 
     def __init__(self, pos, gameboard):
         Animal.__init__(self, pos, gameboard)
-        self.landmarks = [self.pos]
+        self.start_pos = self.pos
+        self.target = None
         self.hunting = True
         self.dig_pos = None
         self.tick = 0
         self.safe = False
         self.closest = None
-        self.last_steps = []
         # Foxes don't occupy places in the same way chickens do, but they
         # can still be inside
         self.building = None
+        self._last_steps = []
+        self.path = []
 
     def outside(self):
         return self.building is None
@@ -352,88 +364,230 @@ class Fox(Animal):
             cost = 100 # Out of bounds is expensive
         return cost
 
-    def _cost_path(self, path):
-        """Calculate the cost of a path"""
-        total = 0
-        for pos in path:
-            total += self._cost_tile(pos)
-        return total
+    def _is_fence(self, pos):
+        if self.gameboard.in_bounds(pos):
+            this_tile = self.gameboard.tv.get(pos.to_tile_tuple())
+            return this_tile == TILE_FENCE
+        return False
 
-    def _gen_path(self, start_pos, final_pos):
-        """Construct a direct path from start_pos to final_pos,
-           excluding start_pos"""
-        return start_pos.intermediate_positions(final_pos)
+    def _check_steps(self, step, border_func, end_func, max_steps):
+        steps = 0
+        cur_pos = self.pos
+        path = []
+        while steps < max_steps:
+            if not border_func(cur_pos):
+                # Not walking the edge
+                # Is there a 4-NEIGHBOUR, to path[-1], not in the path that
+                # is a continue
+                if not path:
+                    # Rest of search will cover neighbours
+                    return None
+                for cand in [path[-1] + x for x in NEIGHBOUR_4]:
+                    if cand in path:
+                        continue
+                    if border_func(cand):
+                        cur_pos = cand
+                        break
+                return None
+            path.append(cur_pos)
+            if end_func(cur_pos):
+                # is there an 8-NEIGHBOUR that also satisfies end_func and is
+                # closer to target
+                dist = self.target.dist(cur_pos)
+                fin_pos = None
+                for pos in [cur_pos + x for x in NEIGHBOUR_8]:
+                    if end_func(pos) and self.target.dist(pos) < dist:
+                        fin_pos = pos
+                        dist = self.target.dist(pos)
+                if fin_pos:
+                    path.append(fin_pos)
+                return path
+            steps += 1
+            cur_pos = cur_pos + step
+        return None
 
-    def _find_best_path_step(self, final_pos):
-        """Find the cheapest path to final_pos, and return the next step
-           along the path."""
-        # We calculate the cost of the direct path
-        if final_pos.z < self.pos.z:
-            # We need to try heading down.
-            return Position(self.pos.x, self.pos.y, self.pos.z - 1)
-        if final_pos.x == self.pos.x and final_pos.y == self.pos.y and \
-                final_pos.z > self.pos.z:
-            # We try heading up
-            return Position(self.pos.x, self.pos.y, self.pos.z + 1)
-        cur_dist = final_pos.dist(self.pos)
-        if cur_dist < 2:
-            # We're right ontop of our target, so just go there
-            return final_pos
-        # Find the cheapest spot close to us that moves us closer to the target
-        neighbours = [Position(self.pos.x + x, self.pos.y + y, self.pos.z) for
-                x in range(-1, 2) for y in range(-1, 2) if (x, y) != (0, 0)]
-        best_pos = self.pos
+    def _search_for_path(self, border_func, end_func, max_steps):
+        paths = [None] * 4
+        paths[0] = self._check_steps(Position(-1, 0), border_func, end_func, max_steps)
+        paths[1] = self._check_steps(Position(0, -1), border_func, end_func, max_steps)
+        paths[2] = self._check_steps(Position(1, 0), border_func, end_func, max_steps)
+        paths[3] = self._check_steps(Position(0, 1), border_func, end_func, max_steps)
+        cands = [x for x in paths if x is not None]
+        if not cands:
+            return None
+        elif len(cands) == 1:
+            return cands[0][1:]
+        # take the end point closest to our target
+        final_path = cands[0]
+        min_dist = final_path[-1].dist(self.target)
+        for this_path in cands[1:]:
+            dist = this_path[-1].dist(self.target)
+            if dist < min_dist:
+                min_dist = dist
+                final_path = this_path
+            elif dist == min_dist and random.randint(0, 1) == 0:
+                final_path = this_path
+        return final_path[1:] # path's include self.pos
+
+    def _find_nearest_corner(self):
+        """Find the nearest corner of the bulding"""
+        COST_MARGIN = 25
+        def border(pos):
+            cost = self._cost_tile(pos)
+            if cost >= COST_MARGIN:
+                return False # in building isn't border
+            for tpos in [pos + step for step in NEIGHBOUR_8]:
+                if self.gameboard.in_bounds(tpos):
+                    cost = self._cost_tile(tpos)
+                    if cost >= COST_MARGIN:
+                        return True
+            return False
+
+        def corner(pos):
+            # A corner is not 4-connected to a building
+            if not border(pos):
+                return False
+            for tpos in [pos + step for step in NEIGHBOUR_4]:
+                if self.gameboard.in_bounds(tpos):
+                    cost = self._cost_tile(tpos)
+                    if cost >= COST_MARGIN:
+                        return False
+            return True
+
+        # We check left, then right and take the shortest if both are valid
+        return self._search_for_path(border, corner, 6)
+
+    def _find_fence_gap(self):
+        # We search for a gap in the fence
+        # we know we are next to fence. A gap in the fence is
+        # a point that borders the fence where the fence is not
+        # 4-connected
+
+        COST_MARGIN = 25
+
+        def border(pos):
+            if self._is_fence(pos) or self._cost_tile(pos) >= COST_MARGIN:
+                return False
+            for tpos in [pos + step for step in NEIGHBOUR_8]:
+                if self._is_fence(tpos) or self._cost_tile(tpos) >= COST_MARGIN:
+                    print 'border pos', pos, self._cost_tile(pos)
+                    return True
+            return False
+
+        def is_gap(pos):
+            # A gap neighbours only fence tiles which has < 2 4-neighbours
+            if self._is_fence(pos):
+                return False
+            fence_neighbours = [0]
+            for tpos in [pos + step for step in NEIGHBOUR_8]:
+                if self._is_fence(tpos):
+                    connections = 0
+                    for fpos in [tpos + step for step in NEIGHBOUR_4]:
+                        if self.gameboard.in_bounds(fpos):
+                            if self._is_fence(fpos) or self._cost_tile(tpos) >= COST_MARGIN:
+                                # Expensive building is considered fence
+                                connections += 1
+                        else:
+                            # Fence connecting to out of bounds counts as fence
+                            connections += 1
+                    fence_neighbours.append(connections)
+            return max(fence_neighbours) < 2
+
+        return self._search_for_path(border, is_gap, 7)
+
+    def _find_min_cost_neighbour(self, target):
+        """Find the minimum cost neighbour that's closer to target"""
+        cur_dist = target.dist(self.pos)
+        neighbours = [self.pos + step for step in NEIGHBOUR_8]
         min_cost = 1000
         min_dist = cur_dist
+        best = self.pos
         for point in neighbours:
-            dist = point.dist(final_pos)
-            if dist < cur_dist:
+            if point in self._last_steps:
+                continue
+            dist = point.dist(target)
+            if dist <= min_dist:
                 cost = self._cost_tile(point)
                 if cost < min_cost or (min_cost == cost and dist < min_dist):
                     # Prefer closest of equal cost points
                     min_dist = dist
                     min_cost = cost
                     best = point
-        if min_cost < 20 or not self.gameboard.in_bounds(self.pos):
+                elif min_cost == cost and random.randint(0, 1) == 0:
+                    # Be slightly non-deterministic when presented with
+                    # equal choices
+                    best = point
+        return best, min_cost
+
+    def _find_best_path_step(self):
+        """Find the cheapest path to final_pos, and return the next step
+           along the path."""
+        if self.path:
+            next_step = self.path.pop(0)
+            if next_step.dist(self.pos) < 2:
+                return next_step
+            else:
+                # Been bounced off the path
+                self.path = []
+        if self.target.z < self.pos.z:
+            # We need to try heading down.
+            return Position(self.pos.x, self.pos.y, self.pos.z - 1)
+        if self.target.x == self.pos.x and self.target.y == self.pos.y and \
+                self.target.z > self.pos.z:
+            # We try heading up
+            return Position(self.pos.x, self.pos.y, self.pos.z + 1)
+        cur_dist = self.target.dist(self.pos)
+        best, min_cost = self._find_min_cost_neighbour(self.target)
+        if cur_dist < 2:
+            # We're right ontop of our target, so just go there
+            return self.target
+        # Find the cheapest spot close to us that moves us closer to the target
+        if min_cost < 20 or not self.gameboard.in_bounds(self.pos) \
+                or not self.gameboard.in_bounds(best):
             # If we're not on the gameboard yet, there's no point in looking
             # for an optimal path.
             return best
         # Else expensive step, so think further
-        direct_path = self._gen_path(self.pos, final_pos)
-        min_cost = self._cost_path(direct_path)
-        min_path = direct_path
-        # is there a point nearby that gives us a cheaper direct path?
-        # This is delibrately not finding the optimal path, as I don't
-        # want the foxes to be too intelligent, although the implementation
-        # isn't well optimised yet
-        # FIXME: Currently, this introduces loops, but the memory kind
-        # avoids that.  Fixing this is the next goal.
-        poss = [Position(self.pos.x + x, self.pos.y + y, self.pos.z) for
-                x in range(-3, 4) for y in range(-3, 4) if (x, y) != (0, 0)]
-        for start in poss:
-            cand_path = self._gen_path(self.pos, start) + \
-                    self._gen_path(start, final_pos)
-            cost = self._cost_path(cand_path)
-            if cost < min_cost:
-                min_cost = cost
-                min_path = cand_path
-        if not min_path:
-            return final_pos
-        return min_path[0]
-
-    def _find_path_to_woodland(self):
-        """Dive back to woodland through the landmarks"""
-        # find the closest point to our current location in walked path
-        if self.pos == self.landmarks[-1]:
-            if len(self.landmarks) > 1:
-                self.landmarks.pop() # Moving to the next landmark
-        if not self.gameboard.in_bounds(self.pos) and not self.hunting:
-            # Safely out of sight
-            self.safe = True
+        if self._is_fence(best):
+            path = self._find_fence_gap()
+        elif min_cost == 30:
+            # building
+            path = self._find_nearest_corner()
+        else:
+            # We're looping
+            self._last_steps = []
             return self.pos
-        return self._find_best_path_step(self.landmarks[-1])
+        if path:
+            self.path = path[1:] # exclude 1st step
+            return path[0]
+        return best
 
-    def _select_target(self):
+    def _calc_next_move(self):
+        """Find the path to the target"""
+        if self.hunting:
+            # Check if we need to update our idea of a target
+            if not self.closest or self.closest not in self.gameboard.chickens:
+                # Either no target, or someone ate it
+                self._select_prey()
+            elif not self.target:
+                self.target = self.closest.pos
+        if not self.target:
+            self.target = self.start_pos
+            self._last_steps = []
+        if self.target == self.pos:
+            # No need to move, but we will need to update the target
+            self.target = None
+            return self.pos
+        if self.target.to_tile_tuple() == self.pos.to_tile_tuple():
+            # Only differ in z, so next step is in z
+            if self.target.z < self.pos.z:
+                new_z = self.pos.z - 1
+            else:
+                new_z = self.pos.z + 1
+            return Position(self.pos.x, self.pos.y, new_z)
+        return self._find_best_path_step()
+
+    def _select_prey(self):
         min_dist = 999
         self.closest = None
         for chicken in self.gameboard.chickens:
@@ -445,28 +599,12 @@ class Fox(Animal):
             if dist < min_dist:
                 min_dist = dist
                 self.closest = chicken
-
-    def _find_path_to_chicken(self):
-        """Find the path to the closest chicken"""
-        # Find the closest chicken
-        if self.closest not in self.gameboard.chickens:
-            # Either no target, or someone ate it
-            self._select_target()
+                self.target = chicken.pos
         if not self.closest:
             # No more chickens, so leave
             self.hunting = False
+            self.target = self.start_pos
             return self.pos
-        if self.closest.pos == self.pos:
-            # No need to move
-            return self.pos
-        if self.closest.pos.to_tile_tuple() == self.pos.to_tile_tuple():
-            # Only differ in z, so next step is in z
-            if self.closest.pos.z < self.pos.z:
-                new_z = self.pos.z - 1
-            else:
-                new_z = self.pos.z + 1
-            return Position(self.pos.x, self.pos.y, new_z)
-        return self._find_best_path_step(self.closest.pos)
 
     def attack(self):
         """Attack a chicken"""
@@ -480,29 +618,26 @@ class Fox(Animal):
         chicken.damage()
         self.closest = None
         self.hunting = False
-        self.last_steps = [] # Forget history here
+        self.target = self.start_pos
+        self._last_steps = []
 
     def _update_pos(self, new_pos):
         """Update the position, making sure we don't step on other foxes"""
+        if not self.hunting and not self.gameboard.in_bounds(self.pos):
+            self.safe = True
+            return self.pos
         if new_pos == self.pos:
             # We're not moving, so we can skip all the checks
             return new_pos
         blocked = self.gameboard.get_animal_at_pos(new_pos, 'fox') is not None
-        if not blocked and new_pos.z == self.pos.z:
-            # We're only worried about loops when not on a ladder
-            blocked = new_pos in self.last_steps
         final_pos = new_pos
         if blocked:
-            if new_pos.z != self.pos.z:
+            if new_pos.z != self.pos.z or self.pos.z != 0:
                 # We can only move up and down a ladder
                 moves = [Position(self.pos.x, self.pos.y, z) for z
                         in range(self.pos.z-1, self.pos.z + 2) if z >= 0]
             else:
-                moves = [Position(x, y) for x in range(self.pos.x-1, self.pos.x + 2)
-                        for y in range(self.pos.y-1, self.pos.y + 2)
-                        if Position(x,y) != self.pos and
-                        Position(x, y) not in self.last_steps and
-                        self.pos.z == 0]
+                moves = [self.pos + step for step in NEIGHBOUR_8]
             # find the cheapest point in moves that's not blocked
             final_pos = None
             min_cost = 1000
@@ -519,18 +654,11 @@ class Fox(Animal):
         if not final_pos:
             # No good choice, so stay put
             return self.pos
-        if self.gameboard.in_bounds(final_pos):
-            this_tile = self.gameboard.tv.get(final_pos.to_tile_tuple())
-        else:
-            this_tile = tiles.REVERSE_TILE_MAP['woodland']
-        if tiles.TILE_MAP[this_tile] == 'broken fence' and self.hunting:
-            # We'll head back towards the holes we make/find
-            self.landmarks.append(final_pos)
-        elif tiles.TILE_MAP[this_tile] == 'fence' and not self.dig_pos:
+        if self._is_fence(final_pos) and not self.dig_pos:
             return self._dig(final_pos)
-        self.last_steps.append(final_pos)
-        if len(self.last_steps) > 3:
-            self.last_steps.pop(0)
+        self._last_steps.append(final_pos)
+        if len(self._last_steps) > 6:
+            self._last_steps.pop(0)
         return final_pos
 
     def _dig(self, dig_pos):
@@ -560,17 +688,14 @@ class Fox(Animal):
                 # Check the another fox hasn't dug a hole for us
                 # We're too busy digging to notice if a hole appears nearby,
                 # but we'll notice if the fence we're digging vanishes
-                this_tile = self.gameboard.tv.get(self.dig_pos.to_tile_tuple())
-                if tiles.TILE_MAP[this_tile] != 'fence':
+                if not self._is_fence(self.dig_pos):
                     self.tick = 0
             else:
                 # We've dug through the fence, so make a hole
                 self._make_hole()
             return
-        elif self.hunting:
-            desired_pos = self._find_path_to_chicken()
         else:
-            desired_pos = self._find_path_to_woodland()
+            desired_pos = self._calc_next_move()
         final_pos = self._update_pos(desired_pos)
         self._fix_face(final_pos)
         self.pos = final_pos
@@ -638,7 +763,8 @@ class GreedyFox(Fox):
         self.chickens_eaten += 1
         if self.chickens_eaten > 2:
             self.hunting = False
-        self.last_steps = []
+            self.target = self.start_pos
+            self._last_steps = []
 
 class Rinkhals(Fox):
     """The Rinkhals has eclectic tastes"""
@@ -646,7 +772,10 @@ class Rinkhals(Fox):
     IMAGE_FILE = 'sprites/rinkhals.png'
     CONFIG_NAME = 'rinkhals'
 
-    def _select_target(self):
+    costs = Fox.costs.copy()
+    costs['fence'] = 2
+
+    def _select_prey(self):
         """The Rinkhals eats eggs"""
         min_dist = 999
         self.closest = None
@@ -657,13 +786,15 @@ class Rinkhals(Fox):
             if dist < min_dist:
                 min_dist = dist
                 self.closest = chicken
+                self.target = self.closest.pos
 
     def _catch_chicken(self, chicken):
         """The Rinkhals eats eggs, but does not harm chickens"""
         chicken.remove_eggs()
         self.closest = None
         self.hunting = False
-        self.last_steps = []
+        self.target = self.start_pos
+        self._last_steps = []
 
     def _dig(self, dig_pos):
         """Snakes ignore fences"""
