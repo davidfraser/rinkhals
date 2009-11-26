@@ -276,7 +276,7 @@ class NightState(State):
             # Re-enable timers
             diff = pygame.time.get_ticks() - cur_time
             time_left = self.cycle_time - diff
-            if time_left < 0:
+            if time_left <= 0:
                 time_left = self.cycle_time
             pygame.time.set_timer(MOVE_FOX_ID, time_left)
         elif e.type is not QUIT:
