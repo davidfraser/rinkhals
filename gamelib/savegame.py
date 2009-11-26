@@ -12,6 +12,8 @@ import pygame
 
 import config
 import version
+import gameboard
+import serializer
 
 TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
@@ -239,11 +241,11 @@ class SaveDialog(BaseSaveRestoreDialog):
 class RestoreDialog(BaseSaveRestoreDialog):
     """Restore game dialog."""
 
-    def __init__(self, gameboard):
+    def __init__(self, restore_func):
         BaseSaveRestoreDialog.__init__(self, "Load Game ...", "Load", allow_new=False)
-        self.connect(gui.CHANGE, self._restore, gameboard)
+        self.connect(gui.CHANGE, self._restore, restore_func)
 
-    def _restore(self, gameboard):
+    def _restore(self, restore_func):
         filename = self.get_fullpath()
         if filename is None:
             return
@@ -254,4 +256,14 @@ class RestoreDialog(BaseSaveRestoreDialog):
             print "Failed to load game: %s" % (e,)
             return
 
-        gameboard.restore_game(data)
+        if 'refid' not in data or 'class' not in data or data['class'] != gameboard.GameBoard.__name__:
+            print "Failed to load game: Invalid game data."
+            return
+
+        try:
+            new_gameboard = serializer.unsimplify(data)
+        except Exception, e:
+            print "Failed to load game: %s" % (e,)
+            return
+
+        restore_func(new_gameboard)

@@ -297,6 +297,9 @@ class GameBoard(serializer.Simplifiable):
         self._cache_animal_positions()
 
     def start_day(self):
+        if hasattr(self, '_skip_start_day'):
+            del self._skip_start_day
+            return
         self.day, self.night = True, False
         self.tv.sun(True)
         self.reset_states()
@@ -307,6 +310,11 @@ class GameBoard(serializer.Simplifiable):
         for chicken in self.chickens.copy():
             chicken.start_day()
         self.redraw_counters()
+
+    def skip_next_start_day(self):
+        # used to skip the start of the day triggered after
+        # reloading a save game
+        self._skip_start_day = True
 
     def in_bounds(self, pos):
         """Check if a position is within the game boundaries"""
@@ -1059,14 +1067,10 @@ class GameBoard(serializer.Simplifiable):
         self.reset_states()
         return serializer.simplify(self)
 
-    def restore_game(self, data):
-        if 'refid' not in data or 'class' not in data or data['class'] != self.__class__.__name__:
-            raise ValueError("Invalid save game.")
-
-        new_gameboard = serializer.unsimplify(data)
-
+    @staticmethod
+    def restore_game(gameboard):
         import engine
-        pygame.event.post(pygame.event.Event(engine.DO_LOAD_SAVEGAME, gameboard=new_gameboard))
+        pygame.event.post(pygame.event.Event(engine.DO_LOAD_SAVEGAME, gameboard=gameboard))
 
 
 class TextDialog(gui.Dialog):

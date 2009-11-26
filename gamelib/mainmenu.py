@@ -5,6 +5,8 @@ import pygame
 import constants
 import engine
 import imagecache
+import gameboard
+import savegame
 
 def make_main_menu(level):
     """Create a main menu"""
@@ -42,6 +44,9 @@ class MainMenu(gui.Table):
         def choose_level():
             pygame.event.post(engine.GO_LEVEL_SCREEN)
 
+        def load_game():
+            savegame.RestoreDialog(gameboard.GameBoard.restore_game).open()
+
         def help_pressed():
             pygame.event.post(engine.GO_HELP_SCREEN)
 
@@ -62,6 +67,11 @@ class MainMenu(gui.Table):
         start_button.connect(gui.CLICK, start_game)
         self.tr()
         self.td(start_button, **td_kwargs)
+
+        loadgame_button = gui.Button('Restore Game')
+        loadgame_button.connect(gui.CLICK, load_game)
+        self.tr()
+        self.td(loadgame_button, **td_kwargs)
 
         quit_button = gui.Button("Quit")
         quit_button.connect(gui.CLICK, quit_pressed)

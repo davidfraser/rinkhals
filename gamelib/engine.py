@@ -103,6 +103,10 @@ class MainMenuState(State):
                 return DayState(self.game)
             elif e.key == K_i:
                 return HelpScreenState(self.game)
+        elif e.type is DO_LOAD_SAVEGAME:
+            self.game.switch_gameboard(e.gameboard)
+            e.gameboard.skip_next_start_day()
+            return DayState(self.game)
         elif e.type is not QUIT:
             self.game.main_app.event(e)
 

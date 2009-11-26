@@ -181,7 +181,7 @@ class BaseToolBar(gui.Table):
 
     def load_game(self):
         """Load game 'dialog'."""
-        savegame.RestoreDialog(self.gameboard).open()
+        savegame.RestoreDialog(self.gameboard.restore_game).open()
 
     update_cash_counter = mkcountupdate('cash_counter')
     update_wood_counter = mkcountupdate('wood_counter')
