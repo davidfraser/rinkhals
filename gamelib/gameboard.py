@@ -680,7 +680,6 @@ class GameBoard(serializer.Simplifiable):
                     break
 
         def dlg_event(e):
-            print e.type, e
             if e.type == MOUSEBUTTONDOWN and e.button == 2: # Middle
                 self.unselect_all()
                 for chicken in building.occupants():
