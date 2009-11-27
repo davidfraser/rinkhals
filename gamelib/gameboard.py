@@ -3,7 +3,7 @@ import random
 import pygame
 from pygame.locals import MOUSEBUTTONDOWN, MOUSEMOTION, KEYDOWN, K_UP, K_DOWN, \
         K_LEFT, K_RIGHT, KMOD_SHIFT, K_0, K_1, K_2, K_3, K_4, K_5, K_6, K_7, \
-        K_8, K_9, KMOD_CTRL, KEYUP
+        K_8, K_9, KMOD_CTRL, KMOD_ALT, KEYUP
 from pgu import gui
 
 import tiles
@@ -827,7 +827,7 @@ class GameBoard(serializer.Simplifiable):
         elif e.type == KEYDOWN and e.key in \
                 [K_0, K_1, K_2, K_3, K_4, K_5, K_6, K_7, K_8, K_9]:
             mods = pygame.key.get_mods()
-            if mods & KMOD_CTRL:
+            if (mods & KMOD_CTRL) or (mods & KMOD_ALT):
                 # store current selection
                 self.stored_selections[e.key] = self.selected_chickens[:]
             else:
