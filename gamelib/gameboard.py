@@ -653,6 +653,12 @@ class GameBoard(serializer.Simplifiable):
                             self.unselect_animal(place.occupant)
             building.selected(False)
 
+        def select_all_callback():
+            self.unselect_all()
+            for chicken in building.occupants():
+                self.select_animal(chicken)
+                update_button(chicken)
+
         def evict_callback():
             if not self.selected_chickens:
                 return
@@ -666,11 +672,14 @@ class GameBoard(serializer.Simplifiable):
                     self.place_animal(tile_pos)
                     break
 
+        tbl.tr()
+        select_button = gui.Button('Select All')
+        select_button.connect(gui.CLICK, select_all_callback)
+        tbl.td(select_button, colspan=2, **kwargs)
         if not sell_callback:
-            tbl.tr()
-            button = gui.Button('Evict')
-            button.connect(gui.CLICK, evict_callback)
-            tbl.td(button, colspan=2, **kwargs)
+            evict_button = gui.Button('Evict')
+            evict_button.connect(gui.CLICK, evict_callback)
+            tbl.td(evict_button, colspan=2, **kwargs)
 
         self.open_dialog(tbl, close_callback=close_callback)
 
