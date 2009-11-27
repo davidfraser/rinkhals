@@ -781,7 +781,7 @@ class GameBoard(serializer.Simplifiable):
                 do_sell(chicken)
             else:
                 building = self.get_building(tile_pos)
-                if building is None:
+                if building is None or not building.ABODE:
                     return
                 x, y = 50, 0
                 self.open_building_dialog(building, False, do_sell)
