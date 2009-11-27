@@ -155,7 +155,7 @@ class Axe(Weapon):
     SELL_PRICE = 30
 
     RANGE = 1
-    BASE_HIT = 25
+    BASE_HIT = 35
     RANGE_PENALTY = 0
 
     CHICKEN_IMAGE_FILE = 'sprites/equip_axe.png'
