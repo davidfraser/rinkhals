@@ -913,12 +913,15 @@ class GameBoard(serializer.Simplifiable):
 
     def foxes_move(self):
         over = True
-        for fox in self.foxes:
+        for fox in self.foxes.copy():
             old_pos = fox.pos
             fox.move()
             if not fox.safe:
                 over = False
-            self._pos_cache.update(old_pos, fox, 'fox')
+                self._pos_cache.update(old_pos, fox, 'fox')
+            else:
+                # Avoid stale fox on board edge
+                self.remove_fox(fox)
         return over
 
     def foxes_attack(self):
