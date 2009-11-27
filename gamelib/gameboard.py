@@ -351,10 +351,16 @@ class GameBoard(serializer.Simplifiable):
             self.sell_egg(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_PLACE_ANIMALS:
             self.place_animal(self.tv.screen_to_tile(e.pos))
+            self.selected_tool = constants.TOOL_SELECT_CHICKENS
+            self.toolbar.toggle_select_on()
         elif self.selected_tool == constants.TOOL_SELECT_CHICKENS:
-            if not (mods & KMOD_SHIFT):
-                self.unselect_all()
-            self.select_chicken(self.tv.screen_to_tile(e.pos))
+            # ctrl moves current selection without having to select move tool
+            if (mods & KMOD_CTRL):
+                self.place_animal(self.tv.screen_to_tile(e.pos))
+            else:
+                if not (mods & KMOD_SHIFT):
+                    self.unselect_all()
+                self.select_chicken(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELL_BUILDING:
             self.sell_building(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELL_EQUIPMENT:
