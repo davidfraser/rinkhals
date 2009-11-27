@@ -162,7 +162,8 @@ class BaseToolBar(gui.Table):
         COMBOS = {
                 'Select Multiple chickens' : 'Shift & Left Click',
                 'Move selected chickens' : 'Ctrl & Left Click',
-                'Change to move tool' : 'Right Click',
+                'Toggle between select and move' : 'Right Click',
+                'Unselect current tool and all chickens' : 'Middle Click',
                 'Save selection' : 'Ctrl & 0 .. 9',
                 'Recall saved selection' : '0 .. 9',
                 'Exit game' : 'Esc',
@@ -170,7 +171,7 @@ class BaseToolBar(gui.Table):
 
         tbl = gui.Table()
         tbl.tr()
-        doc = gui.Document(width=410)
+        doc = gui.Document(width=610)
         space = doc.style.font.size(" ")
         for header in ['Action', 'Combination']:
             doc.add(misc.make_box(header))
