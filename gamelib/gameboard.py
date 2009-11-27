@@ -438,7 +438,7 @@ class GameBoard(serializer.Simplifiable):
         if tile_pos:
             building = self.get_building(tile_pos)
             if building and building.HENHOUSE:
-                 self.open_building_dialog(building, False, do_sell)
+                self.open_building_dialog(building, False, do_sell)
         else:
             for chicken in self.selected_chickens:
                 do_sell(chicken)
@@ -615,8 +615,15 @@ class GameBoard(serializer.Simplifiable):
                     # select new animal (on button)
                     update_button(place.occupant)
                 else:
-                    # Attempt to sell the occupant
-                    sell_callback(place.occupant, update_button)
+                    # FIXME: This should really match the behaviour for
+                    # outside buildings, but that requires using the toolbar
+                    # while the dialog is open.
+                    to_process = [place.occupant]
+                    if place.occupant in self.selected_chickens:
+                        # We do the same action for all the selected chickens
+                        to_process = self.selected_chickens
+                    for chick in to_process[:]:
+                        sell_callback(chick, update_button)
             else:
                 # there is no occupant, attempt to fill the space
                 if self.selected_chickens and fill_empty:
