@@ -576,15 +576,20 @@ class Fox(Animal):
             return Position(self.pos.x, self.pos.y, new_z)
         return self._find_best_path_step()
 
+    def _calculate_dist(self, chicken):
+        """Calculate the distance to the chicken"""
+        dist = chicken.pos.dist(self.pos)
+        if chicken.abode:
+            dist += 5 # Prefer free-ranging chickens
+        if len(chicken.weapons()) > 0:
+            dist += 5 # Prefer unarmed chickens
+        return dist
+
     def _select_prey(self):
         min_dist = 999
         self.closest = None
         for chicken in self.gameboard.chickens:
-            dist = chicken.pos.dist(self.pos)
-            if chicken.abode:
-                dist += 5 # Prefer free-ranging chickens
-            if len(chicken.weapons()) > 0:
-                dist += 5 # Prefer unarmed chickens
+            dist = self._calculate_dist(chicken)
             if dist < min_dist:
                 min_dist = dist
                 self.closest = chicken
@@ -745,15 +750,29 @@ class GreedyFox(Fox):
     def __init__(self, pos, gameboard):
         Fox.__init__(self, pos, gameboard)
         self.chickens_eaten = 0
+        self.last_chicken = None
 
     def _catch_chicken(self, chicken):
         chicken.damage()
+        self.last_chicken = self.closest
         self.closest = None
         self.chickens_eaten += 1
         if self.chickens_eaten > 2:
             self.hunting = False
             self.target = self.start_pos
             self._last_steps = []
+        else:
+            self._select_prey() # select new target
+
+    def _calculate_dist(self, chicken):
+        """Calculate the distance to the chicken"""
+        dist = super(GreedyFox, self)._calculate_dist(chicken)
+        if self.last_chicken and self.last_chicken is chicken:
+            # We hurt our teeth, only attack the same chicken if it's the
+            # only one nearby
+            dist += 15
+        return dist
+
 
 class Rinkhals(Fox):
     """The Rinkhals has eclectic tastes"""
@@ -764,18 +783,12 @@ class Rinkhals(Fox):
     costs = Fox.costs.copy()
     costs['fence'] = 2
 
-    def _select_prey(self):
-        """The Rinkhals eats eggs"""
-        min_dist = 999
-        self.closest = None
-        for chicken in self.gameboard.chickens:
-            dist = chicken.pos.dist(self.pos)
-            if not chicken.eggs:
-                dist += 100 # The closest eggs have to be *far* away to be safe
-            if dist < min_dist:
-                min_dist = dist
-                self.closest = chicken
-                self.target = self.closest.pos
+    def _calculate_dist(self, chicken):
+        """The Rinkhals eats eggs, so tweak distance accordingly"""
+        dist = chicken.pos.dist(self.pos)
+        if not chicken.eggs:
+            dist += 100 # The closest eggs have to be *far* away to be safe
+        return dist
 
     def _catch_chicken(self, chicken):
         """The Rinkhals eats eggs, but does not harm chickens"""
