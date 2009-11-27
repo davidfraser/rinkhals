@@ -518,13 +518,19 @@ class Fox(Animal):
             else:
                 # Been bounced off the path
                 self.path = []
+        new_pos = None
         if self.target.z < self.pos.z:
             # We need to try heading down.
-            return Position(self.pos.x, self.pos.y, self.pos.z - 1)
+            new_pos = Position(self.pos.x, self.pos.y, self.pos.z - 1)
         if self.target.x == self.pos.x and self.target.y == self.pos.y and \
                 self.target.z > self.pos.z:
             # We try heading up
-            return Position(self.pos.x, self.pos.y, self.pos.z + 1)
+            new_pos = Position(self.pos.x, self.pos.y, self.pos.z + 1)
+        if new_pos:
+            if new_pos in self._last_steps:
+                # ladder, so we allow backtracking
+                self._last_steps.remove(new_pos)
+            return new_pos
         cur_dist = self.target.dist(self.pos)
         if cur_dist < 2:
             # We're right ontop of our target, so just go there
@@ -688,8 +694,7 @@ class Fox(Animal):
                 # We've dug through the fence, so make a hole
                 self._make_hole()
             return
-        else:
-            desired_pos = self._calc_next_move()
+        desired_pos = self._calc_next_move()
         final_pos = self._update_pos(desired_pos)
         self._fix_face(final_pos)
         self.pos = final_pos
