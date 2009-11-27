@@ -7,6 +7,7 @@ import engine
 import imagecache
 import gameboard
 import savegame
+import loadlevel
 
 def make_main_menu(level):
     """Create a main menu"""
@@ -31,6 +32,7 @@ class MainMenu(gui.Table):
     def __init__(self, level, **params):
         gui.Table.__init__(self, **params)
         self.mode = None
+        self.level_name = level.level_name
 
         def fullscreen_toggled():
             pygame.display.toggle_fullscreen()
@@ -42,7 +44,11 @@ class MainMenu(gui.Table):
             pygame.event.post(engine.START_DAY)
 
         def choose_level():
-            pygame.event.post(engine.GO_LEVEL_SCREEN)
+            def load_func(new_level):
+                pygame.event.post(pygame.event.Event(engine.DO_LOAD_LEVEL, level=new_level))
+                self.level_name = new_level.level_name
+                self.redraw()
+            loadlevel.LoadLevelDialog(level, load_func).open()
 
         def load_game():
             savegame.RestoreDialog(gameboard.GameBoard.restore_game).open()
@@ -63,10 +69,10 @@ class MainMenu(gui.Table):
         self.tr()
         self.td(change_button, **td_kwargs)
 
-        start_button = gui.Button(level.level_name)
-        start_button.connect(gui.CLICK, start_game)
+        self.start_button = gui.Button(level.level_name)
+        self.start_button.connect(gui.CLICK, start_game)
         self.tr()
-        self.td(start_button, **td_kwargs)
+        self.td(self.start_button, **td_kwargs)
 
         loadgame_button = gui.Button('Restore Game')
         loadgame_button.connect(gui.CLICK, load_game)
@@ -90,3 +96,6 @@ class MainMenu(gui.Table):
 
         self.tr()
         self.td(quit_button, **td_kwargs)
+
+    def redraw(self):
+        self.start_button.value = self.level_name

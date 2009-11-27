@@ -4,98 +4,88 @@ from pgu import gui
 import os
 import pygame
 import level
-import engine
 import data
-import imagecache
 import gameboard
 import constants
 
-def make_load_screen(level):
-    """Create a screen for selecting the levels"""
-    load_screen = LoadScreen(level, width=600)
 
-    c = LoadContainer(align=0, valign=0)
-    c.add(load_screen, 0, 0)
+class LoadLevelDialog(gui.Dialog):
+    """Load level dialog."""
 
-    return c, load_screen
+    def __init__(self, curr_level, load_func, cls="dialog"):
+        self.value = None
+        self.levels = self._populate_levels()
 
-class LoadContainer(gui.Container):
-    def paint(self, s):
-        pygame.display.set_caption('Load Level')
-        splash = imagecache.load_image("images/splash.png", ["lighten_most"])
-        pygame.display.get_surface().blit(splash, (0, 0))
-        gui.Container.paint(self, s)
+        self.main_style = {
+            'width': 300, 'height': 350
+        }
 
-class LoadScreen(gui.Document):
-    def __init__(self, start_level, **params):
-        gui.Document.__init__(self, **params)
+        td_style = {
+            'padding_left': 4,
+            'padding_right': 4,
+            'padding_top': 2,
+            'padding_bottom': 2,
+        }
 
-        self.levels = []
-        self.cur_level = None
+        self.level_list = gui.List(**self.main_style)
+        level_names = self.levels.keys()
+        level_names.sort()
+        for name in level_names:
+            self.level_list.add(name, value=name)
+        self.level_list.set_vertical_scroll(0)
+        self.level_list.connect(gui.CHANGE, self._level_list_change)
+
+        self.image_container = gui.Container()
+
+        button_ok = gui.Button("Load Level")
+        button_ok.connect(gui.CLICK, self._click_ok)
+
+        button_cancel = gui.Button("Cancel")
+        button_cancel.connect(gui.CLICK, self._click_cancel)
+
+        body = gui.Table()
+        body.tr()
+        list_style = dict(self.main_style)
+        list_style.update(td_style)
+        body.td(self.level_list, style=list_style, valign=-1, rowspan=2)
+        body.td(self.image_container, style=td_style, colspan=2)
+        body.tr()
+        # putting in the extra spacer squashes the ok and cancel button
+        # up nicely
+        body.td(gui.Spacer(0, 0), style=td_style)
+        body.td(button_ok, style=td_style, align=1)
+        body.td(button_cancel, style=td_style, align=1)
+
+        title = gui.Label("Load Level ...", cls=cls + ".title.label")
+        gui.Dialog.__init__(self, title, body)
+
+        if curr_level.level_name in self.levels:
+            self.level_list.group.value = curr_level.level_name
+        elif level_names:
+            self.level_list.group.value = level_names[0]
+
+        self.connect(gui.CHANGE, self._load_level, load_func)
+
+    def _populate_levels(self):
+        """Read list of levels from disk."""
+        levels = {}
         for name in os.listdir(data.filepath('levels/')):
-            if name.endswith('.conf'):
-                try:
-                    this_level = level.Level(name)
-                except RuntimeError:
-                    continue # Skip levels that fail to load
-                if os.path.exists(this_level.map):
-                    # Skip level if we can't see the map
-                    self.levels.append(this_level)
-                    if this_level.level_name == start_level.level_name:
-                        self.cur_level = this_level
+            if not name.endswith('.conf'):
+                continue
+            try:
+                this_level = level.Level(name)
+            except RuntimeError:
+                # Skip levels that fail to load
+                continue
+            if not os.path.exists(this_level.map):
+                # Skip level if we can't see the map
+                continue
+            levels[this_level.level_name] = (this_level, None)
+        return levels
 
-        if not self.cur_level:
-            self.cur_level = self.levels[0]
-
-
-        def done_pressed():
-            pygame.event.post(engine.DO_LOAD_LEVEL)
-
-        def cancel_pressed():
-            pygame.event.post(engine.GO_MAIN_MENU)
-
-        def next_pressed():
-            self.next_level()
-
-        def prev_pressed():
-            self.prev_level()
-
-        self.next_button = gui.Button("Next Level >>")
-        self.next_button.connect(gui.CLICK, next_pressed)
-
-        self.prev_button = gui.Button("<< Prev Level")
-        self.prev_button.connect(gui.CLICK, prev_pressed)
-
-        self.cancel_button = gui.Button("Cancel")
-        self.cancel_button.connect(gui.CLICK, cancel_pressed)
-
-        self.done_button = gui.Button("Load This Level")
-        self.done_button.connect(gui.CLICK, done_pressed)
-
-        self.render_level()
-
-
-    def next_level(self):
-        pos = self.levels.index(self.cur_level) + 1
-        if pos == len(self.levels):
-            pos = 0
-        self.cur_level = self.levels[pos]
-        self.render_level()
-
-    def prev_level(self):
-        pos = self.levels.index(self.cur_level) - 1
-        if pos == -1:
-            pos = len(self.levels) - 1
-        self.cur_level = self.levels[pos]
-        self.render_level()
-
-    def render_level(self):
-        self.clear()
-        self.repaint()
-
-        board = gameboard.GameBoard(None, self.cur_level)
-
-        space = self.style.font.size(" ")
+    def _create_image_widget(self, curr_level):
+        """Create an image showing the contents of level file."""
+        board = gameboard.GameBoard(None, curr_level)
         w, h = board.tv.size
 
         map_image = pygame.Surface((constants.TILE_DIMENSIONS[0] * w,
@@ -104,35 +94,62 @@ class LoadScreen(gui.Document):
         board.tv.paint(map_image)
 
         style = {
-                'width' : min(300, 7*w),
-                'height' : min(300, 7*h),
-                }
+            'width' : min(300, 7*w),
+            'height' : min(300, 7*h),
+        }
 
-        image = gui.Image(map_image, style=style)
+        doc = gui.Document(style=self.main_style)
+        space = doc.style.font.size(" ")
 
-        self.block(align=0)
-        self.add(image)
+        doc.block(align=0)
+        doc.add(gui.Image(map_image, style=style))
 
-        self.block(align=-1)
-        self.add(gui.Label(self.cur_level.level_name))
-        self.block(align=-1)
-        for word in self.cur_level.goal.split():
-            self.add(gui.Label(word))
-            self.space(space)
+        doc.block(align=0)
+        doc.add(gui.Label(curr_level.level_name, style={
+            'border_bottom': 1,
+            'margin_bottom': 5,
+            'margin_top': 5,
+        }))
 
-        self.block(align=0)
-        # NB: pgu 's layout engine is sensitive to ordering here
-        self.add(self.prev_button, align=-1)
-        self.add(self.next_button, align=1)
-        self.add(self.done_button)
-        self.add(self.cancel_button)
+        doc.block(align=0)
+        for word in curr_level.goal.split():
+            doc.add(gui.Label(word))
+            doc.space(space)
 
-    def clear(self):
-        """Clear the document"""
-        for widget in self.widgets[:]:
-            self.remove(widget)
-        self.layout._widgets = []
-        self.layout.init()
+        return doc
+
+    def _level_list_change(self):
+        for w in self.image_container.widgets:
+            self.image_container.remove(w)
+
+        name = self.level_list.value
+        curr_level, widget = self.levels[name]
+        if widget is None:
+            widget = self._create_image_widget(curr_level)
+            self.levels[name] = (curr_level, widget)
+
+        self.image_container.add(widget, 0, 0)
+
+    def _click_ok(self):
+        self.value = self.level_list.value
+        if self.value:
+            self.send(gui.CHANGE)
+            self.close()
+
+    def _click_cancel(self):
+        self.value = None
+        self.send(gui.CHANGE)
+        self.close()
+
+    def _load_level(self, load_func):
+        level = self.get_level()
+        if level is not None:
+            load_func(level)
+
+    def get_level(self):
+        if self.value is None:
+            return None
+        return self.levels[self.value][0]
 
 
 
