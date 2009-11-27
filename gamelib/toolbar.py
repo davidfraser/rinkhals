@@ -8,6 +8,7 @@ import equipment
 import cursors
 import engine
 import savegame
+import misc
 
 class RinkhalsTool(gui.Tool):
     def __init__(self, group, label, value, func, **params):
@@ -113,56 +114,36 @@ class BaseToolBar(gui.Table):
 
     def show_prices(self):
         """Popup dialog of prices"""
-        def make_box(text):
-            style = {
-                    'border' : 1
-                    }
-            word = gui.Label(text, style=style)
-            return word
-
-        def fix_widths(doc):
-            """Loop through all the widgets in the doc, and set the
-               width of the labels to max + 10"""
-            # We need to do this because of possible font issues
-            max_width = 0
-            for thing in doc.widgets:
-                if hasattr(thing, 'style'):
-                    # A label
-                    if thing.style.width > max_width:
-                        max_width = thing.style.width
-            for thing in doc.widgets:
-                if hasattr(thing, 'style'):
-                    thing.style.width = max_width + 10
 
         tbl = gui.Table()
         tbl.tr()
         doc = gui.Document(width=510)
         space = doc.style.font.size(" ")
         for header in ['Item', 'Buy Price', 'Sell Price', 'Repair Price']:
-            doc.add(make_box(header))
+            doc.add(misc.make_box(header))
         doc.br(space[1])
         for building in buildings.BUILDINGS:
-            doc.add(make_box(building.NAME))
-            doc.add(make_box('%d planks' % building.BUY_PRICE))
-            doc.add(make_box('%d planks' % building.SELL_PRICE))
+            doc.add(misc.make_box(building.NAME))
+            doc.add(misc.make_box('%d planks' % building.BUY_PRICE))
+            doc.add(misc.make_box('%d planks' % building.SELL_PRICE))
             if building.BREAKABLE:
-                doc.add(make_box('%d planks' % building.REPAIR_PRICE))
+                doc.add(misc.make_box('%d planks' % building.REPAIR_PRICE))
             else:
-                doc.add(make_box('N/A'))
+                doc.add(misc.make_box('N/A'))
             doc.br(space[1])
         for equip in equipment.EQUIPMENT:
-            doc.add(make_box(equip.NAME))
-            doc.add(make_box('%d groats' % equip.BUY_PRICE))
-            doc.add(make_box('%d groats' % equip.SELL_PRICE))
-            doc.add(make_box('N/A'))
+            doc.add(misc.make_box(equip.NAME))
+            doc.add(misc.make_box('%d groats' % equip.BUY_PRICE))
+            doc.add(misc.make_box('%d groats' % equip.SELL_PRICE))
+            doc.add(misc.make_box('N/A'))
             doc.br(space[1])
-        doc.add(make_box("5 planks"))
-        doc.add(make_box('%d groats' % self.gameboard.wood_buy_price))
-        doc.add(make_box('%d groats' % self.gameboard.wood_sell_price))
-        doc.add(make_box('N/A'))
+        doc.add(misc.make_box("5 planks"))
+        doc.add(misc.make_box('%d groats' % self.gameboard.wood_buy_price))
+        doc.add(misc.make_box('%d groats' % self.gameboard.wood_sell_price))
+        doc.add(misc.make_box('N/A'))
         doc.br(space[1])
 
-        fix_widths(doc)
+        misc.fix_widths(doc)
         for word in "Damaged equipment or buildings will be sold for" \
                 " less than the sell price.".split():
             doc.add(gui.Label(word))
@@ -174,6 +155,41 @@ class BaseToolBar(gui.Table):
         dialog = gui.Dialog(gui.Label('Price Reference'), tbl)
         close_button.connect(gui.CLICK, dialog.close)
         dialog.open()
+
+    def show_controls(self):
+        """Popup dialog of controls"""
+
+        COMBOS = {
+                'Select Multiple chickens' : 'Shift & Left Click',
+                'Move selected chickens' : 'Ctrl & Left Click',
+                'Change to move tool' : 'Right Click',
+                'Save selection' : 'Ctrl & 0 .. 9',
+                'Recall saved selection' : '0 .. 9',
+                'Exit game' : 'Esc',
+                }
+
+        tbl = gui.Table()
+        tbl.tr()
+        doc = gui.Document(width=410)
+        space = doc.style.font.size(" ")
+        for header in ['Action', 'Combination']:
+            doc.add(misc.make_box(header))
+        doc.br(space[1])
+        for command, combo in COMBOS.iteritems():
+            doc.add(misc.make_box(command))
+            doc.add(misc.make_box(combo))
+            doc.br(space[1])
+        doc.br(space[1])
+
+        misc.fix_widths(doc)
+        close_button = gui.Button("Close")
+        tbl.td(doc)
+        tbl.tr()
+        tbl.td(close_button, align=1)
+        dialog = gui.Dialog(gui.Label('Command Reference'), tbl)
+        close_button.connect(gui.CLICK, dialog.close)
+        dialog.open()
+
 
     def save_game(self):
         """Save game 'dialog'."""
@@ -241,15 +257,12 @@ class DefaultToolBar(BaseToolBar):
         self.make_toolbar()
 
     def make_toolbar(self):
-        self._select_tool = self.add_tool_button("Select chicken", constants.TOOL_SELECT_CHICKENS,
+        self._select_tool = self.add_tool_button("Select / Move", constants.TOOL_SELECT_CHICKENS,
                 None, cursors.cursors['select'])
 
         self.add_spacer(5)
 
         self.add_tool('Equip chickens', self.add_equipment_toolbar)
-
-        self._move_tool = self.add_tool_button("Move chickens", constants.TOOL_PLACE_ANIMALS,
-                None, cursors.cursors['select'])
 
         self.add_tool('Sell stuff', self.add_sell_toolbar)
 
@@ -269,6 +282,7 @@ class DefaultToolBar(BaseToolBar):
         self.add_spacer(5)
         self.add_heading("Help")
         self.add_tool("Price Reference", self.show_prices)
+        self.add_tool("Controls", self.show_controls)
 
         self.add_spacer(5)
         self.add_heading("Game")
@@ -280,21 +294,6 @@ class DefaultToolBar(BaseToolBar):
         #_cur_width, cur_height = self.resize()
         #self.add_spacer(570-cur_height)
         self.fin_tool = self.add_tool("Finished Day", self.day_done)
-
-        if self.gameboard.selected_tool == constants.TOOL_PLACE_ANIMALS:
-            self.toggle_move_on()
-        elif self.gameboard.selected_tool == constants.TOOL_SELECT_CHICKENS:
-            self.toggle_select_on()
-
-    def toggle_move_on(self):
-        self._select_tool.group.value = self._move_tool.value
-        self._move_tool.pcls = "down"
-        self._select_tool.pcls = ""
-
-    def toggle_select_on(self):
-        self._select_tool.group.value = self._select_tool.value
-        self._move_tool.pcls = ""
-        self._select_tool.pcls = "down"
 
     def add_building_toolbar(self):
         self.gameboard.change_toolbar(BuildingToolBar(self.gameboard,

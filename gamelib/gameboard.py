@@ -332,12 +332,8 @@ class GameBoard(serializer.Simplifiable):
             if self.toolbar.MOVE_SELECT_PERMITTED:
                 if self.selected_tool != constants.TOOL_SELECT_CHICKENS:
                     self.set_selected_tool(constants.TOOL_SELECT_CHICKENS, cursors.cursors["select"])
-                    if self.toolbar.IS_DEFAULT:
-                        self.toolbar.toggle_select_on()
                 elif self.selected_tool == constants.TOOL_SELECT_CHICKENS:
                     self.set_selected_tool(constants.TOOL_PLACE_ANIMALS, cursors.cursors["chicken"])
-                    if self.toolbar.IS_DEFAULT:
-                        self.toolbar.toggle_move_on()
             return
         elif e.button == 2: # Middle button
             self.reset_states()
@@ -352,8 +348,6 @@ class GameBoard(serializer.Simplifiable):
         elif self.selected_tool == constants.TOOL_PLACE_ANIMALS:
             self.place_animal(self.tv.screen_to_tile(e.pos))
             self.set_selected_tool(constants.TOOL_SELECT_CHICKENS, cursors.cursors["select"])
-            if self.toolbar.IS_DEFAULT:
-                self.toolbar.toggle_select_on()
         elif self.selected_tool == constants.TOOL_SELECT_CHICKENS:
             # ctrl moves current selection without having to select move tool
             if (mods & KMOD_CTRL):

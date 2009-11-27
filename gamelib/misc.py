@@ -115,4 +115,26 @@ def check_exit():
     dialog.open()
     return dialog
 
+# Utility layout functions
+
+def make_box(text):
+    style = {
+            'border' : 1
+            }
+    word = gui.Label(text, style=style)
+    return word
+
+def fix_widths(doc):
+    """Loop through all the widgets in the doc, and set the
+       width of the labels to max + 10"""
+    # We need to do this because of possible font issues
+    max_width = 0
+    for thing in doc.widgets:
+        if hasattr(thing, 'style'):
+            # A label
+            if thing.style.width > max_width:
+                max_width = thing.style.width
+    for thing in doc.widgets:
+        if hasattr(thing, 'style'):
+            thing.style.width = max_width + 10
 
