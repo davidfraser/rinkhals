@@ -720,7 +720,7 @@ class GameBoard(serializer.Simplifiable):
             if chicken is None:
                 building = self.get_building(tile_pos)
                 if not (building and building.ABODE):
-                     return
+                    return
                 # Bounce through open dialog once more
                 self.open_building_dialog(building, False, do_equip)
             else:
@@ -815,19 +815,19 @@ class GameBoard(serializer.Simplifiable):
             return True
         elif e.type == KEYDOWN and e.key in \
                 [K_0, K_1, K_2, K_3, K_4, K_5, K_6, K_7, K_8, K_9]:
-             mods = pygame.key.get_mods()
-             if mods & KMOD_CTRL:
-                 # store current selection
-                 self.stored_selections[e.key] = self.selected_chickens[:]
-             else:
-                 self.restore_selection(self.stored_selections.get(e.key, []))
+            mods = pygame.key.get_mods()
+            if mods & KMOD_CTRL:
+                # store current selection
+                self.stored_selections[e.key] = self.selected_chickens[:]
+            else:
+                self.restore_selection(self.stored_selections.get(e.key, []))
         elif e.type == KEYDOWN:
-             mods = pygame.key.get_mods()
-             if mods & KMOD_CTRL and self.selected_tool == constants.TOOL_SELECT_CHICKENS and self.selected_chickens:
+            mods = pygame.key.get_mods()
+            if mods & KMOD_CTRL and self.selected_tool == constants.TOOL_SELECT_CHICKENS and self.selected_chickens:
                 pygame.mouse.set_cursor(*cursors.cursors['chicken'])
         elif e.type == KEYUP:
-             mods = pygame.key.get_mods()
-             if not (mods & KMOD_CTRL) and self.selected_tool == constants.TOOL_SELECT_CHICKENS:
+            mods = pygame.key.get_mods()
+            if not (mods & KMOD_CTRL) and self.selected_tool == constants.TOOL_SELECT_CHICKENS:
                 pygame.mouse.set_cursor(*cursors.cursors['select'])
         return False
 
