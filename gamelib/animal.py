@@ -445,7 +445,6 @@ class Fox(Animal):
                         return False
             return True
 
-        # We check left, then right and take the shortest if both are valid
         return self._search_for_path(border, corner, 6)
 
     def _find_fence_gap(self):
@@ -702,8 +701,8 @@ class Fox(Animal):
             # can only leave from the ground floor
             if building == self.building:
                 # Check if we need to leave the building
-                if not self.hunting or (self.closest and
-                        self.closest.abode.building is not building):
+                if not self.hunting or (self.closest and self.closest.abode
+                        and self.closest.abode.building is not building):
                     self.building.remove_predator(self)
                     change_visible = True
             else:
