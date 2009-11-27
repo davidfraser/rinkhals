@@ -952,6 +952,7 @@ class GameBoard(serializer.Simplifiable):
             building.add_occupant(new_chick)
             self.add_chicken(new_chick)
             new_chick.equip(equipment.Nest())
+            new_chick.set_pos(new_chick.abode.get_pos())
         except buildings.BuildingFullError:
             # No space in the hen house, look nearby
             for tile_pos in building.adjacent_tiles():
