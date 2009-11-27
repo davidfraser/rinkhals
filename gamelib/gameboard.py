@@ -679,6 +679,16 @@ class GameBoard(serializer.Simplifiable):
                     self.place_animal(tile_pos)
                     break
 
+        def dlg_event(e):
+            print e.type, e
+            if e.type == MOUSEBUTTONDOWN and e.button == 2: # Middle
+                self.unselect_all()
+                for chicken in building.occupants():
+                    update_button(chicken)
+                return False
+            return gui.Table.event(tbl, e)
+
+
         tbl.tr()
         select_button = gui.Button('Select All')
         select_button.connect(gui.CLICK, select_all_callback)
@@ -687,6 +697,8 @@ class GameBoard(serializer.Simplifiable):
             evict_button = gui.Button('Evict')
             evict_button.connect(gui.CLICK, evict_callback)
             tbl.td(evict_button, colspan=2, **kwargs)
+
+        tbl.event = dlg_event
 
         self.open_dialog(tbl, close_callback=close_callback)
 
