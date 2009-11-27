@@ -4,6 +4,7 @@ import random
 
 from pygame.locals import KEYDOWN, K_ESCAPE
 from pgu import gui
+from pgu import html
 from pgu.algo import getline
 
 import serializer
@@ -117,11 +118,18 @@ def check_exit():
 
 # Utility layout functions
 
-def make_box(text):
+def make_box(text, markup=False):
     style = {
-            'border' : 1
-            }
-    word = gui.Label(text, style=style)
+        'border' : 1,
+        'padding_left': 2,
+        'padding_right': 2,
+        'padding_top': 2,
+        'padding_bottom': 2,
+    }
+    if markup:
+        word = html.HTML(text, style=style)
+    else:
+        word = gui.Label(text, style=style)
     return word
 
 def fix_widths(doc):

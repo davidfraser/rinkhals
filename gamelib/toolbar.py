@@ -120,7 +120,7 @@ class BaseToolBar(gui.Table):
         doc = gui.Document(width=510)
         space = doc.style.font.size(" ")
         for header in ['Item', 'Buy Price', 'Sell Price', 'Repair Price']:
-            doc.add(misc.make_box(header))
+            doc.add(misc.make_box("<b>%s</b>" % header, markup=True))
         doc.br(space[1])
         for building in buildings.BUILDINGS:
             doc.add(misc.make_box(building.NAME))
@@ -175,7 +175,7 @@ class BaseToolBar(gui.Table):
         doc = gui.Document(width=610)
         space = doc.style.font.size(" ")
         for header in ['Action', 'Combination']:
-            doc.add(misc.make_box(header))
+            doc.add(misc.make_box("<b>%s</b>" % header, markup=True))
         doc.br(space[1])
         for command, combo in COMBOS:
             doc.add(misc.make_box(command))
