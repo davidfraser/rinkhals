@@ -526,11 +526,11 @@ class Fox(Animal):
             # We try heading up
             return Position(self.pos.x, self.pos.y, self.pos.z + 1)
         cur_dist = self.target.dist(self.pos)
-        best, min_cost = self._find_min_cost_neighbour(self.target)
         if cur_dist < 2:
             # We're right ontop of our target, so just go there
             return self.target
         # Find the cheapest spot close to us that moves us closer to the target
+        best, min_cost = self._find_min_cost_neighbour(self.target)
         if min_cost < 20 or not self.gameboard.in_bounds(self.pos) \
                 or not self.gameboard.in_bounds(best):
             # If we're not on the gameboard yet, there's no point in looking
