@@ -159,15 +159,16 @@ class BaseToolBar(gui.Table):
     def show_controls(self):
         """Popup dialog of controls"""
 
-        COMBOS = {
-                'Select Multiple chickens' : 'Shift & Left Click',
-                'Move selected chickens' : 'Ctrl & Left Click',
-                'Toggle between select and move' : 'Right Click',
-                'Unselect current tool and all chickens' : 'Middle Click',
-                'Save selection' : 'Ctrl & 0 .. 9',
-                'Recall saved selection' : '0 .. 9',
-                'Exit game' : 'Esc',
-                }
+        COMBOS = [
+            ('Select Multiple chickens', 'Shift & Left Click'),
+            ('Move selected chickens', 'Ctrl & Left Click'),
+            ('Toggle between select and move', 'Right Click'),
+            ('Unselect current tool and chickens', 'Middle Click'),
+            ('Save selection', 'Ctrl & 0 .. 9'),
+            ('        or', 'Alt & 0 .. 9'),
+            ('Recall saved selection', '0 .. 9'),
+            ('Exit game', 'Esc'),
+            ]
 
         tbl = gui.Table()
         tbl.tr()
@@ -176,7 +177,7 @@ class BaseToolBar(gui.Table):
         for header in ['Action', 'Combination']:
             doc.add(misc.make_box(header))
         doc.br(space[1])
-        for command, combo in COMBOS.iteritems():
+        for command, combo in COMBOS:
             doc.add(misc.make_box(command))
             doc.add(misc.make_box(combo))
             doc.br(space[1])
