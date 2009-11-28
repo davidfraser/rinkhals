@@ -334,6 +334,8 @@ class GameBoard(serializer.Simplifiable):
                     self.set_selected_tool(constants.TOOL_SELECT_CHICKENS, cursors.cursors["select"])
                 elif self.selected_tool == constants.TOOL_SELECT_CHICKENS:
                     self.set_selected_tool(constants.TOOL_PLACE_ANIMALS, cursors.cursors["chicken"])
+            if self.toolbar.IS_DEFAULT:
+                self.toolbar.highlight_move_select_button()
             return
         elif e.button == 2: # Middle button
             self.reset_states()

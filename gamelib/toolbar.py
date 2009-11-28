@@ -297,6 +297,13 @@ class DefaultToolBar(BaseToolBar):
         #self.add_spacer(570-cur_height)
         self.fin_tool = self.add_tool("Finished Day", self.day_done)
 
+        if self.gameboard.selected_tool in [constants.TOOL_PLACE_ANIMALS, constants.TOOL_SELECT_CHICKENS]:
+            self.highlight_move_select_button()
+
+    def highlight_move_select_button(self):
+        self._select_tool.group.value = self._select_tool.value
+        self._select_tool.pcls = "down"
+
     def add_building_toolbar(self):
         self.gameboard.change_toolbar(BuildingToolBar(self.gameboard,
                 width=self.style.width))
