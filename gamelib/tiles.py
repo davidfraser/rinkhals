@@ -18,6 +18,10 @@ class TileMap(object):
         4: ("guardtower", "grassland.png"),
         5: ("broken fence", "broken_fence.png"),
         6: ("hendominium", "grassland.png"),
+
+        255: ("woodland", "woodland.png"),
+        254: ("woodland", "woodland2.png"),
+        253: ("woodland", "woodland3.png"),
     }
 
     def __init__(self, tiles=None):
@@ -25,6 +29,8 @@ class TileMap(object):
             tiles = self.DEFAULT_TILES.copy()
         self._tiles = tiles
         self._reverse_map = dict((v[0], k) for k, v in self._tiles.iteritems())
+        # Wood is different:
+        self._reverse_map["woodland"] = 0
 
     def __getitem__(self, n):
         """Get the string name of tile n."""

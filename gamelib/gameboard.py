@@ -75,7 +75,6 @@ class GameBoard(serializer.Simplifiable):
 
     GRASSLAND = tiles.REVERSE_TILE_MAP['grassland']
     FENCE = tiles.REVERSE_TILE_MAP['fence']
-    WOODLAND = tiles.REVERSE_TILE_MAP['woodland']
     BROKEN_FENCE = tiles.REVERSE_TILE_MAP['broken fence']
 
     SIMPLIFY = [
@@ -887,12 +886,14 @@ class GameBoard(serializer.Simplifiable):
     def advance_day(self):
         self.days += 1
 
+    def is_woodland_tile(self, pos):
+        return tiles.TILE_MAP[self.tv.get(pos.to_tile_tuple())] == 'woodland'
+
     def clear_foxes(self):
         for fox in self.foxes.copy():
             # Any foxes that didn't make it to the woods are automatically
             # killed
-            if self.in_bounds(fox.pos) and \
-                    self.tv.get(fox.pos.to_tile_tuple()) != self.WOODLAND:
+            if self.in_bounds(fox.pos) and not self.is_woodland_tile(fox.pos):
                 self.kill_fox(fox)
             else:
                 self.remove_fox(fox)
@@ -1114,7 +1115,7 @@ class GameBoard(serializer.Simplifiable):
 
     def trees_left(self):
         width, height = self.tv.size
-        return len([(x,y) for x in range(width) for y in range(height) if self.tv.get((x,y)) == self.WOODLAND])
+        return len([(x,y) for x in range(width) for y in range(height) if self.is_woodland_tile(misc.Position(x,y))])
 
     def calculate_wood_groat_exchange_rate(self):
         # per five planks

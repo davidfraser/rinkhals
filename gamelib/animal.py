@@ -217,7 +217,7 @@ class Chicken(Animal):
         if self.has_axe():
             pos_x, pos_y = self.pos.to_tile_tuple()
             surrounds = [Position(pos_x + dx, pos_y + dy) for dx in [-1, 0, 1] for dy in [-1, 0, 1]]
-            tree_options = [pos for pos in surrounds if self.gameboard.in_bounds(pos) and self.gameboard.tv.get(pos.to_tile_tuple()) == self.gameboard.WOODLAND]
+            tree_options = [pos for pos in surrounds if self.gameboard.in_bounds(pos) and self.gameboard.is_woodland_tile(pos)]
             if tree_options:
                 num_trees_to_cut = random.randint(1, len(tree_options))
                 trees_to_cut = random.sample(tree_options, num_trees_to_cut)
@@ -832,7 +832,7 @@ def visible(watcher, watchee, gameboard):
             return False
     distance = watcher.pos.dist(watchee.pos) - 1
     # Intervening forests get in the way a bit.
-    woods = len([pos for pos in positions if gameboard.tv.get(pos.to_tile_tuple()) == gameboard.WOODLAND])
+    woods = len([pos for pos in positions if gameboard.is_woodland_tile(pos)])
     roll = random.randint(1, 100)
     return roll > watchee.STEALTH - vision_bonus + range_penalty*distance + constants.WOODLAND_CONCEALMENT*woods
 
