@@ -3,8 +3,10 @@ import random
 import os
 
 from pgu import gui
+from pgu import html
 from pgu.high import Highs
 import pygame
+from pygame.locals import KEYDOWN, K_ESCAPE
 
 import engine
 import constants
@@ -174,18 +176,23 @@ class GameOver(gui.Table):
         self.td(gui.Spacer(0, height), colspan=3)
 
 
-class Scoreboard(gui.Table):
+class ScoreDialog(gui.Dialog):
 
     def __init__(self, level, **params):
-        gui.Table.__init__(self, **params)
-
+        title = html.HTML("<b>High Scores for Level<i>%s</i></b>"
+            % level.level_name)
         scoreboard = ScoreTable(level)
 
-        self.tr()
-        self.td(gui.Label('Level: %s' % level.level_name, colspan=3))
-
+        tbl = gui.Table()
         for highscore in scoreboard:
-            self.tr()
-            self.td(gui.Label(highscore.name), colspan=2)
-            self.td(gui.Label('%d' % highscore.score))
+            tbl.tr()
+            tbl.td(gui.Label(highscore.name), colspan=2)
+            tbl.td(gui.Label('%d' % highscore.score))
 
+        gui.Dialog.__init__(self, title, tbl, **params)
+
+    def event(self, e):
+        if e.type == KEYDOWN and e.key == K_ESCAPE:
+            self.close()
+            return True
+        return gui.Dialog.event(self, e)

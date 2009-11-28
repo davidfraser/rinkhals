@@ -78,14 +78,6 @@ class MainMenuState(State):
             return DayState(self.game)
         elif events_equal(e, GO_HELP_SCREEN):
             return HelpScreenState(self.game)
-        elif e.type is KEYDOWN:
-            if e.key == K_ESCAPE:
-                return Quit(self.game)
-            elif e.key == K_s:
-                self.game.create_game_board()
-                return DayState(self.game)
-            elif e.key == K_i:
-                return HelpScreenState(self.game)
         elif e.type is DO_LOAD_LEVEL:
             self.game.load_new_level(e.level)
             return
@@ -93,8 +85,8 @@ class MainMenuState(State):
             self.game.switch_gameboard(e.gameboard)
             e.gameboard.skip_next_start_day()
             return DayState(self.game)
-        elif e.type is not QUIT:
-            self.game.main_app.event(e)
+
+        self.game.main_app.event(e)
 
     def paint(self, screen):
         screen.fill((0,0,0))

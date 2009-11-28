@@ -1,6 +1,7 @@
 """Main menu."""
 
 from pgu import gui
+from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
 import pygame
 import constants
 import engine
@@ -29,6 +30,22 @@ class MenuContainer(gui.Container):
     def get_mode(self):
         return self.widgets[0].mode
 
+    def event(self, e):
+        if gui.Container.event(self, e):
+            return True
+        if e.type is KEYDOWN:
+            if e.key == K_ESCAPE:
+                pygame.event.post(pygame.event.Event(QUIT))
+                return True
+            elif e.key == K_s:
+                pygame.event.post(engine.START_DAY)
+                return True
+            elif e.key == K_i:
+                pygame.event.post(engine.GO_HELP_SCREEN)
+                return True
+        return False
+
+
 class MainMenu(gui.Table):
     def __init__(self, level, **params):
         gui.Table.__init__(self, **params)
@@ -55,9 +72,7 @@ class MainMenu(gui.Table):
             savegame.RestoreDialog(gameboard.GameBoard.restore_game).open()
 
         def scores_pressed():
-            scoreboard = gameover.Scoreboard(self.level)
-            title = gui.Label("High Scores for Level %s" % self.level.level_name)
-            gui.Dialog(title, scoreboard).open()
+            gameover.ScoreDialog(self.level).open()
 
         def help_pressed():
             pygame.event.post(engine.GO_HELP_SCREEN)
@@ -104,7 +119,6 @@ class MainMenu(gui.Table):
         # fullscreen_toggle.connect(gui.CLICK, fullscreen_toggled)
         # self.tr()
         # self.td(fullscreen_toggle, **td_kwargs)
-
 
     def redraw(self):
         self.start_button.value = self.level.level_name
