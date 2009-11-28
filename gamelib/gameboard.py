@@ -863,30 +863,6 @@ class GameBoard(serializer.Simplifiable):
             for chicken in self.selected_chickens[:]:
                 do_sell(chicken)
 
-    def open_equipment_dialog(self, chicken, x, y, update_button=None):
-        tbl = gui.Table()
-
-        def sell_item(item, button):
-            """Select item of equipment."""
-            self.add_cash(item.sell_price())
-            chicken.unequip(item)
-            if update_button:
-                update_button(chicken)
-            self.disp.close(dialog)
-
-        kwargs = { 'style': { 'padding_left': 10, 'padding_bottom': 10 }}
-
-        tbl.tr()
-        tbl.td(gui.Button("Sell ...     "), align=-1, **kwargs)
-
-        for item in chicken.equipment:
-            tbl.tr()
-            button = gui.Button(item.name().title())
-            button.connect(gui.CLICK, sell_item, item, button)
-            tbl.td(button, align=1, **kwargs)
-
-        dialog = self.open_dialog(tbl, x=x, y=y)
-
     def _do_quit(self):
 
         def check_saved(_widget):
