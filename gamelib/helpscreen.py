@@ -6,9 +6,9 @@ import constants
 import imagecache
 
 HELP = [
-"""Welcome to %s
+"""Welcome to %s!
 
-Introduction:
+INTRODUCTION:
 
 The aim of the game is to make as much money as possible from your chicken
 farm. The problem is that chickens are delicious and foxes want to eat them.
@@ -21,7 +21,7 @@ Check the in-game controls reference for information about keys and mouse button
 
 """ % constants.NAME,
 
-"""Biology and economics:
+"""BIOLOGY AND ECONOMICS:
 
 Chickens only lay eggs in henhouses. An egg must be incubated for two days to
 hatch. Chickens that hatch in already full henhouses are moved outside. If there
@@ -40,14 +40,14 @@ end of the day.
 
 """,
 
-"""Equipment:
+"""EQUIPMENT:
 
-Axe: For chopping down trees. Doubles as a weapon, but it's not very good. \\
-Helmet: Cheap armour. \\
-Kevlar: More expensive and durable armour. \\
-Knife: Easy to use, but only at melee range, \\
-Rifle: Ranged weapon; requires more skill. \\
-Sniper rifle: Longer range and better accuracy than the plain rifle, but less ammo per clip.
+AXE: For chopping down trees. Doubles as a weapon, but it's not very good. \\
+HELMET: Cheap armour. \\
+KEVLAR: More expensive and durable armour. \\
+KNIFE: Easy to use, but only at melee range, \\
+RIFLE: Ranged weapon; requires more skill. \\
+SNIPER RIFLE: Longer range and better accuracy than the plain rifle, but less ammo per clip.
 
 You can sell equipment, but you don't get the full price back.
 
@@ -57,12 +57,12 @@ can only use one clip per night.
 """,
 
 """
-Buildings:
+BUILDINGS:
 
-Henhouse: The standard chicken dwelling. \\
-Hendominium: A luxury double-storey chicken dwelling. \\
-Watchtower: A lookout post which helps chickens with rifles to see better and further away. \\
-Fence: A barrier to both foxes and chickens.
+HENHOUSE: The standard chicken dwelling. \\
+HENDOMINIUM: A luxury double-storey chicken dwelling. \\
+WATCHTOWER: A lookout post which helps chickens with rifles to see better and further away. \\
+FENCE: A barrier to both foxes and chickens.
 
 You can repair broken fences and demolish buildings for their wood.  You won't get as
 much as you started with -- chickens are bad tenants and peck holes in everything.
@@ -70,21 +70,21 @@ much as you started with -- chickens are bad tenants and peck holes in everythin
 """,
 
 """
-The enemy:
+THE ENEMY:
 
-Fox: One of the little furry gluttons who are gorging themselves on your chickens. \\
-Greedy fox: Doesn't have the decency to stop at just one chicken. \\
-Ninja fox: Tries to sneak past your chicken guards. \\
-Sapper fox: Blows up your fences with explosives. \\
-Rinkhals: Not in fact a fox at all.  It has eclectic tastes. \\
+FOX: One of the little furry gluttons who are gorging themselves on your chickens. \\
+GREEDY FOX: Doesn't have the decency to stop at just one chicken. \\
+NINJA FOX: Tries to sneak past your chicken guards. \\
+SAPPER FOX: Blows up your fences with explosives. \\
+RINKHALS: Not in fact a fox at all.  It has eclectic tastes. \\
 
 """,
 ]
 
-LEVEL_TEXT="""The currently selected level is %(name)s
+LEVEL_TEXT="""The currently selected level is '%(name)s'.
 
 The goal is:
-    %(goal)s
+    '%(goal)s'.
 """
 
 def make_help_screen(level):
