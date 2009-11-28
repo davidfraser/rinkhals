@@ -93,12 +93,14 @@ class Building(Sprite, serializer.Simplifiable):
         '_sun_on',
         '_broken',
         '_floors',
+        'gameboard',
     ]
 
-    def __init__(self, pos):
+    def __init__(self, pos, gameboard):
         """Initial image, tile vid position, size and tile number for building."""
         self._set_images()
         self.pos = pos
+        self.gameboard = gameboard
         self.size = self.SIZE
         self.tile_no = self.TILE_NO
         self._buy_price = self.BUY_PRICE
@@ -133,7 +135,7 @@ class Building(Sprite, serializer.Simplifiable):
     @classmethod
     def make(cls):
         """Override default Simplifiable object creation."""
-        return cls((0, 0))
+        return cls((0, 0), None)
 
     @classmethod
     def unsimplify(cls, *args, **kwargs):
@@ -208,18 +210,18 @@ class Building(Sprite, serializer.Simplifiable):
         # Default is not to move
         return self.pos
 
-    def place(self, tv):
+    def place(self):
         """Check that the building can be placed at its current position
            and place it if possible.
            """
         # check that all spaces under the structure are grassland
         for tile_pos in self.tile_positions():
-            if not tv.get(tile_pos) == self.GRASSLAND:
+            if not self.gameboard.tv.get(tile_pos) == self.GRASSLAND:
                 return False
 
         # place tile
         for tile_pos in self.tile_positions():
-            tv.set(tile_pos, self.tile_no)
+            self.gameboard.tv.set(tile_pos, self.tile_no)
 
         return True
 
@@ -233,29 +235,29 @@ class Building(Sprite, serializer.Simplifiable):
     def broken(self):
         return self._broken
 
-    def damage(self, tv):
+    def damage(self):
         if not self.BREAKABLE:
             return False
         self._broken = True
         self._sell_price = self.SELL_PRICE_BROKEN
         self.tile_no = self.TILE_NO_BROKEN
         for tile_pos in self.tile_positions():
-            tv.set(tile_pos, self.tile_no)
+            self.gameboard.tv.set(tile_pos, self.tile_no)
         self._set_main_image()
 
-    def repair(self, tv):
+    def repair(self):
         self._broken = False
         self._sell_price = self.SELL_PRICE
         self.tile_no = self.TILE_NO
         for tile_pos in self.tile_positions():
-            tv.set(tile_pos, self.tile_no)
+            self.gameboard.tv.set(tile_pos, self.tile_no)
         self._set_main_image()
 
-    def remove(self, tv):
+    def remove(self):
         """Remove the building from its current position."""
         # remove tile
         for tile_pos in self.tile_positions():
-            tv.set(tile_pos, self.GRASSLAND)
+            self.gameboard.tv.set(tile_pos, self.GRASSLAND)
 
     def buy_price(self):
         return self._buy_price

@@ -755,12 +755,12 @@ class GameBoard(serializer.Simplifiable):
         self.open_dialog(tbl, close_callback=close_callback)
 
     def buy_building(self, tile_pos, building_cls):
-        building = building_cls(tile_pos)
+        building = building_cls(tile_pos, self)
         if self.wood < building.buy_price():
             return
         if any(building.covers((chicken.pos.x, chicken.pos.y)) for chicken in self.chickens):
             return
-        if building.place(self.tv):
+        if building.place():
             self.add_wood(-building.buy_price())
             self.add_building(building)
 
@@ -802,7 +802,7 @@ class GameBoard(serializer.Simplifiable):
             self.open_dialog(warning)
             return
         self.add_wood(building.sell_price())
-        building.remove(self.tv)
+        building.remove()
         self.remove_building(building)
 
     def repair_building(self, tile_pos):
@@ -812,7 +812,7 @@ class GameBoard(serializer.Simplifiable):
         if self.wood < building.repair_price():
             return
         self.add_wood(-building.repair_price())
-        building.repair(self.tv)
+        building.repair()
 
     def sell_equipment(self, tile_pos):
         x, y = 0, 0
@@ -1150,9 +1150,9 @@ class GameBoard(serializer.Simplifiable):
                     continue
 
                 building_cls = tile_to_building[tile_no]
-                building = building_cls(tile_pos)
-                building.remove(self.tv)
-                building.place(self.tv)
+                building = building_cls(tile_pos, self)
+                building.remove()
+                building.place()
                 self.add_building(building)
 
     def trees_left(self):

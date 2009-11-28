@@ -672,7 +672,7 @@ class Fox(Animal):
         fence = self.gameboard.get_building(self.dig_pos.to_tile_tuple())
         # Another fox could have made the same hole this turn
         if fence:
-            fence.damage(self.gameboard.tv)
+            fence.damage()
         self.dig_pos = None
 
     def move(self):
