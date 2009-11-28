@@ -9,6 +9,7 @@ import datetime
 
 from pgu import gui
 import pygame
+from pygame.locals import KEYDOWN, K_ESCAPE
 
 import config
 import version
@@ -207,6 +208,11 @@ class BaseSaveRestoreDialog(gui.Dialog):
         self.send(gui.CHANGE)
         self.close()
 
+    def event(self, e):
+        if e.type == KEYDOWN and e.key == K_ESCAPE:
+            self._click_cancel()
+            return True
+        return gui.Dialog.event(self, e)
 
 class SaveDialog(BaseSaveRestoreDialog):
     """Save game dialog."""
