@@ -205,6 +205,9 @@ class BaseToolBar(gui.Table):
         """Load game 'dialog'."""
         savegame.RestoreDialog(self.gameboard.restore_game).open()
 
+    def quit_game(self):
+        self.gameboard._do_quit()
+
     update_cash_counter = mkcountupdate('cash_counter')
     update_wood_counter = mkcountupdate('wood_counter')
     update_fox_counter = mkcountupdate('killed_foxes')
@@ -302,6 +305,7 @@ class DefaultToolBar(BaseToolBar):
         self.add_heading("Game")
         self.add_tool("Save Game", self.save_game)
         self.add_tool("Load Game", self.load_game)
+        self.add_tool("Quit", self.quit_game)
 
         self.add_heading(" ")
         ## Dear pgu, is there a better way to get the current height?
