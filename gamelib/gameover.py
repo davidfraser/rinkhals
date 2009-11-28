@@ -1,6 +1,7 @@
 """The Game Over Screen"""
 import random
 import os
+import getpass
 
 from pgu import gui
 from pgu import html
@@ -100,7 +101,11 @@ class GameOver(gui.Table):
         if level.is_game_over(gameboard):
             if len(gameboard.chickens) > 0:
                 self.survived = WON
-                scoreboard.submit(score, 'Player')
+                try:
+                    player = getpass.getuser()
+                except Exception:
+                    player = 'You'
+                scoreboard.submit(score, player)
                 message = random.choice(WON_MESSAGES)
             else:
                 self.survived = LOST
