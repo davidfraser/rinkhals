@@ -270,3 +270,7 @@ EQUIP_MAP = { # Map chicken level codes to equipment
         15 : [Kevlar, Axe],
         16 : [Kevlar, Helmet, Axe],
         }
+
+import eegg
+if eegg.is_eggday():
+    NestEgg.CHICKEN_IMAGE_FILE = 'sprites/equip_easter_egg.png'
