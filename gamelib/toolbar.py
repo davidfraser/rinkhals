@@ -6,7 +6,6 @@ import constants
 import buildings
 import equipment
 import cursors
-import engine
 import savegame
 import misc
 
@@ -335,9 +334,9 @@ class DefaultToolBar(BaseToolBar):
 
     def day_done(self):
         if self.gameboard.day:
-            pygame.event.post(engine.START_NIGHT)
+            pygame.event.post(constants.START_NIGHT)
         else:
-            pygame.event.post(engine.FAST_FORWARD)
+            pygame.event.post(constants.FAST_FORWARD)
 
 class BuildingToolBar(BaseToolBar):
 

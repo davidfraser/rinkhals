@@ -1,10 +1,9 @@
 """Main menu."""
 
 from pgu import gui
-from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
+from pygame.locals import KEYDOWN, K_ESCAPE, K_s, K_i
 import pygame
 import constants
-import engine
 import imagecache
 import gameboard
 import gameover
@@ -35,13 +34,13 @@ class MenuContainer(gui.Container):
             return True
         if e.type is KEYDOWN:
             if e.key == K_ESCAPE:
-                pygame.event.post(pygame.event.Event(QUIT))
+                pygame.event.post(constants.DO_QUIT)
                 return True
             elif e.key == K_s:
-                pygame.event.post(engine.START_DAY)
+                pygame.event.post(constants.START_DAY)
                 return True
             elif e.key == K_i:
-                pygame.event.post(engine.GO_HELP_SCREEN)
+                pygame.event.post(constants.GO_HELP_SCREEN)
                 return True
         return False
 
@@ -56,14 +55,14 @@ class MainMenu(gui.Table):
             pygame.display.toggle_fullscreen()
 
         def quit_pressed():
-            pygame.event.post(engine.QUIT)
+            pygame.event.post(constants.DO_QUIT)
 
         def start_game():
-            pygame.event.post(engine.START_DAY)
+            pygame.event.post(constants.START_DAY)
 
         def choose_level():
             def load_func(new_level):
-                pygame.event.post(pygame.event.Event(engine.DO_LOAD_LEVEL, level=new_level))
+                pygame.event.post(pygame.event.Event(constants.DO_LOAD_LEVEL, level=new_level))
                 self.level = new_level
                 self.redraw()
             loadlevel.LoadLevelDialog(level, load_func).open()
@@ -75,7 +74,7 @@ class MainMenu(gui.Table):
             gameover.ScoreDialog(self.level).open()
 
         def help_pressed():
-            pygame.event.post(engine.GO_HELP_SCREEN)
+            pygame.event.post(constants.GO_HELP_SCREEN)
 
         style = {
             "padding_bottom": 15,

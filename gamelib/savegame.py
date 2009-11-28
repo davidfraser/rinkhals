@@ -235,6 +235,7 @@ class SaveDialog(BaseSaveRestoreDialog):
             write_savegame(filename, data, snapshot, level_name, timestamp)
         except Exception, e:
             print "Failed to save game: %s" % (e,)
+            self.value = None
 
 
 class RestoreDialog(BaseSaveRestoreDialog):

@@ -1,7 +1,7 @@
 """Game engine and states."""
-from pgu.engine import Game, State, Quit
+from pgu.engine import Game, State
 import pygame
-from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE, K_s, K_i
+from pygame.locals import KEYDOWN, K_ESCAPE
 
 import gameboard
 import gameover
@@ -73,15 +73,15 @@ class MainMenuState(State):
         self.game.set_main_menu()
 
     def event(self, e):
-        if events_equal(e, START_DAY):
+        if events_equal(e, constants.START_DAY):
             self.game.create_game_board()
             return DayState(self.game)
-        elif events_equal(e, GO_HELP_SCREEN):
+        elif events_equal(e, constants.GO_HELP_SCREEN):
             return HelpScreenState(self.game)
-        elif e.type is DO_LOAD_LEVEL:
+        elif e.type is constants.DO_LOAD_LEVEL:
             self.game.load_new_level(e.level)
             return
-        elif e.type is DO_LOAD_SAVEGAME:
+        elif e.type is constants.DO_LOAD_SAVEGAME:
             self.game.switch_gameboard(e.gameboard)
             e.gameboard.skip_next_start_day()
             return DayState(self.game)
@@ -105,9 +105,9 @@ class HelpScreenState(State):
     def event(self, e):
         if e.type is KEYDOWN and e.key == K_ESCAPE:
             return MainMenuState(self.game)
-        elif events_equal(e, GO_MAIN_MENU):
+        elif events_equal(e, constants.GO_MAIN_MENU):
             return MainMenuState(self.game)
-        elif e.type is not QUIT:
+        elif e.type is not constants.DO_QUIT:
             self.game.main_app.event(e)
 
     def paint(self, screen):
@@ -128,18 +128,18 @@ class DayState(State):
 
         sound.play_sound("daybreak.ogg")
         # disable timer
-        pygame.time.set_timer(MOVE_FOX_ID, 0)
+        pygame.time.set_timer(constants.MOVE_FOX_ID, 0)
         sound.background_music("daytime.ogg")
 
     def event(self, e):
-        if events_equal(e, START_NIGHT):
+        if events_equal(e, constants.START_NIGHT):
             self.game.gameboard.reset_states()
             return NightState(self.game)
-        elif events_equal(e, GO_GAME_OVER):
+        elif events_equal(e, constants.GO_GAME_OVER):
             return GameOver(self.game)
-        elif events_equal(e, GO_MAIN_MENU):
+        elif events_equal(e, constants.GO_MAIN_MENU):
             return MainMenuState(self.game)
-        elif e.type is DO_LOAD_SAVEGAME:
+        elif e.type is constants.DO_LOAD_SAVEGAME:
             self.game.switch_gameboard(e.gameboard)
             return
 
@@ -168,44 +168,44 @@ class NightState(State):
         # Add a timer to the event queue
         self.cycle_count = 0
         self.cycle_time = SLOW__SPEED
-        pygame.time.set_timer(MOVE_FOX_ID, self.cycle_time)
+        pygame.time.set_timer(constants.MOVE_FOX_ID, self.cycle_time)
         sound.background_music("nighttime.ogg")
 
         self.dialog = None
 
     def event(self, e):
-        if events_equal(e, START_DAY):
+        if events_equal(e, constants.START_DAY):
             if self.game.gameboard.level.is_game_over(self.game.gameboard):
                 return GameOver(self.game)
             return DayState(self.game)
-        elif events_equal(e, GO_GAME_OVER):
+        elif events_equal(e, constants.GO_GAME_OVER):
             return GameOver(self.game)
-        elif events_equal(e, FAST_FORWARD):
+        elif events_equal(e, constants.FAST_FORWARD):
             if self.cycle_time > FAST__SPEED:
                 self.cycle_time = FAST__SPEED
             else:
                 self.cycle_time = SLOW__SPEED
-            pygame.time.set_timer(MOVE_FOX_ID, self.cycle_time)
+            pygame.time.set_timer(constants.MOVE_FOX_ID, self.cycle_time)
             return
-        elif e.type is MOVE_FOX_ID:
+        elif e.type is constants.MOVE_FOX_ID:
             # ensure no timers trigger while we're running
-            pygame.time.set_timer(MOVE_FOX_ID, 0)
+            pygame.time.set_timer(constants.MOVE_FOX_ID, 0)
             cur_time = pygame.time.get_ticks()
             # Clear any queued timer events, so we don't full the queue
-            pygame.event.clear(MOVE_FOX_ID)
+            pygame.event.clear(constants.MOVE_FOX_ID)
             # Ensure any outstanding animitions get cleaned up
             self.cycle_count += 1
             if self.cycle_count > constants.NIGHT_LENGTH:
-                return pygame.event.post(START_DAY)
+                return pygame.event.post(constants.START_DAY)
             if self.game.gameboard.do_night_step():
                 # All foxes are gone/safe, so dawn happens
-                return pygame.event.post(START_DAY)
+                return pygame.event.post(constants.START_DAY)
             # Re-enable timers
             diff = pygame.time.get_ticks() - cur_time
             time_left = self.cycle_time - diff
             if time_left <= 0:
                 time_left = self.cycle_time
-            pygame.time.set_timer(MOVE_FOX_ID, time_left)
+            pygame.time.set_timer(constants.MOVE_FOX_ID, time_left)
             return
 
         self.game.main_app.event(e)
@@ -227,15 +227,15 @@ class GameOver(State):
         """Setup everything"""
         sound.stop_background_music()
         self.game.create_game_over()
-        pygame.time.set_timer(MOVE_FOX_ID, 0)
+        pygame.time.set_timer(constants.MOVE_FOX_ID, 0)
 
     def event(self, e):
         if e.type is KEYDOWN:
             if e.key == K_ESCAPE:
                 return MainMenuState(self.game)
-        elif events_equal(e, GO_MAIN_MENU):
+        elif events_equal(e, constants.GO_MAIN_MENU):
             return MainMenuState(self.game)
-        elif e.type is not QUIT:
+        elif e.type is not constants.DO_QUIT:
             self.game.main_app.event(e)
 
     def paint(self, screen):
@@ -252,18 +252,6 @@ class GameOver(State):
 def events_equal(e1, e2):
     """Compare two user events."""
     return (e1.type is e2.type and e1.name == e2.name)
-
-START_DAY = pygame.event.Event(USEREVENT, name="START_DAY")
-START_NIGHT = pygame.event.Event(USEREVENT, name="START_NIGHT")
-GO_MAIN_MENU = pygame.event.Event(USEREVENT, name="GO_MAIN_MENU")
-GO_HELP_SCREEN = pygame.event.Event(USEREVENT, name="GO_HELP_SCREEN")
-GO_GAME_OVER = pygame.event.Event(USEREVENT, name="GO_GAME_OVER")
-FAST_FORWARD = pygame.event.Event(USEREVENT, name="FAST_FORWARD")
-MOVE_FOX_ID = USEREVENT + 1
-MOVE_FOXES = pygame.event.Event(MOVE_FOX_ID, name="MOVE_FOXES")
-DO_LOAD_SAVEGAME = USEREVENT + 2
-DO_LOAD_LEVEL = USEREVENT + 3
-QUIT = pygame.event.Event(QUIT)
 
 # Due to the way pgu's loop timing works, these will only get proceesed
 # at intervals of 10ms, so there's no point in them not being multiples of 10

@@ -3,7 +3,6 @@
 from pgu import gui
 import pygame
 import constants
-import engine
 import imagecache
 
 HELP = [
@@ -67,7 +66,7 @@ class HelpScreen(gui.Document):
         self.level = level
 
         def done_pressed():
-            pygame.event.post(engine.GO_MAIN_MENU)
+            pygame.event.post(constants.GO_MAIN_MENU)
 
         def next_page():
             self.cur_page += 1

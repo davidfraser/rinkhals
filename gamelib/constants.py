@@ -1,5 +1,8 @@
 """Operation Fox Assault constants."""
 
+from pygame.locals import USEREVENT, QUIT
+import pygame
+
 # Project metadata
 
 NAME = "Operation Fox Assault"
@@ -61,3 +64,17 @@ NIGHT_LENGTH = 150
 
 TILE_DIMENSIONS = (20, 20)
 TOOLBAR_WIDTH = 140
+
+
+# Game states
+START_DAY = pygame.event.Event(USEREVENT, name="START_DAY")
+START_NIGHT = pygame.event.Event(USEREVENT, name="START_NIGHT")
+GO_MAIN_MENU = pygame.event.Event(USEREVENT, name="GO_MAIN_MENU")
+GO_HELP_SCREEN = pygame.event.Event(USEREVENT, name="GO_HELP_SCREEN")
+GO_GAME_OVER = pygame.event.Event(USEREVENT, name="GO_GAME_OVER")
+FAST_FORWARD = pygame.event.Event(USEREVENT, name="FAST_FORWARD")
+MOVE_FOX_ID = USEREVENT + 1
+MOVE_FOXES = pygame.event.Event(MOVE_FOX_ID, name="MOVE_FOXES")
+DO_LOAD_SAVEGAME = USEREVENT + 2
+DO_LOAD_LEVEL = USEREVENT + 3
+DO_QUIT = pygame.event.Event(QUIT)

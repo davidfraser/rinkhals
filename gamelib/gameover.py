@@ -9,7 +9,6 @@ from pgu.high import Highs
 import pygame
 from pygame.locals import KEYDOWN, K_ESCAPE
 
-import engine
 import constants
 import imagecache
 import config
@@ -88,10 +87,10 @@ class GameOver(gui.Table):
         scoreboard = ScoreTable(level)
 
         def return_pressed():
-            pygame.event.post(engine.GO_MAIN_MENU)
+            pygame.event.post(constants.GO_MAIN_MENU)
 
         def quit_pressed():
-            pygame.event.post(engine.QUIT)
+            pygame.event.post(constants.DO_QUIT)
 
         score = gameboard.cash + \
                 level.sell_price_chicken * len(gameboard.chickens) + \

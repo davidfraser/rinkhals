@@ -18,6 +18,7 @@ import sprite_cursor
 import misc
 import toolbar
 import serializer
+import savegame
 
 class VidWidget(gui.Widget):
     def __init__(self, gameboard, vid, **params):
@@ -889,22 +890,30 @@ class GameBoard(serializer.Simplifiable):
 
     def event(self, e):
         if e.type == KEYDOWN and e.key == K_ESCAPE:
+            def check_saved(_widget):
+                if _widget.value:
+                    # OK to quit, rely on pgu ordering that this happens in
+                    # the right order
+                    pygame.event.post(constants.GO_GAME_OVER)
+
             def sure(val):
-                if val:
-                    import engine
-                    pygame.event.post(engine.GO_GAME_OVER)
+                if val == 2:
+                    savedialog = savegame.SaveDialog(self)
+                    savedialog.connect(gui.CHANGE, check_saved)
+                    savedialog.open()
+                elif val:
+                    pygame.event.post(constants.GO_GAME_OVER)
+
             dialog = misc.CheckDialog(sure,
                     "Do you REALLY want to exit this game?",
-                    "Yes, Quit", "No, Don't Quit", None)
+                    "Yes, Quit", "No, Don't Quit", "Save & Quit")
             self.disp.open(dialog)
             return True
         elif e.type == KEYDOWN and e.key == K_n and self.day:
-            import engine
-            pygame.event.post(engine.START_NIGHT)
+            pygame.event.post(constants.START_NIGHT)
             return True
         elif e.type == KEYDOWN and e.key == K_d and self.night:
-            import engine
-            pygame.event.post(engine.FAST_FORWARD)
+            pygame.event.post(constants.FAST_FORWARD)
             return True
         elif e.type == KEYDOWN and e.key in [K_UP, K_DOWN, K_LEFT, K_RIGHT]:
             if e.key == K_UP:
@@ -1206,8 +1215,7 @@ class GameBoard(serializer.Simplifiable):
 
     @staticmethod
     def restore_game(gameboard):
-        import engine
-        pygame.event.post(pygame.event.Event(engine.DO_LOAD_SAVEGAME, gameboard=gameboard))
+        pygame.event.post(pygame.event.Event(constants.DO_LOAD_SAVEGAME, gameboard=gameboard))
 
 
 class TextDialog(gui.Dialog):
