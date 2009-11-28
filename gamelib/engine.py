@@ -1,7 +1,7 @@
 """Game engine and states."""
 from pgu.engine import Game, State, Quit
 import pygame
-from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE, K_n, K_d, K_s, K_i
+from pygame.locals import USEREVENT, QUIT, KEYDOWN, K_ESCAPE, K_s, K_i
 
 import gameboard
 import gameover
@@ -10,7 +10,6 @@ import constants
 import mainmenu
 import helpscreen
 import level
-from misc import check_exit
 
 class Engine(Game):
     def __init__(self, main_app, level_name):
@@ -141,33 +140,20 @@ class DayState(State):
         # disable timer
         pygame.time.set_timer(MOVE_FOX_ID, 0)
         sound.background_music("daytime.ogg")
-        self.dialog = None
 
     def event(self, e):
-        if self.dialog and self.dialog.running:
-            if self.dialog.event(e):
-                return
-        elif self.dialog:
-            if self.dialog.do_quit:
-                self.dialog = None
-                self.game.gameboard.reset_states()
-                return GameOver(self.game)
-            self.dialog = None
-            return
         if events_equal(e, START_NIGHT):
             self.game.gameboard.reset_states()
             return NightState(self.game)
-        elif e.type is KEYDOWN and e.key == K_ESCAPE:
-            self.dialog = check_exit()
-        elif e.type is KEYDOWN and e.key == K_n:
-            return pygame.event.post(START_NIGHT)
+        elif events_equal(e, GO_GAME_OVER):
+            return GameOver(self.game)
         elif events_equal(e, GO_MAIN_MENU):
             return MainMenuState(self.game)
         elif e.type is DO_LOAD_SAVEGAME:
             self.game.switch_gameboard(e.gameboard)
             return
-        elif e.type is not QUIT:
-            self.game.main_app.event(e)
+
+        self.game.main_app.event(e)
 
     def paint(self, screen):
         self.game.main_app.paint(screen)
@@ -198,29 +184,19 @@ class NightState(State):
         self.dialog = None
 
     def event(self, e):
-        if self.dialog and self.dialog.running:
-            if self.dialog.event(e):
-                return
-        elif self.dialog:
-            if self.dialog.do_quit:
-                self.dialog = None
-                self.game.gameboard.reset_states()
-                return GameOver(self.game)
-            self.dialog=None
-            return
         if events_equal(e, START_DAY):
             if self.game.gameboard.level.is_game_over(self.game.gameboard):
                 return GameOver(self.game)
             return DayState(self.game)
-        elif (e.type is KEYDOWN and e.key == K_d) or \
-                events_equal(e, FAST_FORWARD):
+        elif events_equal(e, GO_GAME_OVER):
+            return GameOver(self.game)
+        elif events_equal(e, FAST_FORWARD):
             if self.cycle_time > FAST__SPEED:
                 self.cycle_time = FAST__SPEED
             else:
                 self.cycle_time = SLOW__SPEED
             pygame.time.set_timer(MOVE_FOX_ID, self.cycle_time)
-        elif e.type is KEYDOWN and e.key == K_ESCAPE:
-            self.dialog = check_exit()
+            return
         elif e.type is MOVE_FOX_ID:
             # ensure no timers trigger while we're running
             pygame.time.set_timer(MOVE_FOX_ID, 0)
@@ -240,8 +216,9 @@ class NightState(State):
             if time_left <= 0:
                 time_left = self.cycle_time
             pygame.time.set_timer(MOVE_FOX_ID, time_left)
-        elif e.type is not QUIT:
-            self.game.main_app.event(e)
+            return
+
+        self.game.main_app.event(e)
 
     def loop(self):
         self.game.gameboard.loop()
@@ -290,6 +267,7 @@ START_DAY = pygame.event.Event(USEREVENT, name="START_DAY")
 START_NIGHT = pygame.event.Event(USEREVENT, name="START_NIGHT")
 GO_MAIN_MENU = pygame.event.Event(USEREVENT, name="GO_MAIN_MENU")
 GO_HELP_SCREEN = pygame.event.Event(USEREVENT, name="GO_HELP_SCREEN")
+GO_GAME_OVER = pygame.event.Event(USEREVENT, name="GO_GAME_OVER")
 FAST_FORWARD = pygame.event.Event(USEREVENT, name="FAST_FORWARD")
 MOVE_FOX_ID = USEREVENT + 1
 MOVE_FOXES = pygame.event.Event(MOVE_FOX_ID, name="MOVE_FOXES")

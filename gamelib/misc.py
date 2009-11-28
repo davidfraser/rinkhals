@@ -82,10 +82,9 @@ class WeightedSelection(object):
             roll -= weight
 
 class CheckDialog(gui.Dialog):
-    def __init__(self, **params):
+    def __init__(self, sure_func, **params):
+        self._sure_func = sure_func
         title = gui.Label('Are You Sure?')
-        self.do_quit = False
-        self.running = True
         tbl = gui.Table()
         tbl.tr()
         tbl.td(gui.Label("Do you REALLY want to exit this game?"), colspan=2)
@@ -101,8 +100,7 @@ class CheckDialog(gui.Dialog):
         gui.Dialog.__init__(self, title, tbl, **params)
 
     def clicked(self, val):
-        self.do_quit = val
-        self.running = False
+        self._sure_func(val)
         self.close()
 
     def event(self, e):
@@ -111,10 +109,6 @@ class CheckDialog(gui.Dialog):
             return True
         return gui.Dialog.event(self, e)
 
-def check_exit():
-    dialog = CheckDialog()
-    dialog.open()
-    return dialog
 
 # Utility layout functions
 

@@ -3,7 +3,7 @@ import random
 import pygame
 from pygame.locals import MOUSEBUTTONDOWN, MOUSEMOTION, KEYDOWN, K_UP, K_DOWN, \
         K_LEFT, K_RIGHT, KMOD_SHIFT, K_0, K_1, K_2, K_3, K_4, K_5, K_6, K_7, \
-        K_8, K_9, KMOD_CTRL, KMOD_ALT, KEYUP
+        K_8, K_9, K_ESCAPE, K_n, K_d, KMOD_CTRL, KMOD_ALT, KEYUP
 from pgu import gui
 
 import tiles
@@ -41,8 +41,7 @@ class VidWidget(gui.Widget):
         elif e.type == MOUSEMOTION and self.gameboard.sprite_cursor:
             self.gameboard.update_sprite_cursor(e)
         else:
-            return self.gameboard.event(e)
-        return True
+            return False
 
 
 class AnimalPositionCache(object):
@@ -192,6 +191,15 @@ class GameBoard(serializer.Simplifiable):
         tbl.td(self.toolbar, valign=-1)
         self.tvw = VidWidget(self, self.tv, width=width-constants.TOOLBAR_WIDTH, height=height)
         tbl.td(self.tvw)
+
+        # we should probably create a custom widget to be the top widget
+        # if we want to flow some events to the gameboard
+        def event(e):
+            if gui.Table.event(tbl, e):
+                return True
+            return self.event(e)
+        tbl.event = event
+
         self.top_widget = tbl
         self.redraw_counters()
 
@@ -820,7 +828,23 @@ class GameBoard(serializer.Simplifiable):
         dialog = self.open_dialog(tbl, x=x, y=y)
 
     def event(self, e):
-        if e.type == KEYDOWN and e.key in [K_UP, K_DOWN, K_LEFT, K_RIGHT]:
+        if e.type == KEYDOWN and e.key == K_ESCAPE:
+            def sure(val):
+                if val:
+                    import engine
+                    pygame.event.post(engine.GO_GAME_OVER)
+            dialog = misc.CheckDialog(sure)
+            self.disp.open(dialog)
+            return True
+        elif e.type == KEYDOWN and e.key == K_n and self.day:
+            import engine
+            pygame.event.post(engine.START_NIGHT)
+            return True
+        elif e.type == KEYDOWN and e.key == K_d and self.night:
+            import engine
+            pygame.event.post(engine.FAST_FORWARD)
+            return True
+        elif e.type == KEYDOWN and e.key in [K_UP, K_DOWN, K_LEFT, K_RIGHT]:
             if e.key == K_UP:
                 self.tvw.move_view(0, -constants.TILE_DIMENSIONS[1])
             if e.key == K_DOWN:
