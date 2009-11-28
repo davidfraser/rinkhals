@@ -1,6 +1,6 @@
 """The Game Over Screen"""
-import tempfile
 import random
+import os
 
 from pgu import gui
 from pgu.high import Highs
@@ -9,6 +9,7 @@ import pygame
 import engine
 import constants
 import imagecache
+import config
 
 WON, LOST, LEFT = range(3)
 
@@ -34,20 +35,28 @@ LEFT_MESSAGES = [
 
 def ScoreTable(level):
     """Create and initialise a score table"""
-    # We need a true file, so load will work, but, as we never save,
-    # the deletion doesn't bother us.
-    our_scores = Highs(tempfile.NamedTemporaryFile(), 4)
-    #for mode in constants.TURN_LIMITS:
-    #    for score in range(700,1000,100):
-    #        our_scores[mode].submit(score, 'No-one', None)
-    for score in range(700,1000,100):
-        our_scores[level.level_name].submit(score, 'No-one', None)
-    return our_scores
+    score_path = os.path.join(config.config.prefs_folder, "highscores.dat")
+    all_scores = Highs(score_path, 4)
+    all_scores.load()
+    level_scores = all_scores[level.level_name]
 
-def create_game_over(gameboard, scores, level):
+    if not list(level_scores):
+        authors = [auth[2] for auth in constants.AUTHORS]
+        scores = [700+i*100 for i in range(len(authors))]
+        random.shuffle(scores)
+
+        for auth, score in zip(authors, scores):
+            level_scores.submit(score, auth, None)
+
+        level_scores.save()
+
+    return level_scores
+
+def create_game_over(gameboard, level):
     """Create a game over screen"""
-    game_over = GameOver(gameboard, scores, level)
+    game_over = GameOver(gameboard, level)
     return GameOverContainer(game_over, align=0, valign=0)
+
 
 class GameOverContainer(gui.Container):
     def __init__(self, game_over, *args, **kwargs):
@@ -68,10 +77,12 @@ class GameOverContainer(gui.Container):
         pygame.display.get_surface().blit(self.splash, (0, 0))
         gui.Container.paint(self, s)
 
+
 class GameOver(gui.Table):
 
-    def __init__(self, gameboard, scoreboard, level, **params):
+    def __init__(self, gameboard, level, **params):
         gui.Table.__init__(self, **params)
+        scoreboard = ScoreTable(level)
 
         def return_pressed():
             pygame.event.post(engine.GO_MAIN_MENU)
@@ -126,6 +137,7 @@ class GameOver(gui.Table):
         self.td(gui.Label("Final score : %d" % score,
             color=constants.FG_COLOR), colspan=3)
         if made_list:
+            scoreboard.save()
             self.tr()
             if self.survived == WON:
                 self.td(gui.Label("You made the high scores",
@@ -160,3 +172,20 @@ class GameOver(gui.Table):
     def add_spacer(self, height=5):
         self.tr()
         self.td(gui.Spacer(0, height), colspan=3)
+
+
+class Scoreboard(gui.Table):
+
+    def __init__(self, level, **params):
+        gui.Table.__init__(self, **params)
+
+        scoreboard = ScoreTable(level)
+
+        self.tr()
+        self.td(gui.Label('Level: %s' % level.level_name, colspan=3))
+
+        for highscore in scoreboard:
+            self.tr()
+            self.td(gui.Label(highscore.name), colspan=2)
+            self.td(gui.Label('%d' % highscore.score))
+

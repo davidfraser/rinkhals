@@ -48,7 +48,6 @@ class Engine(Game):
 
     def set_main_menu(self):
         """Open the main menu"""
-        self.scoreboard = gameover.ScoreTable(self.level)
         main_menu = mainmenu.make_main_menu(self.level)
         self.open_window(main_menu)
 
@@ -60,8 +59,7 @@ class Engine(Game):
     def create_game_over(self):
         """Create and open the Game Over window"""
         level = self.gameboard.level
-        game_over = gameover.create_game_over(self.gameboard,
-                self.scoreboard[level.level_name], level)
+        game_over = gameover.create_game_over(self.gameboard, level)
         self.gameboard = None
         self.open_window(game_over)
 

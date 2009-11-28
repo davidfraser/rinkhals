@@ -6,6 +6,7 @@ import constants
 import engine
 import imagecache
 import gameboard
+import gameover
 import savegame
 import loadlevel
 
@@ -32,7 +33,7 @@ class MainMenu(gui.Table):
     def __init__(self, level, **params):
         gui.Table.__init__(self, **params)
         self.mode = None
-        self.level_name = level.level_name
+        self.level = level
 
         def fullscreen_toggled():
             pygame.display.toggle_fullscreen()
@@ -46,12 +47,17 @@ class MainMenu(gui.Table):
         def choose_level():
             def load_func(new_level):
                 pygame.event.post(pygame.event.Event(engine.DO_LOAD_LEVEL, level=new_level))
-                self.level_name = new_level.level_name
+                self.level = new_level
                 self.redraw()
             loadlevel.LoadLevelDialog(level, load_func).open()
 
         def load_game():
             savegame.RestoreDialog(gameboard.GameBoard.restore_game).open()
+
+        def scores_pressed():
+            scoreboard = gameover.Scoreboard(self.level)
+            title = gui.Label("High Scores for Level %s" % self.level.level_name)
+            gui.Dialog(title, scoreboard).open()
 
         def help_pressed():
             pygame.event.post(engine.GO_HELP_SCREEN)
@@ -79,23 +85,26 @@ class MainMenu(gui.Table):
         self.tr()
         self.td(loadgame_button, **td_kwargs)
 
-        quit_button = gui.Button("Quit")
-        quit_button.connect(gui.CLICK, quit_pressed)
-
         help_button = gui.Button("Instructions")
         help_button.connect(gui.CLICK, help_pressed)
-
-        fullscreen_toggle = gui.Button("Toggle Fullscreen")
-        fullscreen_toggle.connect(gui.CLICK, fullscreen_toggled)
-
         self.tr()
         self.td(help_button, **td_kwargs)
 
-        # self.tr()
-        # self.td(fullscreen_toggle, **td_kwargs)
+        scores_button = gui.Button("High Scores")
+        scores_button.connect(gui.CLICK, scores_pressed)
+        self.tr()
+        self.td(scores_button, **td_kwargs)
 
+        quit_button = gui.Button("Quit")
+        quit_button.connect(gui.CLICK, quit_pressed)
         self.tr()
         self.td(quit_button, **td_kwargs)
 
+        # fullscreen_toggle = gui.Button("Toggle Fullscreen")
+        # fullscreen_toggle.connect(gui.CLICK, fullscreen_toggled)
+        # self.tr()
+        # self.td(fullscreen_toggle, **td_kwargs)
+
+
     def redraw(self):
-        self.start_button.value = self.level_name
+        self.start_button.value = self.level.level_name
