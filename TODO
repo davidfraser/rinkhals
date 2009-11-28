@@ -2,68 +2,15 @@
 
 == POST PYWEEK ==
 
-* Add invalid cursor sprite
+* Add invalid cursor sprite (mostly when placing buildings on trees, etc).
 
 * <confluence> We should have text images instead of buttons (in the various menus and toolbars).
-
-* Persistent high scores 
-
-* Better fox move logic
-  - Tweak weighting of free chickens
-  - Foxes should eat the chickens immediately when they move onto the
-    occupied square - avoid the fox drawn on top of chicken thing.
-
-* More game levels / progression of difficulty
-
-* Improve performance when many foxes or chickens
 
 * Improve Fullscreen mode (on the fly scaling)
 
 * Investigate using infinity symbol instead of dash for unlimited mode
 
 == ISSUES ==
-
-23:26 <@Derakon> Jerith: http://paste.ubuntu.com/266865/
-23:26 <@Derakon> That's with the OSX .dmg.
-
-From the pastebin URL above: """
-dyld: lazy symbol binding failed: Symbol not found: _pthread_cond_init$UNIX2003
-  Referenced from: /Volumes/Operation Fox Assault/Operation Fox Assault.app/Contents/Frameworks/libpython2.5.dylib
-  Expected in: /usr/lib/libSystem.B.dylib
-
-dyld: Symbol not found: _pthread_cond_init$UNIX2003
-  Referenced from: /Volumes/Operation Fox Assault/Operation Fox Assault.app/Contents/Frameworks/libpython2.5.dylib
-  Expected in: /usr/lib/libSystem.B.dylib
-
-Sep  7 14:25:21 Kleine crashdump[402]: Operation Fox Assault crashed
-Sep  7 14:25:21 Kleine crashdump[402]: crash report written to: /Users/chriswei/Library/Logs/CrashReporter/Operation Fox Assault.crash.log
-"""
-
-pygame event queue full bug.
-Sep 10 22:01: <eltigre> one IndexError and one pygame event overflow
-...
-Sep 10 23:15: <eltigre> Hodgestar, jerith : http://dpaste.com/91590/
-
-From pastebin:
-"""
-Traceback (most recent call last):
-  File "run_game.py", line 4, in <module>
-    main.main()
-  File "/home/andi/projekte/pyweek/Rinkhals/foxassault-1.0.0/gamelib/main.py", line 38, in main
-    engine.run(MainMenuState(engine), screen)
-  File "/home/andi/projekte/pyweek/Rinkhals/foxassault-1.0.0/pgu/engine.py", line 104, in run
-    self.loop()
-  File "/home/andi/projekte/pyweek/Rinkhals/foxassault-1.0.0/pgu/engine.py", line 123, in loop
-    if self.fnc('event',e): return
-  File "/home/andi/projekte/pyweek/Rinkhals/foxassault-1.0.0/pgu/engine.py", line 79, in fnc
-    if v != None: r = f(v)
-  File "/home/andi/projekte/pyweek/Rinkhals/foxassault-1.0.0/gamelib/engine.py", line 229, in event
-    return pygame.event.post(START_DAY)
-pygame.error: Event queue full
-"""
- - r370 disables timer events while processing the fox movements and
-   chicken attacks. This should make this bug harder to trigger.
-
 
 Leaking weakref objects bug (reported by tumbleweed):
  - this is probably http://pygame.motherhamster.org/bugzilla/show_bug.cgi?id=30
@@ -73,38 +20,8 @@ Leaking weakref objects bug (reported by tumbleweed):
 
 Farmer's weekly (daily?) -- egg/chicken/fox report thing. (Yay Marc!)
 
-23:41 <@Derakon> The instructions could also be more detailed, but the game's pretty intuitive once you realize that it's not realtime.
-00:03 < Rhamphoryncus> hrm.  Instructions need work.. yup, that got said, heh
-
-00:10 <@Derakon> An auto-repair fences command would be handy.
-00:12 <@Derakon> Man, fence repair is nuking my budget.
-00:13 <@AnnoDomini> Fences made of wood are overrated.
-00:13 <@AnnoDomini> I make a fence of elite fighting fowl.
-00:13  * Derakon nods.
-00:15 <@Derakon> Suddenly the game gets much easier~
-
-00:28 <@Derakon> I want a faster way to sell eggs. ._.
-00:29 <@Derakon> Some way to say "Keep enough eggs to mature the maximum number of chickens as quickly as possible; sell the rest."
-00:33 <@jerith> Derakon: Superfluous eggs autosell.
-00:34 <@jerith> A chicken lays some number of eggs. On of those eggs will hatch, the rest will sell.
-00:34 <@Derakon> Oooh.
-00:34 <@Derakon> Okay, then I can stop bothering to click so much. Thanks.
-
-00:38 <@AnnoDomini> Needs an 'evict all' button.
-
 00:40 <@Derakon> And a way to drag-clear trees, drag-sell chickens (or auto-sell naked outdoor chickens).
 00:42 <@Derakon> So...much...clicking... ;.;
-
-00:50 <@AnnoDomini> http://i30.tinypic.com/sx15k1.jpg
-
-01:19 < Rhamphoryncus> Do you know what watch towers are for?
-01:20 <@Derakon> I think the watchtowers might make riflehens more effective somehow.
-01:20 <@Derakon> Or maybe they're bunkers.
-
-01:24 < Rhamphoryncus> And I have no idea what my income is from
-01:24 <@Derakon> Killing foxes and selling stuff.
-01:25 < Rhamphoryncus> I have spare room around my  henhouses, so autosell isn't happening.  It must be from killing foxes
-01:27 <@AnnoDomini> Rhamphoryncus: I expect you get eggs sold. Hens lay eggs every turn, but incubate for two. So you get N*5 cash for each hen in a henhouse/hendominium per turn.
 
 01:31 < Rhamphoryncus> It seems like, long term, you want to pack hendominiums in with no space around them
 01:32 < Rhamphoryncus> As you fill a grid like that you'll still have exposed edges, producing tons of chickens
@@ -114,22 +31,10 @@ Farmer's weekly (daily?) -- egg/chicken/fox report thing. (Yay Marc!)
 01:33 < Rhamphoryncus> I thought they were autosold.  I may have been confusing with the egg autosell though
 01:33 <@AnnoDomini> Eggs autosell if there's no room. Chickens die.
 
-05:41 <@Derakon> 2x2 pods of knifehens are almost invincible.
-05:57 <@Derakon> Oh, hey, the 2x2 pod of knifehens is not invulnerable. The foxes finally killed one after losing some 1500 of their own.
-
-05:45  * Vornicus-Latens thinks this game needs less shouty graphics.
-
 08:37 < Rhamphoryncus> jerith: feature request: automatically switch to an offset breeding schedule.  IOW, a henhouse should only do 3/day and a hendemonium should only do 6/day
 
 08:50 < Rhamphoryncus> and if I go and sell an egg in a henhouse/hendominium, is it supposed to take multiple clicks?
 [ed: He didn't know it was multiple eggs.]
-
-09:12 < Reivthia> Jerith: UI improvement: *Please* let us click&drag.
-09:12 < Reivthia> I want to be able to not have to click every single chicken/tree seperately when I have five thousand cash :P
-
-09:12 < Rhamphoryncus> My huts get ignored
-09:12 < Reivthia> Rham: I thought mine were too, until they got occasionally pounced.
-09:12 < Reivthia> Very, very occasionally
 
 
 And here's me rapid-fire rambling at #ctpug after finishing my first long game. (Unedited.)
