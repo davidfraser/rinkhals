@@ -217,13 +217,18 @@ class BaseSaveRestoreDialog(gui.Dialog):
 class SaveDialog(BaseSaveRestoreDialog):
     """Save game dialog."""
 
-    def __init__(self, gameboard):
+    def __init__(self, gameboard, saved_func=None):
         BaseSaveRestoreDialog.__init__(self, "Save Game ...", "Save", allow_new=True)
+        if saved_func is None:
+            self._saved_func = lambda _val: None
+        else:
+            self._saved_func = saved_func
         self.connect(gui.CHANGE, self._save, gameboard)
 
     def _save(self, gameboard):
         filename = self.get_fullpath()
         if filename is None:
+            self._saved_func(False)
             return
 
         data = gameboard.save_game()
@@ -234,9 +239,11 @@ class SaveDialog(BaseSaveRestoreDialog):
         try:
             write_savegame(filename, data, snapshot, level_name, timestamp)
         except Exception, e:
+            self._saved_func(False)
             print "Failed to save game: %s" % (e,)
-            self.value = None
+            return
 
+        self._saved_func(True)
 
 class RestoreDialog(BaseSaveRestoreDialog):
     """Restore game dialog."""

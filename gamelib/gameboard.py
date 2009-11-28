@@ -865,16 +865,13 @@ class GameBoard(serializer.Simplifiable):
 
     def _do_quit(self):
 
-        def check_saved(_widget):
-            if _widget.value:
-                # OK to quit, rely on pgu ordering that this happens in
-                # the right order
+        def saved(val):
+            if val:
                 pygame.event.post(constants.GO_GAME_OVER)
 
         def sure(val):
             if val == 2:
-                savedialog = savegame.SaveDialog(self)
-                savedialog.connect(gui.CHANGE, check_saved)
+                savedialog = savegame.SaveDialog(self, saved)
                 savedialog.open()
             elif val:
                 pygame.event.post(constants.GO_GAME_OVER)
