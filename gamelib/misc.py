@@ -82,20 +82,27 @@ class WeightedSelection(object):
             roll -= weight
 
 class CheckDialog(gui.Dialog):
-    def __init__(self, sure_func, **params):
+    def __init__(self, sure_func, message, yes_choice, no_choice,
+            maybe_choice, **params):
         self._sure_func = sure_func
         title = gui.Label('Are You Sure?')
         tbl = gui.Table()
         tbl.tr()
-        tbl.td(gui.Label("Do you REALLY want to exit this game?"), colspan=2)
+        tbl.td(gui.Label(message), colspan=3)
         tbl.tr()
-        tbl.td(gui.Spacer(0, 15), colspan=2)
+        tbl.td(gui.Spacer(0, 15), colspan=3)
         tbl.tr()
-        yes_button = gui.Button('Yes')
-        yes_button.connect(gui.CLICK, self.clicked, True)
-        no_button = gui.Button('No')
-        no_button.connect(gui.CLICK, self.clicked, False)
+        no_button = gui.Button(no_choice)
+        no_button.connect(gui.CLICK, self.clicked, 0)
         tbl.td(no_button, align=-1)
+        if maybe_choice:
+            maybe_button = gui.Button(maybe_choice)
+            maybe_button.connect(gui.CLICK, self.clicked, 2)
+            tbl.td(maybe_button, align=1)
+        else:
+            tbl.td(gui.Spacer(0, 15))
+        yes_button = gui.Button(yes_choice)
+        yes_button.connect(gui.CLICK, self.clicked, 1)
         tbl.td(yes_button, align=1)
         gui.Dialog.__init__(self, title, tbl, **params)
 

@@ -832,7 +832,9 @@ class GameBoard(serializer.Simplifiable):
                 if val:
                     import engine
                     pygame.event.post(engine.GO_GAME_OVER)
-            dialog = misc.CheckDialog(sure)
+            dialog = misc.CheckDialog(sure,
+                    "Do you REALLY want to exit this game?",
+                    "Yes, Quit", "No, Don't Quit", None)
             self.disp.open(dialog)
             return True
         elif e.type == KEYDOWN and e.key == K_n and self.day:
