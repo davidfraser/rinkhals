@@ -10,13 +10,14 @@ import sys
 
 import pygame
 from pgu import gui
-from pygame.locals import SWSURFACE
+from pygame.locals import SWSURFACE, SRCALPHA
 
 #from engine import Engine, MainMenuState
 from sound import init_sound
 import constants
 from config import config
 import data
+from misc import WarnDialog
 
 def create_main_app(screen):
     """Create an app with a background widget."""
@@ -26,10 +27,32 @@ def create_main_app(screen):
     app.init(widget, screen)
     return app
 
+def complaint_dialog(message):
+    """Create a complaint dialog"""
+    app = gui.App()
+
+    def close(_w):
+        app.quit()
+
+    app.close = close
+
+    dialog = WarnDialog('Problem starting Fox Assault',
+            message)
+    app.run(dialog)
+    sys.exit(1)
+
+def sanity_check():
+    """Run some sanity checks, and complain if they fail"""
+    try:
+        pygame.Surface((100, 100), flags=SRCALPHA)
+    except Exception, e:
+        complaint_dialog("Unable to create a suitable screen, please check your display settings")
+
 def main():
     """Main script."""
     config.configure(sys.argv[1:])
     init_sound()
+    sanity_check()
     screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE)
     pygame.display.set_icon(pygame.image.load(
         data.filepath('icons/foxassault24x24.png')))
