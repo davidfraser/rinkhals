@@ -156,7 +156,7 @@ class DayState(State):
                 self.dialog = None
                 self.game.gameboard.reset_states()
                 return GameOver(self.game)
-            self.dialog=None
+            self.dialog = None
             return
         if events_equal(e, START_NIGHT):
             self.game.gameboard.reset_states()
