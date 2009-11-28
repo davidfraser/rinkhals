@@ -11,28 +11,74 @@ HELP = [
 Introduction:
 
 The aim of the game is to make as much money as possible from your chicken
-farm. The problem is the foxes, which want to eat your chickens.  Since hiring
-guards is both too expensive and unreliable, the obvious solution is to help
-the chickens defend themselves.
+farm. The problem is that chickens are delicious and foxes want to eat them.
+Since hiring guards is too expensive and too unreliable, the obvious solution
+is to help the chickens defend themselves.
 
 You lose if you end a night with no chickens left.
 
+Check the in-game controls reference for information about keys and mouse buttons!
+
 """ % constants.NAME,
 
-"""Important Game mechanics:
+"""Biology and economics:
 
-Chickens only lay eggs in henhouses, and must stay on the egg for 2 days to
-hatch a new chicken. Chickens that hatch in already full henhouses are
-moved to just outside. If there is no space outside, they die immediately
-from overcrowding.
+Chickens only lay eggs in henhouses. An egg must be incubated for two days to
+hatch. Chickens that hatch in already full henhouses are moved outside. If there
+is no space left next to the henhouse, they die immediately from overcrowding.
 
-Buildings require wood to construct. You can either trade money for wood,
-or, by equipping a chicken with an axes, and placing it near trees, your
-chickens will chop down trees at the end of the day.
+Chickens have short attention spans, and will stray from where you put them at
+the end of the day if they are out in the open.
 
-Chickens that aren't in buildings will move around at the end of the day.
+You can sell chickens and eggs.  Only one egg per chicken will hatch; the excess
+is sold automatically. The fox pelts your chickens acquire during their violent
+nocturnal activities are also sold automatically.
+
+Buildings require wood to construct. You can buy and sell wood. If you equip a 
+chicken with an axe and place it next to some trees, it will chop some down at the
+end of the day.
+
+""",
+
+"""Equipment:
+
+Axe: For chopping down trees. Doubles as a weapon, but it's not very good. \\
+Helmet: Cheap armour. \\
+Kevlar: More expensive and durable armour. \\
+Knife: Easy to use, but only at melee range, \\
+Rifle: Ranged weapon; requires more skill. \\
+Sniper rifle: Longer range and better accuracy than the plain rifle, but less ammo per clip.
+
+You can sell equipment, but you don't get the full price back.
+
+Guns use ammunition.  You have an unlimited supply, but chickens don't have pockets, so they
+can only use one clip per night.
+
+""",
 
 """
+Buildings:
+
+Henhouse: The standard chicken dwelling. \\
+Hendominium: A luxury double-storey chicken dwelling. \\
+Watchtower: A lookout post which helps chickens with rifles to see better and further away. \\
+Fence: A barrier to both foxes and chickens.
+
+You can repair broken fences and demolish buildings for their wood.  You won't get as
+much as you started with -- chickens are bad tenants and peck holes in everything.
+
+""",
+
+"""
+The enemy:
+
+Fox: One of the little furry gluttons who are gorging themselves on your chickens. \\
+Greedy fox: Doesn't have the decency to stop at just one chicken. \\
+Ninja fox: Tries to sneak past your chicken guards. \\
+Sapper fox: Blows up your fences with explosives. \\
+Rinkhals: Not in fact a fox at all.  It has eclectic tastes. \\
+
+""",
 ]
 
 LEVEL_TEXT="""The currently selected level is %(name)s
@@ -112,8 +158,11 @@ class HelpScreen(gui.Document):
         for paragraph in full_text.split('\n\n'):
             self.block(align=-1)
             for word in paragraph.split():
-                self.add(gui.Label(word))
-                self.space(space)
+                if word == "\\":
+                    self.br(space[1])
+                else:
+                    self.add(gui.Label(word))
+                    self.space(space)
             self.br(space[1])
         self.br(space[1])
         self.add(self.prev_button, align=-1)

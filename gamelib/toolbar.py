@@ -289,9 +289,9 @@ class DefaultToolBar(BaseToolBar):
 
         self.add_heading("Buildings")
 
-        self.add_tool('Buy building', self.add_building_toolbar)
+        self.add_tool('Build', self.add_building_toolbar)
 
-        self.add_tool_button("Sell building", constants.TOOL_SELL_BUILDING,
+        self.add_tool_button("Demolish", constants.TOOL_SELL_BUILDING,
                 None, cursors.cursors['sell'])
 
         self.add_tool_button("Repair", constants.TOOL_REPAIR_BUILDING, None, cursors.cursors['repair'])
