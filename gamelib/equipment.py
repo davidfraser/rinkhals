@@ -230,7 +230,7 @@ class NestEgg(Accoutrement):
     DRAW_LAYER = 14
 
 def is_equipment(obj):
-    """Return true if obj is a build class."""
+    """Return true if obj is an equipment class."""
     return getattr(obj, "IS_EQUIPMENT", False) and hasattr(obj, "NAME")
 
 def is_weapon(obj):

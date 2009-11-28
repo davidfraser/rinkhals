@@ -279,8 +279,9 @@ class GameBoard(serializer.Simplifiable):
             elif tool == constants.TOOL_SELL_EGG:
                 self.sell_egg(None)
                 return True
-            elif tool == constants.TOOL_SELL_EQUIPMENT:
-                self.sell_equipment(None)
+            elif toolbar.SellToolBar.is_equip_tool(tool):
+                equipment_cls = toolbar.SellToolBar.get_equip_cls(tool)
+                self.sell_equipment(None, equipment_cls)
                 return True
             elif equipment.is_equipment(tool):
                 self.buy_equipment(None, tool)
@@ -386,12 +387,13 @@ class GameBoard(serializer.Simplifiable):
                 self.select_chicken(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_SELL_BUILDING:
             self.sell_building(self.tv.screen_to_tile(e.pos))
-        elif self.selected_tool == constants.TOOL_SELL_EQUIPMENT:
-            self.sell_equipment(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_REPAIR_BUILDING:
             self.repair_building(self.tv.screen_to_tile(e.pos))
         elif buildings.is_building(self.selected_tool):
             self.buy_building(self.tv.screen_to_tile(e.pos), self.selected_tool)
+        elif toolbar.SellToolBar.is_equip_tool(self.selected_tool):
+            equipment_cls = toolbar.SellToolBar.get_equip_cls(self.selected_tool)
+            self.sell_equipment(self.tv.screen_to_tile(e.pos), equipment_cls)
         elif equipment.is_equipment(self.selected_tool):
             if not self.selected_chickens:
                 # old selection behaviour
@@ -836,19 +838,16 @@ class GameBoard(serializer.Simplifiable):
         self.add_wood(-building.repair_price())
         building.repair()
 
-    def sell_equipment(self, tile_pos):
+    def sell_equipment(self, tile_pos, equipment_cls):
         x, y = 0, 0
         def do_sell(chicken, update_button=None):
-            if not chicken.equipment:
-                return
-            elif len(chicken.equipment) == 1:
-                item = chicken.equipment[0]
+            items = [item for item in chicken.equipment
+                if isinstance(item, equipment_cls)]
+            for item in items:
                 self.add_cash(item.sell_price())
                 chicken.unequip(item)
                 if update_button:
                     update_button(chicken)
-            else:
-                self.open_equipment_dialog(chicken, x, y, update_button)
             return False
         if tile_pos:
             chicken = self.get_outside_chicken(tile_pos)

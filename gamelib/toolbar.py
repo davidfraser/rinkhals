@@ -386,15 +386,38 @@ class SellToolBar(BaseToolBar):
         self.group = gui.Group(name='sell_toolbar', value=None)
         self.make_toolbar()
 
+    @staticmethod
+    def make_equip_tool(equipment_cls):
+        tool = ("sell_tool", equipment_cls)
+        return tool
+
+    @staticmethod
+    def is_equip_tool(tool):
+        return type(tool) == tuple and tool[0] == "sell_tool"
+
+    @staticmethod
+    def get_equip_cls(tool):
+        return tool[1]
+
     def make_toolbar(self):
         self.add_heading("Sell ...")
         self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
                 self.gameboard.level.sell_price_chicken, cursors.cursors['sell'])
         self.add_tool_button("Egg", constants.TOOL_SELL_EGG,
                 self.gameboard.level.sell_price_egg, cursors.cursors['sell'])
-        self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
-                None, cursors.cursors['sell'])
         self.add_spacer(15)
+
+        for equipment_cls in equipment.EQUIPMENT:
+            tool = self.make_equip_tool(equipment_cls)
+            self.add_tool_button(equipment_cls.NAME.title(),
+                    tool,
+                    equipment_cls.SELL_PRICE,
+                    cursors.cursors.get('sell', None))
+        self.add_spacer(15)
+
+        #self.add_tool_button("Equipment", constants.TOOL_SELL_EQUIPMENT,
+        #        None, cursors.cursors['sell'])
+
         self.add_tool('Done', self.add_default_toolbar)
 
     def add_default_toolbar(self):
