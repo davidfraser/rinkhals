@@ -19,48 +19,41 @@ TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 def read_savegame(fullpath):
     """Open a save game file."""
+    xml = zlib.decompress(open(fullpath, "rb").read())
+    params, methodname = xmlrpclib.loads(xml)
+    if methodname != "foxassault":
+        raise SaveGameError("File does not appear to be a "
+            "Fox Assault save game.")
+    save_version = params[0]
+    if save_version != version.SAVE_GAME_VERSION:
+        raise SaveGameError("Incompatible save game version.")
+
+    data = params[1]
+
     try:
-        xml = zlib.decompress(open(fullpath, "rb").read())
-        params, methodname = xmlrpclib.loads(xml)
-        if methodname != "foxassault":
-            raise SaveGameError("File does not appear to be a "
-                "Fox Assault save game.")
-        save_version = params[0]
-        if save_version != version.SAVE_GAME_VERSION:
-            raise SaveGameError("Incompatible save game version.")
-
-        data = params[1]
-
-        try:
-            snapshot = decode_snapshot(params[2])
-        except Exception, e:
-            snapshot = None
-
-        try:
-            level_name = params[3]
-        except Exception, e:
-            level_name = None
-
-        try:
-            timestamp = datetime.datetime.strptime(params[4], TIMESTAMP_FORMAT)
-        except Exception, e:
-            timestamp = None
-
+        snapshot = decode_snapshot(params[2])
     except Exception, e:
-        raise SaveGameError("Failed to load game: %s" % (e,))
+        snapshot = None
+
+    try:
+        level_name = params[3]
+    except Exception, e:
+        level_name = None
+
+    try:
+        timestamp = datetime.datetime.strptime(params[4], TIMESTAMP_FORMAT)
+    except Exception, e:
+        timestamp = None
 
     return data, snapshot, level_name, timestamp
 
 def write_savegame(fullpath, data, snapshot, level_name, timestamp):
     """Write a save game file."""
-    try:
-        snapshot_data = encode_snapshot(snapshot)
-        timestamp_str = timestamp.strftime(TIMESTAMP_FORMAT)
-        params = (version.SAVE_GAME_VERSION, data, snapshot_data, level_name, timestamp_str)
-        xml = xmlrpclib.dumps(params, "foxassault")
-        open(fullpath, "wb").write(zlib.compress(xml))
-    except Exception, e:
-        raise SaveGameError("Failed to save game: %s" % (e,))
+    snapshot_data = encode_snapshot(snapshot)
+    timestamp_str = timestamp.strftime(TIMESTAMP_FORMAT)
+    params = (version.SAVE_GAME_VERSION, data, snapshot_data, level_name, timestamp_str)
+    xml = xmlrpclib.dumps(params, "foxassault")
+    open(fullpath, "wb").write(zlib.compress(xml))
 
 def encode_snapshot(snapshot):
     """Encode a snapshot."""
@@ -162,7 +155,7 @@ class BaseSaveRestoreDialog(gui.Dialog):
         """Create an image showing the contents of a save game file."""
         try:
             data, screenshot, level_name, timestamp = read_savegame(fullpath)
-        except SaveGameError:
+        except Exception:
             return gui.Label("Bad Save Game")
 
         tbl = gui.Table()
