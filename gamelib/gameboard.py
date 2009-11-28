@@ -295,6 +295,8 @@ class GameBoard(serializer.Simplifiable):
             chicken.start_night()
         self.toolbar.update_egg_counter(self.eggs)
         self._cache_animal_positions()
+        self.chickens_chop_wood()
+        self.chickens_scatter()
 
     def start_day(self):
         if hasattr(self, '_skip_start_day'):

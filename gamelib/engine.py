@@ -193,8 +193,6 @@ class NightState(State):
 
         sound.play_sound("nightfall.ogg")
 
-        self.game.gameboard.chickens_scatter()
-        self.game.gameboard.chickens_chop_wood()
         # Add a timer to the event queue
         self.cycle_count = 0
         self.cycle_time = SLOW__SPEED
