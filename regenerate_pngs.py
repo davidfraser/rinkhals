@@ -53,6 +53,7 @@ SPRITES = [
     ("select_chkn", 20, 20),
     ("nest", 20, 20),
     ("equip_egg", 20, 20),
+    ("equip_easter_egg", 20, 20),
     # fox bits
     ("fox", 20, 20),
     ("ninja_fox", 20, 20),
