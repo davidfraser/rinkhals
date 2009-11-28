@@ -38,10 +38,14 @@ class OpaqueLabel(gui.Label):
 
     def paint(self, s):
         s.fill(self.style.background)
-        if self.style.align > 0:
-            r = s.get_rect()
-            w, _ = self.font.size(self.value)
+        r = s.get_rect()
+        w, _ = self.font.size(self.value)
+        if self.style.align > 0: # Right align
             s = s.subsurface(r.move((r.w-w, 0)).clip(r))
+        elif self.style.align == 0: # Centre align
+            s = s.subsurface(r.move(((r.w-w)/2, 0)).clip(r))
+        else: # Left align
+            pass
         gui.Label.paint(self, s)
 
     def update_value(self, value):
@@ -70,12 +74,12 @@ class BaseToolBar(gui.Table):
         self.group = gui.Group(name='base_toolbar', value=None)
         self._next_tool_value = 0
         self.gameboard = gameboard
-        self.cash_counter = mklabel(align=1)
-        self.wood_counter = mklabel(align=1)
-        self.chicken_counter = mklabel(align=1)
-        self.egg_counter = mklabel(align=1)
-        self.day_counter = mklabel(align=1)
-        self.killed_foxes = mklabel(align=1)
+        self.cash_counter = mklabel(align=0)
+        self.wood_counter = mklabel(align=0)
+        self.chicken_counter = mklabel(align=0)
+        self.egg_counter = mklabel(align=0)
+        self.day_counter = mklabel(align=0)
+        self.killed_foxes = mklabel(align=0)
         self.add_labels()
 
     def add_labels(self):
