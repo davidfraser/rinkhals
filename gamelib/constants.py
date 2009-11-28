@@ -5,10 +5,11 @@
 NAME = "Operation Fox Assault"
 
 AUTHORS = [
-    ("Adrianna Pinska", "adrianna.pinska@gmail.com"),
-    ("Jeremy Thurgood", "firxen+rinkhals@gmail.com"),
-    ("Neil Muller", ""),
-    ("Simon Cross", "hodgestar+rinkhals@gmail.com"),
+    ("Adrianna Pinska", "adrianna.pinska@gmail.com", "Confluence"),
+    ("Jeremy Thurgood", "firxen+rinkhals@gmail.com", "Jerith"),
+    ("Neil Muller", "drnlmuller+rinkhals@gmail.com", "Nitwit"),
+    ("Simon Cross", "hodgestar+rinkhals@gmail.com", "Hodgestar"),
+    ("David Fraser", "davidroyfraser+rinkhals@gmail.com", "Davidf"),
 ]
 
 # GUI constants
