@@ -1,7 +1,9 @@
 """Extension to pgu's tilevid."""
 
-from pgu import tilevid, vid
+import random
 import os
+
+from pgu import tilevid, vid
 import data
 import imagecache
 import serializer
@@ -18,33 +20,39 @@ class TileMap(object):
         4: ("guardtower", "grassland.png"),
         5: ("broken fence", "broken_fence.png"),
         6: ("hendominium", "grassland.png"),
+    }
 
+    ALTERNATE_TILES = {
         255: ("woodland", "woodland.png"),
         254: ("woodland", "woodland2.png"),
         253: ("woodland", "woodland3.png"),
-    }
+        }        
 
-    def __init__(self, tiles=None):
+    def __init__(self, tiles=None, alternate_tiles=None):
         if tiles is None:
             tiles = self.DEFAULT_TILES.copy()
+        if alternate_tiles is None:
+            alternate_tiles = self.ALTERNATE_TILES.copy()
+        self._alternate_tiles = alternate_tiles
         self._tiles = tiles
         self._reverse_map = dict((v[0], k) for k, v in self._tiles.iteritems())
-        # Wood is different:
-        self._reverse_map["woodland"] = 0
+        self._tiles.update(alternate_tiles)
 
     def __getitem__(self, n):
         """Get the string name of tile n."""
         return self._tiles[n][0]
-
-    def tile_number(self, name):
-        """Return the tile number of the tile with the given name."""
-        return self._reverse_map[name]
 
     def tiles_for_image(self, image_name):
         """Return tile numbers associated with the given image name."""
         for n, (name, image) in self._tiles.iteritems():
             if image_name == image:
                 yield n
+
+    def random_alternate(self, n):
+        alts = [a for a, (name, image) in self._alternate_tiles.iteritems() if name == self[n]]
+        if alts:
+            return random.choice(alts)
+        return n
 
 TILE_MAP = TileMap()
 REVERSE_TILE_MAP = TILE_MAP._reverse_map
@@ -129,6 +137,11 @@ class FarmVid(tilevid.Tilevid, serializer.Simplifiable):
         obj.updates = []
 
         return obj
+
+    def tga_load_level(self, level_map):
+        tilevid.Tilevid.tga_load_level(self, level_map)
+        for xy in [(x, y) for x in range(self.size[0]) for y in range(self.size[1])]:
+            self.set(xy, TILE_MAP.random_alternate(self.get(xy)))
 
     def png_folder_load_tiles(self, path):
         """Load tiles from a folder of PNG files."""
