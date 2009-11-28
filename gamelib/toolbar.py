@@ -82,12 +82,13 @@ class BaseToolBar(gui.Table):
         self.tr()
         self.td(gui.Spacer(self.rect.w/2, 0))
         self.td(gui.Spacer(self.rect.w/2, 0))
-        self.add_counter(icons.DAY_ICON, self.day_counter)
+        self._counter_col = 0
         self.add_counter(icons.GROATS_ICON, self.cash_counter)
         self.add_counter(icons.WOOD_ICON, self.wood_counter)
-        self.add_counter(icons.EGG_ICON, self.egg_counter)
         self.add_counter(icons.CHKN_ICON, self.chicken_counter)
+        self.add_counter(icons.EGG_ICON, self.egg_counter)
         self.add_counter(icons.KILLED_FOX, self.killed_foxes)
+        self.add_counter(icons.DAY_ICON, self.day_counter)
         self.add_spacer(5)
 
     def start_night(self):
@@ -239,9 +240,16 @@ class BaseToolBar(gui.Table):
             item.pcls = ""
 
     def add_counter(self, icon, label):
-        self.tr()
-        self.td(icon, width=self.rect.w/2)
-        self.td(label, width=self.rect.w/2)
+        if self._counter_col == 0:
+            self.add_spacer(5)
+            self.tr()
+        tbl = gui.Table()
+        tbl.tr()
+        tbl.td(icon, width=self.rect.w/2)
+        tbl.tr()
+        tbl.td(label, width=self.rect.w/2)
+        self.td(tbl)
+        self._counter_col = (self._counter_col + 1) % 2
 
     def resize(self, width=None, height=None):
         width, height = gui.Table.resize(self, width, height)

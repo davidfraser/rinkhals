@@ -224,8 +224,7 @@ class GameBoard(serializer.Simplifiable):
         self.toolbar.update_chicken_counter(len(self.chickens))
         self.toolbar.update_cash_counter(self.cash)
         self.toolbar.update_wood_counter(self.wood)
-        if self.killed_foxes:
-            self.toolbar.update_fox_counter(self.killed_foxes)
+        self.toolbar.update_fox_counter(self.killed_foxes)
 
     def update(self):
         self.tvw.reupdate()
