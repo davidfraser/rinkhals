@@ -165,10 +165,10 @@ class BaseToolBar(gui.Table):
         """Popup dialog of controls"""
 
         COMBOS = [
-            ('Select Multiple chickens', 'Shift & Left Click'),
+            ('Select multiple chickens', 'Shift & Left Click'),
             ('Move selected chickens', 'Ctrl & Left Click'),
-            ('Toggle between select and move', 'Right Click'),
-            ('Unselect current tool and chickens', 'Middle Click'),
+            ('        or', 'Right Click'),
+            ('Unselect chickens and tool', 'Middle Click'),
             ('Save selection', 'Ctrl & 0 .. 9'),
             ('        or', 'Alt & 0 .. 9'),
             ('Recall saved selection', '0 .. 9'),
