@@ -40,6 +40,10 @@ class VidWidget(gui.Widget):
             self.gameboard.use_tool(e)
         elif e.type == MOUSEMOTION and self.gameboard.sprite_cursor:
             self.gameboard.update_sprite_cursor(e)
+        elif e.type == gui.ENTER:
+            self.gameboard.set_tool_cursor()
+        elif e.type == gui.EXIT:
+            self.gameboard.set_menu_cursor()
         else:
             return False
 
@@ -252,8 +256,18 @@ class GameBoard(serializer.Simplifiable):
             sprite_curs = sprite_cursor.SpriteCursor(tool.CHICKEN_IMAGE_FILE, self.tv)
         elif tool == constants.TOOL_PLACE_ANIMALS and self.selected_chickens:
             cursor = cursors.cursors['chicken']
-        self.set_cursor(cursor, sprite_curs)
+        self.current_cursor = (cursor, sprite_curs)
+        self.set_tool_cursor((cursor, sprite_curs))
         return True
+
+    def set_tool_cursor(self, current_cursor=None):
+        if current_cursor:
+            self.current_cursor = current_cursor
+        if pygame.mouse.get_pos()[0] >= constants.TOOLBAR_WIDTH:
+            self.set_cursor(*self.current_cursor)
+
+    def set_menu_cursor(self):
+        self.set_cursor()
 
     def apply_tool_to_selected(self, tool):
         if self.selected_chickens:
@@ -542,7 +556,7 @@ class GameBoard(serializer.Simplifiable):
                 pass
             if not self.selected_chickens:
                 # if we placed all the chickens, switch to select cursor
-                pygame.mouse.set_cursor(*cursors.cursors['select'])
+                self.set_tool_cursor((cursors.cursors['select'],))
         elif self.tv.get(tile_pos) == self.GRASSLAND:
             for chicken in self.selected_chickens:
                 try_pos = tile_pos
@@ -580,7 +594,7 @@ class GameBoard(serializer.Simplifiable):
             chicken = self.get_chicken_at_pos(tile_pos)
             if chicken:
                 self.select_animal(chicken)
-                pygame.mouse.set_cursor(*cursors.cursors['chicken'])
+                self.set_tool_cursor((cursors.cursors['chicken'],))
                 return
         elif tile_pos:
             building = self.get_building(tile_pos)
@@ -915,11 +929,11 @@ class GameBoard(serializer.Simplifiable):
         elif e.type == KEYDOWN:
             mods = pygame.key.get_mods()
             if mods & KMOD_CTRL and self.selected_tool == constants.TOOL_SELECT_CHICKENS and self.selected_chickens:
-                pygame.mouse.set_cursor(*cursors.cursors['chicken'])
+                self.set_tool_cursor((cursors.cursors['chicken'],))
         elif e.type == KEYUP:
             mods = pygame.key.get_mods()
             if not (mods & KMOD_CTRL) and self.selected_tool == constants.TOOL_SELECT_CHICKENS:
-                pygame.mouse.set_cursor(*cursors.cursors['select'])
+                self.set_tool_cursor((cursors.cursors['select'],))
         return False
 
     def restore_selection(self, selection, additive=False):
