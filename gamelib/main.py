@@ -49,8 +49,10 @@ def sanity_check():
     if sound.SOUND_INITIALIZED:
         try:
             sound.play_sound('silence.ogg')
+            sound.background_music('silence.ogg')
         except pygame.error:
             complaint_dialog('Error trying to play sound. Please run with --no-sound')
+        sound.stop_background_music()
 
 def main():
     """Main script."""
