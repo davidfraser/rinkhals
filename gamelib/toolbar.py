@@ -219,7 +219,7 @@ class BaseToolBar(gui.Table):
 
     def add_heading(self, text):
         self.tr()
-        self.td(mklabel(text), colspan=2)
+        self.td(mklabel(text, width=constants.TOOLBAR_WIDTH, align=0), colspan=2)
 
     def add_tool_button(self, text, tool, price=None, cursor=None):
         if price is not None:
