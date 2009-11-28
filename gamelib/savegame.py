@@ -15,6 +15,7 @@ import config
 import version
 import gameboard
 import serializer
+import misc
 
 TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
@@ -240,7 +241,7 @@ class SaveDialog(BaseSaveRestoreDialog):
             write_savegame(filename, data, snapshot, level_name, timestamp)
         except Exception, e:
             self._saved_func(False)
-            print "Failed to save game: %s" % (e,)
+            misc.WarnDialog("Save Failed", str(e)).open()
             return
 
         self._saved_func(True)
@@ -260,17 +261,17 @@ class RestoreDialog(BaseSaveRestoreDialog):
         try:
             data, screenshot, level_name, timestamp = read_savegame(filename)
         except Exception, e:
-            print "Failed to load game: %s" % (e,)
+            misc.WarnDialog("Restore Failed", str(e)).open()
             return
 
         if 'refid' not in data or 'class' not in data or data['class'] != gameboard.GameBoard.__name__:
-            print "Failed to load game: Invalid game data."
+            misc.WarnDialog("Restore Failed", "Saved game board state invalid.").open()
             return
 
         try:
             new_gameboard = serializer.unsimplify(data)
         except Exception, e:
-            print "Failed to load game: %s" % (e,)
+            misc.WarnDialog("Restore Failed", str(e)).open()
             return
 
         restore_func(new_gameboard)

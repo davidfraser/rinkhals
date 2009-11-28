@@ -117,6 +117,35 @@ class CheckDialog(gui.Dialog):
         return gui.Dialog.event(self, e)
 
 
+class WarnDialog(gui.Dialog):
+    def __init__(self, title, message, **params):
+        title = gui.Label(title)
+
+        body = gui.Table()
+        body.tr()
+        body.td(gui.Label(message), colspan=3)
+        body.tr()
+        body.td(gui.Spacer(0, 15), colspan=3)
+
+        ok_button = gui.Button("Ok")
+        ok_button.connect(gui.CLICK, self.clicked)
+
+        body.tr()
+        body.td(gui.Spacer(0, 0), colspan=2)
+        body.td(ok_button, align=-1)
+
+        gui.Dialog.__init__(self, title, body, **params)
+
+    def clicked(self):
+        self.close()
+
+    def event(self, e):
+        if e.type == KEYDOWN and e.key == K_ESCAPE:
+            self.clicked()
+            return True
+        return gui.Dialog.event(self, e)
+
+
 # Utility layout functions
 
 def make_box(text, markup=False):
