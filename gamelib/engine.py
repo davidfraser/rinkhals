@@ -67,11 +67,7 @@ class Engine(Game):
         self.open_window(game_over)
 
     def event(self, e):
-        if not Game.event(self, e):
-            if self.gameboard:
-                return self.gameboard.event(e)
-            return False
-        return True
+        return Game.event(self, e)
 
 
 class MainMenuState(State):

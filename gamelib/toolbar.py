@@ -248,6 +248,11 @@ class BaseToolBar(gui.Table):
         width = constants.TOOLBAR_WIDTH
         return width, height
 
+    def event(self, e):
+        if not gui.Table.event(self, e):
+            return self.gameboard.event(e)
+        return True
+
 class DefaultToolBar(BaseToolBar):
 
     IS_DEFAULT = True

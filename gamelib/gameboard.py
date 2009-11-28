@@ -40,6 +40,9 @@ class VidWidget(gui.Widget):
             self.gameboard.use_tool(e)
         elif e.type == MOUSEMOTION and self.gameboard.sprite_cursor:
             self.gameboard.update_sprite_cursor(e)
+        else:
+            return self.gameboard.event(e)
+        return True
 
 
 class AnimalPositionCache(object):
@@ -836,6 +839,7 @@ class GameBoard(serializer.Simplifiable):
                 self.stored_selections[e.key] = self.selected_chickens[:]
             else:
                 self.restore_selection(self.stored_selections.get(e.key, []))
+            return True
         elif e.type == KEYDOWN:
             mods = pygame.key.get_mods()
             if mods & KMOD_CTRL and self.selected_tool == constants.TOOL_SELECT_CHICKENS and self.selected_chickens:
