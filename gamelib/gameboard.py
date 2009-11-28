@@ -838,7 +838,8 @@ class GameBoard(serializer.Simplifiable):
                 # store current selection
                 self.stored_selections[e.key] = self.selected_chickens[:]
             else:
-                self.restore_selection(self.stored_selections.get(e.key, []))
+                additive = (mods & KMOD_SHIFT)
+                self.restore_selection(self.stored_selections.get(e.key, []), additive)
             return True
         elif e.type == KEYDOWN:
             mods = pygame.key.get_mods()
@@ -850,8 +851,9 @@ class GameBoard(serializer.Simplifiable):
                 pygame.mouse.set_cursor(*cursors.cursors['select'])
         return False
 
-    def restore_selection(self, selection):
-        self.unselect_all()
+    def restore_selection(self, selection, additive=False):
+        if not additive:
+            self.unselect_all()
         for chick in selection[:]:
             if chick in self.chickens:
                 self.select_animal(chick)
