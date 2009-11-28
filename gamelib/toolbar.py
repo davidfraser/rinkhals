@@ -59,8 +59,9 @@ def mklabel(text="", **params):
 
 def mkcountupdate(counter):
     def update_counter(self, value):
-        getattr(self, counter).update_value("%s  " % value)
-        self.repaint()
+        widget = getattr(self, counter)
+        widget.update_value("%s  " % value)
+        widget.repaint()
     return update_counter
 
 class BaseToolBar(gui.Table):
