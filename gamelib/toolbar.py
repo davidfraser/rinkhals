@@ -122,7 +122,7 @@ class BaseToolBar(gui.Table):
 
         tbl = gui.Table()
         tbl.tr()
-        doc = gui.Document(width=510)
+        doc = gui.Document(width=540)
         space = doc.style.font.size(" ")
         for header in ['Item', 'Buy Price', 'Sell Price', 'Repair Price']:
             doc.add(misc.make_box("<b>%s</b>" % header, markup=True))
