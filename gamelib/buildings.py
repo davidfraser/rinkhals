@@ -293,6 +293,13 @@ class Building(Sprite, serializer.Simplifiable):
                 # Blit to the right
                 x, y = text.get_size()
                 image.blit(text, (w - x, h - y))
+                sel_count = len([chick for chick in self.occupants()
+                    if chick in self.gameboard.selected_chickens])
+                if sel_count:
+                    text = self._font.render(str(sel_count), True,
+                            constants.SELECTED_COUNT_COLOR)
+                    x, y = text.get_size()
+                    image.blit(text, (0, h - y))
             # Render predator count
             if self._predators:
                 text = self._font.render(str(len(self._predators)), True,

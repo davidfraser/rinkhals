@@ -484,18 +484,25 @@ class GameBoard(serializer.Simplifiable):
 
     def select_animal(self, animal):
         self.selected_chickens.append(animal)
+        if animal.abode:
+            animal.abode.building.update_occupant_count()
         animal.equip(equipment.Spotlight())
 
     def unselect_all(self):
         # Clear any highlights
-        for chick in self.selected_chickens:
-            chick.unequip_by_name("Spotlight")
+        old_sel = self.selected_chickens
         self.selected_chickens = []
+        for chick in old_sel:
+            chick.unequip_by_name("Spotlight")
+            if chick.abode:
+                chick.abode.building.update_occupant_count()
 
     def unselect_animal(self, animal):
         if animal in self.selected_chickens:
             self.selected_chickens.remove(animal)
             animal.unequip_by_name("Spotlight")
+            if animal.abode:
+                animal.abode.building.update_occupant_count()
 
     def get_chicken_at_pos(self, tile_pos):
         chicken = self.get_outside_chicken(tile_pos)

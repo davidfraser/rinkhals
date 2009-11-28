@@ -17,6 +17,7 @@ AUTHORS = [
 SCREEN = (800, 600)
 FG_COLOR = (255, 255, 255)
 PREDATOR_COUNT_COLOR = (255, 100, 0) # Approximately fox coloured
+SELECTED_COUNT_COLOR = (0, 128, 235) # Selection highlight colour
 BG_COLOR = (0, 0, 0)
 
 # Mixer constants
