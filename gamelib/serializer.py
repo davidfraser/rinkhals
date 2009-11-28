@@ -28,6 +28,10 @@ def simplify(item, refs=None):
         refs.add(refid)
         value = { 'set': [simplify(x, refs) for x in item] }
         value['refid'] = refid
+    elif type(item) is dict:
+        refs.add(refid)
+        value = { 'dict': [(simplify(k, refs), simplify(v, refs)) for k, v in item.iteritems()] }
+        value['refid'] = refid
     elif type(item) is tuple:
         refs.add(refid)
         value = { 'tuple': tuple([simplify(x, refs) for x in item]) }
@@ -58,6 +62,10 @@ def unsimplify(value, refs=None):
         item = set()
         refs[refid] = item
         item.update(unsimplify(x, refs) for x in value['set'])
+    elif value.has_key('dict'):
+        item = {}
+        refs[refid] = item
+        item.update(dict((unsimplify(k, refs), unsimplify(v, refs)) for k, v in value['dict']))
     elif value.has_key('tuple'):
         item = tuple([unsimplify(x, refs) for x in value['tuple']])
     elif value.has_key('none'):
