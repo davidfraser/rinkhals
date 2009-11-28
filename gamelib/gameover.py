@@ -96,7 +96,6 @@ class GameOver(gui.Table):
                 level.sell_price_chicken * len(gameboard.chickens) + \
                 level.sell_price_egg * gameboard.eggs
 
-        self.tr()
         made_list = scoreboard.check(score) is not None
         if level.is_game_over(gameboard):
             if len(gameboard.chickens) > 0:
@@ -109,19 +108,37 @@ class GameOver(gui.Table):
         else:
             self.survived = LEFT
             message = random.choice(LEFT_MESSAGES)
+
+        self.tr()
         self.td(gui.Label(message, color=constants.FG_COLOR),
                 colspan=3)
         self.add_spacer()
+
+        # heading options
+        head_kwargs = {
+            'color': constants.FG_COLOR,
+            'style': {
+                'padding_top': 10,
+                'padding_bottom': 5,
+            },
+        }
+
         # show the scoreboard
 
         self.tr()
-        self.td(gui.Label('Level: %s' % level.level_name, color=constants.FG_COLOR),
-                colspan=3)
+        self.td(html.HTML('<b>High Scores for Level<i>%s:</i></b>'
+            % level.level_name, **head_kwargs),
+            colspan=3)
 
         for highscore in scoreboard:
             self.tr()
             self.td(gui.Label(highscore.name, color=constants.FG_COLOR), colspan=2)
             self.td(gui.Label('%d' % highscore.score, color=constants.FG_COLOR))
+
+        # show player score
+
+        self.tr()
+        self.td(html.HTML('<b>Your Score:</b>', **head_kwargs), colspan=3)
 
         self.tr()
         self.td(gui.Label("Groats : %d" % gameboard.cash,
@@ -138,15 +155,16 @@ class GameOver(gui.Table):
         self.tr()
         self.td(gui.Label("Final score : %d" % score,
             color=constants.FG_COLOR), colspan=3)
+
         if made_list:
-            scoreboard.save()
             self.tr()
             if self.survived == WON:
-                self.td(gui.Label("You made the high scores",
-                    color=constants.FG_COLOR), colspan=3)
+                msg = "You made the high scores!"
+                scoreboard.save()
             else:
-                self.td(gui.Label("Pity, you could have made the high scores",
-                    color=constants.FG_COLOR), colspan=3)
+                msg = "Pity, you could have made the high scores."
+            self.td(html.HTML("<b>%s</b>" % msg, **head_kwargs)
+                , colspan=3)
 
         self.add_spacer(50)
 
