@@ -715,7 +715,7 @@ class GameBoard(serializer.Simplifiable):
         tbl = gui.Table()
         columns = building.max_floor_width()
         kwargs = { 'style': { 'padding_left': 10, 'padding_bottom': 10 }}
-        for floor in building.floors():
+        for floor in reversed(building.floors()):
             tbl.tr()
             tbl.td(gui.Button(floor.title), colspan=columns, align=-1, **kwargs)
             tbl.tr()
