@@ -423,8 +423,17 @@ class GameBoard(serializer.Simplifiable):
                 return
             do_sell(chick)
         else:
-            for chick in self.selected_chickens[:]:
-                do_sell(chick)
+            def sure(val):
+                if val:
+                    for chick in self.selected_chickens[:]:
+                        do_sell(chick)
+            if self._check_dangerous_sale():
+                dialog = misc.CheckDialog(sure,
+                        "These chickens have equipment or eggs. Do you want to sell?",
+                        "Yes, Sell Them", "No, Don't Sell", None)
+                self.disp.open(dialog)
+            else:
+                sure(1)
 
     def sell_one_egg(self, chicken):
         if chicken.eggs:
@@ -455,6 +464,23 @@ class GameBoard(serializer.Simplifiable):
         else:
             for chicken in self.selected_chickens:
                 do_sell(chicken)
+
+    def _check_dangerous_sale(self):
+        # Dangerous sales are: selling chickens with equipment & selling
+        # chickens with eggs
+        for chick in self.selected_chickens:
+            if chick.eggs or chick.weapons() or chick.armour():
+                return True
+        return False
+
+    def _check_dangerous_move(self, building=None):
+        # Dangerous move involves moving chickens WITH eggs out of their
+        # current building
+        for chick in self.selected_chickens:
+            if chick.eggs and chick.abode and \
+                    chick.abode.building is not building:
+                return True
+        return False # safe move
 
     def select_animal(self, animal):
         self.selected_chickens.append(animal)
@@ -490,6 +516,52 @@ class GameBoard(serializer.Simplifiable):
         else:
             self.select_animal(chicken)
 
+    def _do_move_selected(self, building, tile_pos):
+        """Internal helper function for place_animal"""
+        if building and building.ABODE:
+            for chicken in self.selected_chickens[:]:
+                try:
+                    place = building.first_empty_place()
+                    self.relocate_animal(chicken, place=place)
+                    chicken.equip(equipment.Nest())
+                    self.unselect_animal(chicken)
+                except buildings.BuildingFullError:
+                    pass
+            try:
+                # if there's a space left, open the building
+                building.first_empty_place()
+                self.open_building_dialog(building, True)
+            except buildings.BuildingFullError:
+                pass
+            if not self.selected_chickens:
+                # if we placed all the chickens, switch to select cursor
+                pygame.mouse.set_cursor(*cursors.cursors['select'])
+        elif self.tv.get(tile_pos) == self.GRASSLAND:
+            for chicken in self.selected_chickens:
+                try_pos = tile_pos
+                cur_chick = self.get_outside_chicken(try_pos)
+                if cur_chick == chicken:
+                    continue
+                if cur_chick:
+                    try_pos = None
+                    # find a free square nearby
+                    poss = [(tile_pos[0] + x, tile_pos[1] + y)
+                            for x in range(-1, 2) for y in range(-1, 2)
+                            if (x, y) != (0, 0)]
+                    poss.extend([(tile_pos[0] + x, tile_pos[1] + y)
+                            for x in range(-2, 3, 2) for y in range(-2, 3)
+                            if (x, y) != (0, 0)])
+                    for cand in poss:
+                        if self.tv.get(cand) == self.GRASSLAND and \
+                                not self.get_outside_chicken(cand):
+                            try_pos = cand
+                            break
+                if try_pos:
+                    chicken.unequip_by_name("Nest")
+                    self.relocate_animal(chicken, tile_pos=try_pos)
+                    chicken.remove_eggs()
+
+
     def place_animal(self, tile_pos):
         """Handle an TOOL_PLACE_ANIMALS click.
 
@@ -505,49 +577,17 @@ class GameBoard(serializer.Simplifiable):
                 return
         elif tile_pos:
             building = self.get_building(tile_pos)
-            if building and building.ABODE:
-                for chicken in self.selected_chickens[:]:
-                    try:
-                        place = building.first_empty_place()
-                        self.relocate_animal(chicken, place=place)
-                        chicken.equip(equipment.Nest())
-                        self.unselect_animal(chicken)
-                    except buildings.BuildingFullError:
-                        pass
-                try:
-                    # if there's a space left, open the building
-                    building.first_empty_place()
-                    self.open_building_dialog(building, True)
-                except buildings.BuildingFullError:
-                    pass
-                if not self.selected_chickens:
-                    # if we placed all the chickens, switch to select cursor
-                    pygame.mouse.set_cursor(*cursors.cursors['select'])
-                return
-            if self.tv.get(tile_pos) == self.GRASSLAND:
-                for chicken in self.selected_chickens:
-                    try_pos = tile_pos
-                    cur_chick = self.get_outside_chicken(try_pos)
-                    if cur_chick == chicken:
-                        continue
-                    if cur_chick:
-                        try_pos = None
-                        # find a free square nearby
-                        poss = [(tile_pos[0] + x, tile_pos[1] + y)
-                                for x in range(-1, 2) for y in range(-1, 2)
-                                if (x, y) != (0, 0)]
-                        poss.extend([(tile_pos[0] + x, tile_pos[1] + y)
-                                for x in range(-2, 3, 2) for y in range(-2, 3)
-                                if (x, y) != (0, 0)])
-                        for cand in poss:
-                            if self.tv.get(cand) == self.GRASSLAND and \
-                                    not self.get_outside_chicken(cand):
-                                try_pos = cand
-                                break
-                    if try_pos:
-                        chicken.unequip_by_name("Nest")
-                        self.relocate_animal(chicken, tile_pos=try_pos)
-                        chicken.remove_eggs()
+            def sure(val):
+                if val:
+                    self._do_move_selected(building, tile_pos)
+
+            if self._check_dangerous_move(building):
+                dialog = misc.CheckDialog(sure,
+                        "These chickens have eggs. Do you want to move them?",
+                        "Yes, Move Them", "No, Don't Move", None)
+                self.disp.open(dialog)
+            else:
+                sure(1)
 
     def relocate_animal(self, chicken, tile_pos=None, place=None):
         assert((tile_pos, place) != (None, None))
