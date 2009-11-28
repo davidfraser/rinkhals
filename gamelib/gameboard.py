@@ -888,26 +888,30 @@ class GameBoard(serializer.Simplifiable):
 
         dialog = self.open_dialog(tbl, x=x, y=y)
 
+    def _do_quit(self):
+
+        def check_saved(_widget):
+            if _widget.value:
+                # OK to quit, rely on pgu ordering that this happens in
+                # the right order
+                pygame.event.post(constants.GO_GAME_OVER)
+
+        def sure(val):
+            if val == 2:
+                savedialog = savegame.SaveDialog(self)
+                savedialog.connect(gui.CHANGE, check_saved)
+                savedialog.open()
+            elif val:
+                pygame.event.post(constants.GO_GAME_OVER)
+
+        dialog = misc.CheckDialog(sure,
+                "Do you REALLY want to exit this game?",
+                "Yes, Quit", "No, Don't Quit", "Save & Quit")
+        self.disp.open(dialog)
+
     def event(self, e):
         if e.type == KEYDOWN and e.key == K_ESCAPE:
-            def check_saved(_widget):
-                if _widget.value:
-                    # OK to quit, rely on pgu ordering that this happens in
-                    # the right order
-                    pygame.event.post(constants.GO_GAME_OVER)
-
-            def sure(val):
-                if val == 2:
-                    savedialog = savegame.SaveDialog(self)
-                    savedialog.connect(gui.CHANGE, check_saved)
-                    savedialog.open()
-                elif val:
-                    pygame.event.post(constants.GO_GAME_OVER)
-
-            dialog = misc.CheckDialog(sure,
-                    "Do you REALLY want to exit this game?",
-                    "Yes, Quit", "No, Don't Quit", "Save & Quit")
-            self.disp.open(dialog)
+            self._do_quit()
             return True
         elif e.type == KEYDOWN and e.key == K_n and self.day:
             pygame.event.post(constants.START_NIGHT)
