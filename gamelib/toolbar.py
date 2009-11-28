@@ -273,9 +273,16 @@ class DefaultToolBar(BaseToolBar):
         self.group = gui.Group(name='default_toolbar', value=None)
         self.make_toolbar()
 
+    def toggle_move(self):
+        if self.gameboard.selected_tool == constants.TOOL_PLACE_ANIMALS:
+            self.gameboard.set_selected_tool(None, None)
+            return False
+        else:
+            self.gameboard.set_selected_tool(constants.TOOL_PLACE_ANIMALS, cursors.cursors['chicken'])
+            return True
+
     def make_toolbar(self):
-        self._select_tool = self.add_tool_button("Select / Move", constants.TOOL_SELECT_CHICKENS,
-                None, cursors.cursors['select'])
+        self._move_tool = self.add_tool("Move", self.toggle_move)
 
         self.add_spacer(5)
 
@@ -313,12 +320,16 @@ class DefaultToolBar(BaseToolBar):
         #self.add_spacer(570-cur_height)
         self.fin_tool = self.add_tool("Finished Day", self.day_done)
 
-        if self.gameboard.selected_tool in [constants.TOOL_PLACE_ANIMALS, constants.TOOL_SELECT_CHICKENS]:
-            self.highlight_move_select_button()
+        if self.gameboard.selected_tool == constants.TOOL_PLACE_ANIMALS:
+            self.highlight_move_button()
 
-    def highlight_move_select_button(self):
-        self._select_tool.group.value = self._select_tool.value
-        self._select_tool.pcls = "down"
+    def unhighlight_move_button(self):
+        self._move_tool.group.value = None
+        self._move_tool.pcls = "up"
+
+    def highlight_move_button(self):
+        self._move_tool.group.value = self._move_tool.value
+        self._move_tool.pcls = "down"
 
     def add_building_toolbar(self):
         self.gameboard.change_toolbar(BuildingToolBar(self.gameboard,

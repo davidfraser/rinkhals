@@ -247,6 +247,9 @@ class GameBoard(serializer.Simplifiable):
     def set_selected_tool(self, tool, cursor):
         if not self.day:
             return False
+        if tool is None:
+            tool = constants.TOOL_SELECT_CHICKENS
+            cursor = cursors.cursors['select']
         if self.apply_tool_to_selected(tool):
             return False # Using the tool on selected chickens is immediate
         self.selected_tool = tool
@@ -312,6 +315,9 @@ class GameBoard(serializer.Simplifiable):
         self.day, self.night = False, True
         self.tv.sun(False)
         self.reset_states()
+        self.selected_tool = None
+        self.current_cursor = (cursors.cursors['arrow'],)
+        self.set_menu_cursor()
         self.unselect_all()
         self.toolbar.start_night()
         self.spawn_foxes()
@@ -356,17 +362,13 @@ class GameBoard(serializer.Simplifiable):
         if not self.day:
             return
         if e.button == 3: # Right button
-            if self.toolbar.MOVE_SELECT_PERMITTED:
-                if self.selected_tool != constants.TOOL_SELECT_CHICKENS:
-                    self.set_selected_tool(constants.TOOL_SELECT_CHICKENS, cursors.cursors["select"])
-                elif self.selected_tool == constants.TOOL_SELECT_CHICKENS:
-                    self.set_selected_tool(constants.TOOL_PLACE_ANIMALS, cursors.cursors["chicken"])
-            if self.toolbar.IS_DEFAULT:
-                self.toolbar.highlight_move_select_button()
+            if self.selected_tool == constants.TOOL_SELECT_CHICKENS:
+                self.place_animal(self.tv.screen_to_tile(e.pos))
             return
         elif e.button == 2: # Middle button
             self.reset_states()
             self.unselect_all()
+            return
         elif e.button != 1: # Left button
             return
         mods = pygame.key.get_mods()
@@ -377,6 +379,7 @@ class GameBoard(serializer.Simplifiable):
         elif self.selected_tool == constants.TOOL_PLACE_ANIMALS:
             self.place_animal(self.tv.screen_to_tile(e.pos))
             self.set_selected_tool(constants.TOOL_SELECT_CHICKENS, cursors.cursors["select"])
+            self.toolbar.unhighlight_move_button()
         elif self.selected_tool == constants.TOOL_SELECT_CHICKENS:
             # ctrl moves current selection without having to select move tool
             if (mods & KMOD_CTRL):
@@ -397,8 +400,7 @@ class GameBoard(serializer.Simplifiable):
         elif equipment.is_equipment(self.selected_tool):
             if not self.selected_chickens:
                 # old selection behaviour
-                self.buy_equipment(self.tv.screen_to_tile(e.pos),
-                        self.selected_tool)
+                self.buy_equipment(self.tv.screen_to_tile(e.pos), self.selected_tool)
 
     def get_outside_chicken(self, tile_pos):
         for chick in self.chickens:
