@@ -12,8 +12,7 @@ import pygame
 from pgu import gui
 from pygame.locals import SWSURFACE, SRCALPHA
 
-#from engine import Engine, MainMenuState
-from sound import init_sound
+import sound
 import constants
 from config import config
 import data
@@ -47,11 +46,16 @@ def sanity_check():
         pygame.Surface((100, 100), flags=SRCALPHA)
     except Exception, e:
         complaint_dialog("Unable to create a suitable screen, please check your display settings")
+    if sound.SOUND_INITIALIZED:
+        try:
+            sound.play_sound('silence.ogg')
+        except pygame.error:
+            complaint_dialog('Error trying to play sound. Please run with --no-sound')
 
 def main():
     """Main script."""
     config.configure(sys.argv[1:])
-    init_sound()
+    sound.init_sound()
     sanity_check()
     screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE)
     pygame.display.set_icon(pygame.image.load(
