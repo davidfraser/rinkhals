@@ -14,3 +14,7 @@ DAY_ICON = Image(imagecache.load_image('icons/sun.png'))
 
 def animal_icon(animal):
     return Image(animal.image_left)
+
+import eegg
+if eegg.is_eggday():
+    EGG_ICON = Image(imagecache.load_image('icons/easter_egg.png'))
