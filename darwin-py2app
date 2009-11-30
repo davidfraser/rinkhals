@@ -45,6 +45,7 @@ echo ""
 cd ${BASEDIR}
 
 pwd
+rm dist/${DMG_NAME} > /dev/null
 hdiutil create -srcfolder ${BUILD_FOLDER}/dist/*.app/ dist/${DMG_NAME}
 
 echo ""
