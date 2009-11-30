@@ -571,16 +571,18 @@ class GameBoard(serializer.Simplifiable):
                 if cur_chick:
                     try_pos = None
                     # find a free square nearby
-                    poss = [(tile_pos[0] + x, tile_pos[1] + y)
-                            for x in range(-1, 2) for y in range(-1, 2)
+                    diff_pos = misc.Position(*tile_pos)
+                    poss = [diff_pos + misc.Position(x, y)
+                            for x in range(-2, 3)
+                            for y in range(-2, 3)
                             if (x, y) != (0, 0)]
-                    poss.extend([(tile_pos[0] + x, tile_pos[1] + y)
-                            for x in range(-2, 3, 2) for y in range(-2, 3)
-                            if (x, y) != (0, 0)])
+                    poss.sort(key=lambda p: p.dist(diff_pos))
                     for cand in poss:
-                        if self.tv.get(cand) == self.GRASSLAND and \
-                                not self.get_outside_chicken(cand):
-                            try_pos = cand
+                        if not self.in_bounds(cand):
+                            continue
+                        if self.tv.get(cand.to_tile_tuple()) == self.GRASSLAND and \
+                               not self.get_outside_chicken(cand.to_tile_tuple()):
+                            try_pos = cand.to_tile_tuple()
                             break
                 if try_pos:
                     chicken.unequip_by_name("Nest")
