@@ -42,6 +42,7 @@ IMAGE_PATH = "data/images"
 SPRITES = [
     # chicken bits
     ("chkn", 20, 20),
+    ("rooster", 20, 20),
     ("wing", 20, 20),
     ("eye", 20, 20),
     ("equip_rifle", 20, 20),
