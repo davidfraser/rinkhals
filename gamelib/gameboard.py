@@ -1094,7 +1094,7 @@ class GameBoard(serializer.Simplifiable):
 
     def add_start_chickens(self, _map, tile, value):
         """Add chickens as specified by the code layer"""
-        chick = animal.Chicken((tile.tx, tile.ty), self)
+        chick = random.choice([animal.Chicken, animal.Rooster])((tile.tx, tile.ty), self)
         for equip_cls in equipment.EQUIP_MAP[value]:
             item = equip_cls()
             chick.equip(item)

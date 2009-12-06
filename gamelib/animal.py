@@ -228,9 +228,14 @@ class Chicken(Animal):
     def lay(self):
         """See if the chicken lays an egg"""
         if self.abode and self.abode.building.HENHOUSE:
+            # TODO: Find a cleaner way to do this
+            fertilised = False
+            for bird in self.abode.building.occupants():
+                if getattr(bird, 'ROOSTER', None):
+                    fertilised = True
             if not self.eggs:
                 for x in range(random.randint(1, 4)):
-                    self.eggs.append(Egg(self.pos, self.gameboard))
+                    self.eggs.append(Egg(self.pos, self.gameboard, fertilised=fertilised))
                 self.equip(equipment.NestEgg())
             self.gameboard.eggs += self.get_num_eggs()
 
@@ -295,24 +300,51 @@ class Chicken(Animal):
         for weapon in self.weapons():
             weapon.refresh_ammo()
 
+
+class Rooster(Chicken):
+    """A rooster"""
+
+    IMAGE_FILE = 'sprites/rooster.png'
+    ROOSTER = True
+
+    AGGRESSION = 50
+
+    def lay(self):
+        # Roosters don't lay eggs.
+        pass
+
+    def start_night(self):
+        Chicken.start_night(self)
+        self._manly_fight()
+
+    def _manly_fight(self):
+        if self.abode:
+            for rival in [occ for occ in self.abode.building.occupants()
+                          if getattr(occ, 'ROOSTER', False)]:
+                if random.randint(1, 100) <= self.AGGRESSION:
+                    rival.damage()
+
+
 class Egg(Animal):
     """An egg"""
 
     IMAGE_FILE = 'sprites/equip_egg.png'
 
-    SIMPLIFY = Animal.SIMPLIFY + ['timer']
+    SIMPLIFY = Animal.SIMPLIFY + ['timer', 'fertilised']
 
-    def __init__(self, pos, gameboard):
+    def __init__(self, pos, gameboard, fertilised=False):
         Animal.__init__(self, pos, gameboard)
+        self.fertilised = fertilised
         self.timer = 2
 
     # Eggs don't move
 
     def hatch(self):
         self.timer -= 1
-        if self.timer == 0:
-            return Chicken(self.pos, self.gameboard)
+        if self.timer == 0 and self.fertilised:
+            return random.choice([Chicken, Rooster])(self.pos, self.gameboard)
         return None
+
 
 class Fox(Animal):
     """A fox"""
