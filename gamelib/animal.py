@@ -783,6 +783,7 @@ class DemoFox(Fox):
 class GreedyFox(Fox):
     """Greedy foxes eat more chickens"""
     CONFIG_NAME = 'greedy fox'
+    IMAGE_FILE = 'sprites/greedy_fox.png'
 
     def __init__(self, pos, gameboard):
         Fox.__init__(self, pos, gameboard)
