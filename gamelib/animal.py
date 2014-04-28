@@ -182,7 +182,7 @@ class Animal(Sprite, serializer.Simplifiable):
 class Chicken(Animal):
     """A chicken"""
 
-    EQUIPMENT_IMAGE_ATTRIBUTE = 'CHICKEN_IMAGE_FILE'
+    EQUIPMENT_IMAGE_ATTRIBUTE = 'ANIMAL_IMAGE_FILE'
     DEATH_ANIMATION = animations.ChickenDeath
     DEATH_SOUND = 'kill-chicken.ogg'
     IMAGE_FILE = 'sprites/chkn.png'
@@ -351,6 +351,7 @@ class Fox(Animal):
 
     STEALTH = 20
     IMAGE_FILE = 'sprites/fox.png'
+    EQUIPMENT_IMAGE_ATTRIBUTE = 'ANIMAL_IMAGE_FILE'
     DEATH_ANIMATION = animations.FoxDeath
     DEATH_SOUND = 'kill-fox.ogg'
     CONFIG_NAME = 'fox'
@@ -813,7 +814,6 @@ class GreedyFox(Fox):
 
 class ShieldFox(Fox):
     """The Shield Fox has a shield, so is harder to damage"""
-    EQUIPMENT_IMAGE_ATTRIBUTE = 'FOX_IMAGE_FILE'
     CONFIG_NAME = 'shield fox'
 
     def __init__(self, pos, gameboard):
@@ -821,7 +821,6 @@ class ShieldFox(Fox):
         self.equip(equipment.Shield())
 
 class RobberFox(Fox):
-    EQUIPMENT_IMAGE_ATTRIBUTE = 'CHICKEN_IMAGE_FILE'
     CONFIG_NAME = 'robber fox'
     IMAGE_FILE = 'sprites/robber_fox.png'
     STEALTH = 40

@@ -47,7 +47,7 @@ class Equipment(serializer.Simplifiable):
             return None
         eq_image_left = imagecache.load_image(eq_image_file)
         eq_image_right = imagecache.load_image(eq_image_file, ("right_facing",))
-        if eq_image_attr == "CHICKEN_IMAGE_FILE":
+        if eq_image_attr == "ANIMAL_IMAGE_FILE":
             # a bit hacky; eventually the chicken should have a stack of images and layering should take care of everything
             if self.UNDER_LIMB:
                 wing_left = imagecache.load_image("sprites/wing.png")
@@ -116,7 +116,7 @@ class Rifle(Weapon):
     RANGE_PENALTY = 15
     HIT_SOUND = "fire-rifle.ogg"
 
-    CHICKEN_IMAGE_FILE = 'sprites/equip_rifle.png'
+    ANIMAL_IMAGE_FILE = 'sprites/equip_rifle.png'
 
     ANIMATION = animations.MuzzleFlash
 
@@ -132,7 +132,7 @@ class SniperRifle(Weapon):
     RANGE_PENALTY = 10
     HIT_SOUND = "fire-rifle.ogg"
 
-    CHICKEN_IMAGE_FILE = 'sprites/equip_sniper_rifle.png'
+    ANIMAL_IMAGE_FILE = 'sprites/equip_sniper_rifle.png'
 
     ANIMATION = animations.MuzzleFlash
 
@@ -146,7 +146,7 @@ class Knife(Weapon):
     BASE_HIT = 70
     RANGE_PENALTY = 0
 
-    CHICKEN_IMAGE_FILE = 'sprites/equip_knife.png'
+    ANIMAL_IMAGE_FILE = 'sprites/equip_knife.png'
 
 class Axe(Weapon):
     TYPE = "AXE"
@@ -158,7 +158,7 @@ class Axe(Weapon):
     BASE_HIT = 35
     RANGE_PENALTY = 0
 
-    CHICKEN_IMAGE_FILE = 'sprites/equip_axe.png'
+    ANIMAL_IMAGE_FILE = 'sprites/equip_axe.png'
 
 class Armour(Equipment):
     IS_ARMOUR = True
@@ -189,7 +189,7 @@ class Helmet(Armour):
 
     STARTING_HITPOINTS = 1
 
-    CHICKEN_IMAGE_FILE = 'sprites/equip_helmet.png'
+    ANIMAL_IMAGE_FILE = 'sprites/equip_helmet.png'
     UNDER_EYE = True
 
 class Kevlar(Armour):
@@ -199,7 +199,7 @@ class Kevlar(Armour):
 
     STARTING_HITPOINTS = 2
 
-    CHICKEN_IMAGE_FILE = 'sprites/equip_kevlar.png'
+    ANIMAL_IMAGE_FILE = 'sprites/equip_kevlar.png'
 
 class Shield(Armour):
     NAME = "Shield"
@@ -207,7 +207,7 @@ class Shield(Armour):
     SELL_PRICE = 40
     STARTING_HITPOINTS = 1
 
-    FOX_IMAGE_FILE = 'sprites/equip_shield.png'
+    ANIMAL_IMAGE_FILE = 'sprites/equip_shield.png'
 
 class Accoutrement(Equipment):
     """Things which are not equipment, but are displayed in the same way"""
@@ -224,17 +224,17 @@ class Accoutrement(Equipment):
 
 class Spotlight(Accoutrement):
     NAME = "Spotlight"
-    CHICKEN_IMAGE_FILE = 'sprites/select_chkn.png'
+    ANIMAL_IMAGE_FILE = 'sprites/select_chkn.png'
     DRAW_LAYER = -5
 
 class Nest(Accoutrement):
     NAME = "Nest"
-    CHICKEN_IMAGE_FILE = 'sprites/nest.png'
+    ANIMAL_IMAGE_FILE = 'sprites/nest.png'
     DRAW_LAYER = 15
 
 class NestEgg(Accoutrement):
     NAME = "Nestegg"
-    CHICKEN_IMAGE_FILE = 'sprites/equip_egg.png'
+    ANIMAL_IMAGE_FILE = 'sprites/equip_egg.png'
     DRAW_LAYER = 14
 
 def is_equipment(obj):
@@ -281,4 +281,4 @@ EQUIP_MAP = { # Map chicken level codes to equipment
 
 import eegg
 if eegg.is_eggday():
-    NestEgg.CHICKEN_IMAGE_FILE = 'sprites/equip_easter_egg.png'
+    NestEgg.ANIMAL_IMAGE_FILE = 'sprites/equip_easter_egg.png'
