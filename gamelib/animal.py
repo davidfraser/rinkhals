@@ -820,6 +820,21 @@ class ShieldFox(Fox):
         Fox.__init__(self, pos, gameboard)
         self.equip(equipment.Shield())
 
+class RobberFox(NinjaFox):
+    EQUIPMENT_IMAGE_ATTRIBUTE = 'CHICKEN_IMAGE_FILE'
+    CONFIG_NAME = 'robber fox'
+    IMAGE_FILE = 'sprites/robber_fox.png'
+
+    def _catch_chicken(self, chicken):
+        """Catch a chicken"""
+        for a in chicken.armour():
+            chicken.unequip(a)
+            self.equip(a)
+        self.closest = None
+        self.hunting = False
+        self.target = self.start_pos
+        self._last_steps = []
+
 class Rinkhals(Fox):
     """The Rinkhals has eclectic tastes"""
     STEALTH = 80
@@ -880,10 +895,11 @@ def visible(watcher, watchee, gameboard):
 # These don't have to add up to 100, but it's easier to think
 # about them if they do.
 DEFAULT_FOX_WEIGHTINGS = (
-    (Fox, 39),
-    (GreedyFox, 30),
+    (Fox, 24),
+    (GreedyFox, 20),
     (ShieldFox, 20),
-    (NinjaFox, 5),
+    (RobberFox, 20),
+    (NinjaFox, 10),
     (DemoFox, 5),
     (Rinkhals, 1),
     )
