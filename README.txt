@@ -84,6 +84,14 @@ You will need to install these before running the game:
 Fox Assault requires python 2.5 or later, pygame 1.8 or later and
 pgu 0.12.3.
 
+DEVELOPMENT DEPENDENCIES
+========================
+
+To regenerate the bitmap graphics from the vector graphics using regenerate_pngs.py
+you need:
+
+  PyCairo:                  http://cairographics.org/pycairo/
+
 LICENSE
 =======
 

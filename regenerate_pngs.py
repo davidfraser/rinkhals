@@ -3,6 +3,7 @@
 import cairo
 import rsvg
 import os
+from gamelib import constants
 
 def svg_to_png(svg_name, png_name, w, h):
     """Convert an SVG file to a PNG file."""
@@ -39,49 +40,51 @@ TILE_PATH = "data/tiles"
 SPRITE_PATH = "data/sprites"
 IMAGE_PATH = "data/images"
 
+BASE_X, BASE_Y = constants.TILE_DIMENSIONS
 SPRITES = [
     # chicken bits
-    ("chkn", 20, 20),
-    ("rooster", 20, 20),
-    ("wing", 20, 20),
-    ("eye", 20, 20),
-    ("equip_rifle", 20, 20),
-    ("equip_sniper_rifle", 20, 20),
-    ("equip_knife", 20, 20),
-    ("equip_kevlar", 20, 20),
-    ("equip_helmet", 20, 20),
-    ("equip_axe", 20, 20),
-    ("select_chkn", 20, 20),
-    ("nest", 20, 20),
-    ("equip_egg", 20, 20),
-    ("equip_easter_egg", 20, 20),
+    ("chkn", BASE_X, BASE_Y),
+    ("rooster", BASE_X, BASE_Y),
+    ("wing", BASE_X, BASE_Y),
+    ("eye", BASE_X, BASE_Y),
+    ("equip_rifle", BASE_X, BASE_Y),
+    ("equip_sniper_rifle", BASE_X, BASE_Y),
+    ("equip_knife", BASE_X, BASE_Y),
+    ("equip_kevlar", BASE_X, BASE_Y),
+    ("equip_helmet", BASE_X, BASE_Y),
+    ("equip_axe", BASE_X, BASE_Y),
+    ("select_chkn", BASE_X, BASE_Y),
+    ("nest", BASE_X, BASE_Y),
+    ("equip_egg", BASE_X, BASE_Y),
+    ("equip_easter_egg", BASE_X, BASE_Y),
     # fox bits
-    ("fox", 20, 20),
-    ("ninja_fox", 20, 20),
-    ("sapper_fox", 20, 20),
-    ("rinkhals", 20, 20),
+    ("fox", BASE_X, BASE_Y),
+    ("ninja_fox", BASE_X, BASE_Y),
+    ("sapper_fox", BASE_X, BASE_Y),
+    ("rinkhals", BASE_X, BASE_Y),
     # buildings
-    ("henhouse", 60, 40),
-    ("select_henhouse", 60, 40),
-    ("hendominium", 40, 60),
-    ("select_hendominium", 40, 60),
-    ("watchtower", 40, 40),
-    ("select_watchtower", 40, 40),
+    ("henhouse", BASE_X*3, BASE_Y*2),
+    ("select_henhouse", BASE_X*3, BASE_Y*2),
+    ("hendominium", BASE_X*2, BASE_Y*3),
+    ("select_hendominium", BASE_X*2, BASE_Y*3),
+    ("watchtower", BASE_X*2, BASE_Y*2),
+    ("select_watchtower", BASE_X*2, BASE_Y*2),
     # special effects
-    ("muzzle_flash", 20, 20),
-    ("chkn_death", 20, 20),
-    ("fox_death", 20, 20),
-    ("boom1", 20, 20),
-    ("boom2", 20, 20),
-    ("boom3", 20, 20),
-    ("boom4", 20, 20),
+    ("muzzle_flash", BASE_X, BASE_Y),
+    ("chkn_death", BASE_X, BASE_Y),
+    ("fox_death", BASE_X, BASE_Y),
+    ("boom1", BASE_X, BASE_Y),
+    ("boom2", BASE_X, BASE_Y),
+    ("boom3", BASE_X, BASE_Y),
+    ("boom4", BASE_X, BASE_Y),
 ]
 
 if __name__ == "__main__":
-    process_svg_folder("data/tiles", 20, 20)
-    process_svg_folder("data/icons", 40, 40)
+    process_svg_folder("data/tiles", BASE_X, BASE_Y)
+    process_svg_folder("data/icons", BASE_X*2, BASE_Y*2)
     for name, width, height in SPRITES:
         process_sprite(name, width, height, SPRITE_PATH)
-    process_sprite("splash", 800, 600, IMAGE_PATH)
-    process_sprite("gameover_win", 800, 600, IMAGE_PATH)
-    process_sprite("gameover_lose", 800, 600, IMAGE_PATH)
+    process_sprite("splash", constants.SCREEN[0], constants.SCREEN[1], IMAGE_PATH)
+    process_sprite("gameover_win", constants.SCREEN[0], constants.SCREEN[1], IMAGE_PATH)
+    process_sprite("gameover_lose", constants.SCREEN[0], constants.SCREEN[1], IMAGE_PATH)
+
