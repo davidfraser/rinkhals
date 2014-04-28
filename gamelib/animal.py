@@ -820,20 +820,50 @@ class ShieldFox(Fox):
         Fox.__init__(self, pos, gameboard)
         self.equip(equipment.Shield())
 
-class RobberFox(NinjaFox):
+class RobberFox(Fox):
     EQUIPMENT_IMAGE_ATTRIBUTE = 'CHICKEN_IMAGE_FILE'
     CONFIG_NAME = 'robber fox'
     IMAGE_FILE = 'sprites/robber_fox.png'
+    STEALTH = 40
+
+    def __init__(self, pos, gameboard):
+        Fox.__init__(self, pos, gameboard)
+        self.chickens_robbed = 0
+        self.hungry = False
+        self.last_chicken = None
 
     def _catch_chicken(self, chicken):
         """Catch a chicken"""
-        for a in chicken.armour():
-            chicken.unequip(a)
-            self.equip(a)
+        if chicken.equipment:
+            e = chicken.equipment[0]
+            chicken.unequip(e)
+            self.equip(e)
+            self.hungry = True
+        elif self.hungry:
+            chicken.damage()
+        self.last_chicken = self.closest
         self.closest = None
-        self.hunting = False
-        self.target = self.start_pos
-        self._last_steps = []
+        self.chickens_robbed += 1
+        if self.chickens_robbed > 2:
+            self.hunting = False
+            self.target = self.start_pos
+            self._last_steps = []
+        else:
+            self._select_prey() # select new target
+
+    def _calculate_dist(self, chicken):
+        """Calculate the distance to the chicken"""
+        dist = chicken.pos.dist(self.pos)
+        if chicken.abode:
+            dist += 5 # Prefer free-ranging chickens
+        if not self.hungry and not chicken.equipment:
+            dist += 1000 # Ignore chickens with nothing to steal
+        if len(chicken.weapons()) > 0:
+            dist += 5 # Prefer unarmed chickens
+        if self.last_chicken and self.last_chicken is chicken:
+            # That chicken may be suspicious of us; careful of robbing it again
+            dist += 10
+        return dist
 
 class Rinkhals(Fox):
     """The Rinkhals has eclectic tastes"""
