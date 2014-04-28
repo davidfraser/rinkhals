@@ -201,6 +201,14 @@ class Kevlar(Armour):
 
     CHICKEN_IMAGE_FILE = 'sprites/equip_kevlar.png'
 
+class Shield(Armour):
+    NAME = "Shield"
+    BUY_PRICE = 50
+    SELL_PRICE = 40
+    STARTING_HITPOINTS = 1
+
+    FOX_IMAGE_FILE = 'sprites/equip_shield.png'
+
 class Accoutrement(Equipment):
     """Things which are not equipment, but are displayed in the same way"""
     IS_EQUIPMENT = False

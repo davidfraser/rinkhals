@@ -453,7 +453,7 @@ class Fox(Animal):
         return final_path[1:] # path's include self.pos
 
     def _find_nearest_corner(self):
-        """Find the nearest corner of the bulding"""
+        """Find the nearest corner of the building"""
         COST_MARGIN = 25
         def border(pos):
             cost = self._cost_tile(pos)
@@ -811,6 +811,14 @@ class GreedyFox(Fox):
             dist += 15
         return dist
 
+class ShieldFox(Fox):
+    """The Shield Fox has a shield, so is harder to damage"""
+    EQUIPMENT_IMAGE_ATTRIBUTE = 'FOX_IMAGE_FILE'
+    CONFIG_NAME = 'shield fox'
+
+    def __init__(self, pos, gameboard):
+        Fox.__init__(self, pos, gameboard)
+        self.equip(equipment.Shield())
 
 class Rinkhals(Fox):
     """The Rinkhals has eclectic tastes"""
@@ -872,8 +880,9 @@ def visible(watcher, watchee, gameboard):
 # These don't have to add up to 100, but it's easier to think
 # about them if they do.
 DEFAULT_FOX_WEIGHTINGS = (
-    (Fox, 59),
+    (Fox, 39),
     (GreedyFox, 30),
+    (ShieldFox, 20),
     (NinjaFox, 5),
     (DemoFox, 5),
     (Rinkhals, 1),

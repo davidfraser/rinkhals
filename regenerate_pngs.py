@@ -53,6 +53,7 @@ SPRITES = [
     ("equip_kevlar", BASE_X, BASE_Y),
     ("equip_helmet", BASE_X, BASE_Y),
     ("equip_axe", BASE_X, BASE_Y),
+    ("equip_shield", BASE_X, BASE_Y),
     ("select_chkn", BASE_X, BASE_Y),
     ("nest", BASE_X, BASE_Y),
     ("equip_egg", BASE_X, BASE_Y),
