@@ -23,7 +23,7 @@ It is likely that you have obtain the game in one of four possible ways:
 Windows:
 
 If you have the Windows .zip file, unzip it, find foxassault.exe and
-doube-click it to launch the game.
+double-click it to launch the game.
 
 Unix:
 
@@ -91,6 +91,9 @@ To regenerate the bitmap graphics from the vector graphics using regenerate_pngs
 you need:
 
   PyCairo:                  http://cairographics.org/pycairo/
+  rsvg:                     http://cairographics.org/pyrsvg/
+  gobject
+  glib
 
 LICENSE
 =======
