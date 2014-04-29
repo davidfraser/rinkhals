@@ -162,6 +162,9 @@ class Animal(Sprite, serializer.Simplifiable):
     def weapons(self):
         return [e for e in self.equipment if equipment.is_weapon(e)]
 
+    def surveillance_equipment(self):
+        return [e for e in self.equipment if equipment.is_surveillance_equipment(e)]
+
     def armour(self):
         return [e for e in self.equipment if equipment.is_armour(e)]
 
@@ -898,6 +901,9 @@ class Rinkhals(Fox):
 
 def _get_vision_param(parameter, watcher):
     param = getattr(watcher, parameter)
+    for e in watcher.surveillance_equipment():
+        modifier = getattr(e, 'MODIFY_'+parameter, lambda r: r)
+        param = modifier(param)
     if watcher.abode:
         modifier = getattr(watcher.abode.building, 'MODIFY_'+parameter, lambda r: r)
         param = modifier(param)
@@ -924,10 +930,10 @@ def visible(watcher, watchee, gameboard):
 # These don't have to add up to 100, but it's easier to think
 # about them if they do.
 DEFAULT_FOX_WEIGHTINGS = (
-    (Fox, 24),
+    (Fox, 44),
     (GreedyFox, 20),
-    (ShieldFox, 20),
-    (RobberFox, 20),
+    (ShieldFox, 10),
+    (RobberFox, 10),
     (NinjaFox, 10),
     (DemoFox, 5),
     (Rinkhals, 1),

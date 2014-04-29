@@ -197,7 +197,7 @@ class Kevlar(Armour):
     BUY_PRICE = 100
     SELL_PRICE = 75
 
-    STARTING_HITPOINTS = 2
+    STARTING_HITPOINTS = 3
 
     ANIMAL_IMAGE_FILE = 'sprites/equip_kevlar.png'
 
@@ -205,9 +205,27 @@ class Shield(Armour):
     NAME = "Shield"
     BUY_PRICE = 50
     SELL_PRICE = 40
-    STARTING_HITPOINTS = 1
+    STARTING_HITPOINTS = 2
 
     ANIMAL_IMAGE_FILE = 'sprites/equip_shield.png'
+
+class SurveillanceEquipment(Equipment):
+    IS_SURVEILLANCE_EQUIPMENT = True
+    def place(self, animal):
+        for eq in animal.equipment:
+            if is_surveillance_equipment(eq):
+                return False
+        return True
+
+class Binoculars(SurveillanceEquipment):
+    NAME = "Binoculars"
+    BUY_PRICE = 25
+    SELL_PRICE = 15
+
+    MODIFY_VISION_BONUS = lambda s, x: x+20
+    MODIFY_VISION_RANGE_PENALTY = lambda s, x: max(x-5, 0)
+
+    ANIMAL_IMAGE_FILE = 'sprites/equip_binoculars.png'
 
 class Accoutrement(Equipment):
     """Things which are not equipment, but are displayed in the same way"""
@@ -240,6 +258,10 @@ class NestEgg(Accoutrement):
 def is_equipment(obj):
     """Return true if obj is an equipment class."""
     return getattr(obj, "IS_EQUIPMENT", False) and hasattr(obj, "NAME")
+
+def is_surveillance_equipment(obj):
+    """Return true if obj is a surveillance equipment class."""
+    return getattr(obj, "IS_SURVEILLANCE_EQUIPMENT", False) and hasattr(obj, "NAME")
 
 def is_weapon(obj):
     return is_equipment(obj) and getattr(obj, 'IS_WEAPON', False)
