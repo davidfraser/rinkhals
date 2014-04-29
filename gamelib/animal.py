@@ -837,7 +837,7 @@ class RobberFox(Fox):
     def _catch_chicken(self, chicken):
         """Catch a chicken"""
         if chicken.equipment:
-            e = chicken.equipment[0]
+            e = random.choice(chicken.equipment)
             chicken.unequip(e)
             self.equip(e)
             self.hungry = True
