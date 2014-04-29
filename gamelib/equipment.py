@@ -227,6 +227,17 @@ class Binoculars(SurveillanceEquipment):
 
     ANIMAL_IMAGE_FILE = 'sprites/equip_binoculars.png'
 
+class Telescope(SurveillanceEquipment):
+    NAME = "Telescope"
+    BUY_PRICE = 75
+    SELL_PRICE = 50
+
+    MODIFY_VISION_BONUS = lambda s, x: x+50
+    MODIFY_VISION_RANGE_PENALTY = lambda s, x: max(x-7, 0)
+
+    ANIMAL_IMAGE_FILE = 'sprites/equip_telescope.png'
+
+
 class Accoutrement(Equipment):
     """Things which are not equipment, but are displayed in the same way"""
     IS_EQUIPMENT = False
