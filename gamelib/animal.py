@@ -140,6 +140,13 @@ class Animal(Sprite, serializer.Simplifiable):
         if matches:
             self.unequip(matches[0])
 
+    def get_stealth(self):
+        stealth = self.STEALTH
+        for eq in self.equipment:
+            stealth_bonus = getattr(eq, "STEALTH_BONUS", 0)
+            stealth += stealth_bonus
+        return stealth
+
     def redraw(self):
         layers = [(self._image_left.copy(), self._image_right.copy(), 0)]
         if hasattr(self, 'EQUIPMENT_IMAGE_ATTRIBUTE'):
@@ -597,11 +604,17 @@ class Fox(Animal):
         """Find the path to the target"""
         if self.hunting:
             # Check if we need to update our idea of a target
-            if not self.closest or self.closest not in self.gameboard.chickens:
+            if self.closest and self.closest in self.gameboard.chickens:
+                stealth = self.closest.get_stealth()
+                roll = random.randint(1, 100)
+                is_visible = roll > stealth
+                if not is_visible:
+                    self._select_prey()
+                elif not self.target:
+                    self.target = self.closest.pos
+            else:
                 # Either no target, or someone ate it
                 self._select_prey()
-            elif not self.target:
-                self.target = self.closest.pos
         if not self.target:
             self.target = self.start_pos
             self._last_steps = []
@@ -629,13 +642,19 @@ class Fox(Animal):
 
     def _select_prey(self):
         min_dist = 999
+        previous_chicken = self.closest
         self.closest = None
         for chicken in self.gameboard.chickens:
             dist = self._calculate_dist(chicken)
             if dist < min_dist:
-                min_dist = dist
-                self.closest = chicken
-                self.target = chicken.pos
+                stealth = chicken.get_stealth()
+                roll = random.randint(1, 100)
+                # if we're reselecting prey, the previous_chicken is hidden
+                is_visible = (chicken is not previous_chicken) and (roll > stealth)
+                if is_visible:
+                    min_dist = dist
+                    self.closest = chicken
+                    self.target = chicken.pos
         if not self.closest:
             # No more chickens, so leave
             self.hunting = False
@@ -925,7 +944,7 @@ def visible(watcher, watchee, gameboard):
     # Intervening forests get in the way a bit.
     woods = len([pos for pos in positions if gameboard.is_woodland_tile(pos)])
     roll = random.randint(1, 100)
-    return roll > watchee.STEALTH - vision_bonus + range_penalty*distance + constants.WOODLAND_CONCEALMENT*woods
+    return roll > watchee.get_stealth() - vision_bonus + range_penalty*distance + constants.WOODLAND_CONCEALMENT*woods
 
 # These don't have to add up to 100, but it's easier to think
 # about them if they do.

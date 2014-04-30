@@ -160,6 +160,20 @@ class Axe(Weapon):
 
     ANIMAL_IMAGE_FILE = 'sprites/equip_axe.png'
 
+class Cloak(Equipment):
+    NAME = "Cloak"
+    BUY_PRICE = 25
+    SELL_PRICE = 15
+    STEALTH_BONUS = 40
+
+    ANIMAL_IMAGE_FILE = 'sprites/equip_cloak.png'
+
+    def place(self, animal):
+        for eq in animal.equipment:
+            if eq.NAME == self.NAME:
+                return False
+        return True
+
 class Armour(Equipment):
     IS_ARMOUR = True
     DRAW_LAYER = 5
