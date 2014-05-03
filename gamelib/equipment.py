@@ -174,6 +174,21 @@ class Cloak(Equipment):
                 return False
         return True
 
+class FoxDisguise(Equipment):
+    NAME = "Fox Disguise"
+    BUY_PRICE = 60
+    SELL_PRICE = 45
+    STEALTH_BONUS = 70
+
+    ANIMAL_IMAGE_FILE = 'sprites/equip_foxdisguise.png'
+
+    def place(self, animal):
+        for eq in animal.equipment:
+            if eq.NAME == self.NAME:
+                return False
+        return True
+
+
 class Armour(Equipment):
     IS_ARMOUR = True
     DRAW_LAYER = 5

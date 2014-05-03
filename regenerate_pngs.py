@@ -51,6 +51,7 @@ SPRITES = [
     ("equip_sniper_rifle", BASE_X, BASE_Y),
     ("equip_knife", BASE_X, BASE_Y),
     ("equip_cloak", BASE_X, BASE_Y),
+    ("equip_foxdisguise", BASE_X, BASE_Y),
     ("equip_kevlar", BASE_X, BASE_Y),
     ("equip_helmet", BASE_X, BASE_Y),
     ("equip_axe", BASE_X, BASE_Y),
