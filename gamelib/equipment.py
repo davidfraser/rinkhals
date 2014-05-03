@@ -160,7 +160,16 @@ class Axe(Weapon):
 
     ANIMAL_IMAGE_FILE = 'sprites/equip_axe.png'
 
-class Cloak(Equipment):
+class Disguise(Equipment):
+    IS_DISGUISE = True
+
+    def place(self, animal):
+        for eq in animal.equipment:
+            if is_disguise(eq):
+                return False
+        return True
+
+class Cloak(Disguise):
     NAME = "Cloak"
     BUY_PRICE = 25
     SELL_PRICE = 15
@@ -168,26 +177,13 @@ class Cloak(Equipment):
 
     ANIMAL_IMAGE_FILE = 'sprites/equip_cloak.png'
 
-    def place(self, animal):
-        for eq in animal.equipment:
-            if eq.NAME == self.NAME:
-                return False
-        return True
-
-class FoxDisguise(Equipment):
+class FoxDisguise(Disguise):
     NAME = "Fox Disguise"
     BUY_PRICE = 60
     SELL_PRICE = 45
     STEALTH_BONUS = 70
 
     ANIMAL_IMAGE_FILE = 'sprites/equip_foxdisguise.png'
-
-    def place(self, animal):
-        for eq in animal.equipment:
-            if eq.NAME == self.NAME:
-                return False
-        return True
-
 
 class Armour(Equipment):
     IS_ARMOUR = True
@@ -305,6 +301,9 @@ def is_surveillance_equipment(obj):
 
 def is_weapon(obj):
     return is_equipment(obj) and getattr(obj, 'IS_WEAPON', False)
+
+def is_disguise(obj):
+    return is_equipment(obj) and getattr(obj, 'IS_DISGUISE', False)
 
 def is_armour(obj):
     return is_equipment(obj) and getattr(obj, 'IS_ARMOUR', False)
