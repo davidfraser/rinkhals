@@ -136,6 +136,22 @@ class SniperRifle(Weapon):
 
     ANIMATION = animations.MuzzleFlash
 
+class Bazooka(Weapon):
+    TYPE = "GUN"
+    NAME = "Bazooka"
+    BUY_PRICE = 300
+    SELL_PRICE = 225
+    AMMUNITION = 100
+
+    RANGE = 7
+    BASE_HIT = 90
+    RANGE_PENALTY = 7
+    HIT_SOUND = "fire-rifle.ogg"
+
+    ANIMAL_IMAGE_FILE = 'sprites/equip_bazooka.png'
+
+    ANIMATION = animations.MuzzleFlash
+
 class Knife(Weapon):
     TYPE = "KNIFE"
     NAME = "Knife"
