@@ -68,6 +68,7 @@ class Weapon(Equipment):
     IS_WEAPON = True
     DRAW_LAYER = 10
     UNDER_LIMB = True
+    DAMAGE_RANGE = 1
 
     def _get_parameter(self, parameter, wielder):
         param = getattr(self, parameter)
@@ -97,6 +98,30 @@ class Weapon(Equipment):
         base_hit = self._get_parameter('BASE_HIT', wielder)
         range_penalty = self._get_parameter('RANGE_PENALTY', wielder)
         return roll > (100-base_hit) + range_penalty*wielder.pos.dist(target.pos)
+
+    def damage_in_area(self, gameboard, wielder, target_pos):
+        """For explosive weapons, affect foxes close to the target position"""
+        if self.ammunition is not None:
+            if self.ammunition <= 0:
+                # Out of ammunition, so we don't get to shoot.
+                return
+            else:
+                self.ammunition -= 1
+        if hasattr(self, 'HIT_SOUND'):
+            sound.play_sound(self.HIT_SOUND)
+        if hasattr(self, 'ANIMATION'):
+            self.ANIMATION(gameboard.tv, wielder)
+        base_hit = self._get_parameter('BASE_HIT', wielder)
+        range_penalty = self._get_parameter('RANGE_PENALTY', wielder)
+        roll = random.randint(1, 100)
+        damaged_foxes = set()
+        for fox in gameboard.foxes:
+            if target_pos.dist(fox.pos) <= self.DAMAGE_RANGE:
+                damage_penalty = self.DAMAGE_RANGE_PENALTY * fox.pos.dist(target_pos)
+                if roll > (100-base_hit) + range_penalty*(wielder.pos.dist(target_pos) + damage_penalty):
+                    damaged_foxes.add(fox)
+        for fox in damaged_foxes:
+            fox.damage()
 
     def place(self, animal):
         for eq in animal.equipment:
@@ -142,6 +167,8 @@ class Bazooka(Weapon):
     BUY_PRICE = 300
     SELL_PRICE = 225
     AMMUNITION = 100
+    DAMAGE_RANGE = 4
+    DAMAGE_RANGE_PENALTY = 3
 
     RANGE = 7
     BASE_HIT = 90

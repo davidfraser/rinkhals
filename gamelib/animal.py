@@ -302,8 +302,11 @@ class Chicken(Animal):
         if not fox:
             return
         self._fix_face(fox.pos)
-        if weapon.hit(self.gameboard, self, fox):
-            fox.damage()
+        if weapon.DAMAGE_RANGE > 1:
+            weapon.damage_in_area(self.gameboard, self, fox.pos)
+        else:
+            if weapon.hit(self.gameboard, self, fox):
+                fox.damage()
 
     def reload_weapon(self):
         """If we have a weapon that takes ammunition, reload it."""
