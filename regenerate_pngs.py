@@ -47,6 +47,7 @@ SPRITES = [
     ("rooster", BASE_X, BASE_Y),
     ("wing", BASE_X, BASE_Y),
     ("eye", BASE_X, BASE_Y),
+    ("equip_handgun", BASE_X, BASE_Y),
     ("equip_rifle", BASE_X, BASE_Y),
     ("equip_sniper_rifle", BASE_X, BASE_Y),
     ("equip_bazooka", BASE_X, BASE_Y),

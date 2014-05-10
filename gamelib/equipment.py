@@ -129,6 +129,22 @@ class Weapon(Equipment):
                 return False
         return True
 
+class Handgun(Weapon):
+    TYPE = "GUN"
+    NAME = "Handgun"
+    BUY_PRICE = 30
+    SELL_PRICE = 30
+    AMMUNITION = 30
+
+    RANGE = 2
+    BASE_HIT = 70
+    RANGE_PENALTY = 15
+    HIT_SOUND = "fire-rifle.ogg"
+
+    ANIMAL_IMAGE_FILE = 'sprites/equip_handgun.png'
+
+    ANIMATION = animations.MuzzleFlash
+
 class Rifle(Weapon):
     TYPE = "GUN"
     NAME = "Rifle"
