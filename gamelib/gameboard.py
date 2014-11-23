@@ -257,7 +257,7 @@ class GameBoard(serializer.Simplifiable):
         if buildings.is_building(tool):
             sprite_curs = sprite_cursor.SpriteCursor(tool.IMAGE, self.tv, tool.BUY_PRICE)
         elif equipment.is_equipment(tool):
-            sprite_curs = sprite_cursor.SpriteCursor(tool.CHICKEN_IMAGE_FILE, self.tv)
+            sprite_curs = sprite_cursor.SpriteCursor(tool.ANIMAL_IMAGE_FILE, self.tv)
         elif tool == constants.TOOL_PLACE_ANIMALS and self.selected_chickens:
             cursor = cursors.cursors['chicken']
         self.current_cursor = (cursor, sprite_curs)

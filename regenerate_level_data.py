@@ -45,7 +45,7 @@ def get_code_mappings():
         image = generate_image('chkn', regenerate_pngs.SPRITE_PATH)
         need_wing = False
         for equip in sprites:
-            sub_image = generate_image(equip.CHICKEN_IMAGE_FILE,
+            sub_image = generate_image(equip.ANIMAL_IMAGE_FILE,
                     regenerate_pngs.SPRITE_PATH)
             image.blit(sub_image, (0, 0))
             if equip.UNDER_LIMB:
