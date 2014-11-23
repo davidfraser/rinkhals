@@ -20,6 +20,7 @@ class TileMap(object):
         4: ("guardtower", "grassland.png"),
         5: ("broken fence", "broken_fence.png"),
         6: ("hendominium", "grassland.png"),
+        7: ("trap", "trap.png"),
     }
 
     ALTERNATE_TILES = {

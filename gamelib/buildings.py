@@ -3,8 +3,10 @@
 from pgu.vid import Sprite
 from pygame.locals import SRCALPHA
 import pygame
+import random
 
 import imagecache
+import sound
 import tiles
 import constants
 import serializer
@@ -416,6 +418,28 @@ class Fence(Building):
 
     BLOCKS_VISION = False
 
+class Trap(Building):
+    """A trap."""
+
+    TILE_NO = tiles.REVERSE_TILE_MAP['trap']
+
+    BUY_PRICE = 12
+    SELL_PRICE = 6
+    SIZE = (1, 1)
+    IMAGE = 'tiles/trap.png'
+    SELECTED_IMAGE = 'tiles/trap.png'
+    NAME = 'Trap'
+
+    BLOCKS_VISION = False
+    BASE_CATCH = 50
+
+    def catch(self, target):
+        """Is the potentially unlucky target actually unlucky?"""
+        if hasattr(self, 'TRAP_SOUND'):
+            sound.play_sound(self.TRAP_SOUND)
+        roll = random.randint(1, 100)
+        base_catch = getattr(self, 'BASE_CATCH')
+        return roll > (100-base_catch)
 
 def is_building(obj):
     """Return true if obj is a build class."""

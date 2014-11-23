@@ -22,6 +22,7 @@ NEIGHBOUR_8 = [Position(-1, 0), Position(1, 0), Position(0, 1), Position(0, -1),
 
 
 TILE_FENCE = tiles.REVERSE_TILE_MAP['fence']
+TILE_TRAP = tiles.REVERSE_TILE_MAP['trap']
 
 class Animal(Sprite, serializer.Simplifiable):
     """Base class for animals"""
@@ -375,6 +376,7 @@ class Fox(Animal):
             'woodland' : 1, # Try to keep to the woods if possible
             'broken fence' : 1,
             'fence' : 25,
+            'trap': 2,
             'guardtower' : 2, # We can pass under towers
             'henhouse' : 30, # Don't go into a henhouse unless we're going to
                              # catch a chicken there
@@ -414,6 +416,12 @@ class Fox(Animal):
         if self.gameboard.in_bounds(pos):
             this_tile = self.gameboard.tv.get(pos.to_tile_tuple())
             return this_tile == TILE_FENCE
+        return False
+
+    def _is_trap(self, pos):
+        if self.gameboard.in_bounds(pos):
+            this_tile = self.gameboard.tv.get(pos.to_tile_tuple())
+            return this_tile == TILE_TRAP
         return False
 
     def _check_steps(self, step, border_func, end_func, max_steps):
@@ -759,7 +767,10 @@ class Fox(Animal):
         change_visible = False
         # See if we're entering/leaving a building
         building = self.gameboard.get_building(final_pos.to_tile_tuple())
-        if building and self.outside():
+        if building and self._is_trap(self.pos):
+            if building.catch(self):
+                self.damage()
+        elif building and self.outside():
             # Check if we need to enter
             if self.closest and not self.closest.outside() and \
                     self.closest.abode.building is building:
