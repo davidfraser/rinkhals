@@ -45,6 +45,7 @@ SPRITES = [
     # chicken bits
     ("chkn", BASE_X, BASE_Y),
     ("rooster", BASE_X, BASE_Y),
+    ("stealth_chicken", BASE_X, BASE_Y),
     ("wing", BASE_X, BASE_Y),
     ("eye", BASE_X, BASE_Y),
     ("equip_handgun", BASE_X, BASE_Y),

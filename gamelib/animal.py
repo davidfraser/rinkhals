@@ -339,6 +339,13 @@ class Rooster(Chicken):
                     rival.damage()
 
 
+class StealthChicken(Chicken):
+    """A chicken that acts like a ninja fox"""
+
+    STEALTH = 60
+    IMAGE_FILE = 'sprites/stealth_chicken.png'
+    # CONFIG_NAME = 'stealth chicken'
+
 class Egg(Animal):
     """An egg"""
 
@@ -356,7 +363,7 @@ class Egg(Animal):
     def hatch(self):
         self.timer -= 1
         if self.timer == 0 and self.fertilised:
-            return random.choice([Chicken, Rooster])(self.pos, self.gameboard)
+            return random.choice([Chicken, Rooster, StealthChicken])(self.pos, self.gameboard)
         return None
 
 
