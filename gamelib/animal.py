@@ -245,8 +245,14 @@ class Chicken(Animal):
                 if getattr(bird, 'ROOSTER', None):
                     fertilised = True
             if not self.eggs:
+                has_cloak = False
+                for equip in self.equipment:
+                    if equip.NAME == "Cloak":
+                        has_cloak = True
                 for x in range(random.randint(1, 4)):
-                    self.eggs.append(Egg(self.pos, self.gameboard, fertilised=fertilised))
+                    new_egg_class = StealthEgg if (has_cloak and random.randint(1, 2) > 1) else Egg
+                    new_egg = new_egg_class(self.pos, self.gameboard, fertilised=fertilised)
+                    self.eggs.append(new_egg)
                 self.equip(equipment.NestEgg())
             self.gameboard.eggs += self.get_num_eggs()
 
@@ -363,9 +369,19 @@ class Egg(Animal):
     def hatch(self):
         self.timer -= 1
         if self.timer == 0 and self.fertilised:
-            return random.choice([Chicken, Rooster, StealthChicken])(self.pos, self.gameboard)
+            return random.choice([Chicken, Rooster])(self.pos, self.gameboard)
         return None
 
+class StealthEgg(Egg):
+    """An egg which will hatch into a stealth chicken"""
+
+    IMAGE_FILE = 'sprites/equip_stealth_egg.png'
+
+    def hatch(self):
+        self.timer -= 1
+        if self.timer == 0 and self.fertilised:
+            return random.choice([StealthChicken, Rooster])(self.pos, self.gameboard)
+        return None
 
 class Fox(Animal):
     """A fox"""

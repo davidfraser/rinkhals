@@ -65,6 +65,7 @@ SPRITES = [
     ("nest", BASE_X, BASE_Y),
     ("equip_egg", BASE_X, BASE_Y),
     ("equip_easter_egg", BASE_X, BASE_Y),
+    ("equip_stealth_egg", BASE_X, BASE_Y),
     # fox bits
     ("fox", BASE_X, BASE_Y),
     ("greedy_fox", BASE_X, BASE_Y),
