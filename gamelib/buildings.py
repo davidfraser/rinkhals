@@ -399,6 +399,17 @@ class GuardTower(Abode):
     MODIFY_VISION_RANGE_PENALTY = lambda s, x: x-2
     BLOCKS_VISION = False
 
+class Barracks(Abode):
+    """A barracks for training chickens."""
+    TILE_NO = tiles.REVERSE_TILE_MAP['barracks']
+    BUY_PRICE = 75
+    SELL_PRICE = 50
+    SIZE = (3, 3)
+    IMAGE = 'sprites/barracks.png'
+    SELECTED_IMAGE = 'sprites/select_barracks.png'
+    NAME = 'Barracks'
+    FLOORS = [1, 2, 3]
+
 class Fence(Building):
     """A fence."""
 

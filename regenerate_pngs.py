@@ -80,6 +80,8 @@ SPRITES = [
     ("select_hendominium", BASE_X*2, BASE_Y*3),
     ("watchtower", BASE_X*2, BASE_Y*2),
     ("select_watchtower", BASE_X*2, BASE_Y*2),
+    ("barracks", BASE_X*3, BASE_Y*3),
+    ("select_barracks", BASE_X*3, BASE_Y*3),
     # special effects
     ("muzzle_flash", BASE_X, BASE_Y),
     ("chkn_death", BASE_X, BASE_Y),
