@@ -338,7 +338,7 @@ class Rooster(Chicken):
         self._manly_fight()
 
     def _manly_fight(self):
-        if self.abode:
+        if self.abode and self.abode.building.NAME != 'Barracks':
             for rival in [occ for occ in self.abode.building.occupants()
                           if getattr(occ, 'ROOSTER', False)]:
                 if random.randint(1, 100) <= self.AGGRESSION:
