@@ -219,6 +219,29 @@ class Axe(Weapon):
 
     ANIMAL_IMAGE_FILE = 'sprites/equip_axe.png'
 
+class Uniform(Equipment):
+    IS_UNIFORM = True
+    BUY_PRICE = 0
+    SELL_PRICE = 0
+
+    def place(self, animal):
+        for eq in animal.equipment:
+            if is_uniform(eq):
+                return False
+        return True
+
+class LanceCorporalUniform(Uniform):
+    NAME = "LanceCorporalUniform"
+    ANIMAL_IMAGE_FILE = 'sprites/uniform_lance_corporal.png'
+
+class CorporalUniform(Uniform):
+    NAME = "CorporalUniform"
+    ANIMAL_IMAGE_FILE = 'sprites/uniform_corporal.png'
+
+class SergeantUniform(Uniform):
+    NAME = "SergeantUniform"
+    ANIMAL_IMAGE_FILE = 'sprites/uniform_sergeant.png'
+
 class Disguise(Equipment):
     IS_DISGUISE = True
 
@@ -361,6 +384,9 @@ def is_surveillance_equipment(obj):
 def is_weapon(obj):
     return is_equipment(obj) and getattr(obj, 'IS_WEAPON', False)
 
+def is_uniform(obj):
+    return is_equipment(obj) and getattr(obj, 'IS_UNIFORM', False)
+
 def is_disguise(obj):
     return is_equipment(obj) and getattr(obj, 'IS_DISGUISE', False)
 
@@ -374,7 +400,7 @@ EQUIPMENT = []
 for name in dir():
     obj = eval(name)
     try:
-        if is_equipment(obj):
+        if is_equipment(obj) and obj.BUY_PRICE != 0:
             EQUIPMENT.append(obj)
     except TypeError:
         pass

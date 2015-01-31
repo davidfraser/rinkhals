@@ -193,6 +193,9 @@ class Animal(Sprite, serializer.Simplifiable):
 class Chicken(Animal):
     """A chicken"""
 
+    TRAINING = 0
+    MAX_TRAINING = 3
+
     EQUIPMENT_IMAGE_ATTRIBUTE = 'ANIMAL_IMAGE_FILE'
     DEATH_ANIMATION = animations.ChickenDeath
     DEATH_SOUND = 'kill-chicken.ogg'
@@ -210,6 +213,20 @@ class Chicken(Animal):
 
     def start_day(self):
         self.hatch()
+        self._train()
+
+    def _train(self):
+        """If in a Barracks, get trained"""
+        if self.abode and self.abode.building.NAME == 'Barracks':
+            if self.TRAINING < self.MAX_TRAINING:
+                self.TRAINING += 1
+                if self.TRAINING == 1:
+                    uniform = equipment.LanceCorporalUniform()
+                elif self.TRAINING == 2:
+                    uniform = equipment.CorporalUniform()
+                elif self.TRAINING == 3:
+                    uniform = equipment.SergeantUniform()
+                self.equip(uniform)
 
     def _game_death(self):
         self.gameboard.remove_chicken(self)
