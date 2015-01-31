@@ -226,7 +226,13 @@ class Chicken(Animal):
                     uniform = equipment.CorporalUniform()
                 elif self.TRAINING == 3:
                     uniform = equipment.SergeantUniform()
-                self.equip(uniform)
+                else:
+                    uniform = None
+                for item in self.equipment:
+                    if equipment.is_uniform(item):
+                        self.unequip(item)
+                if uniform is not None:
+                    self.equip(uniform)
 
     def _game_death(self):
         self.gameboard.remove_chicken(self)
