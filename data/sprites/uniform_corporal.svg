@@ -45,7 +45,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8284271"
-     inkscape:cx="231.3016"
+     inkscape:cx="168.54587"
      inkscape:cy="258.04017"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
@@ -63,7 +63,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -286,14 +286,14 @@
      inkscape:label="Badge"
      style="display:inline">
     <path
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.55064243px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 128.03674,178.58837 1.34908,26.30694 72.84998,39.79772 74.19906,-45.86855 -1.34906,-22.25971 -72.85,42.49585 z"
+       style="fill:#ff0400;fill-opacity:1;stroke:#ff0400;stroke-width:3.92476153000000005;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 104.45422,245.84853 1.76495,34.41615 95.30626,52.06551 97.07121,-60.0077 -1.76492,-29.12134 -95.30629,55.59535 z"
        id="path3637"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.55064243px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 128.03674,266.41382 1.34908,26.30694 72.84998,39.7977 74.19906,-45.86855 -1.34906,-22.25971 -72.85,42.49585 z"
-       id="path3637-1-9"
+       style="fill:#ff0400;fill-opacity:1;stroke:#ff0400;stroke-width:3.56076145000000022;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 120.18213,167.89559 1.44684,34.55671 78.1287,52.27814 79.57554,-60.25277 -1.44682,-29.24027 -78.12872,55.8224 z"
+       id="path3637-5"
        inkscape:connector-curvature="0" />
   </g>
 </svg>

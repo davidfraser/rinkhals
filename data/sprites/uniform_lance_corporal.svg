@@ -45,7 +45,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8284271"
-     inkscape:cx="244.73663"
+     inkscape:cx="232.36226"
      inkscape:cy="258.04017"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
@@ -63,7 +63,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -286,8 +286,8 @@
      inkscape:label="Badge"
      style="display:inline">
     <path
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.55064243px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 128.03674,222.50108 1.34908,26.30694 72.84998,39.79772 74.19906,-45.86855 -1.34906,-22.25971 -72.85,42.49585 z"
+       style="fill:#fff600;fill-opacity:1;stroke:#fff600;stroke-width:3.64453077;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 110.80265,218.09225 1.63893,31.95882 88.50133,48.34799 90.14026,-55.72311 -1.63891,-27.04205 -88.50135,51.6258 z"
        id="path3637"
        inkscape:connector-curvature="0" />
   </g>

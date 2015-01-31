@@ -290,7 +290,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8284271"
-     inkscape:cx="231.3016"
+     inkscape:cx="169.60653"
      inkscape:cy="258.04017"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
@@ -531,19 +531,19 @@
      inkscape:label="Badge"
      style="display:inline">
     <path
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.55064243px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 128.03674,162.58837 1.34908,26.30694 72.84998,39.79772 74.19906,-45.86855 -1.34906,-22.25971 -72.85,42.49585 z"
+       style="fill:#0004ff;fill-opacity:1;stroke:#0004ff;stroke-width:3.92476153000000005;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 105.51488,255.74803 1.76495,34.41615 95.30626,52.06551 97.07121,-60.0077 -1.76492,-29.12134 -95.30629,55.59535 z"
        id="path3637"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.55064243px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 128.03674,222.30126 1.34908,26.30695 72.84998,39.7977 74.19906,-45.86854 -1.34906,-22.25972 -72.85,42.49585 z"
-       id="path3637-1"
+       style="fill:#0004ff;fill-opacity:1;stroke:#0004ff;stroke-width:3.33627700999999988;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 120.42344,197.68643 1.50031,29.25575 81.0159,44.25873 82.51621,-51.01006 -1.50029,-24.75484 -81.01592,47.25931 z"
+       id="path3637-6"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.55064243px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 128.03674,282.41382 1.34908,26.30694 72.84998,39.7977 74.19906,-45.86855 -1.34906,-22.25971 -72.85,42.49585 z"
-       id="path3637-1-9"
+       style="fill:#0004ff;fill-opacity:1;stroke:#0004ff;stroke-width:2.87389635999999982;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 129.38464,141.10644 1.29238,25.20114 69.78776,38.12483 71.08014,-43.94048 -1.29236,-21.32402 -69.78778,40.70955 z"
+       id="path3637-6-0"
        inkscape:connector-curvature="0" />
   </g>
 </svg>
