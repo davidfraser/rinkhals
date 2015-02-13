@@ -993,6 +993,7 @@ def visible(watcher, watchee, gameboard):
         # We can't see anything off the edge of the board.
         return False
     vision_bonus = _get_vision_param('VISION_BONUS', watcher)
+    training_bonus = getattr(watcher, 'TRAINING', 0)*8
     range_penalty = _get_vision_param('VISION_RANGE_PENALTY', watcher)
     positions = watcher.pos.intermediate_positions(watchee.pos)
     for pos in positions:
@@ -1003,7 +1004,7 @@ def visible(watcher, watchee, gameboard):
     distance = watcher.pos.dist(watchee.pos) - 1
     # Intervening forests get in the way a bit.
     woods = len([pos for pos in positions if gameboard.is_woodland_tile(pos)])
-    roll = random.randint(1, 100)
+    roll = random.randint(training_bonus + 1, 100)
     return roll > watchee.get_stealth() - vision_bonus + range_penalty*distance + constants.WOODLAND_CONCEALMENT*woods
 
 # These don't have to add up to 100, but it's easier to think
