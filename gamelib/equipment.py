@@ -94,7 +94,8 @@ class Weapon(Equipment):
             sound.play_sound(self.HIT_SOUND)
         if hasattr(self, 'ANIMATION'):
             self.ANIMATION(gameboard.tv, wielder)
-        roll = random.randint(1, 100)
+        training_bonus = getattr(wielder, 'TRAINING', 0)*10
+        roll = random.randint(training_bonus + 1, 100)
         base_hit = self._get_parameter('BASE_HIT', wielder)
         range_penalty = self._get_parameter('RANGE_PENALTY', wielder)
         return roll > (100-base_hit) + range_penalty*wielder.pos.dist(target.pos)
@@ -113,7 +114,8 @@ class Weapon(Equipment):
             self.ANIMATION(gameboard.tv, wielder)
         base_hit = self._get_parameter('BASE_HIT', wielder)
         range_penalty = self._get_parameter('RANGE_PENALTY', wielder)
-        roll = random.randint(1, 100)
+        training_bonus = getattr(wielder, 'TRAINING', 0)*10
+        roll = random.randint(training_bonus + 1, 100)
         damaged_foxes = set()
         for fox in gameboard.foxes:
             if target_pos.dist(fox.pos) <= self.DAMAGE_RANGE:
