@@ -17,7 +17,7 @@ AUTHORS = [
 
 # GUI constants
 
-SCREEN = (800, 600)
+SCREEN = (1400, 950)
 FG_COLOR = (255, 255, 255)
 PREDATOR_COUNT_COLOR = (255, 100, 0) # Approximately fox coloured
 SELECTED_COUNT_COLOR = (0, 128, 235) # Selection highlight colour
@@ -59,7 +59,7 @@ TOOL_LOGGING = 7
 
 NIGHT_LENGTH = 150
 
-TILE_DIMENSIONS = (20, 20)
+TILE_DIMENSIONS = (31, 31)
 TOOLBAR_WIDTH = 140
 
 
