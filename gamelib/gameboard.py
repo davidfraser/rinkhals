@@ -1,7 +1,7 @@
 import random
 
 import pygame
-from pygame.locals import MOUSEBUTTONDOWN, MOUSEMOTION, KEYDOWN, K_UP, K_DOWN, \
+from pygame.locals import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, K_UP, K_DOWN, \
         K_LEFT, K_RIGHT, KMOD_SHIFT, K_0, K_1, K_2, K_3, K_4, K_5, K_6, K_7, \
         K_8, K_9, K_ESCAPE, K_n, K_d, KMOD_CTRL, KMOD_ALT, KEYUP
 from pgu import gui
@@ -37,7 +37,7 @@ class VidWidget(gui.Widget):
         self.vid.view.move_ip((x, y))
 
     def event(self, e):
-        if e.type == MOUSEBUTTONDOWN:
+        if e.type in (MOUSEBUTTONDOWN, MOUSEBUTTONUP):
             self.gameboard.use_tool(e)
         elif e.type == MOUSEMOTION and self.gameboard.sprite_cursor:
             self.gameboard.update_sprite_cursor(e)
@@ -361,6 +361,9 @@ class GameBoard(serializer.Simplifiable):
     def use_tool(self, e):
         if not self.day:
             return
+        if e.type == MOUSEBUTTONUP:
+            if e.button != 1 or self.selected_tool != constants.TOOL_SELECT_CHICKENS:
+                return
         if e.button == 3: # Right button
             if self.selected_tool == constants.TOOL_SELECT_CHICKENS:
                 self.place_animal(self.tv.screen_to_tile(e.pos))
@@ -382,12 +385,18 @@ class GameBoard(serializer.Simplifiable):
             self.toolbar.unhighlight_move_button()
         elif self.selected_tool == constants.TOOL_SELECT_CHICKENS:
             # ctrl moves current selection without having to select move tool
-            if (mods & KMOD_CTRL):
+            if (mods & KMOD_CTRL) or (e.type == MOUSEBUTTONUP and not mods):
                 self.place_animal(self.tv.screen_to_tile(e.pos))
-            else:
+            elif e.type == MOUSEBUTTONDOWN:
+                tile_pos = self.tv.screen_to_tile(e.pos)
+                chicken = self.get_chicken_at_pos(tile_pos)
+                if chicken and chicken in self.selected_chickens:
+                    if mods & KMOD_SHIFT:
+                        self.unselect_animal(chicken)
+                    return
                 if not (mods & KMOD_SHIFT):
                     self.unselect_all()
-                self.select_chicken(self.tv.screen_to_tile(e.pos))
+                self.select_chicken(tile_pos)
         elif self.selected_tool == constants.TOOL_SELL_BUILDING:
             self.sell_building(self.tv.screen_to_tile(e.pos))
         elif self.selected_tool == constants.TOOL_REPAIR_BUILDING:
@@ -754,6 +763,7 @@ class GameBoard(serializer.Simplifiable):
                 if self.tv.get(tile_pos) != self.GRASSLAND:
                     continue
                 if self.get_outside_chicken(tile_pos) is None:
+                    # FIXME: this empties the roost even if the dialog appears to warn about eggs, and the move is declined
                     for chicken in self.selected_chickens:
                         update_button(chicken, empty=True)
                     # this will place all the chickens
