@@ -251,7 +251,7 @@ class GameOver(State):
 
 def events_equal(e1, e2):
     """Compare two user events."""
-    return (e1.type is e2.type and e1.name == e2.name)
+    return (e1.type == e2.type and e1.name == e2.name)
 
 # Due to the way pgu's loop timing works, these will only get proceesed
 # at intervals of 10ms, so there's no point in them not being multiples of 10
