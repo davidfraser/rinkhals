@@ -1,7 +1,7 @@
 """Central image cache to avoid loading images multiple times."""
 
 import pygame
-import data
+from . import data
 
 class ImageCache(object):
     """Create an image cache with a list of modifiers."""

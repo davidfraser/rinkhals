@@ -18,9 +18,9 @@ import os
 import zipfile
 
 if len(sys.argv) != 2:
-    print '''Usage: python %s <release filename-version>
+    print('''Usage: python %s <release filename-version>
 
-eg. python %s my_cool_game-1.0'''%(sys.argv[0], sys.argv[0])
+eg. python %s my_cool_game-1.0'''%(sys.argv[0], sys.argv[0]))
     sys.exit()
 
 base = sys.argv[1]
@@ -59,5 +59,5 @@ add_files(os.walk('data'))
 import hashlib
 d = hashlib.md5()
 d.update(file(zipname, 'rb').read())
-print 'Created', zipname
-print 'MD5 hash:', d.hexdigest()
+print('Created', zipname)
+print('MD5 hash:', d.hexdigest())

@@ -1,13 +1,13 @@
 import pygame
 from pgu import gui
 
-import icons
-import constants
-import buildings
-import equipment
-import cursors
-import savegame
-import misc
+from . import icons
+from . import constants
+from . import buildings
+from . import equipment
+from . import cursors
+from . import savegame
+from . import misc
 
 class RinkhalsTool(gui.Tool):
     def __init__(self, group, label, value, func, **params):

@@ -1,11 +1,11 @@
 # level.py
 
-import constants
-import serializer
-import data
+from . import constants
+from . import serializer
+from . import data
 import os
-from animal import DEFAULT_FOX_WEIGHTINGS
-from ConfigParser import RawConfigParser
+from .animal import DEFAULT_FOX_WEIGHTINGS
+from configparser import RawConfigParser
 
 class Level(serializer.Simplifiable):
     """Container for level details"""

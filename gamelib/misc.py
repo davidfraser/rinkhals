@@ -7,7 +7,7 @@ from pgu import gui
 from pgu import html
 from pgu.algo import getline
 
-import serializer
+from . import serializer
 
 class Position(serializer.Simplifiable):
     """2D/3D position / vector. Assumed immutable."""

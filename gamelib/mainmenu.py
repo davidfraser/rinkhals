@@ -3,12 +3,12 @@
 from pgu import gui
 from pygame.locals import KEYDOWN, K_ESCAPE, K_s, K_i
 import pygame
-import constants
-import imagecache
-import gameboard
-import gameover
-import savegame
-import loadlevel
+from . import constants
+from . import imagecache
+from . import gameboard
+from . import gameover
+from . import savegame
+from . import loadlevel
 
 def make_main_menu(level):
     """Create a main menu"""

@@ -2,7 +2,7 @@
 
 from pgu.gui import Image
 
-import imagecache
+from . import imagecache
 
 KILLED_FOX = Image(imagecache.load_image('icons/killed_fox.png'))
 CHKN_ICON = Image(imagecache.load_image('icons/chkn.png'))
@@ -15,6 +15,6 @@ DAY_ICON = Image(imagecache.load_image('icons/sun.png'))
 def animal_icon(animal):
     return Image(animal.image_left)
 
-import eegg
+from . import eegg
 if eegg.is_eggday():
     EGG_ICON = Image(imagecache.load_image('icons/easter_egg.png'))

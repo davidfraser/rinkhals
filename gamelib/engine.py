@@ -3,13 +3,13 @@ from pgu.engine import Game, State
 import pygame
 from pygame.locals import KEYDOWN, K_ESCAPE
 
-import gameboard
-import gameover
-import sound
-import constants
-import mainmenu
-import helpscreen
-import level
+from . import gameboard
+from . import gameover
+from . import sound
+from . import constants
+from . import mainmenu
+from . import helpscreen
+from . import level
 
 class Engine(Game):
     def __init__(self, main_app, level_name):

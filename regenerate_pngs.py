@@ -7,7 +7,7 @@ from gamelib import constants
 
 def svg_to_png(svg_name, png_name, w, h):
     """Convert an SVG file to a PNG file."""
-    print "Generating %s at %dx%d..." % (png_name, w, h)
+    print("Generating %s at %dx%d..." % (png_name, w, h))
     r = rsvg.Handle(svg_name)
 
     scale = max(float(r.props.width) / w, float(r.props.height) / h)

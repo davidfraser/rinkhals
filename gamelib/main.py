@@ -12,11 +12,11 @@ import pygame
 from pgu import gui
 from pygame.locals import SWSURFACE, SRCALPHA
 
-import sound
-import constants
-from config import config
-import data
-from misc import WarnDialog
+from . import sound
+from . import constants
+from .config import config
+from . import data
+from .misc import WarnDialog
 
 def create_main_app(screen):
     """Create an app with a background widget."""
@@ -44,7 +44,7 @@ def sanity_check():
     """Run some sanity checks, and complain if they fail"""
     try:
         pygame.Surface((100, 100), flags=SRCALPHA)
-    except Exception, e:
+    except Exception as e:
         complaint_dialog("Unable to create a suitable screen, please check your display settings")
     if sound.SOUND_INITIALIZED:
         try:
@@ -64,7 +64,7 @@ def main():
         data.filepath('icons/foxassault24x24.png')))
     main_app = create_main_app(screen)
 
-    from engine import Engine, MainMenuState
+    from .engine import Engine, MainMenuState
 
     engine = Engine(main_app, config.level_name)
     try:

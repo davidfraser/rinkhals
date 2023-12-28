@@ -9,11 +9,11 @@ from pgu.high import Highs
 import pygame
 from pygame.locals import KEYDOWN, K_ESCAPE
 
-import constants
-import imagecache
-import config
+from . import constants
+from . import imagecache
+from . import config
 
-WON, LOST, LEFT = range(3)
+WON, LOST, LEFT = list(range(3))
 
 WON_MESSAGES = [
     "You won.",

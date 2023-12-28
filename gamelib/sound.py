@@ -3,9 +3,9 @@ import sys
 
 import pygame
 
-import data
-from config import config
-import constants
+from . import data
+from .config import config
+from . import constants
 
 SOUND_INITIALIZED = False
 
@@ -17,8 +17,8 @@ def init_sound():
     try:
         pygame.mixer.init(constants.FREQ, constants.BITSIZE, constants.CHANNELS, constants.BUFFER)
         SOUND_INITIALIZED = True
-    except pygame.error, exc:
-        print >>sys.stderr, "Could not initialize sound system: %s" % exc
+    except pygame.error as exc:
+        print("Could not initialize sound system: %s" % exc, file=sys.stderr)
 
 SOUND_CACHE = {}
 

@@ -2,7 +2,7 @@
 
 from pgu.vid import Sprite
 
-import imagecache
+from . import imagecache
 
 class Animation(Sprite):
     """Animation loop.
@@ -19,13 +19,13 @@ class Animation(Sprite):
             sequence = self.SEQUENCE
         self.iter = iter(sequence)
         self.layer = layer
-        Sprite.__init__(self, self.iter.next(), tv.tile_to_view(tile_pos))
+        Sprite.__init__(self, next(self.iter), tv.tile_to_view(tile_pos))
         tv.sprites.append(self, layer=self.layer)
 
     def loop(self, tv, s):
         """Step to the next frame, removing sprite when done."""
         try:
-            self.setimage(self.iter.next())
+            self.setimage(next(self.iter))
         except StopIteration:
             tv.sprites.remove(self, layer=self.layer)
 

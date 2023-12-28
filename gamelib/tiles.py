@@ -4,9 +4,9 @@ import random
 import os
 
 from pgu import tilevid, vid
-import data
-import imagecache
-import serializer
+from . import data
+from . import imagecache
+from . import serializer
 
 class TileMap(object):
     """Helper class for describing all the game tiles."""
@@ -37,7 +37,7 @@ class TileMap(object):
             alternate_tiles = self.ALTERNATE_TILES.copy()
         self._alternate_tiles = alternate_tiles
         self._tiles = tiles
-        self._reverse_map = dict((v[0], k) for k, v in self._tiles.iteritems())
+        self._reverse_map = dict((v[0], k) for k, v in list(self._tiles.items()))
         self._tiles.update(alternate_tiles)
 
     def __getitem__(self, n):
@@ -46,12 +46,12 @@ class TileMap(object):
 
     def tiles_for_image(self, image_name):
         """Return tile numbers associated with the given image name."""
-        for n, (name, image) in self._tiles.iteritems():
+        for n, (name, image) in list(self._tiles.items()):
             if image_name == image:
                 yield n
 
     def random_alternate(self, n):
-        alts = [a for a, (name, image) in self._alternate_tiles.iteritems() if name == self[n]]
+        alts = [a for a, (name, image) in list(self._alternate_tiles.items()) if name == self[n]]
         if alts:
             return random.choice(alts)
         return n

@@ -1,10 +1,10 @@
 """Stuff for animals to use."""
 
 import random
-import sound
-import imagecache
-import animations
-import serializer
+from . import sound
+from . import imagecache
+from . import animations
+from . import serializer
 
 
 class Equipment(serializer.Simplifiable):
@@ -427,6 +427,6 @@ EQUIP_MAP = { # Map chicken level codes to equipment
         16 : [Kevlar, Helmet, Axe],
         }
 
-import eegg
+from . import eegg
 if eegg.is_eggday():
     NestEgg.ANIMAL_IMAGE_FILE = 'sprites/equip_easter_egg.png'

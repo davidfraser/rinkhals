@@ -3,10 +3,10 @@
 from pgu import gui
 import os
 import pygame
-import level
-import data
-import gameboard
-import constants
+from . import level
+from . import data
+from . import gameboard
+from . import constants
 
 
 class LoadLevelDialog(gui.Dialog):
@@ -28,7 +28,7 @@ class LoadLevelDialog(gui.Dialog):
         }
 
         self.level_list = gui.List(**self.main_style)
-        level_names = self.levels.keys()
+        level_names = list(self.levels.keys())
         level_names.sort()
         for name in level_names:
             self.level_list.add(name, value=name)

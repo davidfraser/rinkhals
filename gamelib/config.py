@@ -1,6 +1,6 @@
 # level.py
 
-from ConfigParser import RawConfigParser
+from configparser import RawConfigParser
 from optparse import OptionParser
 import sys
 import os
@@ -15,7 +15,7 @@ class Config(object):
 
     def configure(self, params=None):
         self._config = RawConfigParser(dict(
-                [(k, v['default']) for k, v in self.valid_options.items() if 'default' in v]
+                [(k, v['default']) for k, v in list(self.valid_options.items()) if 'default' in v]
             ))
         self._config.add_section('Options')
         self._set_up_params(params)

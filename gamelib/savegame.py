@@ -1,8 +1,8 @@
 """Utilities and widgets for saving and restoring games."""
 
-import xmlrpclib
+import xmlrpc.client
 import os
-import StringIO
+import io
 import base64
 import zlib
 import datetime
@@ -11,18 +11,18 @@ from pgu import gui
 import pygame
 from pygame.locals import KEYDOWN, K_ESCAPE
 
-import config
-import version
-import gameboard
-import serializer
-import misc
+from . import config
+from . import version
+from . import gameboard
+from . import serializer
+from . import misc
 
 TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 def read_savegame(fullpath):
     """Open a save game file."""
     xml = zlib.decompress(open(fullpath, "rb").read())
-    params, methodname = xmlrpclib.loads(xml)
+    params, methodname = xmlrpc.client.loads(xml)
     if methodname != "foxassault":
         raise SaveGameError("File does not appear to be a "
             "Fox Assault save game.")
@@ -34,17 +34,17 @@ def read_savegame(fullpath):
 
     try:
         snapshot = decode_snapshot(params[2])
-    except Exception, e:
+    except Exception as e:
         snapshot = None
 
     try:
         level_name = params[3]
-    except Exception, e:
+    except Exception as e:
         level_name = None
 
     try:
         timestamp = datetime.datetime.strptime(params[4], TIMESTAMP_FORMAT)
-    except Exception, e:
+    except Exception as e:
         timestamp = None
 
     return data, snapshot, level_name, timestamp
@@ -54,12 +54,12 @@ def write_savegame(fullpath, data, snapshot, level_name, timestamp):
     snapshot_data = encode_snapshot(snapshot)
     timestamp_str = timestamp.strftime(TIMESTAMP_FORMAT)
     params = (version.SAVE_GAME_VERSION, data, snapshot_data, level_name, timestamp_str)
-    xml = xmlrpclib.dumps(params, "foxassault")
+    xml = xmlrpc.client.dumps(params, "foxassault")
     open(fullpath, "wb").write(zlib.compress(xml))
 
 def encode_snapshot(snapshot):
     """Encode a snapshot."""
-    snapshot_file = StringIO.StringIO()
+    snapshot_file = io.StringIO()
     pygame.image.save(snapshot, snapshot_file)
     data = snapshot_file.getvalue()
     data = base64.standard_b64encode(data)
@@ -68,7 +68,7 @@ def encode_snapshot(snapshot):
 def decode_snapshot(data):
     """Decode a snapshot."""
     data = base64.standard_b64decode(data)
-    snapshot_file = StringIO.StringIO(data)
+    snapshot_file = io.StringIO(data)
     snapshot = pygame.image.load(snapshot_file, "snapshot.tga")
     return snapshot
 
@@ -102,7 +102,7 @@ class BaseSaveRestoreDialog(gui.Dialog):
         }
 
         self.save_list = gui.List(width=350, height=250)
-        games = self.save_games.keys()
+        games = list(self.save_games.keys())
         games.sort()
         for name in games:
             self.save_list.add(name, value=name)
@@ -239,7 +239,7 @@ class SaveDialog(BaseSaveRestoreDialog):
 
         try:
             write_savegame(filename, data, snapshot, level_name, timestamp)
-        except Exception, e:
+        except Exception as e:
             self._saved_func(False)
             misc.WarnDialog("Save Failed", str(e)).open()
             return
@@ -260,7 +260,7 @@ class RestoreDialog(BaseSaveRestoreDialog):
 
         try:
             data, screenshot, level_name, timestamp = read_savegame(filename)
-        except Exception, e:
+        except Exception as e:
             misc.WarnDialog("Restore Failed", str(e)).open()
             return
 
@@ -270,7 +270,7 @@ class RestoreDialog(BaseSaveRestoreDialog):
 
         try:
             new_gameboard = serializer.unsimplify(data)
-        except Exception, e:
+        except Exception as e:
             misc.WarnDialog("Restore Failed", str(e)).open()
             return
 

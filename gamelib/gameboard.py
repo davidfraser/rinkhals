@@ -6,19 +6,19 @@ from pygame.locals import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, 
         K_8, K_9, K_ESCAPE, K_n, K_d, KMOD_CTRL, KMOD_ALT, KEYUP
 from pgu import gui
 
-import tiles
-import icons
-import constants
-import buildings
-import animal
-import equipment
-import sound
-import cursors
-import sprite_cursor
-import misc
-import toolbar
-import serializer
-import savegame
+from . import tiles
+from . import icons
+from . import constants
+from . import buildings
+from . import animal
+from . import equipment
+from . import sound
+from . import cursors
+from . import sprite_cursor
+from . import misc
+from . import toolbar
+from . import serializer
+from . import savegame
 
 class VidWidget(gui.Widget):
     def __init__(self, gameboard, vid, **params):
@@ -1153,8 +1153,8 @@ class GameBoard(serializer.Simplifiable):
         tile_to_building = dict((b.TILE_NO, b) for b in buildings.BUILDINGS)
 
         w, h = self.tv.size
-        for x in xrange(w):
-            for y in xrange(h):
+        for x in range(w):
+            for y in range(h):
                 tile_pos = (x, y)
                 tile_no = self.tv.get(tile_pos)
                 if tile_no not in tile_to_building:

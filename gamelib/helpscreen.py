@@ -2,8 +2,8 @@
 
 from pgu import gui
 import pygame
-import constants
-import imagecache
+from . import constants
+from . import imagecache
 
 HELP = [
 """Welcome to %s!

@@ -4,14 +4,14 @@ import random
 
 from pgu.vid import Sprite
 
-import imagecache
-import tiles
-from misc import Position
-import sound
-import equipment
-import animations
-import serializer
-import constants
+from . import imagecache
+from . import tiles
+from .misc import Position
+from . import sound
+from . import equipment
+from . import animations
+from . import serializer
+from . import constants
 
 
 NEIGHBOUR_4 = [Position(-1, 0), Position(1, 0), Position(0, 1), Position(0, -1)]

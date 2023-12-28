@@ -30,7 +30,7 @@ def simplify(item, refs=None):
         value['refid'] = refid
     elif type(item) is dict:
         refs.add(refid)
-        value = { 'dict': [(simplify(k, refs), simplify(v, refs)) for k, v in item.iteritems()] }
+        value = { 'dict': [(simplify(k, refs), simplify(v, refs)) for k, v in list(item.items())] }
         value['refid'] = refid
     elif type(item) is tuple:
         refs.add(refid)
@@ -51,28 +51,28 @@ def unsimplify(value, refs=None):
     if 'refid' in value:
         refid = value['refid']
 
-    if value.has_key('class'):
+    if 'class' in value:
         cls = REGISTERED_CLASSES[value['class']]
         item = cls.unsimplify(value, refs)
-    elif value.has_key('list'):
+    elif 'list' in value:
         item = []
         refs[refid] = item
         item.extend(unsimplify(x, refs) for x in value['list'])
-    elif value.has_key('set'):
+    elif 'set' in value:
         item = set()
         refs[refid] = item
         item.update(unsimplify(x, refs) for x in value['set'])
-    elif value.has_key('dict'):
+    elif 'dict' in value:
         item = {}
         refs[refid] = item
         item.update(dict((unsimplify(k, refs), unsimplify(v, refs)) for k, v in value['dict']))
-    elif value.has_key('tuple'):
+    elif 'tuple' in value:
         item = tuple([unsimplify(x, refs) for x in value['tuple']])
-    elif value.has_key('none'):
+    elif 'none' in value:
         item = None
-    elif value.has_key('raw'):
+    elif 'raw' in value:
         item = value['raw']
-    elif value.has_key('byref'):
+    elif 'byref' in value:
         refid = value['byref']
         if refid in refs:
             item = refs[refid]
@@ -94,7 +94,7 @@ class SimplifiableMetaclass(type):
         super(SimplifiableMetaclass, cls).__init__(name, bases, dct)
         REGISTERED_CLASSES[cls.__name__] = cls
 
-class Simplifiable(object):
+class Simplifiable(object, metaclass=SimplifiableMetaclass):
     """
     Object which can be simplified() and unsimplified() (i.e.
     converted to a data type which, for example, Python's XMLRPC
@@ -103,7 +103,6 @@ class Simplifiable(object):
     of attributes which should be stored) unless a parent class
     provides the right thing.
     """
-    __metaclass__ = SimplifiableMetaclass
 
     # List of attributes which need to be stored and restored
     SIMPLIFY = []

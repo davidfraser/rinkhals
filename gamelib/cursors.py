@@ -2,7 +2,7 @@
 
 import pygame
 
-import data
+from . import data
 
 
 cursors = {
