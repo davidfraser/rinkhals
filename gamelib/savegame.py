@@ -21,7 +21,7 @@ TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 def read_savegame(fullpath):
     """Open a save game file."""
-    xml = zlib.decompress(open(fullpath, "rb").read())
+    xml = zlib.decompress(open(fullpath, "rb").read()).decode('UTF-8')
     params, methodname = xmlrpc.client.loads(xml)
     if methodname != "foxassault":
         raise SaveGameError("File does not appear to be a "
@@ -55,11 +55,11 @@ def write_savegame(fullpath, data, snapshot, level_name, timestamp):
     timestamp_str = timestamp.strftime(TIMESTAMP_FORMAT)
     params = (version.SAVE_GAME_VERSION, data, snapshot_data, level_name, timestamp_str)
     xml = xmlrpc.client.dumps(params, "foxassault")
-    open(fullpath, "wb").write(zlib.compress(xml))
+    open(fullpath, "wb").write(zlib.compress(xml.encode('UTF-8')))
 
 def encode_snapshot(snapshot):
     """Encode a snapshot."""
-    snapshot_file = io.StringIO()
+    snapshot_file = io.BytesIO()
     pygame.image.save(snapshot, snapshot_file)
     data = snapshot_file.getvalue()
     data = base64.standard_b64encode(data)
@@ -67,8 +67,8 @@ def encode_snapshot(snapshot):
 
 def decode_snapshot(data):
     """Decode a snapshot."""
-    data = base64.standard_b64decode(data)
-    snapshot_file = io.StringIO(data)
+    data = base64.standard_b64decode(data.data)
+    snapshot_file = io.BytesIO(data)
     snapshot = pygame.image.load(snapshot_file, "snapshot.tga")
     return snapshot
 
