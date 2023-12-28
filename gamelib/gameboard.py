@@ -1120,7 +1120,7 @@ class GameBoard(serializer.Simplifiable):
         # Foxes spawn just outside the map
         x, y = 0, 0
         width, height = self.tv.size
-        min_foxes = max(self.level.min_foxes, (self.days+3)/2) # always more than one fox
+        min_foxes = max(self.level.min_foxes, (self.days+3)//2) # always more than one fox
         new_foxes = min(random.randint(min_foxes, min_foxes*2), self.max_foxes)
         while len(self.foxes) < new_foxes:
             side = random.randint(0, 3)

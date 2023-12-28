@@ -42,12 +42,12 @@ class Progress:
     def __init__(self, info, data):
         self.info = info
         self.tosend = len(data)
-        self.total = self.tosend/1024
+        self.total = self.tosend//1024
         self.data = io.StringIO(data)
         self.start = self.now = time.time()
         self.sent = 0
         self.num = 0
-        self.stepsize = self.total / 100 or 1
+        self.stepsize = self.total // 100 or 1
         self.steptimes = []
         self.display()
 
@@ -82,8 +82,8 @@ class Progress:
 
         # tell it like it is (or might be)
         if now - self.start > 3:
-            M = eta / 60
-            H = M / 60
+            M = eta // 60
+            H = M // 60
             M = M % 60
             S = eta % 60
             if self.total:

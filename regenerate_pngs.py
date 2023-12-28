@@ -20,7 +20,7 @@ def svg_to_png(svg_name, png_name, w, h):
 
     cs = cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
     ctx = cairo.Context(cs)
-    ctx.translate(x_extra/2, y_extra/2)
+    ctx.translate(x_extra//2, y_extra//2)
     ctx.scale(scale, scale)
     r.render_cairo(ctx)
     cs.write_to_png(png_name)

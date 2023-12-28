@@ -42,7 +42,7 @@ class OpaqueLabel(gui.Label):
         if self.style.align > 0: # Right align
             s = s.subsurface(r.move((r.w-w, 0)).clip(r))
         elif self.style.align == 0: # Centre align
-            s = s.subsurface(r.move(((r.w-w)/2, 0)).clip(r))
+            s = s.subsurface(r.move(((r.w-w)//2, 0)).clip(r))
         else: # Left align
             pass
         gui.Label.paint(self, s)
@@ -54,7 +54,7 @@ class OpaqueLabel(gui.Label):
 
 def mklabel(text="", **params):
     params.setdefault('color', constants.FG_COLOR)
-    params.setdefault('width', constants.TOOLBAR_WIDTH/2)
+    params.setdefault('width', constants.TOOLBAR_WIDTH//2)
     return OpaqueLabel(text, **params)
 
 def mkcountupdate(counter):
@@ -84,8 +84,8 @@ class BaseToolBar(gui.Table):
 
     def add_labels(self):
         self.tr()
-        self.td(gui.Spacer(self.rect.w/2, 0))
-        self.td(gui.Spacer(self.rect.w/2, 0))
+        self.td(gui.Spacer(self.rect.w//2, 0))
+        self.td(gui.Spacer(self.rect.w//2, 0))
         self._counter_col = 0
         self.add_counter(icons.GROATS_ICON, self.cash_counter)
         self.add_counter(icons.WOOD_ICON, self.wood_counter)
@@ -252,9 +252,9 @@ class BaseToolBar(gui.Table):
             self.tr()
         tbl = gui.Table()
         tbl.tr()
-        tbl.td(icon, width=self.rect.w/2)
+        tbl.td(icon, width=self.rect.w//2)
         tbl.tr()
-        tbl.td(label, width=self.rect.w/2)
+        tbl.td(label, width=self.rect.w//2)
         self.td(tbl)
         self._counter_col = (self._counter_col + 1) % 2
 

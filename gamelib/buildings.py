@@ -392,7 +392,7 @@ class GuardTower(Abode):
     NAME = 'Watchtower'
     FLOORS = [2]
 
-    MODIFY_GUN_RANGE = lambda s, x: (3*x)/2
+    MODIFY_GUN_RANGE = lambda s, x: (3*x)//2
     MODIFY_GUN_BASE_HIT = lambda s, x: x-5
     MODIFY_GUN_RANGE_PENALTY = lambda s, x: x-1
     MODIFY_VISION_BONUS = lambda s, x: x+10
