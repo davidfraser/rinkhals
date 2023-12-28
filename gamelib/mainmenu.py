@@ -32,7 +32,7 @@ class MenuContainer(gui.Container):
     def event(self, e):
         if gui.Container.event(self, e):
             return True
-        if e.type is KEYDOWN:
+        if e.type == KEYDOWN:
             if e.key == K_ESCAPE:
                 pygame.event.post(constants.DO_QUIT)
                 return True

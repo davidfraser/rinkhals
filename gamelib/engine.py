@@ -78,10 +78,10 @@ class MainMenuState(State):
             return DayState(self.game)
         elif events_equal(e, constants.GO_HELP_SCREEN):
             return HelpScreenState(self.game)
-        elif e.type is constants.DO_LOAD_LEVEL:
+        elif e.type == constants.DO_LOAD_LEVEL:
             self.game.load_new_level(e.level)
             return
-        elif e.type is constants.DO_LOAD_SAVEGAME:
+        elif e.type == constants.DO_LOAD_SAVEGAME:
             self.game.switch_gameboard(e.gameboard)
             e.gameboard.skip_next_start_day()
             return DayState(self.game)
@@ -103,11 +103,11 @@ class HelpScreenState(State):
         self.game.set_help_screen()
 
     def event(self, e):
-        if e.type is KEYDOWN and e.key == K_ESCAPE:
+        if e.type == KEYDOWN and e.key == K_ESCAPE:
             return MainMenuState(self.game)
         elif events_equal(e, constants.GO_MAIN_MENU):
             return MainMenuState(self.game)
-        elif e.type is not constants.DO_QUIT:
+        elif e.type != constants.DO_QUIT:
             self.game.main_app.event(e)
 
     def paint(self, screen):
@@ -139,7 +139,7 @@ class DayState(State):
             return GameOver(self.game)
         elif events_equal(e, constants.GO_MAIN_MENU):
             return MainMenuState(self.game)
-        elif e.type is constants.DO_LOAD_SAVEGAME:
+        elif e.type == constants.DO_LOAD_SAVEGAME:
             self.game.switch_gameboard(e.gameboard)
             return
 
@@ -187,7 +187,7 @@ class NightState(State):
                 self.cycle_time = SLOW__SPEED
             pygame.time.set_timer(constants.MOVE_FOX_ID, self.cycle_time)
             return
-        elif e.type is constants.MOVE_FOX_ID:
+        elif e.type == constants.MOVE_FOX_ID:
             # ensure no timers trigger while we're running
             pygame.time.set_timer(constants.MOVE_FOX_ID, 0)
             cur_time = pygame.time.get_ticks()
@@ -230,12 +230,12 @@ class GameOver(State):
         pygame.time.set_timer(constants.MOVE_FOX_ID, 0)
 
     def event(self, e):
-        if e.type is KEYDOWN:
+        if e.type == KEYDOWN:
             if e.key == K_ESCAPE:
                 return MainMenuState(self.game)
         elif events_equal(e, constants.GO_MAIN_MENU):
             return MainMenuState(self.game)
-        elif e.type is not constants.DO_QUIT:
+        elif e.type != constants.DO_QUIT:
             self.game.main_app.event(e)
 
     def paint(self, screen):
