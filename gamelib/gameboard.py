@@ -1110,7 +1110,8 @@ class GameBoard(serializer.Simplifiable):
             chick.equip(item)
         self.add_chicken(chick)
 
-    def _choose_fox(self, (x, y)):
+    def _choose_fox(self, coords):
+        (x, y) = coords
         fox_cls = misc.WeightedSelection(self.level.fox_weightings).choose()
         return fox_cls((x, y), self)
 
