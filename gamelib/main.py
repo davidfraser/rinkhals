@@ -59,7 +59,7 @@ def main():
     config.configure(sys.argv[1:])
     sound.init_sound()
     sanity_check()
-    screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE)
+    screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE | pygame.SCALED)
     pygame.display.set_icon(pygame.image.load(
         data.filepath('icons/foxassault24x24.png')))
     main_app = create_main_app(screen)
