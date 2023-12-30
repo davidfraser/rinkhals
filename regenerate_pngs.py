@@ -1,29 +1,13 @@
 #!/usr/bin/env python
 
-import cairo
-import rsvg
+import cairosvg
 import os
 from gamelib import constants
 
 def svg_to_png(svg_name, png_name, w, h):
     """Convert an SVG file to a PNG file."""
     print("Generating %s at %dx%d..." % (png_name, w, h))
-    r = rsvg.Handle(svg_name)
-
-    scale = max(float(r.props.width) / w, float(r.props.height) / h)
-    scale = 1.0 / scale
-    x_extra = w - (r.props.width * scale)
-    y_extra = h - (r.props.height * scale)
-
-    r.props.dpi_x = r.props.dpi_x / scale
-    r.props.dpi_y = r.props.dpi_y / scale
-
-    cs = cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
-    ctx = cairo.Context(cs)
-    ctx.translate(x_extra//2, y_extra//2)
-    ctx.scale(scale, scale)
-    r.render_cairo(ctx)
-    cs.write_to_png(png_name)
+    cairosvg.svg2png(url=svg_name, output_width=w, output_height=h, write_to=png_name)
 
 def process_svg_folder(path, width, height):
     for dirpath, dirnames, filenames in os.walk(path):

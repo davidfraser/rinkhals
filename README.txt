@@ -90,10 +90,17 @@ DEVELOPMENT DEPENDENCIES
 To regenerate the bitmap graphics from the vector graphics using regenerate_pngs.py
 you need:
 
-  PyCairo:                  http://cairographics.org/pycairo/
-  rsvg:                     http://cairographics.org/pyrsvg/
-  gobject
-  glib
+  CairoSvg:                  http://cairographics.org/pycairo/
+  cairocffi:                     http://cairographics.org/pyrsvg/
+
+To install this on Windows, uses pipwin:
+* check the versions available at https://www.lfd.uci.edu/~gohlke/pythonlibs/#cairocffi
+* make sure you have a compatible Python version (this repository may not have binaries for the latest python)
+* `pip install pipwin`
+* `pipwin install cairocffi`
+
+For all other dependencies, and on other platforms:
+* `pip install -r requirements.txt`
 
 LICENSE
 =======
