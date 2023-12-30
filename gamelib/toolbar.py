@@ -42,7 +42,11 @@ class OpaqueLabel(gui.Label):
         if self.style.align > 0: # Right align
             s = s.subsurface(r.move((r.w-w, 0)).clip(r))
         elif self.style.align == 0: # Centre align
-            s = s.subsurface(r.move(((r.w-w)//2, 0)).clip(r))
+            try:
+                s = s.subsurface(r.move(((r.w-w)//2, 0)).clip(r))
+            except Exception as e:
+                logging.error("Error doing centre align: %s", e)
+                logging.info("Was moving %s from %r with width %r", self, r, w)
         else: # Left align
             pass
         gui.Label.paint(self, s)
