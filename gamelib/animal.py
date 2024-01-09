@@ -406,15 +406,12 @@ class StealthEgg(Egg):
             return random.choice([StealthChicken, Rooster])(self.pos, self.gameboard)
         return None
 
-class Fox(Animal):
-    """A fox"""
+class Enemy(Animal):
+    """An enemy"""
 
-    STEALTH = 20
-    IMAGE_FILE = 'sprites/fox.png'
     EQUIPMENT_IMAGE_ATTRIBUTE = 'ANIMAL_IMAGE_FILE'
     DEATH_ANIMATION = animations.FoxDeath
     DEATH_SOUND = 'kill-fox.ogg'
-    CONFIG_NAME = 'fox'
 
     costs = {
             # weighting for movement calculation
@@ -838,6 +835,14 @@ class Fox(Animal):
             self.gameboard.set_visibility(self)
 
 
+class Fox(Enemy):
+    """Regular fox"""
+    STEALTH = 20
+    IMAGE_FILE = 'sprites/fox.png'
+    CONFIG_NAME = 'fox'
+
+
+
 class NinjaFox(Fox):
     """Ninja foxes are hard to see"""
 
@@ -946,13 +951,13 @@ class RobberFox(Fox):
             dist += 10
         return dist
 
-class Rinkhals(Fox):
+class Rinkhals(Enemy):
     """The Rinkhals has eclectic tastes"""
     STEALTH = 80
     IMAGE_FILE = 'sprites/rinkhals.png'
     CONFIG_NAME = 'rinkhals'
 
-    costs = Fox.costs.copy()
+    costs = Enemy.costs.copy()
     costs['fence'] = 2
 
     def _calculate_dist(self, chicken):
