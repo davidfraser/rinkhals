@@ -50,7 +50,9 @@ KNIFE: Easy to use, but only at melee range, \\
 HANDGUN: Slightly longer range than a knife, \\
 RIFLE: Ranged weapon; requires more skill. \\
 SNIPER RIFLE: Longer range and better accuracy than the plain rifle, but less ammo per clip. \\
-BAZOOKA: Even longer range, but less accuracy then rifles - will spread damage over an area.
+BAZOOKA: Even longer range, but less accuracy then rifles - will spread damage over an area. \\
+BINOCULARS: Increases visual range. \\
+TELESCOPE: Increases visual range even further. \\
 
 You can sell equipment, but you don't get the full price back.
 
@@ -73,7 +75,15 @@ You can repair broken fences and demolish buildings for their wood.  You won't g
 much as you started with -- chickens are bad tenants and peck holes in everything.
 
 Chickens trained in a barracks can rise through the ranks of lance-corporal, corporal or sergeant.
-Training increases both the ability to detect enemies, and accuracy in using weapons.
+Training increases both the ability to detect enemies, and accuracy in using weapons,
+and trained chickens will wear a uniform appropriate to their rank.
+
+Chickens can also be given disguises:
+
+CLOAK: Gives a stealth bonus to the chicken wearing it. \\
+FOX DISGUISE: Made from a fox pelt, this will often deceive foxes into ignoring chickens. \\
+
+A chicken wearing a cloak will sometimes lay stealth eggs that hatch into STEALTH CHICKENS who have natural stealth.
 """,
 
 """
