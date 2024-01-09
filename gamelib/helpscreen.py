@@ -46,8 +46,10 @@ AXE: For chopping down trees. Doubles as a weapon, but it's not very good. \\
 HELMET: Cheap armour. \\
 KEVLAR: More expensive and durable armour. \\
 KNIFE: Easy to use, but only at melee range, \\
+HANDGUN: Slightly longer range than a knife, \\
 RIFLE: Ranged weapon; requires more skill. \\
-SNIPER RIFLE: Longer range and better accuracy than the plain rifle, but less ammo per clip.
+SNIPER RIFLE: Longer range and better accuracy than the plain rifle, but less ammo per clip. \\
+BAZOOKA: Even longer range, but less accuracy then rifles - will spread damage over an area.
 
 You can sell equipment, but you don't get the full price back.
 

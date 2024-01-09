@@ -184,7 +184,7 @@ class Bazooka(Weapon):
     NAME = "Bazooka"
     BUY_PRICE = 300
     SELL_PRICE = 225
-    AMMUNITION = 100
+    AMMUNITION = 20
     DAMAGE_RANGE = 4
     DAMAGE_RANGE_PENALTY = 3
 
