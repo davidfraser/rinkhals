@@ -42,7 +42,7 @@ end of the day.
 
 """EQUIPMENT:
 
-AXE: For chopping down trees. Doubles as a weapon, but it's not very good. \\
+AXE: For chopping down trees. Doubles as an (inferior) weapon. \\
 HELMET: Cheap armour. \\
 SHIELD: Better armour. \\
 KEVLAR: More expensive and durable armour. \\
@@ -52,7 +52,7 @@ RIFLE: Ranged weapon; requires more skill. \\
 SNIPER RIFLE: Longer range and better accuracy than the plain rifle, but less ammo per clip. \\
 BAZOOKA: Even longer range, but less accuracy then rifles - will spread damage over an area. \\
 BINOCULARS: Increases visual range. \\
-TELESCOPE: Increases visual range even further. \\
+TELESCOPE: Increases visual range even further.
 
 You can sell equipment, but you don't get the full price back.
 
@@ -73,6 +73,10 @@ TRAP: A fox trap - there's a chance that a fox wandering through this will be ca
 
 You can repair broken fences and demolish buildings for their wood.  You won't get as
 much as you started with -- chickens are bad tenants and peck holes in everything.
+""",
+
+"""
+TRAINING AND DISGUISES:
 
 Chickens trained in a barracks can rise through the ranks of lance-corporal, corporal or sergeant.
 Training increases both the ability to detect enemies, and accuracy in using weapons,
@@ -81,7 +85,7 @@ and trained chickens will wear a uniform appropriate to their rank.
 Chickens can also be given disguises:
 
 CLOAK: Gives a stealth bonus to the chicken wearing it. \\
-FOX DISGUISE: Made from a fox pelt, this will often deceive foxes into ignoring chickens. \\
+FOX DISGUISE: Made from a fox pelt, this will often deceive foxes into ignoring chickens.
 
 A chicken wearing a cloak will sometimes lay stealth eggs that hatch into STEALTH CHICKENS who have natural stealth.
 """,
