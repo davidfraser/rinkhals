@@ -44,6 +44,7 @@ end of the day.
 
 AXE: For chopping down trees. Doubles as a weapon, but it's not very good. \\
 HELMET: Cheap armour. \\
+SHIELD: Better armour. \\
 KEVLAR: More expensive and durable armour. \\
 KNIFE: Easy to use, but only at melee range, \\
 HANDGUN: Slightly longer range than a knife, \\
@@ -80,6 +81,8 @@ THE ENEMY:
 
 FOX: One of the little furry gluttons who are gorging themselves on your chickens. \\
 GREEDY FOX: Doesn't have the decency to stop at just one chicken. \\
+SHIELD FOX: Has a shield that protects it from your chicken's attacks. \\
+ROBBER FOX: Will try to steal equipment from chickens before eating them. \\
 NINJA FOX: Tries to sneak past your chicken guards. \\
 SAPPER FOX: Blows up your fences with explosives. \\
 RINKHALS: Not in fact a fox at all.  It has eclectic tastes. \\
