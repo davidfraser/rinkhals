@@ -40,6 +40,19 @@ Chickens have short attention spans, and will stray from where you put them at
 the end of the day if they are out in the open.
 """,
 
+"""
+THE ENEMY:
+
+FOX: One of the little furry gluttons who are gorging themselves on your chickens. \\
+GREEDY FOX: Doesn't have the decency to stop at just one chicken. \\
+SHIELD FOX: Has a shield that protects it from your chicken's attacks. \\
+ROBBER FOX: Will try to steal equipment from chickens before eating them. \\
+NINJA FOX: Tries to sneak past your chicken guards. \\
+SAPPER FOX: Blows up your fences with explosives. \\
+RINKHALS: Not in fact a fox at all.  It has eclectic tastes. \\
+
+""",
+
 """EQUIPMENT:
 
 AXE: For chopping down trees. Doubles as an (inferior) weapon. \\
@@ -73,7 +86,6 @@ chicken with an axe and place it next to some trees, it will chop some down at t
 end of the day. You can repair broken fences and demolish buildings for their wood. 
 You won't get as much as you started with -- chickens are bad tenants and peck holes in everything.
 
-
 HENHOUSE: The standard chicken dwelling. \\
 HENDOMINIUM: A luxury double-storey chicken dwelling. \\
 WATCHTOWER: A lookout post which helps chickens with rifles to see better and further away. \\
@@ -93,19 +105,6 @@ Chickens can also be given disguises:
 
 CLOAK: Gives a stealth bonus to the chicken wearing it. \\
 FOX DISGUISE: Made from a fox pelt, this will often deceive foxes into ignoring chickens.
-""",
-
-"""
-THE ENEMY:
-
-FOX: One of the little furry gluttons who are gorging themselves on your chickens. \\
-GREEDY FOX: Doesn't have the decency to stop at just one chicken. \\
-SHIELD FOX: Has a shield that protects it from your chicken's attacks. \\
-ROBBER FOX: Will try to steal equipment from chickens before eating them. \\
-NINJA FOX: Tries to sneak past your chicken guards. \\
-SAPPER FOX: Blows up your fences with explosives. \\
-RINKHALS: Not in fact a fox at all.  It has eclectic tastes. \\
-
 """,
 ]
 
