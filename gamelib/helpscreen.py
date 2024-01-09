@@ -64,11 +64,15 @@ BUILDINGS:
 HENHOUSE: The standard chicken dwelling. \\
 HENDOMINIUM: A luxury double-storey chicken dwelling. \\
 WATCHTOWER: A lookout post which helps chickens with rifles to see better and further away. \\
-FENCE: A barrier to both foxes and chickens.
+BARRACKS: A training facility for specialist chickens. Each night a chicken is here will increase their rank. \\
+FENCE: A barrier to both foxes and chickens. \\
+TRAP: A fox trap - there's a chance that a fox wandering through this will be caught.
 
 You can repair broken fences and demolish buildings for their wood.  You won't get as
 much as you started with -- chickens are bad tenants and peck holes in everything.
 
+Chickens trained in a barracks can rise through the ranks of lance-corporal, corporal or sergeant.
+Training increases both the ability to detect enemies, and accuracy in using weapons.
 """,
 
 """
