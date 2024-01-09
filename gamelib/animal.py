@@ -951,20 +951,12 @@ class RobberFox(Fox):
             dist += 10
         return dist
 
-class Rinkhals(Enemy):
-    """The Rinkhals has eclectic tastes"""
-    STEALTH = 80
-    IMAGE_FILE = 'sprites/rinkhals.png'
-    CONFIG_NAME = 'rinkhals'
-
-    costs = Enemy.costs.copy()
-    costs['fence'] = 2
-
+class EggEater(Enemy):
     def _calculate_dist(self, chicken):
-        """The Rinkhals eats eggs, so tweak distance accordingly"""
+        """This enemy only eats eggs, so tweak distance accordingly"""
         dist = chicken.pos.dist(self.pos)
         if not chicken.eggs:
-            dist += 100 # The closest eggs have to be *far* away to be safe
+            dist += 100  # The closest eggs have to be *far* away to be safe
         return dist
 
     def _catch_chicken(self, chicken):
@@ -974,6 +966,15 @@ class Rinkhals(Enemy):
         self.hunting = False
         self.target = self.start_pos
         self._last_steps = []
+
+class Rinkhals(EggEater):
+    """The Rinkhals has eclectic tastes"""
+    STEALTH = 80
+    IMAGE_FILE = 'sprites/rinkhals.png'
+    CONFIG_NAME = 'rinkhals'
+
+    costs = Enemy.costs.copy()
+    costs['fence'] = 2
 
     def _dig(self, dig_pos):
         """Snakes ignore fences"""
