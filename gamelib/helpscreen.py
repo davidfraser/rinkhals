@@ -21,23 +21,23 @@ Check the in-game controls reference for information about keys and mouse button
 
 """ % constants.NAME,
 
-"""BIOLOGY AND ECONOMICS:
+"""BIOLOGY:
 
-Chickens only lay eggs in henhouses. An egg must be incubated for two days to
+Hens are yellow and roosters are brown.
+
+Hens only lay eggs in henhouses. If there is no rooster in a henhouse,
+the eggs will not be fertilised. An egg must be fertilised and incubated for two days to
 hatch. Chickens that hatch in already full henhouses are moved outside. If there
 is no space left next to the henhouse, they die immediately from overcrowding.
 
+Roosters can be aggressive and fight each other if there is more than one rooster in a building
+(other than in a barracks, where they are more disciplined).
+
+A chicken wearing a cloak will sometimes lay stealth eggs that hatch into STEALTH CHICKENS who have natural stealth.
+This gene is only passed on to hens, not roosters.
+
 Chickens have short attention spans, and will stray from where you put them at
 the end of the day if they are out in the open.
-
-You can sell chickens and eggs.  Only one egg per chicken will hatch; the excess
-is sold automatically. The fox pelts your chickens acquire during their violent
-nocturnal activities are also sold automatically.
-
-Buildings require wood to construct. You can buy and sell wood. If you equip a 
-chicken with an axe and place it next to some trees, it will chop some down at the
-end of the day.
-
 """,
 
 """EQUIPMENT:
@@ -62,7 +62,17 @@ can only use one clip per night.
 """,
 
 """
-BUILDINGS:
+ECONOMICS AND BUILDINGS:
+
+You can sell chickens and eggs.  Only one egg per chicken will hatch; the excess
+is sold automatically. The fox pelts your chickens acquire during their violent
+nocturnal activities are also sold automatically.
+
+Buildings require wood to construct. You can buy and sell wood. If you equip a 
+chicken with an axe and place it next to some trees, it will chop some down at the
+end of the day. You can repair broken fences and demolish buildings for their wood. 
+You won't get as much as you started with -- chickens are bad tenants and peck holes in everything.
+
 
 HENHOUSE: The standard chicken dwelling. \\
 HENDOMINIUM: A luxury double-storey chicken dwelling. \\
@@ -70,9 +80,6 @@ WATCHTOWER: A lookout post which helps chickens with rifles to see better and fu
 BARRACKS: A training facility for specialist chickens. Each night a chicken is here will increase their rank. \\
 FENCE: A barrier to both foxes and chickens. \\
 TRAP: A fox trap - there's a chance that a fox wandering through this will be caught.
-
-You can repair broken fences and demolish buildings for their wood.  You won't get as
-much as you started with -- chickens are bad tenants and peck holes in everything.
 """,
 
 """
@@ -86,8 +93,6 @@ Chickens can also be given disguises:
 
 CLOAK: Gives a stealth bonus to the chicken wearing it. \\
 FOX DISGUISE: Made from a fox pelt, this will often deceive foxes into ignoring chickens.
-
-A chicken wearing a cloak will sometimes lay stealth eggs that hatch into STEALTH CHICKENS who have natural stealth.
 """,
 
 """
