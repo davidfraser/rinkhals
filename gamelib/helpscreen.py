@@ -50,7 +50,7 @@ ROBBER FOX: Will try to steal equipment from chickens before eating them. \\
 NINJA FOX: Tries to sneak past your chicken guards. \\
 SAPPER FOX: Blows up your fences with explosives. \\
 RINKHALS: Not in fact a fox at all.  It has eclectic tastes. \\
-
+MONGOOSE: Also not a fox. Eats only eggs, but not as invincible as a rinkhals. \\
 """,
 
 """EQUIPMENT:

@@ -984,6 +984,22 @@ class Rinkhals(EggEater):
         """The Rinkhals is invincible!"""
         return True
 
+class Mongoose(EggEater):
+    """The Mongoose finds eggs very tasty"""
+    STEALTH = 60
+    IMAGE_FILE = 'sprites/mongoose.png'
+    CONFIG_NAME = 'mongoose'
+
+    costs = Enemy.costs.copy()
+    costs['grassland'] = 1
+    costs['fence'] = 3
+    costs['henhouse'] = 10
+    costs['hendominium'] = 10
+
+    def _dig(self, dig_pos):
+        """Mongeese ignore fences"""
+        return dig_pos
+
 def _get_vision_param(parameter, watcher):
     param = getattr(watcher, parameter)
     for e in watcher.surveillance_equipment():
@@ -1016,12 +1032,13 @@ def visible(watcher, watchee, gameboard):
 # These don't have to add up to 100, but it's easier to think
 # about them if they do.
 DEFAULT_FOX_WEIGHTINGS = (
-    (Fox, 44),
-    (GreedyFox, 20),
-    (ShieldFox, 10),
-    (RobberFox, 10),
-    (NinjaFox, 10),
-    (DemoFox, 5),
+    (Fox, 39),
+    (GreedyFox, 12),
+    (ShieldFox, 8),
+    (RobberFox, 8),
+    (NinjaFox, 8),
+    (DemoFox, 4),
     (Rinkhals, 1),
+    (Mongoose, 20),
     )
 

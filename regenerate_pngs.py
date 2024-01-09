@@ -63,6 +63,7 @@ SPRITES = [
     ("sapper_fox", BASE_X, BASE_Y),
     ("robber_fox", BASE_X, BASE_Y),
     ("rinkhals", BASE_X, BASE_Y),
+    ("mongoose", BASE_X, BASE_Y),
     # buildings
     ("henhouse", BASE_X*3, BASE_Y*2),
     ("select_henhouse", BASE_X*3, BASE_Y*2),
