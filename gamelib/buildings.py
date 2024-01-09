@@ -416,9 +416,9 @@ class Fence(Building):
     TILE_NO = tiles.REVERSE_TILE_MAP['fence']
     TILE_NO_BROKEN = tiles.REVERSE_TILE_MAP['broken fence']
     BREAKABLE = True
-    BUY_PRICE = 10
-    SELL_PRICE = 5
-    REPAIR_PRICE = 5
+    BUY_PRICE = 5
+    SELL_PRICE = 3
+    REPAIR_PRICE = 2
     SELL_PRICE_BROKEN = 1
     SIZE = (1, 1)
     IMAGE = 'tiles/fence.png'
