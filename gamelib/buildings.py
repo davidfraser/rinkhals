@@ -368,8 +368,8 @@ class HenHouse(Abode):
 
     HENHOUSE = True
 
-class DoubleStoryHenHouse(HenHouse):
-    """A double story hen house."""
+class Hendominium(HenHouse):
+    """A hendominium is a double story hen house."""
 
     TILE_NO = tiles.REVERSE_TILE_MAP['hendominium']
     BUY_PRICE = 60
@@ -380,10 +380,10 @@ class DoubleStoryHenHouse(HenHouse):
     NAME = 'Hendominium'
     FLOORS = [0, 1]
 
-class GuardTower(Abode):
-    """A GuardTower."""
+class WatchTower(Abode):
+    """A Watch Tower."""
 
-    TILE_NO = tiles.REVERSE_TILE_MAP['guardtower']
+    TILE_NO = tiles.REVERSE_TILE_MAP['watchtower']
     BUY_PRICE = 40
     SELL_PRICE = 30
     SIZE = (2, 2)

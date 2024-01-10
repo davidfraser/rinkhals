@@ -420,7 +420,7 @@ class Enemy(Animal):
             'broken fence' : 1,
             'fence' : 25,
             'trap': 2,
-            'guardtower' : 2, # We can pass under towers
+            'watchtower' : 2, # We can pass under towers
             'henhouse' : 30, # Don't go into a henhouse unless we're going to
                              # catch a chicken there
             'hendominium' : 30,
@@ -850,8 +850,8 @@ class NinjaFox(Fox):
     IMAGE_FILE = 'sprites/ninja_fox.png'
     CONFIG_NAME = 'ninja fox'
 
-class DemoFox(Fox):
-    """Demolition Foxes destroy fences easily"""
+class SapperFox(Fox):
+    """Sapper Foxes destroy fences easily"""
 
     DIG_ANIMATION = animations.FenceExplosion
     IMAGE_FILE = 'sprites/sapper_fox.png'
@@ -1020,7 +1020,7 @@ def visible(watcher, watchee, gameboard):
     positions = watcher.pos.intermediate_positions(watchee.pos)
     for pos in positions:
         building = gameboard.get_building(pos.to_tile_tuple())
-        # This allows chickens to fire across GuardTowers and Fences.
+        # This allows chickens to fire across WatchTowers and Fences.
         if building and building.BLOCKS_VISION and not (watcher in building.occupants()):
             return False
     distance = watcher.pos.dist(watchee.pos) - 1
@@ -1037,7 +1037,7 @@ DEFAULT_FOX_WEIGHTINGS = (
     (ShieldFox, 8),
     (RobberFox, 8),
     (NinjaFox, 8),
-    (DemoFox, 4),
+    (SapperFox, 4),
     (Rinkhals, 1),
     (Mongoose, 20),
     )

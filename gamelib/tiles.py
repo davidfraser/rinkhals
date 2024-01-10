@@ -17,7 +17,7 @@ class TileMap(object):
         1: ("grassland", "grassland.png"),
         2: ("fence", "fence.png"),
         3: ("henhouse", "grassland.png"),
-        4: ("guardtower", "grassland.png"),
+        4: ("watchtower", "grassland.png"),
         5: ("broken fence", "broken_fence.png"),
         6: ("hendominium", "grassland.png"),
         7: ("trap", "trap.png"),
