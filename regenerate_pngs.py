@@ -33,6 +33,7 @@ SPRITES = [
     ("chkn", BASE_X, BASE_Y),
     ("rooster", BASE_X, BASE_Y),
     ("stealth_chicken", BASE_X, BASE_Y),
+    ("furry_rooster", BASE_X, BASE_Y),
     ("wing", BASE_X, BASE_Y),
     ("eye", BASE_X, BASE_Y),
     ("equip_handgun", BASE_X, BASE_Y),
@@ -56,6 +57,7 @@ SPRITES = [
     ("equip_egg", BASE_X, BASE_Y),
     ("equip_easter_egg", BASE_X, BASE_Y),
     ("equip_stealth_egg", BASE_X, BASE_Y),
+    ("equip_furry_egg", BASE_X, BASE_Y),
     # fox bits
     ("fox", BASE_X, BASE_Y),
     ("greedy_fox", BASE_X, BASE_Y),

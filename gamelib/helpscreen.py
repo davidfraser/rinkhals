@@ -33,8 +33,7 @@ is no space left next to the henhouse, they die immediately from overcrowding.
 Roosters can be aggressive and fight each other if there is more than one rooster in a building
 (other than in a barracks, where they are more disciplined).
 
-A chicken wearing a cloak will sometimes lay stealth eggs that hatch into STEALTH CHICKENS who have natural stealth.
-This gene is only passed on to hens, not roosters.
+Disguises have genetic effects on breeding chickens; see the notes under TRAINING AND DISGUISES.
 
 Chickens have short attention spans, and will stray from where you put them at
 the end of the day if they are out in the open.
@@ -105,6 +104,12 @@ Chickens can also be given disguises:
 
 CLOAK: Gives a stealth bonus to the chicken wearing it. \\
 FOX DISGUISE: Made from a fox pelt, this will often deceive foxes into ignoring chickens.
+
+A chicken wearing a cloak will sometimes lay stealth eggs that hatch into STEALTH CHICKENS who have natural stealth.
+This gene is only passed on to hens, not roosters, and does not affect the next generation.
+
+A chicken wearing a fox disguise will sometimes lay furry eggs that hatch into FURRY ROOSTERS, with natural stealth.
+This gene is only passed on to roosters, not hens, and does not affect the next generation.
 """,
 ]
 

@@ -268,12 +268,14 @@ class Chicken(Animal):
                 if getattr(bird, 'ROOSTER', None):
                     fertilised = True
             if not self.eggs:
-                has_cloak = False
+                possible_eggs = [Egg]
                 for equip in self.equipment:
                     if equip.NAME == "Cloak":
-                        has_cloak = True
+                        possible_eggs.append(StealthEgg)
+                    elif equip.NAME == "Fox Disguise":
+                        possible_eggs.append(FurryEgg)
                 for x in range(random.randint(1, 4)):
-                    new_egg_class = StealthEgg if (has_cloak and random.randint(1, 2) > 1) else Egg
+                    new_egg_class = random.choice(possible_eggs)
                     new_egg = new_egg_class(self.pos, self.gameboard, fertilised=fertilised)
                     self.eggs.append(new_egg)
                 self.equip(equipment.NestEgg())
@@ -375,6 +377,13 @@ class StealthChicken(Chicken):
     IMAGE_FILE = 'sprites/stealth_chicken.png'
     # CONFIG_NAME = 'stealth chicken'
 
+class FurryRooster(Rooster):
+    """A rooster that bears a remarkable resemblance to a fox"""
+
+    STEALTH = 60
+    IMAGE_FILE = 'sprites/furry_rooster.png'
+    # CONFIG_NAME = 'furry rooster'
+
 class Egg(Animal):
     """An egg"""
 
@@ -404,6 +413,17 @@ class StealthEgg(Egg):
         self.timer -= 1
         if self.timer == 0 and self.fertilised:
             return random.choice([StealthChicken, Rooster])(self.pos, self.gameboard)
+        return None
+
+class FurryEgg(Egg):
+    """An egg which may hatch into a furry rooster"""
+
+    IMAGE_FILE = 'sprites/equip_furry_egg.png'
+
+    def hatch(self):
+        self.timer -= 1
+        if self.timer == 0 and self.fertilised:
+            return random.choice([Chicken, FurryRooster])(self.pos, self.gameboard)
         return None
 
 class Enemy(Animal):
