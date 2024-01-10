@@ -427,7 +427,7 @@ class FurryEgg(Egg):
         return None
 
 class Enemy(Animal):
-    """An enemy"""
+    """An animal with designs on chickens and their eggs"""
 
     EQUIPMENT_IMAGE_ATTRIBUTE = 'ANIMAL_IMAGE_FILE'
     DEATH_ANIMATION = animations.FoxDeath
