@@ -36,7 +36,7 @@ Sell Price Egg: 10
 Sell Price Chicken: 5
 Sell Price Dead Fox: 5
 
-[Fox probabilities]
+[Enemy probabilities]
 Fox: 30
 GreedyFox: 30
 NinjaFox: 30

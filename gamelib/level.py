@@ -58,14 +58,12 @@ class Level(serializer.Simplifiable):
         self.min_foxes = config.getint('Game values', 'min foxes')
         self.sell_price_chicken = config.getint('Game values', 'sell price chicken')
         self.sell_price_egg = config.getint('Game values', 'sell price egg')
-        self.sell_price_dead_fox = config.getint('Game values',
-                'sell price dead fox')
+        self.sell_price_dead_fox = config.getint('Game values', 'sell price dead fox')
         self.starting_cash = config.getint('Game values', 'starting cash')
         self.starting_wood = config.getint('Game values', 'starting wood')
         self.fox_weightings = []
         for animal, _prob in DEFAULT_FOX_WEIGHTINGS:
-            self.fox_weightings.append((animal, config.getint('Fox probablities',
-                animal.CONFIG_NAME)))
+            self.fox_weightings.append((animal, config.getint('Enemy probabilities', animal.CONFIG_NAME)))
 
     @classmethod
     def unsimplify(cls, *args, **kwargs):
