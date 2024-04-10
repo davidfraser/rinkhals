@@ -81,8 +81,8 @@ You will need to install these before running the game:
   PyGame:                   http://www.pygame.org/
   Python Game Utilities:    http://code.google.com/p/pgu 
 
-Fox Assault requires python 2.5 or later, pygame 1.8 or later and
-pgu 0.12.3.
+Fox Assault requires python 3 or later, pygame 2.5 or later and
+a fork of pgu 0.21 from https://github.com/davidfraser/pgu.
 
 DEVELOPMENT DEPENDENCIES
 ========================
@@ -98,14 +98,17 @@ To install this on Windows, uses pipwin:
 * make sure you have a compatible Python version (this repository may not have binaries for the latest python)
 * `pip install pipwin`
 * `pipwin install cairocffi`
-* In order to distribute this on Windows, you also need to `pip install py2exe`, and run `python setup.py py2exe`
-
-Alternative form of distributing on Windows uses `py-exe-builder`:
-* pip install py-exe-builder
-* Run `build_exe_folders.cmd`
 
 For all other dependencies, and on other platforms:
 * `pip install -r requirements.txt`
+
+BUILDING FOR DISTRIBUTION
+=========================
+
+In order to distribute this on Windows, you also need to `pip install py2exe`, and run `python setup.py py2exe`,
+however this isn't working in Python 3. There's an alternative form of distributing on Windows using `py-exe-builder`,
+using a batch script:
+  * `build_exe_folders.cmd`
 
 LICENSE
 =======

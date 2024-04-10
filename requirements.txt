@@ -2,4 +2,4 @@ pygame
 pygame-pgu @ git+https://github.com/davidfraser/pgu@main
 setuptools
 cairosvg
-py-exe-builder
+py-exe-builder; sys_platform == 'win32'
