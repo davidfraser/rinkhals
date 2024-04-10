@@ -1,3 +1,5 @@
 Operation_Fox_Assault.egg-info
 *.pyc
-venv
+venv*
+build
+dist
