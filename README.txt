@@ -67,7 +67,7 @@ hatch a new chicken. Chickens that hatch in already full henhouses are
 moved to just outside. If there is no space outside, they die immediately
 from overcrowding.
 
-The the length of the game and the conditions required to win depend on the
+The length of the game and the conditions required to win depend on the
 chosen level. The instructions for the level will be shown at the bottom
 of the instructions screen.
 
