@@ -11,6 +11,7 @@ for /F "tokens=* USEBACKQ" %%F in (`python -c "import sys ; print(sys.prefix)"`)
   set VENV_PYTHON_DIR=%%F
 )
 set TARGET_DIR=dist\%TARGET_NAME%
+if not exist dist (mkdir dist)
 if exist %TARGET_DIR% (rd /s /q %TARGET_DIR% & mkdir %TARGET_DIR%)
 
 echo PHASE 2: Running pyexebuilder
