@@ -5,12 +5,12 @@ import os.path
 import pygame
 from pygame.locals import SWSURFACE, SRCALPHA
 
-from gamelib import tiles, buildings, equipment
+from gamelib import tiles, buildings, equipment, constants
 import regenerate_pngs
 
 LEVEL_PATH = "data/levels"
-TILE_WIDTH = 20
-TILE_HEIGHT = 20
+TILE_WIDTH = constants.TILE_DIMENSIONS[0]
+TILE_HEIGHT = constants.TILE_DIMENSIONS[1]
 TILES_X = 8
 TILES_Y = 8
 WIDTH = TILES_X * TILE_WIDTH
