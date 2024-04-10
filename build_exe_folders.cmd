@@ -37,7 +37,7 @@ echo PHASE 4: Removing unnecessary files
 rd /s /q %TARGET_DIR%\Lib\test\
 
 echo PHASE 5: Zipping
-set TARGET_ARCHIVE=dist\%TARGET_NAME%
+set TARGET_ARCHIVE=dist\%TARGET_NAME%-win
 python -c "import shutil ; from os import getenv as e; shutil.make_archive(e('TARGET_ARCHIVE'), 'zip', base_dir=e('TARGET_DIR'))"
 dir %TARGET_ARCHIVE%.zip
 
