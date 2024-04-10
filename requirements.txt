@@ -2,3 +2,4 @@ pygame
 pygame-pgu @ git+https://github.com/davidfraser/pgu@main
 setuptools
 cairosvg
+py-exe-builder

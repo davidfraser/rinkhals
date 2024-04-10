@@ -98,6 +98,11 @@ To install this on Windows, uses pipwin:
 * make sure you have a compatible Python version (this repository may not have binaries for the latest python)
 * `pip install pipwin`
 * `pipwin install cairocffi`
+* In order to distribute this on Windows, you also need to `pip install py2exe`, and run `python setup.py py2exe`
+
+Alternative form of distributing on Windows uses `py-exe-builder`:
+* pip install py-exe-builder
+* Run `build_exe_folders.cmd`
 
 For all other dependencies, and on other platforms:
 * `pip install -r requirements.txt`

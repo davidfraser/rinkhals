@@ -84,8 +84,6 @@ setup   (   # Metadata
                 'excludes': ['numpy'],
             }},
             data_files = [
-                'COPYRIGHT',
-                'COPYING',
-                'README.txt',
+                ['', ['COPYRIGHT', 'COPYING', 'README.txt']],
             ],
         )
