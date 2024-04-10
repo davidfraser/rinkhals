@@ -12,7 +12,22 @@ for /F "tokens=* USEBACKQ" %%F in (`python -c "import sys ; print(sys.prefix)"`)
 )
 set TARGET_DIR=dist\%TARGET_NAME%
 if not exist dist (mkdir dist)
-if exist %TARGET_DIR% (rd /s /q %TARGET_DIR% & mkdir %TARGET_DIR%)
+set TARGET_ARCHIVE=dist\%TARGET_NAME%-win
+if exist %TARGET_ARCHIVE%.zip (
+    if "%1" equ "/y" (
+        echo %TARGET_ARCHIVE%.zip already exists - removing to recreate as running with /y
+        del %TARGET_ARCHIVE%.zip
+    ) else (
+        echo %TARGET_ARCHIVE%.zip already exists - stopping so as not to overwrite unintentionally >&2
+        echo To suppress this check, run with /y >&2
+        exit /b 1
+    )
+)
+if exist %TARGET_DIR% (
+    echo %TARGET_DIR% exists: removing to make clean build
+    rd /s /q %TARGET_DIR%
+    mkdir %TARGET_DIR%
+)
 
 echo PHASE 2: Running pyexebuilder
 rem pyexebuilder needs these in the current directory, but we'll delete them just now
@@ -27,7 +42,9 @@ del python3*.dll
 echo PHASE 3: Copying necessary files
 copy /y fix_exe_paths.py %TARGET_DIR%\_tkinter.py
 copy /y run_game.py %TARGET_DIR%\
-copy /y README.txt COPYING COPYRIGHT %TARGET_DIR%\
+copy /y README.md %TARGET_DIR%\README.txt
+copy /y COPYING %TARGET_DIR%\COPYING.txt
+copy /y COPYRIGHT %TARGET_DIR%\COPYRIGHT.txt
 xcopy /e /q /y %BASE_PYTHON_DIR%\Lib\ %TARGET_DIR%\Lib\
 xcopy /e /q /y %BASE_PYTHON_DIR%\DLLs\ %TARGET_DIR%\DLLs\
 xcopy /e /q /y venv\ %TARGET_DIR%\
@@ -39,7 +56,6 @@ rd /s /q %TARGET_DIR%\Lib\test\
 del %TARGET_DIR%\pyvenv.cfg
 
 echo PHASE 5: Zipping
-set TARGET_ARCHIVE=dist\%TARGET_NAME%-win
 python -c "import shutil ; from os import getenv as e; shutil.make_archive(e('TARGET_ARCHIVE'), 'zip', root_dir=e('TARGET_DIR'))"
 dir %TARGET_ARCHIVE%.zip
 
