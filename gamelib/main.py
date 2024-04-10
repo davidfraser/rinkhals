@@ -59,7 +59,14 @@ def main():
     config.configure(sys.argv[1:])
     sound.init_sound()
     sanity_check()
-    screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE | pygame.SCALED)
+    if sys.platform == 'win32':
+        # On Windows, the monitor scaling can be set to something besides normal 100%.
+        import ctypes
+        try:
+            ctypes.windll.user32.SetProcessDPIAware()
+        except AttributeError:
+            pass  # Windows XP doesn't support monitor scaling, so just do nothing.
+    screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE)
     pygame.display.set_icon(pygame.image.load(
         data.filepath('icons/foxassault24x24.png')))
     main_app = create_main_app(screen)
