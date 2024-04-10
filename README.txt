@@ -75,7 +75,7 @@ of the instructions screen.
 DEPENDENCIES
 ============
 
-You will need to install these before running the game:
+You will need to install these before running the game from source:
 
   Python:                   http://www.python.org/
   PyGame:                   http://www.pygame.org/
@@ -120,6 +120,7 @@ For authors see COPYRIGHT.
 LINKS
 =====
 
+- https://www.foxassault.org/
 - http://www.python.org.za/pugs/cape-town/Pyweek9Entry
 - IRC: #ctpug on Atrum (http://www.atrum.org)
 
