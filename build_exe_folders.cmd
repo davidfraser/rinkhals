@@ -1,14 +1,14 @@
 @echo off
 
 echo PHASE 1: Determining paths
-FOR /F "tokens=* USEBACKQ" %%F IN (`python -c "from gamelib import version as v; print(f'foxassault-{v.VERSION_STR}')"`) DO (
-  SET TARGET_NAME=%%F
+for /F "tokens=* USEBACKQ" %%F in (`python -c "from gamelib import version as v; print(f'foxassault-{v.VERSION_STR}')"`) do (
+  set TARGET_NAME=%%F
 )
-FOR /F "tokens=* USEBACKQ" %%F IN (`python -c "import sys ; print(sys.base_prefix)"`) DO (
-  SET BASE_PYTHON_DIR=%%F
+for /F "tokens=* USEBACKQ" %%F in (`python -c "import sys ; print(sys.base_prefix)"`) do (
+  set BASE_PYTHON_DIR=%%F
 )
-FOR /F "tokens=* USEBACKQ" %%F IN (`python -c "import sys ; print(sys.prefix)"`) DO (
-  SET VENV_PYTHON_DIR=%%F
+for /F "tokens=* USEBACKQ" %%F in (`python -c "import sys ; print(sys.prefix)"`) do (
+  set VENV_PYTHON_DIR=%%F
 )
 set TARGET_DIR=dist\%TARGET_NAME%
 if exist %TARGET_DIR% (rd /s /q %TARGET_DIR% & mkdir %TARGET_DIR%)
