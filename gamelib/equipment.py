@@ -209,6 +209,19 @@ class Knife(Weapon):
 
     ANIMAL_IMAGE_FILE = 'sprites/equip_knife.png'
 
+
+class Club(Weapon):
+    TYPE = "CLUB"
+    NAME = "Club"
+    BUY_PRICE = 20
+    SELL_PRICE = 12
+
+    RANGE = 1
+    BASE_HIT = 50
+    RANGE_PENALTY = 0
+
+    ANIMAL_IMAGE_FILE = 'sprites/equip_club.png'
+
 class Axe(Weapon):
     TYPE = "AXE"
     NAME = "Axe"

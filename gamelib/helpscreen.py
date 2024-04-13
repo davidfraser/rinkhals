@@ -58,6 +58,7 @@ AXE: For chopping down trees. Doubles as an (inferior) weapon. \\
 HELMET: Cheap armour. \\
 SHIELD: Better armour. \\
 KEVLAR: More expensive and durable armour. \\
+CLUB: Easy to use, but only at close range, not very effective \\
 KNIFE: Easy to use, but only at melee range, \\
 HANDGUN: Slightly longer range than a knife, \\
 RIFLE: Ranged weapon; requires more skill. \\
