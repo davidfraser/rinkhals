@@ -94,7 +94,7 @@ class BaseToolBar(gui.Table):
         self._counter_col = 0
         self.add_counter(icons.GROATS_ICON, self.cash_counter)
         self.add_counter(icons.WOOD_ICON, self.wood_counter)
-        self.add_counter(icons.CHKN_ICON, self.horse_counter)
+        self.add_counter(icons.HORSE_ICON, self.horse_counter)
         self.add_counter(icons.EGG_ICON, self.egg_counter)
         self.add_counter(icons.KILLED_FOX, self.killed_foxes)
         self.add_counter(icons.DAY_ICON, self.day_counter)

@@ -5,7 +5,7 @@ from pgu.gui import Image
 from . import imagecache
 
 KILLED_FOX = Image(imagecache.load_image('icons/killed_fox.png'))
-CHKN_ICON = Image(imagecache.load_image('icons/chkn.png'))
+HORSE_ICON = Image(imagecache.load_image('icons/horse.png'))
 EGG_ICON = Image(imagecache.load_image('icons/egg.png'))
 WOOD_ICON = Image(imagecache.load_image('icons/wood.png'))
 GROATS_ICON = Image(imagecache.load_image('icons/groats.png'))
