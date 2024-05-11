@@ -199,7 +199,7 @@ class Horse(Animal):
     EQUIPMENT_IMAGE_ATTRIBUTE = 'ANIMAL_IMAGE_FILE'
     DEATH_ANIMATION = animations.HorseDeath
     DEATH_SOUND = 'kill-chicken.ogg'
-    IMAGE_FILE = 'sprites/chkn.png'
+    IMAGE_FILE = 'sprites/horse.png'
 
     SIMPLIFY = Animal.SIMPLIFY + ['eggs']
 
@@ -349,7 +349,7 @@ class Horse(Animal):
 class Stallion(Horse):
     """A stallion"""
 
-    IMAGE_FILE = 'sprites/rooster.png'
+    IMAGE_FILE = 'sprites/stallion.png'
     MALE = True
 
     AGGRESSION = 50
@@ -374,15 +374,15 @@ class StealthHorse(Horse):
     """A horse that acts like a ninja orc"""
 
     STEALTH = 60
-    IMAGE_FILE = 'sprites/stealth_chicken.png'
+    IMAGE_FILE = 'sprites/stealth_horse.png'
     # CONFIG_NAME = 'stealth horse'
 
 class FurryStallion(Stallion):
     """A horse that bears a remarkable resemblance to an orc"""
 
     STEALTH = 60
-    IMAGE_FILE = 'sprites/furry_rooster.png'
-    # CONFIG_NAME = 'furry rooster'
+    IMAGE_FILE = 'sprites/furry_stallion.png'
+    # CONFIG_NAME = 'furry stallion'
 
 class Egg(Animal):
     """An egg"""

@@ -42,7 +42,7 @@ def get_code_mappings():
     code_map = {}
     # Needs better handling of wings
     for tn, sprites in equipment.EQUIP_MAP.items():
-        image = generate_image('chkn', regenerate_pngs.SPRITE_PATH)
+        image = generate_image('horse', regenerate_pngs.SPRITE_PATH)
         need_wing = False
         for equip in sprites:
             sub_image = generate_image(equip.ANIMAL_IMAGE_FILE,

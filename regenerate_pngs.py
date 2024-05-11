@@ -30,10 +30,10 @@ IMAGE_PATH = "data/images"
 BASE_X, BASE_Y = constants.TILE_DIMENSIONS
 SPRITES = [
     # horse bits
-    ("chkn", BASE_X, BASE_Y),
-    ("rooster", BASE_X, BASE_Y),
+    ("horse", BASE_X, BASE_Y),
+    ("stallion", BASE_X, BASE_Y),
     ("stealth_horse", BASE_X, BASE_Y),
-    ("furry_rooster", BASE_X, BASE_Y),
+    ("furry_stallion", BASE_X, BASE_Y),
     ("wing", BASE_X, BASE_Y),
     ("eye", BASE_X, BASE_Y),
     ("equip_handgun", BASE_X, BASE_Y),
