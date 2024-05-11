@@ -1,5 +1,6 @@
 import pygame
 from pgu import gui
+import logging
 
 from . import icons
 from . import constants
