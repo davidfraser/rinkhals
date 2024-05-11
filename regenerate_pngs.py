@@ -53,7 +53,7 @@ SPRITES = [
     ("equip_shield", BASE_X, BASE_Y),
     ("equip_binoculars", BASE_X, BASE_Y),
     ("equip_telescope", BASE_X, BASE_Y),
-    ("select_chkn", BASE_X, BASE_Y),
+    ("select_horse", BASE_X, BASE_Y),
     ("nest", BASE_X, BASE_Y),
     ("equip_egg", BASE_X, BASE_Y),
     ("equip_easter_egg", BASE_X, BASE_Y),
@@ -78,7 +78,7 @@ SPRITES = [
     ("select_barracks", BASE_X*3, BASE_Y*3),
     # special effects
     ("muzzle_flash", BASE_X, BASE_Y),
-    ("chkn_death", BASE_X, BASE_Y),
+    ("horse_death", BASE_X, BASE_Y),
     ("fox_death", BASE_X, BASE_Y),
     ("boom1", BASE_X, BASE_Y),
     ("boom2", BASE_X, BASE_Y),

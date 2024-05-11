@@ -375,7 +375,7 @@ class Accoutrement(Equipment):
 
 class Spotlight(Accoutrement):
     NAME = "Spotlight"
-    ANIMAL_IMAGE_FILE = 'sprites/select_chkn.png'
+    ANIMAL_IMAGE_FILE = 'sprites/select_horse.png'
     DRAW_LAYER = -5
 
 class Nest(Accoutrement):
