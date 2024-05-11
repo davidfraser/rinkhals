@@ -286,7 +286,7 @@ class Building(Sprite, serializer.Simplifiable):
             if "count" in self.draw_stack:
                 del self.draw_stack["count"]
         else:
-            # Render chicken count
+            # Render horse count
             image = self._font_image.copy()
             w, h = image.get_size()
             if count:
@@ -295,8 +295,8 @@ class Building(Sprite, serializer.Simplifiable):
                 # Blit to the right
                 x, y = text.get_size()
                 image.blit(text, (w - x, h - y))
-                sel_count = len([chick for chick in self.occupants()
-                    if chick in self.gameboard.selected_chickens])
+                sel_count = len([horse for horse in self.occupants()
+                                 if horse in self.gameboard.selected_horses])
                 if sel_count:
                     text = self._font.render(str(sel_count), True,
                             constants.SELECTED_COUNT_COLOR)
@@ -400,7 +400,7 @@ class WatchTower(Abode):
     BLOCKS_VISION = False
 
 class Barracks(Abode):
-    """A barracks for training chickens."""
+    """A barracks for training horses."""
     TILE_NO = tiles.REVERSE_TILE_MAP['barracks']
     BUY_PRICE = 75
     SELL_PRICE = 50

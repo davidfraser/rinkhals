@@ -14,6 +14,9 @@ Members:
 A first PyWeek entry by the hackers of the Cape Town Python Users Group
 (CTPUG). The theme for PyWeek 9 was "Feather".
 
+This is a mod of the game that's meant to be farming Horses in Rohan, attacked by Orcs
+instead of chickens on a farm, attacked by foxes.
+
 
 RUNNING THE GAME
 ================
@@ -53,17 +56,17 @@ as the first parameter.
 HOW TO PLAY THE GAME
 ====================
 
-Save the chickens!
+Save the horses!
 
-The aim of the game is to make as much money as possible from your chicken
-farm. The problem is the foxes, which want to eat your chickens.  Since hiring
+The aim of the game is to make as much money as possible from your horse
+farm. The problem is the foxes, which want to eat your horses.  Since hiring
 guards is both too expensive and unreliable, the obvious solution is to help
-the chickens defend themselves.
+the horses defend themselves.
 
-You lose if you end a night with no chickens left.
+You lose if you end a night with no horses left.
 
-Chickens only lay eggs in henhouses, and must stay on the egg for 2 days to
-hatch a new chicken. Chickens that hatch in already full henhouses are
+Horses only lay eggs in henhouses, and must stay on the egg for 2 days to
+hatch a new horse. Horses that hatch in already full henhouses are
 moved to just outside. If there is no space outside, they die immediately
 from overcrowding.
 

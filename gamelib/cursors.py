@@ -12,7 +12,7 @@ cursors = {
         }
 
 for tag, filename in [
-        ('chicken', 'cursors/chkn.xbm'),
+        ('horse', 'cursors/chkn.xbm'),
         ('sell', 'cursors/sell_cursor.xbm'),
         ('repair', 'cursors/repair_cursor.xbm'),
         ]:

@@ -107,7 +107,7 @@ class LayeredSprites(object):
 
 class FarmVid(tilevid.Tilevid, serializer.Simplifiable):
     """Extension of pgu's TileVid class to handle the complications
-       of raising chickens.
+       of raising horses.
        """
 
     SIMPLIFY = [

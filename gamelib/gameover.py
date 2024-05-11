@@ -18,12 +18,12 @@ WON, LOST, LEFT = list(range(3))
 WON_MESSAGES = [
     "You won.",
     "You survived!",
-    "Your chickens will one day rule the world.",
+    "Your horses will one day rule the world.",
     ]
 
 LOST_MESSAGES = [
     "You lost.",
-    "You failed to protect your chickens.",
+    "You failed to protect your horses.",
     "Unopposed, the foxes overrun the farm.",
     ]
 
@@ -32,7 +32,7 @@ LEFT_MESSAGES = [
     "You sold your farm.",
     "Real life got in the way.",
     "Are you siding with the foxes?",
-    "What will your chickens do now?",
+    "What will your horses do now?",
     ]
 
 def ScoreTable(level):
@@ -93,12 +93,12 @@ class GameOver(gui.Table):
             pygame.event.post(constants.DO_QUIT)
 
         score = gameboard.cash + \
-                level.sell_price_chicken * len(gameboard.chickens) + \
+                level.sell_price_horse * len(gameboard.horses) + \
                 level.sell_price_egg * gameboard.eggs
 
         made_list = scoreboard.check(score) is not None
         if level.is_game_over(gameboard):
-            if len(gameboard.chickens) > 0:
+            if len(gameboard.horses) > 0:
                 self.survived = WON
                 try:
                     player = getpass.getuser()
@@ -147,8 +147,8 @@ class GameOver(gui.Table):
         self.tr()
         self.td(gui.Label("Groats : %d" % gameboard.cash,
             color=constants.FG_COLOR))
-        self.td(gui.Label("   Chickens : %d " % len(gameboard.chickens),
-            color=constants.FG_COLOR))
+        self.td(gui.Label("   Horses : %d " % len(gameboard.horses),
+                          color=constants.FG_COLOR))
         self.td(gui.Label("   Eggs : %d" % gameboard.eggs,
             color=constants.FG_COLOR))
         self.add_spacer()

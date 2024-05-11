@@ -54,7 +54,7 @@ class FoxDeath(Animation):
     BLOOD_SPLAT = imagecache.load_image('sprites/fox_death.png')
     SEQUENCE = [BLOOD_SPLAT, BLOOD_SPLAT]
     
-class ChickenDeath(Animation):
+class HorseDeath(Animation):
     BLOOD_SPLAT = imagecache.load_image('sprites/fox_death.png')
     FEATHER_SPLAT = imagecache.load_image('sprites/chkn_death.png')
     SEQUENCE = [BLOOD_SPLAT, FEATHER_SPLAT, FEATHER_SPLAT]

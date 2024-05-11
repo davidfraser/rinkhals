@@ -190,14 +190,14 @@ class Animal(Sprite, serializer.Simplifiable):
         self.die()
         return False
 
-class Chicken(Animal):
-    """A chicken"""
+class Horse(Animal):
+    """A horse"""
 
     TRAINING = 0
     MAX_TRAINING = 3
 
     EQUIPMENT_IMAGE_ATTRIBUTE = 'ANIMAL_IMAGE_FILE'
-    DEATH_ANIMATION = animations.ChickenDeath
+    DEATH_ANIMATION = animations.HorseDeath
     DEATH_SOUND = 'kill-chicken.ogg'
     IMAGE_FILE = 'sprites/chkn.png'
 
@@ -235,13 +235,13 @@ class Chicken(Animal):
                     self.equip(uniform)
 
     def _game_death(self):
-        self.gameboard.remove_chicken(self)
+        self.gameboard.remove_horse(self)
 
     def move(self):
-        """A free chicken will wander around aimlessly"""
+        """A free horse will wander around aimlessly"""
         pos_x, pos_y = self.pos.to_tile_tuple()
         surrounds = [Position(pos_x + dx, pos_y + dy) for dx in [-1, 0, 1] for dy in [-1, 0, 1]]
-        pos_options = [pos for pos in surrounds if self.gameboard.in_bounds(pos) and self.gameboard.tv.get(pos.to_tile_tuple()) == self.gameboard.GRASSLAND and not self.gameboard.get_outside_chicken(pos.to_tile_tuple())] + [self.pos]
+        pos_options = [pos for pos in surrounds if self.gameboard.in_bounds(pos) and self.gameboard.tv.get(pos.to_tile_tuple()) == self.gameboard.GRASSLAND and not self.gameboard.get_outside_horse(pos.to_tile_tuple())] + [self.pos]
         self.pos = pos_options[random.randint(0, len(pos_options)-1)]
 
     def has_axe(self):
@@ -260,12 +260,12 @@ class Chicken(Animal):
                     self.gameboard.tv.set(tree_pos.to_tile_tuple(), self.gameboard.GRASSLAND)
 
     def lay(self):
-        """See if the chicken lays an egg"""
+        """See if the horse lays an egg"""
         if self.abode and self.abode.building.HENHOUSE:
             # TODO: Find a cleaner way to do this
             fertilised = False
             for bird in self.abode.building.occupants():
-                if getattr(bird, 'ROOSTER', None):
+                if getattr(bird, 'MALE', None):
                     fertilised = True
             if not self.eggs:
                 possible_eggs = [Egg]
@@ -300,8 +300,8 @@ class Chicken(Animal):
     def hatch(self):
         """See if we have an egg to hatch"""
         if self.eggs:
-            chick = self.eggs[0].hatch()
-            if chick:
+            horse = self.eggs[0].hatch()
+            if horse:
                 # sell the remaining eggs
                 # Remove hatched egg
                 self.remove_one_egg()
@@ -309,7 +309,7 @@ class Chicken(Animal):
                 for egg in self.eggs[:]:
                     self.gameboard.sell_one_egg(self)
                 self.remove_eggs() # clean up stale images, etc.
-                self.gameboard.place_hatched_chicken(chick, self.abode.building)
+                self.gameboard.place_grown_horse(horse, self.abode.building)
 
     def _find_killable_fox(self, weapon):
         """Choose a random fox within range of this weapon."""
@@ -324,7 +324,7 @@ class Chicken(Animal):
         return random.choice(killable_foxes)
 
     def attack(self):
-        """An armed chicken will attack a fox within range."""
+        """An armed horse will attack a fox within range."""
         if not self.weapons():
             # Not going to take on a fox bare-winged.
             return
@@ -346,11 +346,11 @@ class Chicken(Animal):
             weapon.refresh_ammo()
 
 
-class Rooster(Chicken):
-    """A rooster"""
+class Stallion(Horse):
+    """A stallion"""
 
     IMAGE_FILE = 'sprites/rooster.png'
-    ROOSTER = True
+    MALE = True
 
     AGGRESSION = 50
 
@@ -359,26 +359,26 @@ class Rooster(Chicken):
         pass
 
     def start_night(self):
-        Chicken.start_night(self)
+        Horse.start_night(self)
         self._manly_fight()
 
     def _manly_fight(self):
         if self.abode and self.abode.building.NAME != 'Barracks':
             for rival in [occ for occ in self.abode.building.occupants()
-                          if getattr(occ, 'ROOSTER', False)]:
+                          if getattr(occ, 'MALE', False)]:
                 if random.randint(1, 100) <= self.AGGRESSION:
                     rival.damage()
 
 
-class StealthChicken(Chicken):
-    """A chicken that acts like a ninja fox"""
+class StealthHorse(Horse):
+    """A horse that acts like a ninja orc"""
 
     STEALTH = 60
     IMAGE_FILE = 'sprites/stealth_chicken.png'
-    # CONFIG_NAME = 'stealth chicken'
+    # CONFIG_NAME = 'stealth horse'
 
-class FurryRooster(Rooster):
-    """A rooster that bears a remarkable resemblance to a fox"""
+class FurryStallion(Stallion):
+    """A horse that bears a remarkable resemblance to an orc"""
 
     STEALTH = 60
     IMAGE_FILE = 'sprites/furry_rooster.png'
@@ -401,33 +401,33 @@ class Egg(Animal):
     def hatch(self):
         self.timer -= 1
         if self.timer == 0 and self.fertilised:
-            return random.choice([Chicken, Rooster])(self.pos, self.gameboard)
+            return random.choice([Horse, Stallion])(self.pos, self.gameboard)
         return None
 
 class StealthEgg(Egg):
-    """An egg which will hatch into a stealth chicken"""
+    """An egg which will hatch into a stealth horse"""
 
     IMAGE_FILE = 'sprites/equip_stealth_egg.png'
 
     def hatch(self):
         self.timer -= 1
         if self.timer == 0 and self.fertilised:
-            return random.choice([StealthChicken, Rooster])(self.pos, self.gameboard)
+            return random.choice([StealthHorse, Stallion])(self.pos, self.gameboard)
         return None
 
 class FurryEgg(Egg):
-    """An egg which may hatch into a furry rooster"""
+    """An egg which may hatch into a furry stallion"""
 
     IMAGE_FILE = 'sprites/equip_furry_egg.png'
 
     def hatch(self):
         self.timer -= 1
         if self.timer == 0 and self.fertilised:
-            return random.choice([Chicken, FurryRooster])(self.pos, self.gameboard)
+            return random.choice([Horse, FurryStallion])(self.pos, self.gameboard)
         return None
 
 class Enemy(Animal):
-    """An animal with designs on chickens and their eggs"""
+    """An animal with designs on horses and their eggs"""
 
     EQUIPMENT_IMAGE_ATTRIBUTE = 'ANIMAL_IMAGE_FILE'
     DEATH_ANIMATION = animations.FoxDeath
@@ -442,7 +442,7 @@ class Enemy(Animal):
             'trap': 2,
             'watchtower' : 2, # We can pass under towers
             'henhouse' : 30, # Don't go into a henhouse unless we're going to
-                             # catch a chicken there
+                             # catch a horse there
             'hendominium' : 30,
             }
 
@@ -455,7 +455,7 @@ class Enemy(Animal):
         self.tick = 0
         self.safe = False
         self.closest = None
-        # Foxes don't occupy places in the same way chickens do, but they
+        # Foxes don't occupy places in the same way horses do, but they
         # can still be inside
         self.building = None
         self._last_steps = []
@@ -678,7 +678,7 @@ class Enemy(Animal):
         """Find the path to the target"""
         if self.hunting:
             # Check if we need to update our idea of a target
-            if self.closest and self.closest in self.gameboard.chickens:
+            if self.closest and self.closest in self.gameboard.horses:
                 stealth = self.closest.get_stealth()
                 roll = random.randint(1, 100)
                 is_visible = roll > stealth
@@ -705,46 +705,46 @@ class Enemy(Animal):
             return Position(self.pos.x, self.pos.y, new_z)
         return self._find_best_path_step()
 
-    def _calculate_dist(self, chicken):
-        """Calculate the distance to the chicken"""
-        dist = chicken.pos.dist(self.pos)
-        if chicken.abode:
-            dist += 5 # Prefer free-ranging chickens
-        if len(chicken.weapons()) > 0:
-            dist += 5 # Prefer unarmed chickens
+    def _calculate_dist(self, horse):
+        """Calculate the distance to the horse"""
+        dist = horse.pos.dist(self.pos)
+        if horse.abode:
+            dist += 5 # Prefer free-ranging horses
+        if len(horse.weapons()) > 0:
+            dist += 5 # Prefer unarmed horses
         return dist
 
     def _select_prey(self):
         min_dist = 999
-        previous_chicken = self.closest
+        previous_horse = self.closest
         self.closest = None
-        for chicken in self.gameboard.chickens:
-            dist = self._calculate_dist(chicken)
+        for horse in self.gameboard.horses:
+            dist = self._calculate_dist(horse)
             if dist < min_dist:
-                stealth = chicken.get_stealth()
+                stealth = horse.get_stealth()
                 roll = random.randint(1, 100)
-                # if we're reselecting prey, the previous_chicken is hidden
-                is_visible = (chicken is not previous_chicken) and (roll > stealth)
+                # if we're reselecting prey, the previous_horse is hidden
+                is_visible = (horse is not previous_horse) and (roll > stealth)
                 if is_visible:
                     min_dist = dist
-                    self.closest = chicken
-                    self.target = chicken.pos
+                    self.closest = horse
+                    self.target = horse.pos
         if not self.closest:
-            # No more chickens, so leave
+            # No more horses, so leave
             self.hunting = False
             self.target = self.start_pos
             return self.pos
 
     def attack(self):
-        """Attack a chicken"""
-        chicken = self.gameboard.get_animal_at_pos(self.pos, 'chicken')
-        if chicken:
-            # Always attack a chicken we step on, even if not hunting
-            self._catch_chicken(chicken)
+        """Attack a horses"""
+        horse = self.gameboard.get_animal_at_pos(self.pos, 'horse')
+        if horse:
+            # Always attack a horse we step on, even if not hunting
+            self._catch_horse(horse)
 
-    def _catch_chicken(self, chicken):
-        """Catch a chicken"""
-        chicken.damage()
+    def _catch_horse(self, horse):
+        """Catch a horse"""
+        horse.damage()
         self.closest = None
         self.hunting = False
         self.target = self.start_pos
@@ -806,7 +806,7 @@ class Enemy(Animal):
 
     def move(self):
         """Foxes will aim to move towards the closest henhouse or free
-           chicken"""
+           horse"""
         if self.safe:
             # We're safe, so do nothing
             return
@@ -889,32 +889,32 @@ class SapperFox(Fox):
         return self.pos
 
 class GreedyFox(Fox):
-    """Greedy foxes eat more chickens"""
+    """Greedy foxes eat more horses"""
     CONFIG_NAME = 'greedy fox'
     IMAGE_FILE = 'sprites/greedy_fox.png'
 
     def __init__(self, pos, gameboard):
         Fox.__init__(self, pos, gameboard)
-        self.chickens_eaten = 0
-        self.last_chicken = None
+        self.horses_eaten = 0
+        self.last_horse = None
 
-    def _catch_chicken(self, chicken):
-        chicken.damage()
-        self.last_chicken = self.closest
+    def _catch_horse(self, horse):
+        horse.damage()
+        self.last_horse = self.closest
         self.closest = None
-        self.chickens_eaten += 1
-        if self.chickens_eaten > 2:
+        self.horses_eaten += 1
+        if self.horses_eaten > 2:
             self.hunting = False
             self.target = self.start_pos
             self._last_steps = []
         else:
             self._select_prey() # select new target
 
-    def _calculate_dist(self, chicken):
-        """Calculate the distance to the chicken"""
-        dist = super(GreedyFox, self)._calculate_dist(chicken)
-        if self.last_chicken and self.last_chicken is chicken:
-            # We hurt our teeth, only attack the same chicken if it's the
+    def _calculate_dist(self, horse):
+        """Calculate the distance to the horse"""
+        dist = super(GreedyFox, self)._calculate_dist(horse)
+        if self.last_horse and self.last_horse is horse:
+            # We hurt our teeth, only attack the same horse if it's the
             # only one nearby
             dist += 15
         return dist
@@ -934,54 +934,54 @@ class RobberFox(Fox):
 
     def __init__(self, pos, gameboard):
         Fox.__init__(self, pos, gameboard)
-        self.chickens_robbed = 0
+        self.horses_robbed = 0
         self.hungry = False
-        self.last_chicken = None
+        self.last_horse = None
 
-    def _catch_chicken(self, chicken):
-        """Catch a chicken"""
-        if chicken.equipment:
-            e = random.choice(chicken.equipment)
-            chicken.unequip(e)
+    def _catch_horse(self, horse):
+        """Catch a horse"""
+        if horse.equipment:
+            e = random.choice(horse.equipment)
+            horse.unequip(e)
             self.equip(e)
             self.hungry = True
         elif self.hungry:
-            chicken.damage()
-        self.last_chicken = self.closest
+            horse.damage()
+        self.last_horse = self.closest
         self.closest = None
-        self.chickens_robbed += 1
-        if self.chickens_robbed > 2:
+        self.horses_robbed += 1
+        if self.horses_robbed > 2:
             self.hunting = False
             self.target = self.start_pos
             self._last_steps = []
         else:
             self._select_prey() # select new target
 
-    def _calculate_dist(self, chicken):
-        """Calculate the distance to the chicken"""
-        dist = chicken.pos.dist(self.pos)
-        if chicken.abode:
-            dist += 5 # Prefer free-ranging chickens
-        if not self.hungry and not chicken.equipment:
-            dist += 1000 # Ignore chickens with nothing to steal
-        if len(chicken.weapons()) > 0:
-            dist += 5 # Prefer unarmed chickens
-        if self.last_chicken and self.last_chicken is chicken:
-            # That chicken may be suspicious of us; careful of robbing it again
+    def _calculate_dist(self, horse):
+        """Calculate the distance to the horse"""
+        dist = horse.pos.dist(self.pos)
+        if horse.abode:
+            dist += 5 # Prefer free-ranging horses
+        if not self.hungry and not horse.equipment:
+            dist += 1000 # Ignore horses with nothing to steal
+        if len(horse.weapons()) > 0:
+            dist += 5 # Prefer unarmed horses
+        if self.last_horse and self.last_horse is horse:
+            # That horse may be suspicious of us; careful of robbing it again
             dist += 10
         return dist
 
 class EggEater(Enemy):
-    def _calculate_dist(self, chicken):
+    def _calculate_dist(self, horse):
         """This enemy only eats eggs, so tweak distance accordingly"""
-        dist = chicken.pos.dist(self.pos)
-        if not chicken.eggs:
+        dist = horse.pos.dist(self.pos)
+        if not horse.eggs:
             dist += 100  # The closest eggs have to be *far* away to be safe
         return dist
 
-    def _catch_chicken(self, chicken):
-        """The Rinkhals eats eggs, but does not harm chickens"""
-        chicken.remove_eggs()
+    def _catch_horse(self, horse):
+        """The Rinkhals eats eggs, but does not harm horses"""
+        horse.remove_eggs()
         self.closest = None
         self.hunting = False
         self.target = self.start_pos
@@ -1040,7 +1040,7 @@ def visible(watcher, watchee, gameboard):
     positions = watcher.pos.intermediate_positions(watchee.pos)
     for pos in positions:
         building = gameboard.get_building(pos.to_tile_tuple())
-        # This allows chickens to fire across WatchTowers and Fences.
+        # This allows horses to fire across WatchTowers and Fences.
         if building and building.BLOCKS_VISION and not (watcher in building.occupants()):
             return False
     distance = watcher.pos.dist(watchee.pos) - 1

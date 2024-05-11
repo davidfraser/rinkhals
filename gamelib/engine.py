@@ -122,7 +122,7 @@ class HelpScreenState(State):
 
 class DayState(State):
     def init(self):
-        """Add some chickens to the farm"""
+        """Add some horses to the farm"""
         sound.stop_background_music()
         self.game.gameboard.start_day()
 

@@ -2,22 +2,22 @@ Levels are stored as two files.
 
 The level.tga file provides the tilemap for the starting layout. We use
 two layers of pgu's tilemap - the tile layer, for the objects of interest,
-and the code layer, which indicates the starting chicken positions.
+and the code layer, which indicates the starting horse positions.
 
-Different codes mean chickens ahve different levels of equipment.
+Different codes mean horses ahve different levels of equipment.
 
-01 - chicken with no equipment
-02 - chicken with helmet
-03 - chicken with kevlar
-04 - chicken with knife
-05 - chicken with rifle
-06 - chicken with kevlar & helmet
-07 - chicken with helmet & knife
-08 - chicken with kevlar & knife
-09 - chicken with kevlar, helmet & knife
-10 - chicken with helmet & rifle
-11 - chicken with kevlar & rifle
-12 - chicken with kevlar, helmet & rifle
+01 - horse with no equipment
+02 - horse with helmet
+03 - horse with kevlar
+04 - horse with knife
+05 - horse with rifle
+06 - horse with kevlar & helmet
+07 - horse with helmet & knife
+08 - horse with kevlar & knife
+09 - horse with kevlar, helmet & knife
+10 - horse with helmet & rifle
+11 - horse with kevlar & rifle
+12 - horse with kevlar, helmet & rifle
 
 The level.conf file allows the default game constants to be customised.
 
@@ -33,7 +33,7 @@ Turn limit: 14
 Max Foxes: 10
 Starting Cash: 100
 Sell Price Egg: 10
-Sell Price Chicken: 5
+Sell Price Horse: 5
 Sell Price Dead Fox: 5
 
 [Enemy probabilities]

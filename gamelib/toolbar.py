@@ -81,7 +81,7 @@ class BaseToolBar(gui.Table):
         self.gameboard = gameboard
         self.cash_counter = mklabel(align=0)
         self.wood_counter = mklabel(align=0)
-        self.chicken_counter = mklabel(align=0)
+        self.horse_counter = mklabel(align=0)
         self.egg_counter = mklabel(align=0)
         self.day_counter = mklabel(align=0)
         self.killed_foxes = mklabel(align=0)
@@ -94,7 +94,7 @@ class BaseToolBar(gui.Table):
         self._counter_col = 0
         self.add_counter(icons.GROATS_ICON, self.cash_counter)
         self.add_counter(icons.WOOD_ICON, self.wood_counter)
-        self.add_counter(icons.CHKN_ICON, self.chicken_counter)
+        self.add_counter(icons.CHKN_ICON, self.horse_counter)
         self.add_counter(icons.EGG_ICON, self.egg_counter)
         self.add_counter(icons.KILLED_FOX, self.killed_foxes)
         self.add_counter(icons.DAY_ICON, self.day_counter)
@@ -170,10 +170,10 @@ class BaseToolBar(gui.Table):
         """Popup dialog of controls"""
 
         COMBOS = [
-            ('Select multiple chickens', 'Shift & Left Click'),
-            ('Move selected chickens', 'Ctrl & Left Click'),
+            ('Select multiple horses', 'Shift & Left Click'),
+            ('Move selected horses', 'Ctrl & Left Click'),
             ('        or', 'Right Click'),
-            ('Unselect chickens and tool', 'Middle Click'),
+            ('Unselect horses and tool', 'Middle Click'),
             ('Save selection', 'Ctrl & 0 .. 9'),
             ('        or', 'Alt & 0 .. 9'),
             ('Recall saved selection', '0 .. 9'),
@@ -217,7 +217,7 @@ class BaseToolBar(gui.Table):
     update_cash_counter = mkcountupdate('cash_counter')
     update_wood_counter = mkcountupdate('wood_counter')
     update_fox_counter = mkcountupdate('killed_foxes')
-    update_chicken_counter = mkcountupdate('chicken_counter')
+    update_horse_counter = mkcountupdate('horse_counter')
     update_egg_counter = mkcountupdate('egg_counter')
     update_day_counter = mkcountupdate('day_counter')
 
@@ -284,7 +284,7 @@ class DefaultToolBar(BaseToolBar):
             self.gameboard.set_selected_tool(None, None)
             return False
         else:
-            self.gameboard.set_selected_tool(constants.TOOL_PLACE_ANIMALS, cursors.cursors['chicken'])
+            self.gameboard.set_selected_tool(constants.TOOL_PLACE_ANIMALS, cursors.cursors['horse'])
             return True
 
     def make_toolbar(self):
@@ -292,7 +292,7 @@ class DefaultToolBar(BaseToolBar):
 
         self.add_spacer(5)
 
-        self.add_tool('Equip chickens', self.add_equipment_toolbar)
+        self.add_tool('Equip horses', self.add_equipment_toolbar)
 
         self.add_tool('Sell stuff', self.add_sell_toolbar)
 
@@ -418,8 +418,8 @@ class SellToolBar(BaseToolBar):
 
     def make_toolbar(self):
         self.add_heading("Sell ...")
-        self.add_tool_button("Chicken", constants.TOOL_SELL_CHICKEN,
-                self.gameboard.level.sell_price_chicken, cursors.cursors['sell'])
+        self.add_tool_button("Horse", constants.TOOL_SELL_HORSE,
+                             self.gameboard.level.sell_price_horse, cursors.cursors['sell'])
         self.add_tool_button("Egg", constants.TOOL_SELL_EGG,
                 self.gameboard.level.sell_price_egg, cursors.cursors['sell'])
         self.add_spacer(15)

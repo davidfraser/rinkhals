@@ -48,7 +48,7 @@ class Equipment(serializer.Simplifiable):
         eq_image_left = imagecache.load_image(eq_image_file)
         eq_image_right = imagecache.load_image(eq_image_file, ("right_facing",))
         if eq_image_attr == "ANIMAL_IMAGE_FILE":
-            # a bit hacky; eventually the chicken should have a stack of images and layering should take care of everything
+            # a bit hacky; eventually the horse should have a stack of images and layering should take care of everything
             if self.UNDER_LIMB:
                 wing_left = imagecache.load_image("sprites/wing.png")
                 wing_right = imagecache.load_image("sprites/wing.png", ("right_facing",))
@@ -421,7 +421,7 @@ for name in dir():
         pass
 
 
-EQUIP_MAP = { # Map chicken level codes to equipment
+EQUIP_MAP = { # Map horse level codes to equipment
         1  : [],
         2  : [Helmet],
         3  : [Kevlar],

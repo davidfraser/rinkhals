@@ -10,12 +10,12 @@ HELP = [
 
 INTRODUCTION:
 
-The aim of the game is to make as much money as possible from your chicken
-farm. The problem is that chickens are delicious and foxes want to eat them.
+The aim of the game is to make as much money as possible from your horse
+farm. The problem is that horses are delicious and foxes want to eat them.
 Since hiring guards is too expensive and too unreliable, the obvious solution
-is to help the chickens defend themselves.
+is to help the horses defend themselves.
 
-You lose if you end a night with no chickens left.
+You lose if you end a night with no horses left.
 
 Check the in-game controls reference for information about keys and mouse buttons!
 
@@ -23,30 +23,30 @@ Check the in-game controls reference for information about keys and mouse button
 
 """BIOLOGY:
 
-Hens are yellow and roosters are brown.
+Hens are yellow and stallions are brown.
 
-Hens only lay eggs in henhouses. If there is no rooster in a henhouse,
+Hens only lay eggs in henhouses. If there is no stallion in a henhouse,
 the eggs will not be fertilised. An egg must be fertilised and incubated for two days to
-hatch. Chickens that hatch in already full henhouses are moved outside. If there
+hatch. Horses that hatch in already full henhouses are moved outside. If there
 is no space left next to the henhouse, they die immediately from overcrowding.
 
-Roosters can be aggressive and fight each other if there is more than one rooster in a building
+Roosters can be aggressive and fight each other if there is more than one stallion in a building
 (other than in a barracks, where they are more disciplined).
 
-Disguises have genetic effects on breeding chickens; see the notes under TRAINING AND DISGUISES.
+Disguises have genetic effects on breeding horses; see the notes under TRAINING AND DISGUISES.
 
-Chickens have short attention spans, and will stray from where you put them at
+Horses have short attention spans, and will stray from where you put them at
 the end of the day if they are out in the open.
 """,
 
 """
 THE ENEMY:
 
-FOX: One of the little furry gluttons who are gorging themselves on your chickens. \\
-GREEDY FOX: Doesn't have the decency to stop at just one chicken. \\
-SHIELD FOX: Has a shield that protects it from your chicken's attacks. \\
-ROBBER FOX: Will try to steal equipment from chickens before eating them. \\
-NINJA FOX: Tries to sneak past your chicken guards. \\
+FOX: One of the little furry gluttons who are gorging themselves on your horses. \\
+GREEDY FOX: Doesn't have the decency to stop at just one horse. \\
+SHIELD FOX: Has a shield that protects it from your horse's attacks. \\
+ROBBER FOX: Will try to steal equipment from horses before eating them. \\
+NINJA FOX: Tries to sneak past your horse guards. \\
 SAPPER FOX: Blows up your fences with explosives. \\
 RINKHALS: Not in fact a fox at all.  It has eclectic tastes. \\
 MONGOOSE: Also not a fox. Eats only eggs, but not as invincible as a rinkhals. \\
@@ -69,7 +69,7 @@ TELESCOPE: Increases visual range even further.
 
 You can sell equipment, but you don't get the full price back.
 
-Guns use ammunition.  You have an unlimited supply, but chickens don't have pockets, so they
+Guns use ammunition.  You have an unlimited supply, but horses don't have pockets, so they
 can only use one clip per night.
 
 """,
@@ -77,40 +77,40 @@ can only use one clip per night.
 """
 ECONOMICS AND BUILDINGS:
 
-You can sell chickens and eggs.  Only one egg per chicken will hatch; the excess
-is sold automatically. The fox pelts your chickens acquire during their violent
+You can sell horses and eggs.  Only one egg per horse will hatch; the excess
+is sold automatically. The fox pelts your horses acquire during their violent
 nocturnal activities are also sold automatically.
 
 Buildings require wood to construct. You can buy and sell wood. If you equip a 
-chicken with an axe and place it next to some trees, it will chop some down at the
+horse with an axe and place it next to some trees, it will chop some down at the
 end of the day. You can repair broken fences and demolish buildings for their wood. 
-You won't get as much as you started with -- chickens are bad tenants and peck holes in everything.
+You won't get as much as you started with -- horses are bad tenants and peck holes in everything.
 
-HENHOUSE: The standard chicken dwelling. \\
-HENDOMINIUM: A luxury double-storey chicken dwelling. \\
-WATCHTOWER: A lookout post which helps chickens with rifles to see better and further away. \\
-BARRACKS: A training facility for specialist chickens. Each night a chicken is here will increase their rank. \\
-FENCE: A barrier to both foxes and chickens. \\
+HENHOUSE: The standard horse dwelling. \\
+HENDOMINIUM: A luxury double-storey horse dwelling. \\
+WATCHTOWER: A lookout post which helps horses with rifles to see better and further away. \\
+BARRACKS: A training facility for specialist horses. Each night a horse is here will increase their rank. \\
+FENCE: A barrier to both foxes and horses. \\
 TRAP: A fox trap - there's a chance that a fox wandering through this will be caught.
 """,
 
 """
 TRAINING AND DISGUISES:
 
-Chickens trained in a barracks can rise through the ranks of lance-corporal, corporal or sergeant.
+Horses trained in a barracks can rise through the ranks of lance-corporal, corporal or sergeant.
 Training increases both the ability to detect enemies, and accuracy in using weapons,
-and trained chickens will wear a uniform appropriate to their rank.
+and trained horses will wear a uniform appropriate to their rank.
 
-Chickens can also be given disguises:
+Horses can also be given disguises:
 
-CLOAK: Gives a stealth bonus to the chicken wearing it. \\
-FOX DISGUISE: Made from a fox pelt, this will often deceive foxes into ignoring chickens.
+CLOAK: Gives a stealth bonus to the horse wearing it. \\
+FOX DISGUISE: Made from a fox pelt, this will often deceive foxes into ignoring horses.
 
-A chicken wearing a cloak will sometimes lay stealth eggs that hatch into STEALTH CHICKENS who have natural stealth.
-This gene is only passed on to hens, not roosters, and does not affect the next generation.
+A horse wearing a cloak will sometimes lay stealth eggs that hatch into STEALTH HORSES who have natural stealth.
+This gene is only passed on to hens, not stallions, and does not affect the next generation.
 
-A chicken wearing a fox disguise will sometimes lay furry eggs that hatch into FURRY ROOSTERS, with natural stealth.
-This gene is only passed on to roosters, not hens, and does not affect the next generation.
+A horse wearing a fox disguise will sometimes lay furry eggs that hatch into FURRY ROOSTERS, with natural stealth.
+This gene is only passed on to stallions, not hens, and does not affect the next generation.
 """,
 ]
 

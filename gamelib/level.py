@@ -31,7 +31,7 @@ class Level(serializer.Simplifiable):
         defaults = {
                 'map' : default_map,
                 'level name' : config_name,
-                'sell price chicken' : constants.DEFAULT_SELL_PRICE_CHICKEN,
+                'sell price horse' : constants.DEFAULT_SELL_PRICE_HORSE,
                 'sell price egg' : constants.DEFAULT_SELL_PRICE_EGG,
                 'sell price dead fox' : constants.DEFAULT_SELL_PRICE_DEAD_FOX,
                 'turn limit' : constants.DEFAULT_TURN_LIMIT,
@@ -56,7 +56,7 @@ class Level(serializer.Simplifiable):
         self.turn_limit = config.getint('Level', 'turn limit')
         self.max_foxes = config.getint('Game values', 'max foxes')
         self.min_foxes = config.getint('Game values', 'min foxes')
-        self.sell_price_chicken = config.getint('Game values', 'sell price chicken')
+        self.sell_price_horse = config.getint('Game values', 'sell price horse')
         self.sell_price_egg = config.getint('Game values', 'sell price egg')
         self.sell_price_dead_fox = config.getint('Game values', 'sell price dead fox')
         self.starting_cash = config.getint('Game values', 'starting cash')
@@ -91,6 +91,6 @@ class Level(serializer.Simplifiable):
             return True
         if self.turn_limit > 0 and gameboard.days >= self.turn_limit:
             return True
-        if len(gameboard.chickens) == 0:
+        if len(gameboard.horses) == 0:
             return True
 
