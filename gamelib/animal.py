@@ -170,9 +170,6 @@ class Animal(Sprite, serializer.Simplifiable):
     def weapons(self):
         return [e for e in self.equipment if equipment.is_weapon(e)]
 
-    def surveillance_equipment(self):
-        return [e for e in self.equipment if equipment.is_surveillance_equipment(e)]
-
     def armour(self):
         return [e for e in self.equipment if equipment.is_armour(e)]
 
@@ -1022,9 +1019,6 @@ class Mongoose(EggEater):
 
 def _get_vision_param(parameter, watcher):
     param = getattr(watcher, parameter)
-    for e in watcher.surveillance_equipment():
-        modifier = getattr(e, 'MODIFY_'+parameter, lambda r: r)
-        param = modifier(param)
     if watcher.abode:
         modifier = getattr(watcher.abode.building, 'MODIFY_'+parameter, lambda r: r)
         param = modifier(param)

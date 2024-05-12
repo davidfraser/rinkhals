@@ -59,13 +59,7 @@ HELMET: Cheap armour. \\
 SHIELD: Better armour. \\
 KEVLAR: More expensive and durable armour. \\
 CLUB: Easy to use, but only at close range, not very effective \\
-KNIFE: Easy to use, but only at melee range, \\
-HANDGUN: Slightly longer range than a knife, \\
-RIFLE: Ranged weapon; requires more skill. \\
-SNIPER RIFLE: Longer range and better accuracy than the plain rifle, but less ammo per clip. \\
-BAZOOKA: Even longer range, but less accuracy then rifles - will spread damage over an area. \\
-BINOCULARS: Increases visual range. \\
-TELESCOPE: Increases visual range even further.
+KNIFE: Easy to use, but only at melee range.
 
 You can sell equipment, but you don't get the full price back.
 

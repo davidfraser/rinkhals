@@ -126,72 +126,6 @@ class Weapon(Equipment):
                 return False
         return True
 
-class Handgun(Weapon):
-    TYPE = "GUN"
-    NAME = "Handgun"
-    BUY_PRICE = 30
-    SELL_PRICE = 30
-    AMMUNITION = 30
-
-    RANGE = 2
-    BASE_HIT = 70
-    RANGE_PENALTY = 15
-    HIT_SOUND = "fire-rifle.ogg"
-
-    ANIMAL_IMAGE_FILE = 'sprites/equip_handgun.png'
-
-    ANIMATION = animations.MuzzleFlash
-
-class Rifle(Weapon):
-    TYPE = "GUN"
-    NAME = "Rifle"
-    BUY_PRICE = 100
-    SELL_PRICE = 75
-    AMMUNITION = 30
-
-    RANGE = 3
-    BASE_HIT = 55
-    RANGE_PENALTY = 15
-    HIT_SOUND = "fire-rifle.ogg"
-
-    ANIMAL_IMAGE_FILE = 'sprites/equip_rifle.png'
-
-    ANIMATION = animations.MuzzleFlash
-
-class SniperRifle(Weapon):
-    TYPE = "GUN"
-    NAME = "Sniper Rifle"
-    BUY_PRICE = 150
-    SELL_PRICE = 100
-    AMMUNITION = 3
-
-    RANGE = 5
-    BASE_HIT = 80
-    RANGE_PENALTY = 10
-    HIT_SOUND = "fire-rifle.ogg"
-
-    ANIMAL_IMAGE_FILE = 'sprites/equip_sniper_rifle.png'
-
-    ANIMATION = animations.MuzzleFlash
-
-class Bazooka(Weapon):
-    TYPE = "GUN"
-    NAME = "Bazooka"
-    BUY_PRICE = 300
-    SELL_PRICE = 225
-    AMMUNITION = 20
-    DAMAGE_RANGE = 4
-    DAMAGE_RANGE_PENALTY = 3
-
-    RANGE = 7
-    BASE_HIT = 90
-    RANGE_PENALTY = 7
-    HIT_SOUND = "fire-rifle.ogg"
-
-    ANIMAL_IMAGE_FILE = 'sprites/equip_bazooka.png'
-
-    ANIMATION = animations.MuzzleFlash
-
 class Knife(Weapon):
     TYPE = "KNIFE"
     NAME = "Knife"
@@ -326,35 +260,6 @@ class Shield(Armour):
 
     ANIMAL_IMAGE_FILE = 'sprites/equip_shield.png'
 
-class SurveillanceEquipment(Equipment):
-    IS_SURVEILLANCE_EQUIPMENT = True
-    def place(self, animal):
-        for eq in animal.equipment:
-            if is_surveillance_equipment(eq):
-                return False
-        return True
-
-class Binoculars(SurveillanceEquipment):
-    NAME = "Binoculars"
-    BUY_PRICE = 25
-    SELL_PRICE = 15
-
-    MODIFY_VISION_BONUS = lambda s, x: x+20
-    MODIFY_VISION_RANGE_PENALTY = lambda s, x: max(x-5, 0)
-
-    ANIMAL_IMAGE_FILE = 'sprites/equip_binoculars.png'
-
-class Telescope(SurveillanceEquipment):
-    NAME = "Telescope"
-    BUY_PRICE = 75
-    SELL_PRICE = 50
-
-    MODIFY_VISION_BONUS = lambda s, x: x+50
-    MODIFY_VISION_RANGE_PENALTY = lambda s, x: max(x-7, 0)
-
-    ANIMAL_IMAGE_FILE = 'sprites/equip_telescope.png'
-
-
 class Accoutrement(Equipment):
     """Things which are not equipment, but are displayed in the same way"""
     IS_EQUIPMENT = False
@@ -387,10 +292,6 @@ def is_equipment(obj):
     """Return true if obj is an equipment class."""
     return getattr(obj, "IS_EQUIPMENT", False) and hasattr(obj, "NAME")
 
-def is_surveillance_equipment(obj):
-    """Return true if obj is a surveillance equipment class."""
-    return getattr(obj, "IS_SURVEILLANCE_EQUIPMENT", False) and hasattr(obj, "NAME")
-
 def is_weapon(obj):
     return is_equipment(obj) and getattr(obj, 'IS_WEAPON', False)
 
@@ -421,14 +322,14 @@ EQUIP_MAP = { # Map horse level codes to equipment
         2  : [Helmet],
         3  : [Kevlar],
         4  : [Knife],
-        5  : [Rifle],
+        5  : [], # TODO: Add in Sword
         6  : [Kevlar, Helmet],
         7  : [Helmet, Knife],
         8  : [Kevlar, Knife],
         9  : [Kevlar, Helmet, Knife],
-        10 : [Helmet, Rifle],
-        11 : [Kevlar, Rifle],
-        12 : [Kevlar, Helmet, Rifle],
+        10 : [Helmet], # TODO: Add in Sword
+        11 : [Kevlar], # TODO: Add in Sword
+        12 : [Kevlar, Helmet], # TODO: Add in Sword
         13 : [Axe],
         14 : [Helmet, Axe],
         15 : [Kevlar, Axe],
