@@ -3,9 +3,3 @@ URL: https://www.svgrepo.com/download/396651/horse.svg
 Source: hhttps://www.svgrepo.com/svg/396651/horse
 License: https://www.svgrepo.com/page/licensing/#Apache
 Credit: googlefonts, from Noto Emojis
-
-[stallion.svg]
-URL: https://www.svgrepo.com/download/400351/horse.svg
-Source: https://www.svgrepo.com/svg/400351/horse
-License: https://www.svgrepo.com/page/licensing/#Apache
-Credit: Mozilla, from Fxemoji Emojis
