@@ -418,12 +418,6 @@ class SellToolBar(BaseToolBar):
 
     def make_toolbar(self):
         self.add_heading("Sell ...")
-        self.add_tool_button("Horse", constants.TOOL_SELL_HORSE,
-                             self.gameboard.level.sell_price_horse, cursors.cursors['sell'])
-        self.add_tool_button("Egg", constants.TOOL_SELL_EGG,
-                self.gameboard.level.sell_price_egg, cursors.cursors['sell'])
-        self.add_spacer(15)
-
         for equipment_cls in equipment.EQUIPMENT:
             tool = self.make_equip_tool(equipment_cls)
             self.add_tool_button(equipment_cls.NAME.title(),

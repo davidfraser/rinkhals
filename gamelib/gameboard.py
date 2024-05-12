@@ -276,13 +276,7 @@ class GameBoard(serializer.Simplifiable):
     def apply_tool_to_selected(self, tool):
         if self.selected_horses:
             # dispatch call to selected horses if appropriate
-            if tool == constants.TOOL_SELL_HORSE:
-                self.sell_horse(None)
-                return True
-            elif tool == constants.TOOL_SELL_EGG:
-                self.sell_egg(None)
-                return True
-            elif toolbar.SellToolBar.is_equip_tool(tool):
+            if toolbar.SellToolBar.is_equip_tool(tool):
                 equipment_cls = toolbar.SellToolBar.get_equip_cls(tool)
                 self.sell_equipment(None, equipment_cls)
                 return True
@@ -375,11 +369,7 @@ class GameBoard(serializer.Simplifiable):
         elif e.button != 1: # Left button
             return
         mods = pygame.key.get_mods()
-        if self.selected_tool == constants.TOOL_SELL_HORSE:
-            self.sell_horse(self.tv.screen_to_tile(e.pos))
-        elif self.selected_tool == constants.TOOL_SELL_EGG:
-            self.sell_egg(self.tv.screen_to_tile(e.pos))
-        elif self.selected_tool == constants.TOOL_PLACE_ANIMALS:
+        if self.selected_tool == constants.TOOL_PLACE_ANIMALS:
             self.place_animal(self.tv.screen_to_tile(e.pos))
             self.set_selected_tool(constants.TOOL_SELECT_HORSES, cursors.cursors["select"])
             self.toolbar.unhighlight_move_button()
