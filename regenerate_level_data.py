@@ -40,18 +40,11 @@ def get_tile_mappings():
 
 def get_code_mappings():
     code_map = {}
-    # Needs better handling of wings
     for tn, sprites in equipment.EQUIP_MAP.items():
         image = generate_image('horse', regenerate_pngs.SPRITE_PATH)
-        need_wing = False
         for equip in sprites:
             sub_image = generate_image(equip.ANIMAL_IMAGE_FILE,
                     regenerate_pngs.SPRITE_PATH)
-            image.blit(sub_image, (0, 0))
-            if equip.UNDER_LIMB:
-                need_wing = True
-        if need_wing:
-            sub_image = generate_image('wing', regenerate_pngs.SPRITE_PATH)
             image.blit(sub_image, (0, 0))
         if image:
             code_map[tn] = image

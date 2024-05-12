@@ -49,11 +49,6 @@ class Equipment(serializer.Simplifiable):
         eq_image_right = imagecache.load_image(eq_image_file, ("right_facing",))
         if eq_image_attr == "ANIMAL_IMAGE_FILE":
             # a bit hacky; eventually the horse should have a stack of images and layering should take care of everything
-            if self.UNDER_LIMB:
-                wing_left = imagecache.load_image("sprites/wing.png")
-                wing_right = imagecache.load_image("sprites/wing.png", ("right_facing",))
-                eq_image_left.blit(wing_left, (0,0))
-                eq_image_right.blit(wing_right, (0,0))
             if self.UNDER_EYE:
                 eye_left = imagecache.load_image("sprites/eye.png")
                 eye_right = imagecache.load_image("sprites/eye.png", ("right_facing",))

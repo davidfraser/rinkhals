@@ -34,7 +34,6 @@ SPRITES = [
     ("stallion", BASE_X, BASE_Y),
     ("stealth_horse", BASE_X, BASE_Y),
     ("furry_stallion", BASE_X, BASE_Y),
-    ("wing", BASE_X, BASE_Y),
     ("eye", BASE_X, BASE_Y),
     ("equip_handgun", BASE_X, BASE_Y),
     ("equip_rifle", BASE_X, BASE_Y),

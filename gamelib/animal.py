@@ -326,7 +326,7 @@ class Horse(Animal):
     def attack(self):
         """An armed horse will attack a fox within range."""
         if not self.weapons():
-            # Not going to take on a fox bare-winged.
+            # Not going to take on a fox bare-legged.
             return
         # Choose the first weapon equipped.
         weapon = self.weapons()[0]
