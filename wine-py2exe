@@ -5,7 +5,7 @@
 # Usage: wine-py2exe
 
 OFA_VERSION=`PYTHONPATH=. python -c "from gamelib import version; print version.VERSION_STR"`
-BUILD_FOLDER="foxassault-${OFA_VERSION}"
+BUILD_FOLDER="orcassault-${OFA_VERSION}"
 ZIP_NAME="${BUILD_FOLDER}.zip"
 PY2EXE_LOG="py2exe.log"
 
@@ -18,7 +18,7 @@ WINE_SYS32=`winepath "C:/windows/system32"`
 
 echo "=== Running wine python setup.py ==="
 echo ""
-echo "  Fox Assault version: ${OFA_VERSION}"
+echo "  Orc Assault version: ${OFA_VERSION}"
 echo "  Writing log to ${PY2EXE_LOG}."
 echo "  ---"
 echo "  Please make sure you have patched your py2exe run.exe"

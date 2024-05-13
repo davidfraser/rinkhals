@@ -68,7 +68,7 @@ def main():
             pass  # Windows XP doesn't support monitor scaling, so just do nothing.
     screen = pygame.display.set_mode(constants.SCREEN, SWSURFACE)
     pygame.display.set_icon(pygame.image.load(
-        data.filepath('icons/foxassault24x24.png')))
+        data.filepath('icons/orcassault24x24.png')))
     main_app = create_main_app(screen)
 
     from .engine import Engine, MainMenuState

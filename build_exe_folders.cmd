@@ -1,7 +1,7 @@
 @echo off
 
 echo PHASE 1: Determining paths
-for /F "tokens=* USEBACKQ" %%F in (`python -c "from gamelib import version as v; print(f'foxassault-{v.VERSION_STR}')"`) do (
+for /F "tokens=* USEBACKQ" %%F in (`python -c "from gamelib import version as v; print(f'orcassault-{v.VERSION_STR}')"`) do (
   set TARGET_NAME=%%F
 )
 for /F "tokens=* USEBACKQ" %%F in (`python -c "import sys ; print(sys.base_prefix)"`) do (
@@ -32,10 +32,10 @@ if exist %TARGET_DIR% (
 echo PHASE 2: Running pyexebuilder
 rem pyexebuilder needs these in the current directory, but we'll delete them just now
 copy /y %BASE_PYTHON_DIR%\python3*.dll .
-python -m pyexebuilder.ExeBuilder --module-name run_game --module-exe-name foxassault --dest-dir=venv\ --icon data\icons\foxassault.ico
+python -m pyexebuilder.ExeBuilder --module-name run_game --module-exe-name orcassault --dest-dir=venv\ --icon data\icons\orcassault.ico
 rem we put the exe and dlls into venv so the paths end up coming out right - but we don't need them there
-copy /y venv\foxassault.exe %TARGET_DIR%\
-del venv\foxassault.exe venv\python3*.dll
+copy /y venv\orcassault.exe %TARGET_DIR%\
+del venv\orcassault.exe venv\python3*.dll
 copy /y python3*.dll %TARGET_DIR%\
 del python3*.dll
 

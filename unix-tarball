@@ -5,13 +5,13 @@
 # Usage: unix-tarball
 
 OFA_VERSION=`PYTHONPATH=. python -c "from gamelib import version; print version.VERSION_STR"`
-BUILD_FOLDER="build/foxassault-${OFA_VERSION}"
-DIST_FILE="dist/foxassault-${OFA_VERSION}.tgz"
+BUILD_FOLDER="build/orcassault-${OFA_VERSION}"
+DIST_FILE="dist/orcassault-${OFA_VERSION}.tgz"
 TAR_NAME="${BUILD_FOLDER}.tar"
 
 echo "=== Creating UNIX tar ball ==="
 echo ""
-echo "  Fox Assault version: ${OFA_VERSION}"
+echo "  Orc Assault version: ${OFA_VERSION}"
 echo "  ---"
 echo ""
 
@@ -56,9 +56,9 @@ echo "=== Creating tar ball ==="
 echo ""
 
 cd build
-tar czf "foxassault-${OFA_VERSION}.tgz" "foxassault-${OFA_VERSION}"
+tar czf "orcassault-${OFA_VERSION}.tgz" "orcassault-${OFA_VERSION}"
 cd ..
-mv "build/foxassault-${OFA_VERSION}.tgz" "${DIST_FILE}"
+mv "build/orcassault-${OFA_VERSION}.tgz" "${DIST_FILE}"
 
 echo "  Tar file: ${DIST_FILE}"
 echo "  Build folder: ${BUILD_FOLDER}"

@@ -37,18 +37,18 @@ setup   (   # Metadata
 
             # Files
             packages = find_packages(),
-            scripts = ['scripts/foxassault.py', 'scripts/testconsole.py'],
+            scripts = ['scripts/orcassault.py', 'scripts/testconsole.py'],
 
             # py2exe
             console = ['scripts/testconsole.py'],
             windows = [{
-                'script': 'scripts/foxassault.py',
-                'icon_resources': [(0, "data/icons/foxassault.ico")],
+                'script': 'scripts/orcassault.py',
+                'icon_resources': [(0, "data/icons/orcassault.ico")],
             }],
-            app = ['scripts/foxassault.py'],
+            app = ['scripts/orcassault.py'],
             options = { 'py2exe': {
                 'skip_archive': 1,
-                'dist_dir': 'dist/foxassault-%s' % version.VERSION_STR,
+                'dist_dir': 'dist/orcassault-%s' % version.VERSION_STR,
                 'packages': [
                     'logging', 'encodings',
                 ],
@@ -75,8 +75,8 @@ setup   (   # Metadata
             },
             'py2app': {
                 'argv_emulation': 1,
-                'iconfile': 'data/icons/foxassault.icns',
-#                 'dist_dir': 'dist/foxassault-%s' % version.VERSION_STR,
+                'iconfile': 'data/icons/orcassault.icns',
+#                 'dist_dir': 'dist/orcassault-%s' % version.VERSION_STR,
 #                 'bdist_base': 'build/bdist',
                 'packages': [
                     'logging', 'encodings', 'pygame', 'pgu', 'gamelib', 'data',

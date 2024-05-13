@@ -23,7 +23,7 @@ def read_savegame(fullpath):
     """Open a save game file."""
     xml = zlib.decompress(open(fullpath, "rb").read()).decode('UTF-8')
     params, methodname = xmlrpc.client.loads(xml)
-    if methodname != "foxassault":
+    if methodname != "orcassault":
         raise SaveGameError("File does not appear to be a "
             "Orc Assault save game.")
     save_version = params[0]
@@ -54,7 +54,7 @@ def write_savegame(fullpath, data, snapshot, level_name, timestamp):
     snapshot_data = encode_snapshot(snapshot)
     timestamp_str = timestamp.strftime(TIMESTAMP_FORMAT)
     params = (version.SAVE_GAME_VERSION, data, snapshot_data, level_name, timestamp_str)
-    xml = xmlrpc.client.dumps(params, "foxassault")
+    xml = xmlrpc.client.dumps(params, "orcassault")
     open(fullpath, "wb").write(zlib.compress(xml.encode('UTF-8')))
 
 def encode_snapshot(snapshot):

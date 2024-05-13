@@ -5,7 +5,7 @@
 # Usage: darwin-py2app
 
 OFA_VERSION=`PYTHONPATH=. python -c "from gamelib import version; print version.VERSION_STR"`
-BUILD_NAME="foxassault-${OFA_VERSION}"
+BUILD_NAME="orcassault-${OFA_VERSION}"
 BUILD_FOLDER="build/${BUILD_NAME}"
 DMG_NAME="${BUILD_NAME}.dmg"
 PY2APP_LOG="py2app.log"
@@ -26,7 +26,7 @@ cd ${BUILD_FOLDER}
 
 echo ""
 echo "=== Running python setup.py ==="
-echo "  Fox Assault version: ${OFA_VERSION}"
+echo "  Orc Assault version: ${OFA_VERSION}"
 echo "  Writing log to ${PY2APP_LOG}"
 
 python setup.py py2app >${PY2APP_LOG} 2>&1

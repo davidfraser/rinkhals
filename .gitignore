@@ -1,4 +1,4 @@
-Operation_Fox_Assault.egg-info
+*.egg-info
 *.pyc
 venv*
 build

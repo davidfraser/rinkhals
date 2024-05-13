@@ -50,7 +50,7 @@ class Config(object):
 
     def _default_prefs_dir(self):
         """Return a default preference folder name."""
-        app = "foxassault"
+        app = "orcassault"
         if sys.platform.startswith("win") and "APPDATA" in os.environ:
             return os.path.join(os.environ["APPDATA"], app)
         else:

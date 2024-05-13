@@ -1,4 +1,4 @@
-Operation Fox Assault
+Operation Orc Assault
 =====================
 
 Entry in PyWeek #9  <http://www.pyweek.org/9/>
@@ -25,7 +25,7 @@ It is likely that you have obtain the game in one of four possible ways:
 
 Windows:
 
-If you have the Windows .zip file, unzip it, find foxassault.exe and
+If you have the Windows .zip file, unzip it, find orcassault.exe and
 double-click it to launch the game.
 
 Unix:
@@ -37,8 +37,8 @@ inside the extracted folder.
 Mac OS X:
 
 If you have the Mac OS X .dmg file, double-click to open it. Drag
-Operation Fox Assault to Applications to install. Alternatively,
-double-click on Operation Fox Assault to run it.
+Operation Orc Assault to Applications to install. Alternatively,
+double-click on Operation Orc Assault to run it.
 
 Source:
 
@@ -84,7 +84,7 @@ You will need to install these before running the game from source:
   PyGame:                   http://www.pygame.org/
   Python Game Utilities:    http://code.google.com/p/pgu 
 
-Fox Assault requires python 3 or later, pygame 2.5 or later and
+Orc Assault requires python 3 or later, pygame 2.5 or later and
 a fork of pgu 0.21 from https://github.com/davidfraser/pgu.
 
 DEVELOPMENT DEPENDENCIES
@@ -123,7 +123,7 @@ For authors see COPYRIGHT.
 LINKS
 =====
 
-- https://www.foxassault.org/
+- https://www.orcassault.org/
 - http://www.python.org.za/pugs/cape-town/Pyweek9Entry
 - IRC: #ctpug on Atrum (http://www.atrum.org)
 
