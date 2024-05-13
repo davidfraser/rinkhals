@@ -24,14 +24,14 @@ WON_MESSAGES = [
 LOST_MESSAGES = [
     "You lost.",
     "You failed to protect your horses.",
-    "Unopposed, the foxes overrun the farm.",
+    "Unopposed, the orcs overrun the farm.",
     ]
 
 LEFT_MESSAGES = [
     "You gave up.",
     "You sold your farm.",
     "Real life got in the way.",
-    "Are you siding with the foxes?",
+    "Are you siding with the orcs?",
     "What will your horses do now?",
     ]
 
@@ -153,7 +153,7 @@ class GameOver(gui.Table):
             color=constants.FG_COLOR))
         self.add_spacer()
         self.tr()
-        self.td(gui.Label("You killed %d foxes" % gameboard.killed_foxes,
+        self.td(gui.Label("You killed %d orcs" % gameboard.killed_orcs,
             color=constants.FG_COLOR), colspan=3)
         self.add_spacer()
         self.tr()

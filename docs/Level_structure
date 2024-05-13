@@ -10,14 +10,14 @@ Different codes mean horses ahve different levels of equipment.
 02 - horse with helmet
 03 - horse with kevlar
 04 - horse with knife
-05 - horse with rifle
+05 - horse with sword
 06 - horse with kevlar & helmet
 07 - horse with helmet & knife
 08 - horse with kevlar & knife
 09 - horse with kevlar, helmet & knife
-10 - horse with helmet & rifle
-11 - horse with kevlar & rifle
-12 - horse with kevlar, helmet & rifle
+10 - horse with helmet & sword
+11 - horse with kevlar & sword
+12 - horse with kevlar, helmet & sword
 
 The level.conf file allows the default game constants to be customised.
 
@@ -30,7 +30,7 @@ Goal: Survive
 Turn limit: 14
 
 [Game values]
-Max Foxes: 10
+Max orcs: 10
 Starting Cash: 100
 Sell Price Egg: 10
 Sell Price Horse: 5

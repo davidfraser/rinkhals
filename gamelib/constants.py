@@ -1,11 +1,11 @@
-"""Operation Fox Assault constants."""
+"""Operation Orc Assault constants."""
 
 from pygame.locals import USEREVENT, QUIT
 import pygame
 
 # Project metadata
 
-NAME = "Operation Fox Assault"
+NAME = "Operation Orc Assault"
 
 AUTHORS = [
     ("Adrianna Pinska", "adrianna.pinska@gmail.com", "Confluence"),
@@ -22,7 +22,7 @@ TILE_DIMENSIONS = (28, 28)
 TOOLBAR_WIDTH = 180
 
 FG_COLOR = (255, 255, 255)
-PREDATOR_COUNT_COLOR = (255, 100, 0) # Approximately fox coloured
+PREDATOR_COUNT_COLOR = (255, 100, 0) # Approximately orc coloured
 SELECTED_COUNT_COLOR = (0, 128, 235) # Selection highlight colour
 BG_COLOR = (0, 0, 0)
 
@@ -39,11 +39,11 @@ DEFAULT_STARTING_CASH = 1000
 DEFAULT_STARTING_WOOD = 50
 DEFAULT_SELL_PRICE_HORSE = 10
 DEFAULT_SELL_PRICE_EGG = 5
-DEFAULT_SELL_PRICE_DEAD_FOX = 15
+DEFAULT_SELL_PRICE_DEAD_orc = 15
 DEFAULT_TURN_LIMIT = 14
 DEFAULT_GOAL_DESC = 'Survive for 2 weeks'
 
-DEFAULT_MAX_FOXES = 50
+DEFAULT_MAX_orcs = 50
 
 # Game constants, still to be made configurable
 
@@ -68,8 +68,8 @@ GO_MAIN_MENU = pygame.event.Event(USEREVENT, name="GO_MAIN_MENU")
 GO_HELP_SCREEN = pygame.event.Event(USEREVENT, name="GO_HELP_SCREEN")
 GO_GAME_OVER = pygame.event.Event(USEREVENT, name="GO_GAME_OVER")
 FAST_FORWARD = pygame.event.Event(USEREVENT, name="FAST_FORWARD")
-MOVE_FOX_ID = USEREVENT + 11
-MOVE_FOXES = pygame.event.Event(MOVE_FOX_ID, name="MOVE_FOXES")
+MOVE_orc_ID = USEREVENT + 11
+MOVE_orcs = pygame.event.Event(MOVE_orc_ID, name="MOVE_orcs")
 DO_LOAD_SAVEGAME = USEREVENT + 12
 DO_LOAD_LEVEL = USEREVENT + 13
 DO_QUIT = pygame.event.Event(QUIT)

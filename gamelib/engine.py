@@ -128,7 +128,7 @@ class DayState(State):
 
         sound.play_sound("daybreak.ogg")
         # disable timer
-        pygame.time.set_timer(constants.MOVE_FOX_ID, 0)
+        pygame.time.set_timer(constants.MOVE_orc_ID, 0)
         sound.background_music("daytime.ogg")
 
     def event(self, e):
@@ -159,7 +159,7 @@ class DayState(State):
 
 class NightState(State):
     def init(self):
-        """Add some foxes to the farm"""
+        """Add some orcs to the farm"""
         sound.stop_background_music()
         self.game.gameboard.start_night()
 
@@ -168,7 +168,7 @@ class NightState(State):
         # Add a timer to the event queue
         self.cycle_count = 0
         self.cycle_time = SLOW__SPEED
-        pygame.time.set_timer(constants.MOVE_FOX_ID, self.cycle_time)
+        pygame.time.set_timer(constants.MOVE_orc_ID, self.cycle_time)
         sound.background_music("nighttime.ogg")
 
         self.dialog = None
@@ -185,21 +185,21 @@ class NightState(State):
                 self.cycle_time = FAST__SPEED
             else:
                 self.cycle_time = SLOW__SPEED
-            pygame.time.set_timer(constants.MOVE_FOX_ID, self.cycle_time)
+            pygame.time.set_timer(constants.MOVE_orc_ID, self.cycle_time)
             return
-        elif e.type == constants.MOVE_FOX_ID:
+        elif e.type == constants.MOVE_orc_ID:
             # ensure no timers trigger while we're running
-            pygame.time.set_timer(constants.MOVE_FOX_ID, 0)
+            pygame.time.set_timer(constants.MOVE_orc_ID, 0)
             cur_time = pygame.time.get_ticks()
             # Clear any queued timer events, so we don't fill the queue
-            pygame.event.clear(constants.MOVE_FOX_ID)
+            pygame.event.clear(constants.MOVE_orc_ID)
             # Ensure any outstanding animitions get cleaned up
             self.cycle_count += 1
             if self.cycle_count > constants.NIGHT_LENGTH:
                 pygame.event.post(constants.START_DAY)
                 return
             if self.game.gameboard.do_night_step():
-                # All foxes are gone/safe, so dawn happens
+                # All orcs are gone/safe, so dawn happens
                 pygame.event.post(constants.START_DAY)
                 return
             # Re-enable timers
@@ -207,7 +207,7 @@ class NightState(State):
             time_left = self.cycle_time - diff
             if time_left <= 0:
                 time_left = self.cycle_time
-            pygame.time.set_timer(constants.MOVE_FOX_ID, time_left)
+            pygame.time.set_timer(constants.MOVE_orc_ID, time_left)
             return
 
         self.game.main_app.event(e)
@@ -229,7 +229,7 @@ class GameOver(State):
         """Setup everything"""
         sound.stop_background_music()
         self.game.create_game_over()
-        pygame.time.set_timer(constants.MOVE_FOX_ID, 0)
+        pygame.time.set_timer(constants.MOVE_orc_ID, 0)
 
     def event(self, e):
         if e.type == KEYDOWN:

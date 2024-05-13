@@ -50,11 +50,11 @@ class FenceExplosion(Animation):
     FLASH_4 = imagecache.load_image('sprites/boom4.png')
     SEQUENCE = [FLASH_1, FLASH_2, FLASH_3, FLASH_4]
 
-class FoxDeath(Animation):
-    BLOOD_SPLAT = imagecache.load_image('sprites/fox_death.png')
+class orcDeath(Animation):
+    BLOOD_SPLAT = imagecache.load_image('sprites/orc_death.png')
     SEQUENCE = [BLOOD_SPLAT, BLOOD_SPLAT]
     
 class HorseDeath(Animation):
-    BLOOD_SPLAT = imagecache.load_image('sprites/fox_death.png')
+    BLOOD_SPLAT = imagecache.load_image('sprites/orc_death.png')
     FEATHER_SPLAT = imagecache.load_image('sprites/horse_death.png')
     SEQUENCE = [BLOOD_SPLAT, FEATHER_SPLAT, FEATHER_SPLAT]

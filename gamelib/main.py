@@ -35,7 +35,7 @@ def complaint_dialog(message):
 
     app.close = close
 
-    dialog = WarnDialog('Problem starting Fox Assault',
+    dialog = WarnDialog('Problem starting orc Assault',
             message)
     app.run(dialog)
     sys.exit(1)

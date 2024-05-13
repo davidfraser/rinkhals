@@ -25,7 +25,7 @@ def read_savegame(fullpath):
     params, methodname = xmlrpc.client.loads(xml)
     if methodname != "foxassault":
         raise SaveGameError("File does not appear to be a "
-            "Fox Assault save game.")
+            "Orc Assault save game.")
     save_version = params[0]
     if save_version != version.SAVE_GAME_VERSION:
         raise SaveGameError("Incompatible save game version.")

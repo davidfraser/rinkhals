@@ -2,7 +2,7 @@
 # -*- coding: utf8 -*-
 # vim:fileencoding=utf8 ai ts=4 sts=4 et sw=4
 
-"""Setuptools setup.py file for Operation Fox Assault."""
+"""Setuptools setup.py file for Operation Orc Assault."""
 
 from setuptools import setup, find_packages
 from gamelib import version

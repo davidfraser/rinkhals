@@ -14,7 +14,7 @@ Members:
 A first PyWeek entry by the hackers of the Cape Town Python Users Group
 (CTPUG). The theme for PyWeek 9 was "Feather".
 
-This is a mod of the game that's meant to be farming Horses in Rohan, attacked by Orcs
+This is a mod of the game that's meant to be farming horses in Rohan, attacked by orcs
 instead of chickens on a farm, attacked by foxes.
 
 

@@ -41,7 +41,7 @@ SPRITES = [
     ("uniform_corporal", BASE_X, BASE_Y),
     ("uniform_sergeant", BASE_X, BASE_Y),
     ("equip_cloak", BASE_X, BASE_Y),
-    ("equip_foxdisguise", BASE_X, BASE_Y),
+    ("equip_orcdisguise", BASE_X, BASE_Y),
     ("equip_kevlar", BASE_X, BASE_Y),
     ("equip_helmet", BASE_X, BASE_Y),
     ("equip_axe", BASE_X, BASE_Y),
@@ -52,12 +52,12 @@ SPRITES = [
     ("equip_easter_egg", BASE_X, BASE_Y),
     ("equip_stealth_egg", BASE_X, BASE_Y),
     ("equip_furry_egg", BASE_X, BASE_Y),
-    # fox bits
-    ("fox", BASE_X, BASE_Y),
-    ("greedy_fox", BASE_X, BASE_Y),
-    ("ninja_fox", BASE_X, BASE_Y),
-    ("sapper_fox", BASE_X, BASE_Y),
-    ("robber_fox", BASE_X, BASE_Y),
+    # orc bits
+    ("orc", BASE_X, BASE_Y),
+    ("greedy_orc", BASE_X, BASE_Y),
+    ("ninja_orc", BASE_X, BASE_Y),
+    ("sapper_orc", BASE_X, BASE_Y),
+    ("robber_orc", BASE_X, BASE_Y),
     ("rinkhals", BASE_X, BASE_Y),
     ("mongoose", BASE_X, BASE_Y),
     # buildings
@@ -72,7 +72,7 @@ SPRITES = [
     # special effects
     ("muzzle_flash", BASE_X, BASE_Y),
     ("horse_death", BASE_X, BASE_Y),
-    ("fox_death", BASE_X, BASE_Y),
+    ("orc_death", BASE_X, BASE_Y),
     ("boom1", BASE_X, BASE_Y),
     ("boom2", BASE_X, BASE_Y),
     ("boom3", BASE_X, BASE_Y),

@@ -84,7 +84,7 @@ class BaseToolBar(gui.Table):
         self.horse_counter = mklabel(align=0)
         self.egg_counter = mklabel(align=0)
         self.day_counter = mklabel(align=0)
-        self.killed_foxes = mklabel(align=0)
+        self.killed_orcs = mklabel(align=0)
         self.add_labels()
 
     def add_labels(self):
@@ -96,7 +96,7 @@ class BaseToolBar(gui.Table):
         self.add_counter(icons.WOOD_ICON, self.wood_counter)
         self.add_counter(icons.HORSE_ICON, self.horse_counter)
         self.add_counter(icons.EGG_ICON, self.egg_counter)
-        self.add_counter(icons.KILLED_FOX, self.killed_foxes)
+        self.add_counter(icons.KILLED_orc, self.killed_orcs)
         self.add_counter(icons.DAY_ICON, self.day_counter)
         self.add_spacer(5)
 
@@ -216,7 +216,7 @@ class BaseToolBar(gui.Table):
 
     update_cash_counter = mkcountupdate('cash_counter')
     update_wood_counter = mkcountupdate('wood_counter')
-    update_fox_counter = mkcountupdate('killed_foxes')
+    update_orc_counter = mkcountupdate('killed_orcs')
     update_horse_counter = mkcountupdate('horse_counter')
     update_egg_counter = mkcountupdate('egg_counter')
     update_day_counter = mkcountupdate('day_counter')

@@ -1,4 +1,4 @@
-"""Operation Fox Assault Version Information"""
+"""Operation Orc Assault Version Information"""
 
 VERSION = (1, 6, 0, 'alpha', 2)
 BASE_VERSION_STR = '.'.join([str(x) for x in VERSION[:3]])
@@ -11,7 +11,7 @@ VERSION_STR = {
 # incremement whenever a change breaks the save game file format
 SAVE_GAME_VERSION = 2
 
-NAME = 'Operation Fox Assault'
+NAME = 'Operation Orc Assault'
 DESCRIPTION = 'Turn-based strategy game written using Pygame.'
 
 PEOPLE = {

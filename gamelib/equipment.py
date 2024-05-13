@@ -96,7 +96,7 @@ class Weapon(Equipment):
         return roll > (100-base_hit) + range_penalty*wielder.pos.dist(target.pos)
 
     def damage_in_area(self, gameboard, wielder, target_pos):
-        """For explosive weapons, affect foxes close to the target position"""
+        """For explosive weapons, affect orcs close to the target position"""
         if self.ammunition is not None:
             if self.ammunition <= 0:
                 # Out of ammunition, so we don't get to shoot.
@@ -111,14 +111,14 @@ class Weapon(Equipment):
         range_penalty = self._get_parameter('RANGE_PENALTY', wielder)
         training_bonus = getattr(wielder, 'TRAINING', 0)*10
         roll = random.randint(training_bonus + 1, 100)
-        damaged_foxes = set()
-        for fox in gameboard.foxes:
-            if target_pos.dist(fox.pos) <= self.DAMAGE_RANGE:
-                damage_penalty = self.DAMAGE_RANGE_PENALTY * fox.pos.dist(target_pos)
+        damaged_orcs = set()
+        for orc in gameboard.orcs:
+            if target_pos.dist(orc.pos) <= self.DAMAGE_RANGE:
+                damage_penalty = self.DAMAGE_RANGE_PENALTY * orc.pos.dist(target_pos)
                 if roll > (100-base_hit) + range_penalty*(wielder.pos.dist(target_pos) + damage_penalty):
-                    damaged_foxes.add(fox)
-        for fox in damaged_foxes:
-            fox.damage()
+                    damaged_orcs.add(orc)
+        for orc in damaged_orcs:
+            orc.damage()
 
     def place(self, animal):
         for eq in animal.equipment:
@@ -203,13 +203,13 @@ class Cloak(Disguise):
 
     ANIMAL_IMAGE_FILE = 'sprites/equip_cloak.png'
 
-class FoxDisguise(Disguise):
-    NAME = "Fox Disguise"
+class orcDisguise(Disguise):
+    NAME = "orc Disguise"
     BUY_PRICE = 60
     SELL_PRICE = 45
     STEALTH_BONUS = 70
 
-    ANIMAL_IMAGE_FILE = 'sprites/equip_foxdisguise.png'
+    ANIMAL_IMAGE_FILE = 'sprites/equip_orcdisguise.png'
 
 class Armour(Equipment):
     IS_ARMOUR = True

@@ -269,7 +269,7 @@ class Horse(Animal):
                 for equip in self.equipment:
                     if equip.NAME == "Cloak":
                         possible_eggs.append(StealthEgg)
-                    elif equip.NAME == "Fox Disguise":
+                    elif equip.NAME == "orc Disguise":
                         possible_eggs.append(FurryEgg)
                 for x in range(random.randint(1, 4)):
                     new_egg_class = random.choice(possible_eggs)
@@ -308,34 +308,34 @@ class Horse(Animal):
                 self.remove_eggs() # clean up stale images, etc.
                 self.gameboard.place_grown_horse(horse, self.abode.building)
 
-    def _find_killable_fox(self, weapon):
-        """Choose a random fox within range of this weapon."""
-        killable_foxes = []
-        for fox in self.gameboard.foxes:
-            if not weapon.in_range(self.gameboard, self, fox):
+    def _find_killable_orc(self, weapon):
+        """Choose a random orc within range of this weapon."""
+        killable_orcs = []
+        for orc in self.gameboard.orcs:
+            if not weapon.in_range(self.gameboard, self, orc):
                 continue
-            if visible(self, fox, self.gameboard):
-                killable_foxes.append(fox)
-        if not killable_foxes:
+            if visible(self, orc, self.gameboard):
+                killable_orcs.append(orc)
+        if not killable_orcs:
             return None
-        return random.choice(killable_foxes)
+        return random.choice(killable_orcs)
 
     def attack(self):
-        """An armed horse will attack a fox within range."""
+        """An armed horse will attack a orc within range."""
         if not self.weapons():
-            # Not going to take on a fox bare-legged.
+            # Not going to take on a orc bare-legged.
             return
         # Choose the first weapon equipped.
         weapon = self.weapons()[0]
-        fox = self._find_killable_fox(weapon)
-        if not fox:
+        orc = self._find_killable_orc(weapon)
+        if not orc:
             return
-        self._fix_face(fox.pos)
+        self._fix_face(orc.pos)
         if weapon.DAMAGE_RANGE > 1:
-            weapon.damage_in_area(self.gameboard, self, fox.pos)
+            weapon.damage_in_area(self.gameboard, self, orc.pos)
         else:
-            if weapon.hit(self.gameboard, self, fox):
-                fox.damage()
+            if weapon.hit(self.gameboard, self, orc):
+                orc.damage()
 
     def reload_weapon(self):
         """If we have a weapon that takes ammunition, reload it."""
@@ -427,8 +427,8 @@ class Enemy(Animal):
     """An animal with designs on horses and their eggs"""
 
     EQUIPMENT_IMAGE_ATTRIBUTE = 'ANIMAL_IMAGE_FILE'
-    DEATH_ANIMATION = animations.FoxDeath
-    DEATH_SOUND = 'kill-fox.ogg'
+    DEATH_ANIMATION = animations.orcDeath
+    DEATH_SOUND = 'kill-orc.ogg'
 
     costs = {
             # weighting for movement calculation
@@ -452,7 +452,7 @@ class Enemy(Animal):
         self.tick = 0
         self.safe = False
         self.closest = None
-        # Foxes don't occupy places in the same way horses do, but they
+        # Orcs don't occupy places in the same way horses do, but they
         # can still be inside
         self.building = None
         self._last_steps = []
@@ -462,7 +462,7 @@ class Enemy(Animal):
         return self.building is None
 
     def _game_death(self):
-        self.gameboard.kill_fox(self)
+        self.gameboard.kill_orc(self)
 
     def _cost_tile(self, pos):
         if self.gameboard.in_bounds(pos):
@@ -748,14 +748,14 @@ class Enemy(Animal):
         self._last_steps = []
 
     def _update_pos(self, new_pos):
-        """Update the position, making sure we don't step on other foxes"""
+        """Update the position, making sure we don't step on other orcs"""
         if not self.hunting and not self.gameboard.in_bounds(self.pos):
             self.safe = True
             return self.pos
         if new_pos == self.pos:
             # We're not moving, so we can skip all the checks
             return new_pos
-        blocked = self.gameboard.get_animal_at_pos(new_pos, 'fox') is not None
+        blocked = self.gameboard.get_animal_at_pos(new_pos, 'orc') is not None
         final_pos = new_pos
         if blocked:
             if new_pos.z != self.pos.z or self.pos.z != 0:
@@ -768,7 +768,7 @@ class Enemy(Animal):
             final_pos = None
             min_cost = 1000
             for poss in moves:
-                if self.gameboard.get_animal_at_pos(poss, 'fox'):
+                if self.gameboard.get_animal_at_pos(poss, 'orc'):
                     continue # blocked
                 cost = self._cost_tile(poss)
                 if cost < min_cost:
@@ -796,13 +796,13 @@ class Enemy(Animal):
     def _make_hole(self):
         """Make a hole in the fence"""
         fence = self.gameboard.get_building(self.dig_pos.to_tile_tuple())
-        # Another fox could have made the same hole this turn
+        # Another orc could have made the same hole this turn
         if fence:
             fence.damage()
         self.dig_pos = None
 
     def move(self):
-        """Foxes will aim to move towards the closest henhouse or free
+        """Orcs will aim to move towards the closest henhouse or free
            horse"""
         if self.safe:
             # We're safe, so do nothing
@@ -811,7 +811,7 @@ class Enemy(Animal):
             if self.tick:
                 self.tick -= 1
                 # We're still digging through the fence
-                # Check the another fox hasn't dug a hole for us
+                # Check the another orc hasn't dug a hole for us
                 # We're too busy digging to notice if a hole appears nearby,
                 # but we'll notice if the fence we're digging vanishes
                 if not self._is_fence(self.dig_pos):
@@ -852,29 +852,29 @@ class Enemy(Animal):
             self.gameboard.set_visibility(self)
 
 
-class Fox(Enemy):
-    """Regular fox"""
+class Orc(Enemy):
+    """Regular orc"""
     STEALTH = 20
-    IMAGE_FILE = 'sprites/fox.png'
-    CONFIG_NAME = 'fox'
+    IMAGE_FILE = 'sprites/orc.png'
+    CONFIG_NAME = 'orc'
 
 
 
-class NinjaFox(Fox):
-    """Ninja foxes are hard to see"""
+class NinjaOrc(Orc):
+    """Ninja orcs are hard to see"""
 
     STEALTH = 60
-    IMAGE_FILE = 'sprites/ninja_fox.png'
-    CONFIG_NAME = 'ninja fox'
+    IMAGE_FILE = 'sprites/ninja_orc.png'
+    CONFIG_NAME = 'ninja orc'
 
-class SapperFox(Fox):
-    """Sapper Foxes destroy fences easily"""
+class SapperOrc(Orc):
+    """Sapper Orcs destroy fences easily"""
 
     DIG_ANIMATION = animations.FenceExplosion
-    IMAGE_FILE = 'sprites/sapper_fox.png'
-    CONFIG_NAME = 'sapper fox'
+    IMAGE_FILE = 'sprites/sapper_orc.png'
+    CONFIG_NAME = 'sapper orc'
 
-    costs = Fox.costs.copy()
+    costs = Orc.costs.copy()
     costs['fence'] = 2
 
     def _dig(self, dig_pos):
@@ -885,13 +885,13 @@ class SapperFox(Fox):
         self._make_hole()
         return self.pos
 
-class GreedyFox(Fox):
-    """Greedy foxes eat more horses"""
-    CONFIG_NAME = 'greedy fox'
-    IMAGE_FILE = 'sprites/greedy_fox.png'
+class GreedyOrc(Orc):
+    """Greedy orcs eat more horses"""
+    CONFIG_NAME = 'greedy orc'
+    IMAGE_FILE = 'sprites/greedy_orc.png'
 
     def __init__(self, pos, gameboard):
-        Fox.__init__(self, pos, gameboard)
+        Orc.__init__(self, pos, gameboard)
         self.horses_eaten = 0
         self.last_horse = None
 
@@ -909,28 +909,28 @@ class GreedyFox(Fox):
 
     def _calculate_dist(self, horse):
         """Calculate the distance to the horse"""
-        dist = super(GreedyFox, self)._calculate_dist(horse)
+        dist = super(GreedyOrc, self)._calculate_dist(horse)
         if self.last_horse and self.last_horse is horse:
             # We hurt our teeth, only attack the same horse if it's the
             # only one nearby
             dist += 15
         return dist
 
-class ShieldFox(Fox):
-    """The Shield Fox has a shield, so is harder to damage"""
-    CONFIG_NAME = 'shield fox'
+class ShieldOrc(Orc):
+    """The Shield Orc has a shield, so is harder to damage"""
+    CONFIG_NAME = 'shield orc'
 
     def __init__(self, pos, gameboard):
-        Fox.__init__(self, pos, gameboard)
+        Orc.__init__(self, pos, gameboard)
         self.equip(equipment.Shield())
 
-class RobberFox(Fox):
-    CONFIG_NAME = 'robber fox'
-    IMAGE_FILE = 'sprites/robber_fox.png'
+class RobberOrc(Orc):
+    CONFIG_NAME = 'robber orc'
+    IMAGE_FILE = 'sprites/robber_orc.png'
     STEALTH = 40
 
     def __init__(self, pos, gameboard):
-        Fox.__init__(self, pos, gameboard)
+        Orc.__init__(self, pos, gameboard)
         self.horses_robbed = 0
         self.hungry = False
         self.last_horse = None
@@ -1045,13 +1045,13 @@ def visible(watcher, watchee, gameboard):
 
 # These don't have to add up to 100, but it's easier to think
 # about them if they do.
-DEFAULT_FOX_WEIGHTINGS = (
-    (Fox, 39),
-    (GreedyFox, 12),
-    (ShieldFox, 8),
-    (RobberFox, 8),
-    (NinjaFox, 8),
-    (SapperFox, 4),
+DEFAULT_ORC_WEIGHTINGS = (
+    (Orc, 39),
+    (GreedyOrc, 12),
+    (ShieldOrc, 8),
+    (RobberOrc, 8),
+    (NinjaOrc, 8),
+    (SapperOrc, 4),
     (Rinkhals, 1),
     (Mongoose, 20),
     )

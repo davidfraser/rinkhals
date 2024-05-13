@@ -11,7 +11,7 @@ HELP = [
 INTRODUCTION:
 
 The aim of the game is to make as much money as possible from your horse
-farm. The problem is that horses are delicious and foxes want to eat them.
+farm. The problem is that horses are delicious and orcs want to eat them.
 Since hiring guards is too expensive and too unreliable, the obvious solution
 is to help the horses defend themselves.
 
@@ -42,14 +42,14 @@ the end of the day if they are out in the open.
 """
 THE ENEMY:
 
-FOX: One of the little furry gluttons who are gorging themselves on your horses. \\
-GREEDY FOX: Doesn't have the decency to stop at just one horse. \\
-SHIELD FOX: Has a shield that protects it from your horse's attacks. \\
-ROBBER FOX: Will try to steal equipment from horses before eating them. \\
-NINJA FOX: Tries to sneak past your horse guards. \\
-SAPPER FOX: Blows up your fences with explosives. \\
-RINKHALS: Not in fact a fox at all.  It has eclectic tastes. \\
-MONGOOSE: Also not a fox. Eats only eggs, but not as invincible as a rinkhals. \\
+orc: One of the little furry gluttons who are gorging themselves on your horses. \\
+GREEDY orc: Doesn't have the decency to stop at just one horse. \\
+SHIELD orc: Has a shield that protects it from your horse's attacks. \\
+ROBBER orc: Will try to steal equipment from horses before eating them. \\
+NINJA orc: Tries to sneak past your horse guards. \\
+SAPPER orc: Blows up your fences with explosives. \\
+RINKHALS: Not in fact a orc at all.  It has eclectic tastes. \\
+MONGOOSE: Also not a orc. Eats only eggs, but not as invincible as a rinkhals. \\
 """,
 
 """EQUIPMENT:
@@ -72,7 +72,7 @@ can only use one clip per night.
 ECONOMICS AND BUILDINGS:
 
 You can sell horses and eggs.  Only one egg per horse will hatch; the excess
-is sold automatically. The fox pelts your horses acquire during their violent
+is sold automatically. The orc pelts your horses acquire during their violent
 nocturnal activities are also sold automatically.
 
 Buildings require wood to construct. You can buy and sell wood. If you equip a 
@@ -82,10 +82,10 @@ You won't get as much as you started with -- horses are bad tenants and peck hol
 
 HENHOUSE: The standard horse dwelling. \\
 HENDOMINIUM: A luxury double-storey horse dwelling. \\
-WATCHTOWER: A lookout post which helps horses with rifles to see better and further away. \\
+WATCHTOWER: A lookout post which helps horses with spears to see better and further away. \\
 BARRACKS: A training facility for specialist horses. Each night a horse is here will increase their rank. \\
-FENCE: A barrier to both foxes and horses. \\
-TRAP: A fox trap - there's a chance that a fox wandering through this will be caught.
+FENCE: A barrier to both orcs and horses. \\
+TRAP: A orc trap - there's a chance that a orc wandering through this will be caught.
 """,
 
 """
@@ -98,12 +98,12 @@ and trained horses will wear a uniform appropriate to their rank.
 Horses can also be given disguises:
 
 CLOAK: Gives a stealth bonus to the horse wearing it. \\
-FOX DISGUISE: Made from a fox pelt, this will often deceive foxes into ignoring horses.
+orc DISGUISE: Made from a orc pelt, this will often deceive orcs into ignoring horses.
 
 A horse wearing a cloak will sometimes lay stealth eggs that hatch into STEALTH HORSES who have natural stealth.
 This gene is only passed on to hens, not stallions, and does not affect the next generation.
 
-A horse wearing a fox disguise will sometimes lay furry eggs that hatch into FURRY ROOSTERS, with natural stealth.
+A horse wearing a orc disguise will sometimes lay furry eggs that hatch into FURRY ROOSTERS, with natural stealth.
 This gene is only passed on to stallions, not hens, and does not affect the next generation.
 """,
 ]

@@ -55,7 +55,7 @@ class AnimalPositionCache(object):
         self.clear()
 
     def clear(self):
-        self._cache = {'horse': {}, 'fox': {}}
+        self._cache = {'horse': {}, 'orc': {}}
 
     def _in_bounds(self, pos):
         return self.gameboard.in_bounds(pos)
@@ -85,20 +85,20 @@ class GameBoard(serializer.Simplifiable):
     SIMPLIFY = [
         'level',
         'tv',
-        'max_foxes',
+        'max_orcs',
         #'selected_tool',
         #'sprite_cursor',
         'selected_horses',
         'stored_selections',
         'horses',
-        'foxes',
+        'orcs',
         'buildings',
         #'_pos_cache',
         'cash',
         'wood',
         'eggs',
         'days',
-        'killed_foxes',
+        'killed_orcs',
         'day', 'night',
     ]
 
@@ -109,8 +109,8 @@ class GameBoard(serializer.Simplifiable):
         self.tv.png_folder_load_tiles('tiles')
         self.tv.tga_load_level(level.map)
         width, height = self.tv.size
-        # Ensure we don't every try to create more foxes then is sane
-        self.max_foxes = level.max_foxes
+        # Ensure we don't every try to create more orcs then is sane
+        self.max_orcs = level.max_orcs
         self.calculate_wood_groat_exchange_rate()
 
         self.selected_tool = None
@@ -118,14 +118,14 @@ class GameBoard(serializer.Simplifiable):
         self.selected_horses = []
         self.stored_selections = {}
         self.horses = set()
-        self.foxes = set()
+        self.orcs = set()
         self.buildings = set()
         self._pos_cache = AnimalPositionCache(self)
         self.cash = 0
         self.wood = 0
         self.eggs = 0
         self.days = 0
-        self.killed_foxes = 0
+        self.killed_orcs = 0
         self.day, self.night = True, False
         # For the level loading case
         if self.disp:
@@ -158,17 +158,17 @@ class GameBoard(serializer.Simplifiable):
 
         obj.disp = None
 
-        # put horses, foxes and buildings into sprite list
+        # put horses, orcs and buildings into sprite list
 
         existing_horses = obj.horses
         obj.horses = set()
         for horse in existing_horses:
             obj.add_horse(horse)
 
-        existing_foxes = obj.foxes
-        obj.foxes = set()
-        for fox in existing_foxes:
-            obj.add_fox(fox)
+        existing_orcs = obj.orcs
+        obj.orcs = set()
+        for orc in existing_orcs:
+            obj.add_orc(orc)
 
         existing_buildings = obj.buildings
         obj.buildings = set()
@@ -236,7 +236,7 @@ class GameBoard(serializer.Simplifiable):
         self.toolbar.update_horse_counter(len(self.horses))
         self.toolbar.update_cash_counter(self.cash)
         self.toolbar.update_wood_counter(self.wood)
-        self.toolbar.update_fox_counter(self.killed_foxes)
+        self.toolbar.update_orc_counter(self.killed_orcs)
 
     def update(self):
         self.tvw.reupdate()
@@ -314,7 +314,7 @@ class GameBoard(serializer.Simplifiable):
         self.set_menu_cursor()
         self.unselect_all()
         self.toolbar.start_night()
-        self.spawn_foxes()
+        self.spawn_orcs()
         self.eggs = 0
         for horse in self.horses.copy():
             horse.start_night()
@@ -333,7 +333,7 @@ class GameBoard(serializer.Simplifiable):
         self.toolbar.start_day()
         self._pos_cache.clear()
         self.advance_day()
-        self.clear_foxes()
+        self.clear_orcs()
         for horse in self.horses.copy():
             horse.start_day()
         self.redraw_counters()
@@ -941,15 +941,15 @@ class GameBoard(serializer.Simplifiable):
     def is_woodland_tile(self, pos):
         return tiles.TILE_MAP[self.tv.get(pos.to_tile_tuple())] == 'woodland'
 
-    def clear_foxes(self):
-        for fox in self.foxes.copy():
-            # Any foxes that didn't make it to the woods are automatically
+    def clear_orcs(self):
+        for orc in self.orcs.copy():
+            # Any orcs that didn't make it to the woods are automatically
             # killed
-            if self.in_bounds(fox.pos) and not self.is_woodland_tile(fox.pos):
-                self.kill_fox(fox)
+            if self.in_bounds(orc.pos) and not self.is_woodland_tile(orc.pos):
+                self.kill_orc(orc)
             else:
-                self.remove_fox(fox)
-        self.foxes = set() # Remove all the foxes
+                self.remove_orc(orc)
+        self.orcs = set() # Remove all the orcs
 
     def clear_horses(self):
         for horse in self.horses.copy():
@@ -962,22 +962,22 @@ class GameBoard(serializer.Simplifiable):
     def do_night_step(self):
         """Handle the events of the night.
 
-           We return True if there are no more foxes to move or all the
-           foxes are safely back. This end's the night"""
-        if not self.foxes:
+           We return True if there are no more orcs to move or all the
+           orcs are safely back. This end's the night"""
+        if not self.orcs:
             return True
-        # Move all the foxes
-        over = self.foxes_move()
+        # Move all the orcs
+        over = self.orcs_move()
         if not over:
-            self.foxes_attack()
+            self.orcs_attack()
             self.horses_attack()
         return over
 
     def _cache_animal_positions(self):
-        """Cache the current set of fox positions for the avoiding checks"""
+        """Cache the current set of orc positions for the avoiding checks"""
         self._pos_cache.clear()
-        for fox in self.foxes:
-            self._pos_cache.add(fox, 'fox')
+        for orc in self.orcs:
+            self._pos_cache.add(orc, 'orc')
         for horse in self.horses:
             self._pos_cache.add(horse, 'horse')
 
@@ -997,22 +997,22 @@ class GameBoard(serializer.Simplifiable):
             horse.chop()
         self.calculate_wood_groat_exchange_rate()
 
-    def foxes_move(self):
+    def orcs_move(self):
         over = True
-        for fox in self.foxes.copy():
-            old_pos = fox.pos
-            fox.move()
-            if not fox.safe:
+        for orc in self.orcs.copy():
+            old_pos = orc.pos
+            orc.move()
+            if not orc.safe:
                 over = False
-                self._pos_cache.update(old_pos, fox, 'fox')
+                self._pos_cache.update(old_pos, orc, 'orc')
             else:
-                # Avoid stale fox on board edge
-                self.remove_fox(fox)
+                # Avoid stale orc on board edge
+                self.remove_orc(orc)
         return over
 
-    def foxes_attack(self):
-        for fox in self.foxes:
-            fox.attack()
+    def orcs_attack(self):
+        for orc in self.orcs:
+            orc.attack()
 
     def horses_attack(self):
         for horse in self.horses:
@@ -1025,9 +1025,9 @@ class GameBoard(serializer.Simplifiable):
         if self.disp:
             self.toolbar.update_horse_counter(len(self.horses))
 
-    def add_fox(self, fox):
-        self.foxes.add(fox)
-        self.tv.sprites.append(fox)
+    def add_orc(self, orc):
+        self.orcs.add(orc)
+        self.tv.sprites.append(orc)
 
     def add_building(self, building):
         self.buildings.add(building)
@@ -1052,19 +1052,19 @@ class GameBoard(serializer.Simplifiable):
                 # new horse it dies. :/ Farm life
                 # is cruel.
 
-    def kill_fox(self, fox):
-        self.killed_foxes += 1
-        self.toolbar.update_fox_counter(self.killed_foxes)
-        self.add_cash(self.level.sell_price_dead_fox)
-        self.remove_fox(fox)
+    def kill_orc(self, orc):
+        self.killed_orcs += 1
+        self.toolbar.update_orc_counter(self.killed_orcs)
+        self.add_cash(self.level.sell_price_dead_orc)
+        self.remove_orc(orc)
 
-    def remove_fox(self, fox):
-        self._pos_cache.remove(fox.pos, 'fox')
-        self.foxes.discard(fox)
-        if fox.building:
-            fox.building.remove_predator(fox)
-        if fox in self.tv.sprites:
-            self.tv.sprites.remove(fox)
+    def remove_orc(self, orc):
+        self._pos_cache.remove(orc.pos, 'orc')
+        self.orcs.discard(orc)
+        if orc.building:
+            orc.building.remove_predator(orc)
+        if orc in self.tv.sprites:
+            self.tv.sprites.remove(orc)
 
     def remove_horse(self, horse):
         if horse in self.selected_horses:
@@ -1100,19 +1100,19 @@ class GameBoard(serializer.Simplifiable):
             horse.equip(item)
         self.add_horse(horse)
 
-    def _choose_fox(self, coords):
+    def _choose_orc(self, coords):
         (x, y) = coords
-        fox_cls = misc.WeightedSelection(self.level.fox_weightings).choose()
-        return fox_cls((x, y), self)
+        orc_cls = misc.WeightedSelection(self.level.orc_weightings).choose()
+        return orc_cls((x, y), self)
 
-    def spawn_foxes(self):
-        """The foxes come at night, and this is where they come from."""
-        # Foxes spawn just outside the map
+    def spawn_orcs(self):
+        """The orcs come at night, and this is where they come from."""
+        # orcs spawn just outside the map
         x, y = 0, 0
         width, height = self.tv.size
-        min_foxes = max(self.level.min_foxes, (self.days+3)//2) # always more than one fox
-        new_foxes = min(random.randint(min_foxes, min_foxes*2), self.max_foxes)
-        while len(self.foxes) < new_foxes:
+        min_orcs = max(self.level.min_orcs, (self.days+3)//2) # always more than one orc
+        new_orcs = min(random.randint(min_orcs, min_orcs*2), self.max_orcs)
+        while len(self.orcs) < new_orcs:
             side = random.randint(0, 3)
             if side == 0:
                 # top
@@ -1129,7 +1129,7 @@ class GameBoard(serializer.Simplifiable):
             else:
                 x = width
                 y = random.randint(-1, height)
-            self.add_fox(self._choose_fox((x, y)))
+            self.add_orc(self._choose_orc((x, y)))
 
     def fix_buildings(self):
         """Go through the level map looking for buildings that haven't

@@ -4,7 +4,7 @@ from . import constants
 from . import serializer
 from . import data
 import os
-from .animal import DEFAULT_FOX_WEIGHTINGS
+from .animal import DEFAULT_ORC_WEIGHTINGS
 from configparser import RawConfigParser
 
 class Level(serializer.Simplifiable):
@@ -33,16 +33,16 @@ class Level(serializer.Simplifiable):
                 'level name' : config_name,
                 'sell price horse' : constants.DEFAULT_SELL_PRICE_HORSE,
                 'sell price egg' : constants.DEFAULT_SELL_PRICE_EGG,
-                'sell price dead fox' : constants.DEFAULT_SELL_PRICE_DEAD_FOX,
+                'sell price dead orc' : constants.DEFAULT_SELL_PRICE_DEAD_orc,
                 'turn limit' : constants.DEFAULT_TURN_LIMIT,
                 'goal' : constants.DEFAULT_GOAL_DESC,
-                'max foxes' : constants.DEFAULT_MAX_FOXES,
-                'min foxes' : 0,
+                'max orcs' : constants.DEFAULT_MAX_orcs,
+                'min orcs' : 0,
                 'starting cash' : constants.DEFAULT_STARTING_CASH,
                 'starting wood' : constants.DEFAULT_STARTING_WOOD,
                 }
-        # Add default fox weightings
-        for animal, prob in DEFAULT_FOX_WEIGHTINGS:
+        # Add default orc weightings
+        for animal, prob in DEFAULT_ORC_WEIGHTINGS:
             defaults[animal.CONFIG_NAME] = prob
         config = RawConfigParser(defaults)
         config.read(self.level_file)
@@ -54,16 +54,16 @@ class Level(serializer.Simplifiable):
         self.level_name = config.get('Level', 'level name')
         self.goal = config.get('Level', 'goal')
         self.turn_limit = config.getint('Level', 'turn limit')
-        self.max_foxes = config.getint('Game values', 'max foxes')
-        self.min_foxes = config.getint('Game values', 'min foxes')
+        self.max_orcs = config.getint('Game values', 'max orcs')
+        self.min_orcs = config.getint('Game values', 'min orcs')
         self.sell_price_horse = config.getint('Game values', 'sell price horse')
         self.sell_price_egg = config.getint('Game values', 'sell price egg')
-        self.sell_price_dead_fox = config.getint('Game values', 'sell price dead fox')
+        self.sell_price_dead_orc = config.getint('Game values', 'sell price dead orc')
         self.starting_cash = config.getint('Game values', 'starting cash')
         self.starting_wood = config.getint('Game values', 'starting wood')
-        self.fox_weightings = []
-        for animal, _prob in DEFAULT_FOX_WEIGHTINGS:
-            self.fox_weightings.append((animal, config.getint('Enemy probabilities', animal.CONFIG_NAME)))
+        self.orc_weightings = []
+        for animal, _prob in DEFAULT_ORC_WEIGHTINGS:
+            self.orc_weightings.append((animal, config.getint('Enemy probabilities', animal.CONFIG_NAME)))
 
     @classmethod
     def unsimplify(cls, *args, **kwargs):
